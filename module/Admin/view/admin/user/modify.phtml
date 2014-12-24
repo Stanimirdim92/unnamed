@@ -1,0 +1,18 @@
+<div>
+    <p>
+        <a href="/admin/user" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+        </a>
+    </p>
+    <div class='form-inputs'>
+    <?php
+        $form = $this->form;
+        $form->setAttribute('action', $this->url('admin',array('controller' =>'user','action' => 'modify','id' => $this->id)));
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        echo $this->formCollection($form);
+        echo $this->form()->closeTag();
+        echo "<p><a href='/admin/user/setuserclasses/userid/{$this->id}'>{$this->session->USERCLASS}</a></p>";
+    ?>
+    </div>
+</div>

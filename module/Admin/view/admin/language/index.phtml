@@ -1,0 +1,54 @@
+<div>
+<?
+$form = $this->form;
+$form->setAttribute('action', $this->url('admin',array('controller' =>'language','action' => 'index')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+?>
+<section>
+    <div class="table-style">
+        <ul class="table-header">
+            <li class="table-cell">Id</li>
+            <li class="table-cell"><?=$this->session->NAME?></li>
+            <li class="table-cell"><?=$this->session->ACTIVE?></li>
+            <li class="table-cell"><?=$this->session->DETAILS?></li>
+            <li class="table-cell"><?=$this->session->MODIFY?></li>
+            <li class="table-cell"><?=$this->session->DELETE?></li>
+        </ul>
+        <?php
+        foreach($this->paginator as $item)
+        {
+        ?>
+        <ul class="table-row">
+            <li class="table-cell"><?=$item->id?></li>
+            <li class="table-cell"><?=$item->name?></li>
+            <li class="table-cell">
+                <? if (($item->active)) {?><i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i><? } ?></li>
+            <li class="table-cell">
+                <a title='<?=$this->session->DETAILS?>' class='btn blue btn-sm' href='/admin/language/detail/id/<?=$item->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
+            </li>
+            <li class="table-cell">
+                <a title='<?=$this->session->MODIFY?>' href='/admin/language/modify/id/<?=$item->id?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+            </li>
+            <li class="table-cell">
+            <a id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete' title='<?=$this->session->DELETE?>'><i class='fa fa-icon-fix fa-trash-o'></i></a>
+            <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
+                <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getName()?>&raquo;&quest;</p>
+                <ul>
+                    <li><a class='btn delete' href='/admin/language/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
+                    <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
+                </ul>
+            </div>
+            </li>
+        </ul>
+        <?
+        }
+        ?>
+  </div>
+</section>
+<?
+echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
+?>
+</div>

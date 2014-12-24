@@ -1,0 +1,36 @@
+<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
+<?php
+$currency = $this->curr;
+?>
+<a href="/admin/currency/index" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>back to the list of currency objects
+</a>
+<br/><br/>
+<header>
+  <span class="widget-icon"><i class="fa fa-icon-fix fa-info"></i></span>
+  <h2>Details for currency &laquo;<?=$currency->toString()?>&raquo;</h2>
+</header>
+<div class='well'>
+<TABLE class='table table-bordered table-striped' style='clear: both' id='currency'>
+<TBODY>
+<TR>
+    <TD class='definition'>Name</TD>
+    <TD class='admin al l'><?=$currency->name?></TD>
+</TR>
+<tr>
+    <td class="definition">Active</td>
+    <td class='admin al l'><? if ($this->curr->getActive()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?> </td>
+</TR>
+<tr>
+    <td class="definition">Symbol</td>
+    <td class='admin al l'><i class='fa <?=$currency->symbol?>'></i></td>
+</TR>
+</tbody>
+</TABLE>
+<br/>
+
+<a href="/admin/currency/modify/id/<?=$currency->id?>" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="fa fa-pencil"></i></span>Modify
+</a><br/><br/>
+</div>
+</div>

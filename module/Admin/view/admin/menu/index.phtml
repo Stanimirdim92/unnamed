@@ -1,0 +1,93 @@
+<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
+<header>
+  <span class="widget-icon"><i class="fa fa-list"></i></span>
+  <h2>List of all menu objects</h2>
+</header>
+<!-- widget div-->
+<div>
+<!-- widget content -->
+  <div class="widget-body no-padding">
+    <div class="widget-body-toolbar"></div>
+  <!-- widget content -->
+      <table id="dt_basic" class="table table-striped table-bordered table-hover">
+          <THEAD>
+            <TR>
+              <TH>caption</TH>
+              <TH>order</TH>
+              <TH>keywords</TH>
+              <TH>description</TH>
+              <TH>details</TH>
+              <th>menutype</th>
+              <TH>modify</TH>
+              <TH>delete</TH>
+            </TR>
+          </THEAD>
+          <TBODY>
+<?php
+/* @var $item Admin\Model\Menu */
+foreach($this->menus as $item)
+{
+?>
+<TR>
+    <TD class='admin'><?=$item->caption?></TD>
+    <TD class='admin'><?=$item->menuOrder?></TD>
+    <TD class='admin'><?=$item->keywords?></TD>
+    <TD class='admin'><?=$item->description?></TD>
+    <TD class='admin c'>
+      <a title='Menu details' href='/admin/menu/detail/id/<?=$item->id?>' class='btn btn-default btn-sm blue'><i class='fa fa-icon-fix fa-info'></i></a>
+    </TD>
+    <TD class='admin'><?=$item->getMenuTypeAsName()?></TD>
+    <TD class='admin c'>
+    <a title='Modify menu object' href='/admin/menu/modify/id/<?=$item->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+    </TD>
+    <TD class='admin c'>
+    <a id='delete_<?=$item->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
+    <div style='display: none' id='delete_delete_<?=$item->id?>' class='dialog_hide'>
+        <p>Are you sure you would like to delete this menu?</p>
+        <ul>
+          <li><a class='btn btn-danger' href='/admin/menu/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
+          <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
+        </ul>
+    </div>
+    </TD>
+    </TR>
+<?
+    if(isset($this->submenus[$item->id]))
+    {
+        foreach($this->submenus[$item->id] as $sub)
+        {
+            ?>
+            <TR>
+                <TD class='admin r'><?=$sub->caption?></TD>
+                <TD class='admin'><?=$sub->menuOrder?></TD>
+                <TD class='admin'><?=$sub->keywords?></TD>
+                <TD class='admin'><?=$sub->description?></TD>
+                <TD class='admin c'>
+                <a title='Menu details' href='/admin/menu/detail/id/<?=$sub->id?>' class='btn btn-default btn-sm blue'><i class='fa fa-icon-fix fa-info'></i></a>
+                </TD>
+                <TD class='admin'><?=$item->getMenuTypeAsName()?></TD>
+                <TD class='admin c'>
+                <a title='Modify menu object' href='/admin/menu/modify/id/<?=$sub->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+                </TD>
+                <TD class='admin c'>
+                <a id='delete_<?=$sub->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
+                <div style='display: none' id='delete_delete_<?=$sub->id?>' class='dialog_hide'>
+                    <p>Are you sure you would like to delete this menu?</p>
+                    <ul>
+                      <li><a class='btn btn-danger' href='/admin/menu/delete/id/<?=$sub->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
+                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
+                    </ul>
+                </div>
+                </TD>
+                </TR>
+            <?
+        }
+    }
+}
+?>
+          </TBODY>
+        </TABLE>
+  </div>
+  <!-- end widget content -->
+</div>
+</div>

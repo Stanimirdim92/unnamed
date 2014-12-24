@@ -1,0 +1,81 @@
+<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
+<?php
+/* @var $menu Admin\Model\Menu */
+$menu = $this->menu;
+?>
+<a href="/admin/menu/index" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>back to the list of menus
+</a>
+<br/><br/>
+<header>
+  <span class="widget-icon"><i class="fa fa-icon-fix fa-info"></i></span>
+  <h2>Details for menu &laquo;<?=$menu->toString()?>&raquo;</h2>
+</header>
+<div class='well'>
+<TABLE class='table table-bordered table-striped' style='clear: both' id='menu'>
+<TBODY>
+<TR>
+    <TD class='definition'>Caption</TD>
+    <TD class='admin al l'><?=$menu->caption?>
+    </TD>
+</TR>
+<TR>
+    <TD class='definition'>Order</TD>
+    <TD class='admin al l'><?=$menu->menuOrder?>
+    </TD>
+</TR>
+<TR>
+    <TD class='definition'>Keywords</TD>
+    <TD class='admin al l'><?=$menu->keywords?>
+    </TD>
+</TR>
+<TR>
+    <TD class='definition'>Description</TD>
+    <TD class='admin al l'><?=$menu->description?>
+    </TD>
+</TR>
+<TR>
+    <TD class='definition'>Menu type</TD>
+    <TD class='admin al l'><?=$menu->getMenuTypeAsName()?>
+    </TD>
+</TR>
+
+<TR>
+    <TD class='definition'>Language</TD>
+    <TD class='admin al l'>
+<?
+    $language = $menu->getLanguageObject();
+    if($language!=null)
+    {
+?>
+        <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
+<?
+        echo $language->toString();
+    }
+?>
+    </TD>
+</TR>
+
+<TR>
+    <TD class='definition'>Parent</TD>
+    <TD class='admin al l'>
+<?
+    $parent = $menu->getParentObject();
+    if($parent!=null)
+    {
+?>
+        <a class='btn btn-labeled btn-default blue' title='Parent details' href='/admin/menu/detail/id/<?=$parent->id?>' target='_blank'><i class='fa fa-info'></i></a>
+<?
+        echo $parent->toString();
+    }
+?>
+    </TD>
+</TR>
+</TABLE>
+<br/>
+
+<a href="/admin/menu/modify/id/<?=$menu->id?>" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="fa fa-pencil"></i></span>modify
+</a><br/><br/>
+</div>
+</div>

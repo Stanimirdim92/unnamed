@@ -1,0 +1,73 @@
+<div>
+<?php
+$form = $this->form;
+$form->setAttribute("method", "GET");
+$form->setAttribute('action', $this->url('admin',array('controller' =>'user')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+?>
+
+<p class="export">
+    <a href='/admin/user/export' class="btn btn-default">
+        <i class="fa fa-save"></i>&nbsp;<?=$this->session->EXCEL_EXPORT?>
+    </a>
+</p>
+
+<section>
+    <div class="table-style">
+        <ul class="table-header">
+            <li class="table-cell">Id</li>
+            <li class="table-cell"><?=$this->session->NAME?></li>
+            <li class="table-cell"><?=$this->session->USERNAME?></li>
+            <li class="table-cell"><?=$this->session->EMAIL?></li>
+            <li class="table-cell"><?=$this->session->LAST_LOGIN?></li>
+            <li class="table-cell"><?=$this->session->DISABLED?></li>
+            <li class="table-cell"><?=$this->session->REGISTERED?></li>
+            <li class="table-cell"><?=$this->session->DETAILS?></li>
+            <li class="table-cell"><?=$this->session->MODIFY?></li>
+            <li class="table-cell"><?=$this->session->DELETE?></li>
+        </ul>
+        <div id="linked">
+<?php
+/* @var $item Admin\Model\User */
+foreach($this->paginator as $item)
+{
+?>
+        <ul class="table-row">
+            <li class="table-cell"><?=$item->getId()?></li>
+            <li class="table-cell"><?=$item->getName()."&nbsp;".$item->getSurname()?></li>
+            <li class="table-cell"><?=$item->getUsername()?></li>
+            <li class="table-cell"><?=$item->getEmail()?></li>
+            <li class="table-cell"><?=$item->getLastLogin()?></li>
+            <li class="table-cell"><? if ($item->getDeleted()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?></li>
+            <li class="table-cell"><?=$item->getRegistered()?></li>
+            <li class="table-cell">
+                <a title='<?=$this->session->DETAILS?>' class='btn blue btn-sm' href='/admin/user/detail/id/<?=$item->getId()?>'><i class='fa fa-info'></i></a>
+            </li>
+            <li class="table-cell">
+                <a title='<?=$this->session->MODIFY?>' href='/admin/user/modify/id/<?=$item->getId()?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+            </li>
+            <li class="table-cell">
+                <a title='<?=$this->session->DELETE?>' id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a>
+                <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
+                    <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getUsername()?>&raquo;&quest;</p>
+                    <ul>
+                      <li><a class='btn delete' href='/admin/user/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
+                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+<?php
+}
+?>
+        </div>
+        <div id="results"></div>
+    </div>
+</section>
+<?php
+echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
+?>
+</div>

@@ -1,0 +1,86 @@
+<?php
+$children = $this->viewModel()->getCurrent()->getChildren();
+$view = $children[0];
+$langName = "";
+if (isset($view->lang->name))
+{
+    $langName = $view->lang->name;
+}
+else
+{
+    $langName = "en";
+}
+?>
+<!doctype html>
+<html lang="<?=$langName?>" class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title><?=$view->webTitle?></title>
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta http-equiv="cleartype" content="on">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/back/img/apple-touch-icon-144x144-precomposed.png">
+
+        <link rel="stylesheet" media="screen" href="/front/css/font-awesome.min.css">
+        <link rel="stylesheet" media="screen" href="/back/css/style.css">
+    </head>
+    <body>
+        <div class="breadcrumbs">
+            <ul>
+            <?php
+            if(isset($view->breadcrumbs))
+            {
+                foreach($view->breadcrumbs as $bread)
+                {
+                    echo "<li><a title='".$bread['name']."' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
+                }
+            }
+            ?>
+            </ul>
+        </div>
+        <?php echo $this->layout()->content;?>
+    
+        <?php
+            if(isset($view->cache) && $view->cache->warning && $view->cache->warning!="")
+            {
+        ?>
+              <div class="alert alert-warning fade in">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-warning"></i> <p><?=$view->cache->warning?></p>
+              </div>
+        <?php
+                $view->cache->warning = null;
+              }
+              if(isset($view->cache) && $view->cache->success && $view->cache->success!="")
+              {
+        ?>
+              <div class="alert alert-success fade in">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-check"></i> <p><?=$view->cache->success?></p>
+              </div>
+        <?php
+                //reset the message after showing once
+                $view->cache->success = null;
+              }
+              
+              if(isset($view->cache) && $view->cache->error && $view->cache->error!="")
+              {
+        ?>
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-times"></i> <p><?=$view->cache->error?></p>
+              </div>
+        <?php
+                $view->cache->error = null;
+              }
+        ?>
+        <script src="/front/js/jquery.min.js"></script>
+        <script defer src="/back/js/custom.js"></script>
+    </body>
+</html>

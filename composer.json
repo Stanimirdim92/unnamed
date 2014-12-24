@@ -1,0 +1,22 @@
+{
+    "name": "Zend Press",
+    "description": "Wordpress ported to Zend 2",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "framework",
+        "zf2",
+        "zendpress",
+        "zp"
+    ],
+    "homepage": "zendpress.com",
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "2.3.*"
+    },
+    "autoload": {
+        "psr-4":{
+            "Custom\\" : "vendor/Custom/"
+        },
+        "classmap": ["vendor/CodePlex"]
+    }
+}

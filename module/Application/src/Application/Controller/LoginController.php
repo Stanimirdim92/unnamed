@@ -1,0 +1,324 @@
+<?php
+namespace Application\Controller;
+
+use Application\Controller\IndexController;
+use Zend\Authentication\AuthenticationService;
+use Zend\Session\Container;
+use Zend\Http\PhpEnvironment\RemoteAddress;
+
+use Application\Form\LoginForm;
+use Application\Form\ResetPasswordForm;
+use Application\Form\NewPasswordForm;
+use Application\Model\ResetPassword;
+
+use Custom\Plugins\Mailing;
+use Custom\Plugins\Functions;
+use Custom\Error\AuthorizationException;
+
+class LoginController extends IndexController
+{
+    /**
+     * User access
+     */
+    const ROLE_USER = 1;
+
+    /**
+     * Admin access
+     */
+    const ROLE_ADMIN = 10;
+
+    /**
+     * @var Zend\Db\Adapter\Adapter
+     */
+    private $adapter;
+
+    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    {
+        parent::onDispatch($e);
+        $this->checkIdentity();
+    }
+
+    /**
+     * Get database and check if supplied username and password matches.
+     *
+     * @param array $options
+     * @param string $table
+     * @param string $identity
+     * @param string $credential
+     * @var Zend\Crypt\Password\Bcrypt
+     * @var Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter
+     * @return DbTable Adapter
+     */
+    private function getAuthAdapter(array $options, $table = "user", $identity = "email", $credential = "password")
+    {
+        if (!is_array($options))
+        {
+            throw new Exception\InvalidArgumentException(__METHOD__ . ' expects an array');
+        }
+        else
+        {
+            $credentialCallback = function ($passwordInDatabase, $passwordProvided) {
+                $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
+                return $bcrypt->verify($passwordProvided, $passwordInDatabase);
+            };
+            $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
+            $authAdapter->setIdentity($options[$identity]);
+            $authAdapter->setCredential($options[$credential]);
+        }
+        return $authAdapter;
+    }
+
+    /**
+     * @var Zend\Db\Adapter\Adapter
+     * @return Adapter
+     */
+    private function getAdapter()
+    {
+        if(!$this->adapter)
+        {
+            $sm = $this->getServiceLocator();
+            $this->adapter = $sm->get('Zend\Db\Adapter\Adapter');
+        }
+        return $this->adapter;
+    }
+
+    /**
+     * @var Zend\Form\Form
+     * @return LoginForm
+     */
+    public function indexAction()
+    {
+        $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
+        $form->get("login")->setValue($this->translation->LOGIN);
+        $form->get("email")->setLabel($this->translation->EMAIL);
+        $form->get("password")->setLabel($this->translation->PASSWORD);
+        $this->view->form = $form;
+        return $this->view;
+    }
+
+    public function processloginAction()
+    {
+        // Check if we have a POST request
+        if(!$this->getRequest()->isPost())
+        {
+            $this->logoutAction("/login");
+        }
+
+        // Get our form and validate it
+        $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
+        $form->setData($this->getRequest()->getPost());
+        if(!$form->isValid())
+        {
+            foreach($form->getMessages() as $msg)
+            {
+                foreach ($msg as $key => $value)
+                {
+                    $this->cache->error = $value;
+                }
+            }
+            return $this->redirect()->toUrl("/login");
+        }
+        // Get our authentication adapter and validate it
+        $adapter = $this->getAuthAdapter($form->getData());
+        $auth = new AuthenticationService();
+        $result = $auth->authenticate($adapter);
+        $role = self::ROLE_USER;
+        if(!$result->isValid())
+        {
+            $this->cache->error = $this->translation->WRONG_EMAIL_AND_PW;
+            return $this->redirect()->toUrl("/login");
+        }
+        else
+        {
+            $data = $adapter->getResultRowObject(null, 'password');
+            $user = $this->getTable('user')->getUser($data->id);
+            if ($user->getDeleted())
+            {
+                $this->cache->error = $this->translation->DISABLED_ACCOUNT;
+                return $this->redirect()->toUrl("/");
+            }
+            if ($user->getAdmin())
+            {
+                $role = self::ROLE_ADMIN;
+            }
+            $user->setServiceManager(null);
+            $user->setLastLogin(date("Y-m-d H:i:s", time()));
+            $remote = new RemoteAddress();
+            $user->setIp($remote->getIpAddress());
+            $this->getTable('user')->saveUser($user);
+
+            $data->role = $role;
+            $auth->getStorage()->write($data);
+            $this->cache->user = $user;
+            $this->cache->role = (int) $role;
+            $this->cache->logged = true;
+            $authSession = new Container('ul'); //user login
+            $authSession->setExpirationSeconds(7200); // 2hrs
+            return $this->redirect()->toUrl("/");
+        }
+    }
+
+    public function newpasswordAction()
+    {   
+        $token = (string) $this->getParam('id', null);
+        if (Functions::strLength($token) != 64)
+        {
+            throw new \Exception("Token mismatch");
+        }
+        else
+        {
+            $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
+            if (count($tokenExist) != 1)
+            {
+                $this->errorNoParam($this->translation->LINK_EXPIRED);
+                return $this->redirect()->toUrl("/");
+            }
+            else
+            {
+                $form = new NewPasswordForm($tokenExist);
+                $form->get("password")->setLabel($this->translation->PASSWORD)->setAttribute("placeholder", $this->translation->PASSWORD);
+                $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
+                $form->get("resetpw")->setValue($this->translation->RESET_PW);
+
+                // temporary create new view variable to hold the user id.
+                // After the password is reset the variable is destroyed.
+                // Hidden fields will work, but they are more easier to hack.
+                $this->cache->resetpwUserId = $tokenExist->current()->user;
+                $this->view->form = $form;
+                return $this->view;
+            }
+        }
+    }
+
+    public function newpasswordprocessAction()
+    {
+        $form = new NewPasswordForm(array('action' => '/login/newpasswordprocess','method' => 'post'));
+
+        if ($this->getRequest()->isPost())
+        {
+            $form->setInputFilter($form->getInputFilter());
+            $form->setData($this->getRequest()->getPost());
+            if($form->isValid())
+            {
+                $formData = $form->getData();
+                $user = $this->getTable("user")->getUser($this->cache->resetpwUserId);
+                unset($this->cache->resetpwUserId);
+                // $this->cache->resetpwUserId = null;
+                $pw = Functions::createPassword($formData["password"]);
+                if (!empty($pw))
+                {
+                    $user->setSalt("");
+                    $user->setPassword($pw);
+                    $user->setIp($remote->getIpAddress());
+                    $this->getTable("user")->saveUser($user);
+                    $this->cache->success = $this->translation->NEW_PW_SUCCESS;
+                    return $this->redirect()->toUrl("/login");
+                }
+                throw new Exception\RuntimeException("Password could not be generated.");
+            }
+            else
+            {
+                $error = array();
+                foreach($form->getMessages() as $msg)
+                {
+                    foreach ($msg as $key => $value)
+                    {
+                        $error = $value;
+                    }
+                }
+                $this->errorNoParam($error);
+                return $this->redirect()->toUrl("/");
+            }
+        }
+    }
+
+    public function resetpasswordAction()
+    {
+        $form = new ResetPasswordForm(array('action' => '/login/resetpassword','method' => 'post'));
+        $form->get("resetpw")->setValue($this->translation->RESET_PW);
+        $form->get("email")->setLabel($this->translation->EMAIL);
+        $this->view->form = $form;
+        if ($this->getRequest()->isPost())
+        {
+            $form->setInputFilter($form->getInputFilter());
+            $form->setData($this->getRequest()->getPost());
+            if($form->isValid())
+            {
+                $formData = $form->getData();
+                $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
+                
+                if(count($existingEmail) == 1)
+                {
+                    $token = Functions::generateToken(48); // returns 64 characters long string
+                    $user = $this->getTable("user")->getUser($existingEmail->current()->id);
+                    $resetpw = new ResetPassword();
+                    $resetpw->setToken($token);
+                    $resetpw->setUser($existingEmail->current()->id);
+                    $resetpw->setDate(date("Y-m-d H:i:s", time()));
+                    $remote = new RemoteAddress();
+                    $resetpw->setIp($remote->getIpAddress());
+                    $this->getTable("resetpassword")->saveResetPassword($resetpw);
+
+                    $message = $this->translation->NEW_PW_TEXT." ".$_SERVER["SERVER_NAME"]."/login/newpassword/id/{$token}";
+                    $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@localhost", $_SERVER["SERVER_NAME"]);
+                    if ($result)
+                    {
+                        $this->cache->success = $this->translation->PW_SENT." ".$formData['email'];
+                        $this->view->setTerminal(true);
+                        return $this->redirect()->toUrl("/");
+                    }
+                    else
+                    {
+                        $this->cache->error = "Error! Email could not be sent";
+                        return $this->redirect()->toUrl("/login/resetpassword");
+                    }
+                }
+                else/* if(count($existingEmail) == 0)*/
+                {
+                    $this->errorNoParam($this->translation->EMAIL." <b>".$formData["email"]."</b> ".$this->translation->NOT_FOUND);
+                    return $this->redirect()->toUrl("/login/resetpassword");
+                }
+            }
+            else
+            {
+                $error = array();
+                foreach($form->getMessages() as $msg)
+                {
+                    foreach ($msg as $key => $value)
+                    {
+                        $error[] = $value;
+                    }
+                }
+                $this->errorNoParam($error);
+                return $this->redirect()->toUrl("/login/resetpassword");
+            }
+        }
+
+        return $this->view;
+    }
+
+    /** 
+     * Create new instance of $cache and set it to empty|null
+     *
+     * Clear all sessions (cache, translations etc.) 
+     * @param string $redirectTo
+     * @return void
+     */
+    protected function logoutAction($redirectTo = '')
+    {
+        $this->cache->getManager()->getStorage()->clear();
+        $this->translation->getManager()->getStorage()->clear();
+        $this->cache = new Container("cache");
+        $this->translation = new Container("translations");
+        $authSession = new Container('ul');
+        $authSession->getManager()->getStorage()->clear();
+        $auth = new AuthenticationService();
+        $auth->clearIdentity();
+        if ($redirectTo == '')
+        {
+            $redirectTo = "/";
+        }
+        return $this->redirect()->toUrl($redirectTo);
+    }
+}
+?>

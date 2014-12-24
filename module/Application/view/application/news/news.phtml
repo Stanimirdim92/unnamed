@@ -1,0 +1,68 @@
+<?php
+if(count($this->news) > 0)
+{
+    foreach($this->news as $new)
+    {
+        $dateTime = date("Y-m-d", strtotime($new->getDate()));
+        $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
+        $newsCaption = strtolower(str_replace(" ", "-", $new->getTitle()));
+        $text = ($new->getText() ? $new->getText() : $new->getExtract());
+        ?>
+            <article class="post-content" itemprop="event" itemscope itemtype="http://schema.org/Article">
+                <?php if ($new->getPreview() != null) { ?>
+                    <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                        <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview()?>" id="news_image" title="<?=$new->getTitle()?>">
+                            <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview()?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle()?>" />
+                        </a>
+                    </figure>
+                <?php } ?>
+                <h2 itemprop="name" class="post-title">
+                    <a itemprop="url" href="/news/post/<?=$newsCaption?>"><?=$new->getTitle()?></a>
+                </h2>
+                <time datetime="<?=$dateTime?>" class="post-date">
+                    <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
+                </time>
+                <p itemprop="text" class="post-text"><?=substr(strip_tags($text), 0, 300)."...";?></p>
+                <br>
+                <?php if (strlen($new->getText()) > 0)
+                {
+                ?>
+                    <p><a itemprop="url" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more" href="/news/post/<?=$newsCaption?>?>"><?=$this->translation->READ_MORE?></a></p>
+                <?php
+                }
+                ?>
+            </article>
+<?php
+    }
+    echo $this->paginationControl($this->news, 'sliding', array('/application/pagination.phtml', "Application"), array('route' => 'news'));
+}
+else if(count($this->new) === 1)
+{
+    $new = $this->new;
+    $dateTime = date("Y-m-d", strtotime($new->getDate()));
+    $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
+    $text = ($new->getText() ? $new->getText() : $new->getExtract());
+?>
+    <article class="post-content" itemprop="event" itemscope itemtype="http://schema.org/Article">
+        <?php if ($new->getPreview() != null) { ?>
+            <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview()?>" id="news_image" title="<?=$new->getTitle()?>">
+                    <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview()?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle()?>" />
+                </a>
+            </figure>
+        <?php } ?>
+        <h2 itemprop="name" class="post-title"><?=$new->getTitle()?></h2>
+        <time datetime="<?=$dateTime?>" class="post-date">
+            <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
+        </time>
+        <p itemprop="text" class="post-text"><?=$text?></p>
+        <p><a itemprop="url" href="/news" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
+    </article>
+<?php
+}
+else
+{
+  echo "<h3 itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
+}
+
+?>

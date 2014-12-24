@@ -1,0 +1,55 @@
+<?php
+$adminmenu = $this->adminmenu;
+?>
+<section>
+    <p>
+        <a href="/admin/adminmenu" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+        </a>
+    </p>
+    <div class='table-style'>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->CAPTION?></li>
+            <li class="table-cell"><?=$adminmenu->getCaption()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->MENU_ORDER?></li>
+            <li class="table-cell"><?=$adminmenu->getMenuOrder()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->ADVANCED?></li>
+            <li class="table-cell"><? if ($adminmenu->getAdvanced()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->CONTROLLER?></li>
+            <li class="table-cell"><?=$adminmenu->getController()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->ACTION?></li>
+            <li class="table-cell"><?=$adminmenu->getAction()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->CLASS?></li>
+            <li class="table-cell"><?=$adminmenu->getClass()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->DESCRIPTION?></li>
+            <li class="table-cell"><?=$adminmenu->getDescription()?></li>
+        </ul>
+
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->session->PARENT?></li>
+            <li class="table-cell">
+            <?
+                if(is_object($adminmenu->parent))
+                {
+            ?>
+                    <a class='btn btn-default blue' href='/admin/adminmenu/detail/id/<?=$adminmenu->parent->id?>' target='_blank'><i class='fa fa-info'></i></a>
+            <?
+                    echo $adminmenu->parent->toString();
+                }
+            ?>
+            </li>
+        </ul>
+    </div>
+</section>

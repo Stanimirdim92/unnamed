@@ -1,0 +1,105 @@
+<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
+<?php
+//* @var $content Admin\Model\Content */
+$content = $this->content;
+?>
+<a href="/admin/content/index" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>back to the list of content objects
+</a>
+<br/><br/>
+<header>
+  <span class="widget-icon"><i class="fa fa-icon-fix fa-info"></i></span>
+  <h2>Details for content &laquo;<?=$content->toString()?>&raquo;</h2>
+</header>
+<div class='well'>
+<table class='table table-bordered table-striped' style='clear: both' id='content'>
+<tbody>
+<tr>
+    <td class='definition'>Title</td>
+    <td class='admin al l'><?=$content->title?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Preview</td>
+    <td class='admin al l'><?
+    if($content->preview)
+    {
+        ?><img src='/userfiles/preview/<?=$content->preview?>' width='150'><?
+    }
+    else
+    {
+        ?><img src='/back/img/noimg.png' width='100'><?
+    }
+?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Extract</td>
+    <td class='admin al l'><?=$content->extract?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Text</td>
+    <td class='admin al l'><?=$content->text?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Order</td>
+    <td class='admin al l'><?=$content->order?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Type</td>
+    <td class='admin al l'><?=$content->type?>
+    </td>
+</tr>
+<tr>
+    <td class='definition'>Date</td>
+    <td class='admin al l'><?=$content->date?>
+    </td>
+</tr>
+
+<tr>
+    <td class='definition'>Language</td>
+    <td class='admin al l'>
+<?
+    $language = $content->getLanguageObject();
+    if($language!=null)
+    {
+?>
+        <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
+<?
+        echo $language->toString();
+    }
+?>
+    </td>
+</tr>
+
+<tr>
+    <td class='definition'>Menu</td>
+    <td class='admin al l'>
+<?
+    $menu = $content->getMenuObject();
+    if($menu!=null)
+    {
+?>
+        <a class='btn btn-labeled btn-default blue' title='Menu details' href='/admin/menu/detail/id/<?=$menu->id?>' target='_blank'><i class='fa fa-info'></i></a>
+<?
+        echo $menu->toString();
+    }
+?>
+    </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+<a href="/admin/content/modify/id/<?=$content->id?>" class="btn btn-labeled btn-default">
+<span class="btn-label"><i class="fa fa-pencil"></i></span>modify
+</a><br/><br/>
+</div>
+<?
+
+//#BlockEnd number=177
+?>
+</div>

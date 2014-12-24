@@ -1,0 +1,89 @@
+<?php
+    $children = $this->viewModel()->getCurrent()->getChildren();
+    $view = $children[0];
+    $title = $this->headTitle()->renderTitle();
+    $baseURL = $view->baseURL;
+?>
+<!doctype html>
+<html prefix="og: http://ogp.me/ns#" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title><?=$title;?></title>
+        <?=$this->headMeta();?>
+        <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
+        <link rel="canonical" href="<?=$baseURL?>">
+        <!-- <meta name="robots" content="index, follow" /> -->
+        <!-- <meta name="Googlebot" content="index, follow" /> -->
+        <!-- <meta name="revisit-after" content="3 Days" /> -->
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="<?=$baseURL?>">
+        <meta property="og:site_name" content="<?=$title;?>">
+        <?=$this->placeholder('customHead');?>
+        <link rel="apple-touch-icon" href="/front/img/apple-touch-icon.png">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta http-equiv="cleartype" content="on">
+        <link rel='shortcut icon' type="image/x-icon"  href='favicon.ico' />
+        <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
+        <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
+        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+        <meta name="msapplication-TileColor" content="#ededed">
+        <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+        <link rel="stylesheet" media="screen" href="/front/css/font-awesome.min.css">
+        <link rel="stylesheet" media="screen" href="/front/css/style.css">
+    </head>
+    <body>
+        <?php echo $this->layout()->content;?>
+        <?php
+            if(!empty($view->cache->warning))
+            {
+                foreach ($view->cache->warning as $value)
+                {
+        ?>
+              <div class="alert alert-warning">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-warning"></i> <?=$value?>
+              </div>
+        <?php
+                }
+                $view->cache->warning = null;
+            }
+            
+            if(!empty($view->cache->success))
+            {
+                foreach ($view->cache->success as $value)
+                {
+        ?>
+              <div class="alert alert-success">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-check"></i> <?=$value?>
+              </div>
+        <?php
+                }
+                $view->cache->success = null;
+            }
+              
+            if(!empty($view->cache->error))
+            {
+                foreach ($view->cache->error as $value)
+                {
+        ?>
+              <div class="alert alert-danger">
+                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                <i class="fa-fw fa fa-times"></i> <?=$value?>
+              </div>
+        <?php
+                }
+                $view->cache->error = null;
+            }
+        ?>
+        <script src="/front/js/jquery.min.js"></script>
+        <script defer src="/front/js/custom.js"></script>
+    </body>
+</html>

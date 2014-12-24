@@ -1,0 +1,25 @@
+<div>
+    <p>
+        <a href="/admin/user" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+        </a>
+    </p>
+    <div class='form-inputs'>
+        <form method="POST" action="/admin/user/setuserclasses/id/<?=$this->user->id?>">
+            <fieldset>
+                <?
+                $checked = '';
+                foreach ($this->userclass as $value)
+                {
+                    if (in_array($value->id, $this->userClassesArray))
+                    {
+                        $checked = "checked='checked'";
+                    }
+                    echo "<label for='{$value->name}'>{$value->name}</label><input value='{$value->id}' id='{$value->name}' {$checked} name='userclass[]' type='checkbox'>";
+                }
+                ?>
+                <input type="submit" id="submitbutton" value="<?=$this->session->MODIFY?>">
+            </fieldset>
+        </form>
+    </div>
+</div>
