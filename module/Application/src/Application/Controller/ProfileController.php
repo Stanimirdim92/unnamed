@@ -14,7 +14,7 @@ class ProfileController extends IndexController
 
     public function settingsAction()
     {
-        if (!isset($this->cache->user) && !$this->cache->logged)
+        if (!$this->cache->user instanceof \Admin\Model\User && !$this->cache->logged)
         {
             return $this->redirect()->toUrl("/");
         }

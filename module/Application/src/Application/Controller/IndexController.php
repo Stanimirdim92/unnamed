@@ -259,6 +259,10 @@ class IndexController extends AbstractActionController
         {
             return false;
         }
+
+        /**
+         * This section is called when we enter the pageAction and request a menu.
+         */
         if ($isPage === true)
         {
             $description = $obj->current()->getMenuObject()->getDescription();
@@ -266,22 +270,23 @@ class IndexController extends AbstractActionController
             $extract = $obj->current()->getExtract();
             $preview = $obj->current()->getPreview();
             $title = $obj->current()->getTitle();
+            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
         }
+        /**
+         * This section is called when we request newspost. 
+         *
+         * @see Application\Controller\NewsController
+         */
         else if ($isPage === "news")
         {
-
-                // foreach ($obj as $value)
-                // {
-                //     // $value->setServiceManager(null);
-                //     // echo \Zend\Debug\Debug::dump($value, null, true, true);exit;
-                //     $extract = $value->getExtract();
-                //     $preview = $value->getPreview();
-                //     $title = $value->getTitle(); //cannot be empty
-
-                //     (empty($extract) ? $extract = $value->getText() : $extract);
-                // }
-            
+            $extract = $obj->current()->getExtract();
+            $preview = $obj->current()->getPreview();
+            $title = $obj->current()->getTitle();
+            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
         }
+        /**
+         * All other pages? Maybe load the text from the database
+         */
         else
         {
             $description = $obj->current()->getMenuObject()->getDescription();
@@ -290,7 +295,7 @@ class IndexController extends AbstractActionController
             $preview = $obj->current()->getPreview();
             $title = $obj->current()->getTitle(); //cannot be empty
         }
-        // (empty($extract) ? $extract = $obj->getText() : $extract);
+        
         (empty($description) ? $description = "test desc" : $description);
         (empty($keywords) ? $keywords = "test keyw" : $keywords);
         (empty($preview) ? $preview = "" : $preview);
@@ -298,6 +303,7 @@ class IndexController extends AbstractActionController
         $hm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
         $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
         $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
+        // TODO: clear the new lines from the text. See the source code ctrl+u
         $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($extract), 0, 100)."..."."'>\r\n");
         $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
         $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
@@ -305,8 +311,8 @@ class IndexController extends AbstractActionController
         $hm->appendName('keywords', $keywords);
         $hm->appendName('description', $description);
         $hm->appendProperty('og:image', $preview);
-        $hm->appendProperty($title, "og:title");
-        $hm->appendProperty($description, "og:description");
+        $hm->appendProperty("og:title", $title);
+        $hm->appendProperty("og:description", $description);
     }
 
 /****************************************************

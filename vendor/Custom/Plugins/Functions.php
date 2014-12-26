@@ -15,6 +15,11 @@ class Functions
      */
     private static $bcryptCost = 13;
 
+    /**
+     * @var bool $translation
+     */
+    private static $translation = null;
+
     /** 
      * This method loads into translation all term translations from the database
      *
@@ -24,7 +29,7 @@ class Functions
      */
     public static function initTranslations($language = 1, $reload = false)
     {
-        if (!is_int($language))
+        if (!$language || !is_int($language))
         {
             throw new \Exception("Language id must be a number");
         }
@@ -35,25 +40,28 @@ class Functions
         {
             $language = 1;
         }
-
-        $translation = new Container('translations');
-        if(!isset($translation->initialized) || $reload)
+        
+        static::$translation = new Container('translations');
+        if(!isset(static::$translation->initialized) || $reload)
         {
-            $query = "SELECT termtranslation.translation, term.name
-                    FROM term INNER JOIN termtranslation ON term.id=termtranslation.term
-                    WHERE termtranslation.language='{$language}'
-                    ORDER BY term.name ASC";
+            $query = "SELECT `termtranslation`.`translation`, `term`.`name`
+                    FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term`
+                    WHERE `termtranslation`.`language`='{$language}'
+                    ORDER BY `term`.`name` ASC";
             $result = self::getSimpleQueryResults($query);
-            foreach($result as $r)
+            if (count($result) > 0)
             {
-                if(!empty($r['name']))
+                foreach($result as $r)
                 {
-                    $translation->__set($r['name'], $r['translation']);
+                    if(!empty($r['name']))
+                    {
+                        static::$translation->__set($r['name'], $r['translation']);
+                    }
                 }
+                static::$translation->initialized = true;
             }
-            $translation->initialized = true;
         }
-        return $translation;
+        return static::$translation;
     }
 
     /**
@@ -102,7 +110,7 @@ class Functions
      */
     public static function createPassword($password = null)
     {
-        if (empty($password))
+        if (empty($password) && self::strLength($password) < 5)
         {
             throw new Exception("Password cannot be empty");
         }

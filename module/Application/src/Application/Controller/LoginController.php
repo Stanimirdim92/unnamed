@@ -57,7 +57,8 @@ class LoginController extends IndexController
         }
         else
         {
-            $credentialCallback = function ($passwordInDatabase, $passwordProvided) {
+            $credentialCallback = function ($passwordInDatabase, $passwordProvided)
+            {
                 $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
                 return $bcrypt->verify($passwordProvided, $passwordInDatabase);
             };
@@ -98,27 +99,27 @@ class LoginController extends IndexController
 
     public function processloginAction()
     {
-        // Check if we have a POST request
         if(!$this->getRequest()->isPost())
         {
             $this->logoutAction("/login");
         }
 
-        // Get our form and validate it
         $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
         $form->setData($this->getRequest()->getPost());
         if(!$form->isValid())
         {
+            $error = array();
             foreach($form->getMessages() as $msg)
             {
                 foreach ($msg as $key => $value)
                 {
-                    $this->cache->error = $value;
+                    $error[] = $value;
                 }
             }
+            $this->errorNoParam($error);
             return $this->redirect()->toUrl("/login");
         }
-        // Get our authentication adapter and validate it
+
         $adapter = $this->getAuthAdapter($form->getData());
         $auth = new AuthenticationService();
         $result = $auth->authenticate($adapter);
@@ -165,28 +166,26 @@ class LoginController extends IndexController
         {
             throw new \Exception("Token mismatch");
         }
+
+        $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
+        if (count($tokenExist) != 1)
+        {
+            $this->errorNoParam($this->translation->LINK_EXPIRED);
+            return $this->redirect()->toUrl("/");
+        }
         else
         {
-            $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
-            if (count($tokenExist) != 1)
-            {
-                $this->errorNoParam($this->translation->LINK_EXPIRED);
-                return $this->redirect()->toUrl("/");
-            }
-            else
-            {
-                $form = new NewPasswordForm($tokenExist);
-                $form->get("password")->setLabel($this->translation->PASSWORD)->setAttribute("placeholder", $this->translation->PASSWORD);
-                $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
-                $form->get("resetpw")->setValue($this->translation->RESET_PW);
+            $form = new NewPasswordForm($tokenExist);
+            $form->get("password")->setLabel($this->translation->PASSWORD)->setAttribute("placeholder", $this->translation->PASSWORD);
+            $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
+            $form->get("resetpw")->setValue($this->translation->RESET_PW);
 
-                // temporary create new view variable to hold the user id.
-                // After the password is reset the variable is destroyed.
-                // Hidden fields will work, but they are more easier to hack.
-                $this->cache->resetpwUserId = $tokenExist->current()->user;
-                $this->view->form = $form;
-                return $this->view;
-            }
+            // temporary create new view variable to hold the user id.
+            // After the password is reset the variable is destroyed.
+            // Hidden fields will work, but they are more easier to hack.
+            $this->cache->resetpwUserId = $tokenExist->current()->user;
+            $this->view->form = $form;
+            return $this->view;
         }
     }
 
@@ -203,7 +202,6 @@ class LoginController extends IndexController
                 $formData = $form->getData();
                 $user = $this->getTable("user")->getUser($this->cache->resetpwUserId);
                 unset($this->cache->resetpwUserId);
-                // $this->cache->resetpwUserId = null;
                 $pw = Functions::createPassword($formData["password"]);
                 if (!empty($pw))
                 {

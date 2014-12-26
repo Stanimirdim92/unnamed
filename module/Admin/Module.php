@@ -39,6 +39,7 @@ use Zend\Http\Response as HttpResponse;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
 use Custom\Error\AuthorizationException;
+
 class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ServiceProviderInterface,
                         Feature\ConfigProviderInterface,
@@ -56,18 +57,18 @@ class Module implements Feature\AutoloaderProviderInterface,
 
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $event) use ($services)
         {
+            $request  = $event->getRequest();
+            $response = $event->getResponse();
+
+            // Not HTTP? Kill it before it lays eggs!
+            if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
+            {
+                $translation = new Container('translations');
+                throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+            }
+
             if (strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
             {
-                $request  = $event->getRequest();
-                $response = $event->getResponse();
-
-                // Not HTTP? Kill it before it lays eggs!
-                if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
-                {
-                    return false;
-                    die("Access denied"); // don't think it's necessary, but still
-                }
-                
                 $authAdapter = $services->get('Admin\AuthenticationAdapter');
                 $authAdapter->setRequest($request);
                 $authAdapter->setResponse($response);
@@ -78,33 +79,32 @@ class Module implements Feature\AutoloaderProviderInterface,
                     $identity = $result->getIdentity();
                     if (($identity["username"] && $_SERVER["PHP_AUTH_USER"] !== "stanimir") || $identity["realm"] !== "admin" || $_SERVER["PHP_AUTH_PW"] !== '0885123')
                     {
-                        throw new AuthorizationException("Access denied");
-                        $response->setStatusCode(HttpResponse::STATUS_CODE_401);
-                        $event->setResult($response);
-                        return false;
+                        $translation = new Container('translations');
+                        throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
                     }
-                    else
-                    {
-                        return true;
-                    }
+                    return true;
+                
                 }
                 else
                 {
-                    $response->setStatusCode(HttpResponse::STATUS_CODE_401);
-                    $event->setResult($response);
-                    return false;
+                    $translation = new Container('translations');
+                    throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
                 }
             }
         });
 
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($services)
         {
-            if (!$event->getRouteMatch() || strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
+            $route = strtolower($event->getRouteMatch()->getMatchedRouteName());
+            if (!$event->getRouteMatch() || $route === "admin")
             {
                 $exception = $event->getParam("exception");
                 if (!$exception)
                 {
-                    return;
+                    $event->getResponse()->setStatusCode(404);
+                    $viewModel = $event->getViewModel();
+                    $viewModel->setTemplate('layout/error-layout');
+                    $event->stopPropagation();
                 }
                 else
                 {
@@ -147,14 +147,11 @@ class Module implements Feature\AutoloaderProviderInterface,
                         $service->logException($exception);
                         $controllerRedirect->plugin('redirect')->toUrl("/admin");
                     }
-                    $route = strtolower($event->getRouteMatch()->getMatchedRouteName());
-                    if ($route !== "admin")
-                    {
-                        $response = $event->getResponse();
-                        $response->setStatusCode(HttpResponse::STATUS_CODE_404);
-                        $event->setResult($response);
-                        return;
-                    }
+                    $response = $event->getResponse();
+                    $response->setStatusCode(HttpResponse::STATUS_CODE_404);
+                    $event->setResult($response);
+                    $event->stopPropagation();
+                    return;
                 }
             }
         });

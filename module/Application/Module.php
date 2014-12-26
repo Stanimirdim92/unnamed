@@ -91,18 +91,18 @@ class Module implements Feature\AutoloaderProviderInterface,
 
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
+            $request  = $e->getRequest();
+            $response = $e->getResponse();
+
+            // Not HTTP? Kill it before it lays eggs!
+            if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
+            {
+                $translation = new Container('translations');
+                throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+            }
+
             if(!$e->getRouteMatch() || strtolower($e->getRouteMatch()->getMatchedRouteName()) === "application")
             {
-                $request  = $e->getRequest();
-                $response = $e->getResponse();
-
-                // Not HTTP? Kill it before it lays eggs!
-                if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
-                {
-                    return false;
-                    die("Access denied"); // don't think it's necessary, but still
-                }
-
                 $exception = $e->getParam("exception");
                 if (!$exception)
                 {

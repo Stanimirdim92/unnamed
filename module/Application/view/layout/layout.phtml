@@ -10,16 +10,15 @@
         <meta charset="utf-8">
         <title><?=$title;?></title>
         <?=$this->headMeta();?>
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="<?=$_SERVER["SERVER_NAME"].$baseURL?>">
+        <meta property="og:site_name" content="<?=$title;?>">
         <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
         <link rel="canonical" href="<?=$baseURL?>">
         <!-- <meta name="robots" content="index, follow" /> -->
         <!-- <meta name="Googlebot" content="index, follow" /> -->
         <!-- <meta name="revisit-after" content="3 Days" /> -->
-        <meta property="og:type" content="article">
-        <meta property="og:url" content="<?=$baseURL?>">
-        <meta property="og:site_name" content="<?=$title;?>">
         <?=$this->placeholder('customHead');?>
-        <link rel="apple-touch-icon" href="/front/img/apple-touch-icon.png">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -27,6 +26,7 @@
         <meta name="HandheldFriendly" content="True">
         <meta name="MobileOptimized" content="320">
         <meta http-equiv="cleartype" content="on">
+        <link rel="apple-touch-icon" href="/front/img/apple-touch-icon.png">
         <link rel='shortcut icon' type="image/x-icon"  href='favicon.ico' />
         <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
         <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
@@ -36,6 +36,8 @@
         <meta name="msapplication-TileColor" content="#ededed">
         <meta name="msapplication-TileImage" content="/mstile-144x144.png">
         <link rel="stylesheet" media="screen" href="/front/css/font-awesome.min.css">
+
+        <!-- TODO: add css  -->
         <link rel="stylesheet" media="screen" href="/front/css/style.css">
     </head>
     <body>

@@ -7,7 +7,7 @@ if(count($this->news) > 0)
         $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
         $newsCaption = strtolower(str_replace(" ", "-", $new->getTitle()));
         $text = ($new->getText() ? $new->getText() : $new->getExtract());
-        ?>
+?>
             <article class="post-content" itemprop="event" itemscope itemtype="http://schema.org/Article">
                 <?php if ($new->getPreview() != null) { ?>
                     <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
@@ -36,7 +36,7 @@ if(count($this->news) > 0)
     }
     echo $this->paginationControl($this->news, 'sliding', array('/application/pagination.phtml', "Application"), array('route' => 'news'));
 }
-else if(count($this->new) === 1)
+else if(count($this->new) === 1 && count($this->news) === 0)
 {
     $new = $this->new;
     $dateTime = date("Y-m-d", strtotime($new->getDate()));
@@ -46,12 +46,12 @@ else if(count($this->new) === 1)
     <article class="post-content" itemprop="event" itemscope itemtype="http://schema.org/Article">
         <?php if ($new->getPreview() != null) { ?>
             <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
-                <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview()?>" id="news_image" title="<?=$new->getTitle()?>">
-                    <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview()?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle()?>" />
+                <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview();?>" id="news_image" title="<?=$new->getTitle();?>">
+                    <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview();?>" title="<?=$new->getTitle();?>" alt="<?=$new->getTitle();?>" />
                 </a>
             </figure>
         <?php } ?>
-        <h2 itemprop="name" class="post-title"><?=$new->getTitle()?></h2>
+        <h2 itemprop="name" class="post-title"><?=$new->getTitle();?></h2>
         <time datetime="<?=$dateTime?>" class="post-date">
             <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
         </time>
@@ -62,7 +62,7 @@ else if(count($this->new) === 1)
 }
 else
 {
-  echo "<h3 itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
+    echo "<h3 itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
 }
 
 ?>

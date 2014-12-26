@@ -5,16 +5,16 @@ if (count($this->contents) > 0)
     foreach($this->contents as $c)
     {
 ?>
-        <h2 itemprop="name"><?=$c->getTitle()?></h2>
+        <h2 itemprop="name"><?=$c->getTitle();?></h2>
 <?php
         if($c->getPreview() != null)
         {
             $image = "/userfiles/preview/".$c->getPreview();
  ?>
             <figure>
-                <a itemprop="url" href="<?=$image?>" id="news_image" title="<?=$c->getTitle()?>"><img itemprop="image" height="100" width="200" src="<?=$image?>" title="<?=$c->getTitle()?>" alt="<?=$c->getTitle()?>" /></a>
+                <a itemprop="url" href="<?=$image?>" id="news_image" title="<?=$c->getTitle();?>"><img itemprop="image" height="100" width="200" src="<?=$image?>" title="<?=$c->getTitle();?>" alt="<?=$c->getTitle();?>" /></a>
             </figure>
- <?php
+<?php
         }
         if (!$this->hideMainMenu)
         {
@@ -22,7 +22,7 @@ if (count($this->contents) > 0)
             if ($c->getText() != '')
             {
 ?>
-                <p><a itemprop="url" class='read-more' href='index/page/id/<?=$c->id?>'>aaaaaaaaa<?=$this->translation->READ_MORE?></a></p>
+                <p><a itemprop="url" class='read-more' href='index/page/id/<?=$c->id?>'><?=$this->translation->READ_MORE?></a></p>
 <?php
             }
         }
@@ -30,10 +30,10 @@ if (count($this->contents) > 0)
         {
             echo "<p itemprop='text' class='post-text'>".$c->getText()."</p>";
             $backMenuCaption = strtolower(str_replace(" ", "-", $c->getMenuObject()->getCaption()));
-        ?>
+?>
             <br>
-            <p><a itemprop="url" class='read-more' href='/<?=$backMenuCaption?>'>aaaaaaaaaaa<?=$this->translation->BACK?></a></p>
-        <?php
+            <p><a itemprop="url" class='read-more' href='/<?=$backMenuCaption?>'><?=$this->translation->BACK?></a></p>
+<?php
         }
     }
 }
