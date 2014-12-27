@@ -47,7 +47,7 @@ class LoginController extends IndexController
      * @param string $credential
      * @var Zend\Crypt\Password\Bcrypt
      * @var Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter
-     * @return DbTable Adapter
+     * @return DbTable|Adapter
      */
     private function getAuthAdapter(array $options, $table = "user", $identity = "email", $credential = "password")
     {
@@ -55,17 +55,16 @@ class LoginController extends IndexController
         {
             throw new Exception\InvalidArgumentException(__METHOD__ . ' expects an array');
         }
-        else
+
+        $credentialCallback = function ($passwordInDatabase, $passwordProvided)
         {
-            $credentialCallback = function ($passwordInDatabase, $passwordProvided)
-            {
-                $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
-                return $bcrypt->verify($passwordProvided, $passwordInDatabase);
-            };
-            $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
-            $authAdapter->setIdentity($options[$identity]);
-            $authAdapter->setCredential($options[$credential]);
-        }
+            $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
+            return $bcrypt->verify($passwordProvided, $passwordInDatabase);
+        };
+        $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
+        $authAdapter->setIdentity($options[$identity]);
+        $authAdapter->setCredential($options[$credential]);
+
         return $authAdapter;
     }
 
@@ -105,6 +104,7 @@ class LoginController extends IndexController
         }
 
         $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
+        $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
         if(!$form->isValid())
         {
@@ -171,7 +171,7 @@ class LoginController extends IndexController
         if (count($tokenExist) != 1)
         {
             $this->errorNoParam($this->translation->LINK_EXPIRED);
-            return $this->redirect()->toUrl("/");
+            return $this->redirect()->toUrl("/login");
         }
         else
         {
@@ -221,11 +221,11 @@ class LoginController extends IndexController
                 {
                     foreach ($msg as $key => $value)
                     {
-                        $error = $value;
+                        $error[] = $value;
                     }
                 }
                 $this->errorNoParam($error);
-                return $this->redirect()->toUrl("/");
+                return $this->redirect()->toUrl("/login");
             }
         }
     }
@@ -245,15 +245,16 @@ class LoginController extends IndexController
                 $formData = $form->getData();
                 $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
                 
-                if(count($existingEmail) == 1)
+                if(count($existingEmail) === 1)
                 {
                     $token = Functions::generateToken(48); // returns 64 characters long string
                     $user = $this->getTable("user")->getUser($existingEmail->current()->id);
+                    unset($existingEmail);
                     $resetpw = new ResetPassword();
-                    $resetpw->setToken($token);
-                    $resetpw->setUser($existingEmail->current()->id);
-                    $resetpw->setDate(date("Y-m-d H:i:s", time()));
                     $remote = new RemoteAddress();
+                    $resetpw->setToken($token);
+                    $resetpw->setUser($user->getId());
+                    $resetpw->setDate(date("Y-m-d H:i:s", time()));
                     $resetpw->setIp($remote->getIpAddress());
                     $this->getTable("resetpassword")->saveResetPassword($resetpw);
 
@@ -271,7 +272,7 @@ class LoginController extends IndexController
                         return $this->redirect()->toUrl("/login/resetpassword");
                     }
                 }
-                else/* if(count($existingEmail) == 0)*/
+                else
                 {
                     $this->errorNoParam($this->translation->EMAIL." <b>".$formData["email"]."</b> ".$this->translation->NOT_FOUND);
                     return $this->redirect()->toUrl("/login/resetpassword");
@@ -288,10 +289,9 @@ class LoginController extends IndexController
                     }
                 }
                 $this->errorNoParam($error);
-                return $this->redirect()->toUrl("/login/resetpassword");
+                return $this->redirect()->toUrl("/login");
             }
         }
-
         return $this->view;
     }
 
@@ -319,4 +319,5 @@ class LoginController extends IndexController
         return $this->redirect()->toUrl($redirectTo);
     }
 }
+
 ?>

@@ -59,8 +59,7 @@ class LoginForm extends Form
                     'name'    => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min'      => 3,
-                        'max'      => 25,
+                        'min'      => 5,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
@@ -78,8 +77,7 @@ class LoginForm extends Form
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 5,
-                        'max' => 20,
+                        'min' => 8,
                     ),
                 ),
                 array('name' => 'NotEmpty'),

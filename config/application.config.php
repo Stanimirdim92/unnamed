@@ -63,7 +63,7 @@ $cacheConfig = array(
     'module_map_cache_key' => '1cf4c26ec62554e65b00134eed95a538',
 
     // The path in which to cache merged configuration.
-    'cache_dir' => '/data/cache/',
+    'cache_dir' => 'data/cache/',
 
     // Whether or not to enable modules dependency checking.
     // Enabled by default, prevents usage of modules that depend on other modules
@@ -72,7 +72,7 @@ $cacheConfig = array(
 );
 
 // We want to activate the cache only in production environment
-if (getenv('APPLICATION_ENV') === 'development')
+if (getenv('APPLICATION_ENV') == 'development')
 {
     $config = ArrayUtils::merge($config, $cacheConfig);
 }

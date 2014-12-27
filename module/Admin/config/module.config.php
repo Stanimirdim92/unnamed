@@ -9,11 +9,12 @@ return array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'not_found_template'       => 'layout/error-layout',
+        'exception_template'       => 'layout/error-layout',
         'template_map' => array(
-            'error/404'               => __DIR__ . '/../../Admin/view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../../Admin/view/error/index.phtml',          
+            'error/404'               => __DIR__ . '/../../Application/view/layour/error-layout.phtml',
+            'error/index'             => __DIR__ . '/../../Application/view/layour/error-layout.phtml',
+            'layout/error-layout'     => __DIR__ . '/../../Application/view/layout/error-layout.phtml',    
         ),
         'strategies' => array(
             'ViewJsonStrategy',

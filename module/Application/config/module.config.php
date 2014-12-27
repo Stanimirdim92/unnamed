@@ -67,7 +67,7 @@ return array(
                     'route' => '/news[/][post/:post][page/:page]',
                     'constraints' => array(
                         'page' => '[0-9]+',
-                        'post' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'post' => '[a-zA-Z][a-zA-Z0-9_-]+',
                     ),
                     'defaults' => array(
                         'controller' => 'Application\Controller\News',

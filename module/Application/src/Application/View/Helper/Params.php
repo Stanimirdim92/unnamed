@@ -1,6 +1,6 @@
 <?php
 
-namespace Admin\View\Helper;
+namespace Application\View\Helper;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\RequestInterface;

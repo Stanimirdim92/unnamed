@@ -63,8 +63,10 @@ class Module implements Feature\AutoloaderProviderInterface,
             // Not HTTP? Kill it before it lays eggs!
             if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
             {
-                $translation = new Container('translations');
-                throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+                $response->setStatusCode(500);
+                $event->setResult($response);
+                $response->sendHeaders();
+                $event->stopPropagation();
             }
 
             if (strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
@@ -72,23 +74,34 @@ class Module implements Feature\AutoloaderProviderInterface,
                 $authAdapter = $services->get('Admin\AuthenticationAdapter');
                 $authAdapter->setRequest($request);
                 $authAdapter->setResponse($response);
-
                 $result = $authAdapter->authenticate();
                 if ($result->isValid())
                 {
+                    $ok = false;
                     $identity = $result->getIdentity();
-                    if (($identity["username"] && $_SERVER["PHP_AUTH_USER"] !== "stanimir") || $identity["realm"] !== "admin" || $_SERVER["PHP_AUTH_PW"] !== '0885123')
+                    $file = file_get_contents($_SERVER["DOCUMENT_ROOT"].'../../config/autoload/real/basic_passwd.txt');
+                    $lines = explode("\n", $file);
+
+                    foreach ($lines as $value)
                     {
-                        $translation = new Container('translations');
-                        throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+                        $str = explode(":", $value);
+                        if ($identity["username"] == $str[0] && $identity["realm"] == "admin")
+                        {
+                            $ok = true;
+                            break;
+                        }
                     }
-                    return true;
-                
-                }
-                else
-                {
-                    $translation = new Container('translations');
-                    throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+                    if ($ok)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        // add logger
+                        $response->setStatusCode(HttpResponse::STATUS_CODE_401);
+                        $event->setResult($response);
+                        $event->stopPropagation();
+                    }
                 }
             }
         });

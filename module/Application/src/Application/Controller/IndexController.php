@@ -112,7 +112,7 @@ class IndexController extends AbstractActionController
         if(!empty($this->translation->language))
         {
             $this->view->language = $this->getTable("Language")->getLanguage($this->translation->language);
-            $this->translation = Functions::initTranslations($this->translation->language, false);
+            $this->translation = Functions::initTranslations($this->translation->language);
         }
         $this->translation->language = 1;
         $this->translation = Functions::initTranslations($this->translation->language, true);
@@ -139,12 +139,11 @@ class IndexController extends AbstractActionController
      * See if user is logged in.
      * Crazy logic, but it does the trick.
      *
-     * @see \Admin\Model\User
-     * @see \Application\Controller\LoginController for roles
+     * @see \Application\Controller\LoginController
      * @throws AuthorizationException
      * @return void
      */
-    public function checkIdentity()
+    protected function checkIdentity()
     {
         if (is_object($this->cache) && isset($this->cache) && $this->cache instanceof \Zend\Session\Container)
         {
@@ -175,7 +174,7 @@ class IndexController extends AbstractActionController
      * @param null $default
      * @return mixed
      */
-    protected function getParam($paramName, $default = null)
+    protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
         if(!$param) 
@@ -186,17 +185,14 @@ class IndexController extends AbstractActionController
         {
             return $default;
         }
-        else
-        {
-            return $param;
-        }
+        return $param;
     }
 
     /**
      * @param null $message holds the generated error
      * @return string|array
      */
-    public function errorNoParam($message = null)
+    protected function errorNoParam($message = null)
     {
         if(!empty($message))
         {
@@ -325,101 +321,56 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * What happens here is that pageAction was designed to search for menu captions only,
-     * but sometimes we are trying to avoid searching for specific controllers as menus such as LoginController.
-     * So we are using array_key_exists to check if we are in such controller.
-     * (where the key is the controller name and the value is the controller action we want to rdirect).
-     * After that we get the url from the bar and try to find an action with the given name.
+     * Get the contents for the menu/submenu
      *
-     * @param array $otherControllers holds all controllers except the IndexController
-     * @return controller and/or action
+     * @return mixed Object holding the menu text, name etc.
      */
     public function pageAction()
     {
+        $param = (string) $this->getParam("param");
+        $submenuId = (int) $this->getParam('id');
 
-        // $otherControllers = array(
-        //     // 'registration' => array('processregistration'),
-        //     // 'login' => array('processlogin', 'logout', 'resetpassword', 'newpasswordprocess'),
-        //     // 'profile' => array('settings'),
-        // );
-        // if (array_key_exists(strtolower($param), $otherControllers))
-        // {
-        //     foreach ($otherControllers as $controllerName => $actionName)
-        //     {
-        //         $separatedURL = explode("/", $this->getRequest()->getRequestUri());
-        //         if (in_array($separatedURL[2], $actionName)) 
-        //         {
-        //             return $this->forward()->dispatch('Application\Controller\\'.ucfirst($controllerName), array('action' => $separatedURL[2]));
-        //         }
-        //     }
-        // }
-        // else
-        // {
-            $param = (string) $this->getParam("param");
-            $submenuId = (int) $this->getParam('id');
-            $menu = $submenu = $contents = null;
-
-            if ($submenuId && is_int($submenuId))
+        if ($submenuId && is_int($submenuId))
+        {
+            $this->view->hideMainMenu = true;
+            try
             {
-                $this->view->hideMainMenu = true;
-                try
+                $contents = $this->getTable("Content")->fetchList(false, "id='{$submenuId}' AND language='".$this->translation->language."'", "menuOrder ASC");
+            }
+            catch(\Exception $e)
+            {
+                throw new \Exception("An error has occurred");
+            }
+        }
+        else
+        {
+            $this->view->hideMainMenu = false;
+            if(Functions::strLength($param) == 0)
+            {
+                $this->getResponse()->setStatusCode(404);
+                $this->view->setTemplate('layout/error-layout');
+                return $this->view;
+            }
+            try
+            {
+                $menu = $this->matchSEOMenu($param);
+                if (!empty($menu["submenu"]))
                 {
-                    $contents = $this->getTable("Content")->fetchList(false, "id='{$submenuId}' AND language='".$this->translation->language."'", "menuOrder ASC");
-
-                    // $menuVisCaption = $contents->current()->getMenuObject()->getCaption();
-                    // $menuCaption = strtolower(str_replace(" ", "-", $menuVisCaption));
-                    // $aaa = $contents->current()->getMenuObject()->getParentObject();
-
-                    // if ($aaa)
-                    // {
-                    //     $parentCaption = $aaa->getCaption();
-                    //     $parentMenuCaption = strtolower(str_replace(" ", "-", $parentCaption));
-                    //     $this->view->parentMenuSelected = $aaa;
-                    // }
-                    // else
-                    // {
-                    //     $this->view->menuSelected = $contents->current()->getMenuObject();
-                    // }
+                    $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
                 }
-                catch(\Exception $e)
+                else if(!empty($menu["menu"]))
                 {
-                    throw new \Exception("An error has occurred");
+                    $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
                 }
             }
-            else
+            catch(\Exception $e)
             {
-                $this->view->hideMainMenu = false;
-                if(Functions::strLength($param) > 0)
-                {
-                    $menu = $this->matchSEOMenu($param);
-                }
-                else
-                {
-                    $this->getResponse()->setStatusCode(404);
-                    $this->view->setTemplate('layout/error-layout');
-                    return $this->view;
-                }
-                try
-                {
-                    if (!empty($menu["submenu"]))
-                    {
-                        $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
-                    }
-                    else if(!empty($menu["menu"]))
-                    {
-                        $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
-                    }
-                }
-                catch(\Exception $e)
-                {
-                    throw new \Exception("An error has occurred");
-                }
+                throw new \Exception("An error has occurred");
             }
-
-            $this->setMetaTags($contents);
-            $this->view->contents = $contents;
-            return $this->view;
-        // }
+        }
+        $this->setMetaTags($contents);
+        $this->view->contents = $contents;
+        return $this->view;
     }
 
     public function contactAction()
@@ -430,7 +381,7 @@ class IndexController extends AbstractActionController
         $form->get("subject")->setLabel($this->translation->SUBJECT)->setAttribute("placeholder", $this->translation->SUBJECT);
         $form->get("captcha")->setLabel($this->translation->CAPTCHA)->setAttribute("placeholder", $this->translation->ENTER_CAPTCHA);
         $form->get("message")->setLabel($this->translation->MESSAGE)->setAttribute("placeholder", $this->translation->ENTER_MESSAGE);
-       
+
         $this->view->form = $form;
         if($this->getRequest()->isPost())
         {

@@ -31,10 +31,10 @@ class Functions
     {
         if (!$language || !is_int($language))
         {
-            throw new \Exception("Language id must be a number");
+            throw new \Exception("Invalid language was selected");
         }
 
-        $total = self::getSimpleQueryResults("SELECT COUNT(id) FROM `language` WHERE `active`='1'");
+        $total = self::createPlainQuery("SELECT COUNT(id) FROM `language` WHERE `active`='1'");
 
         if($language < 1 || $language > $total)
         {
@@ -48,7 +48,7 @@ class Functions
                     FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term`
                     WHERE `termtranslation`.`language`='{$language}'
                     ORDER BY `term`.`name` ASC";
-            $result = self::getSimpleQueryResults($query);
+            $result = self::createPlainQuery($query);
             if (count($result) > 0)
             {
                 foreach($result as $r)
@@ -71,7 +71,7 @@ class Functions
      * @param Bool $returnResults
      * @return Adapter|ResultSet
      */
-    public static function getSimpleQueryResults($query = null, $returnResults = true)
+    public static function createPlainQuery($query = null, $returnResults = true)
     {
         $query = trim($query);
         if (empty($query))
@@ -79,13 +79,8 @@ class Functions
             $returnResults = false;
             throw new \Exception(__METHOD__ . ' must not be emtpy');
         }
-        if (!is_string($query))
-        {
-            $query = (string) $query;
-        }
 
         $local = include($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
-        // $config = array_merge($local['db'], $global['db']);
         $db = new Adapter($local['db']);
         $stmt = $db->createStatement();
         $stmt->prepare($query);
@@ -110,9 +105,13 @@ class Functions
      */
     public static function createPassword($password = null)
     {
-        if (empty($password) && self::strLength($password) < 5)
+        if (empty($password))
         {
             throw new Exception("Password cannot be empty");
+        }
+        if (self::strLength($password) < 8)
+        {
+            throw new Exception("Password must be atleast 8 characters long");
         }
         return password_hash($password, PASSWORD_BCRYPT, array("cost" => static::$bcryptCost));
     }

@@ -16,7 +16,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
 
-use Admin\View\Helper;
+use Application\View\Helper;
 use Application\Controller\ErrorHandling as ErrorHandlingService;
 
 use Zend\Mvc\MvcEvent;
@@ -65,7 +65,7 @@ class Module implements Feature\AutoloaderProviderInterface,
 
     /**
      * make sure to log errors and redirect to error-layout
-     * @param Event $e
+     * @param \Zend\Mvc\MvcEvent $e
      */
     public function onBootstrap(MvcEvent $e)
     {
@@ -97,8 +97,10 @@ class Module implements Feature\AutoloaderProviderInterface,
             // Not HTTP? Kill it before it lays eggs!
             if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
             {
-                $translation = new Container('translations');
-                throw new AuthorizationException($translation->ERROR_AUTHORIZATION);
+                $response->setStatusCode(500);
+                $event->setResult($response);
+                $response->sendHeaders();
+                $event->stopPropagation();
             }
 
             if(!$e->getRouteMatch() || strtolower($e->getRouteMatch()->getMatchedRouteName()) === "application")
@@ -159,9 +161,7 @@ class Module implements Feature\AutoloaderProviderInterface,
     }
     
     /**
-     * 
-     * 
-     * @param  \Zend\Mvc\MvcEvent $e The MvcEvent instance
+     * @param \Zend\Mvc\MvcEvent $e
      */
     public function setLayoutTitle(MvcEvent $e)
     {

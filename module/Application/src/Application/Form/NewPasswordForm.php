@@ -42,8 +42,7 @@ class NewPasswordForm extends Form
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 20,
+                        'min' => 8,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
@@ -60,8 +59,7 @@ class NewPasswordForm extends Form
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 20,
+                        'min' => 8,
                     ),
                 ),
                 array('name' => 'NotEmpty'),

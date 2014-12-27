@@ -99,7 +99,6 @@ class RegistrationForm extends Form
                     'options' => array(
                         'encoding' => 'UTF-8',
                         'min' => 3,
-                        'max' => 20,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
@@ -116,8 +115,7 @@ class RegistrationForm extends Form
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 20,
+                        'min' => 8,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
@@ -134,8 +132,7 @@ class RegistrationForm extends Form
                     'name' => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 20,
+                        'min' => 8,
                     ),
                 ),
                 array('name' => 'NotEmpty'),

@@ -48,6 +48,13 @@ class ResetPasswordForm extends Form
                         'messages' => array('emailAddressInvalidFormat' => "Email address doesn't appear to be valid."),
                     ),
                 ),
+                array(
+                    'name'    => 'StringLength',
+                    'options' => array(
+                        'encoding' => 'UTF-8',
+                        'min'      => 5,
+                    ),
+                ),
                 array('name' => 'NotEmpty'),
             ),
         )));

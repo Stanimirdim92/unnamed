@@ -43,7 +43,7 @@ else if(count($this->new) === 1 && count($this->news) === 0)
     $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
     $text = ($new->getText() ? $new->getText() : $new->getExtract());
 ?>
-    <article class="post-content" itemprop="event" itemscope itemtype="http://schema.org/Article">
+    <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
         <?php if ($new->getPreview() != null) { ?>
             <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
                 <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview();?>" id="news_image" title="<?=$new->getTitle();?>">
@@ -55,7 +55,7 @@ else if(count($this->new) === 1 && count($this->news) === 0)
         <time datetime="<?=$dateTime?>" class="post-date">
             <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
         </time>
-        <p itemprop="text" class="post-text"><?=$text?></p>
+        <div itemprop="text" class="post-text"><?=$text?></div>
         <p><a itemprop="url" href="/news" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
     </article>
 <?php
