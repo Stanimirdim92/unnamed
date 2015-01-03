@@ -29,6 +29,7 @@ class IndexController extends AbstractActionController
      * @return Zend\Session\Container
      */
     public $translation = null;
+    public $langTranslation = null;
     
     /**
      * constructor
@@ -38,10 +39,13 @@ class IndexController extends AbstractActionController
         $this->view = new ViewModel();
         $this->translation = new Container('translations');
         $this->initCache();
+        // keeping it simple and DRY
+        $this->langTranslation = ((int) $this->translation->language ? (int) $this->translation->language : 1);
     }
 
     /**
      * Initialize any variables before controller actions
+     * @param \Zend\Mvc\MvcEvent $e
      * @throws Exception\RuntimeException
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
@@ -56,14 +60,14 @@ class IndexController extends AbstractActionController
         $this->initViewVars();
 
         // Store all menus in a variable for the front page
-        $temp = $this->getTable("Menu")->fetchList(false, "parent='0' AND menutype='0' AND language='".$this->translation->language."'", "menuOrder ASC");
+        $temp = $this->getTable("Menu")->fetchList(false, "parent='0' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
         $menus = $submenus = array();
         $menuId = $submenuId = null;
 
         foreach($temp as $m)
         {
             $menus[] = $m;
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . $m->id."' AND menutype='0' AND language='".$this->translation->language."'", "menuOrder ASC");
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . $m->id."' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
         }
         $this->view->menus = $menus;
         $this->view->submenus = $submenus;
@@ -96,8 +100,8 @@ class IndexController extends AbstractActionController
     {
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
-        $this->view->languageId = (int) $this->translation->language;
-        $this->view->controllerShort = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
+        $this->view->languageId = $this->langTranslation;
+        $this->view->controllerShort = strtolower('__CONTROLLER__');
         $this->view->controllerLong = $this->params('controller');
         $this->view->action = $this->params('action');
         $this->view->baseURL = $this->getRequest()->getRequestUri();
@@ -109,13 +113,16 @@ class IndexController extends AbstractActionController
     public function initLanguages()
     {
         $this->translation = new Container('translations');
-        if(!empty($this->translation->language))
+        if(empty($this->translation->language))
+        {
+            $this->translation->language = 1;
+            $this->translation = Functions::initTranslations($this->translation->language, true);
+        }
+        else
         {
             $this->view->language = $this->getTable("Language")->getLanguage($this->translation->language);
             $this->translation = Functions::initTranslations($this->translation->language);
         }
-        $this->translation->language = 1;
-        $this->translation = Functions::initTranslations($this->translation->language, true);
     }
 
 /****************************************************
@@ -145,24 +152,28 @@ class IndexController extends AbstractActionController
      */
     protected function checkIdentity()
     {
-        if (is_object($this->cache) && isset($this->cache) && $this->cache instanceof \Zend\Session\Container)
+        if(isset($this->cache->user) && $this->cache->user instanceof \Admin\Model\User)
         {
-            if(is_object($this->cache->user) && isset($this->cache->user) && $this->cache->user instanceof \Admin\Model\User)
+            $auth = new \Zend\Authentication\AuthenticationService();
+            if($auth->hasIdentity())
             {
-                if(($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged)
+                if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
+                    (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
                 {
                     return $this->redirect()->toUrl("/");
                 }
-                else
-                {
-                    $this->cache->getManager()->getStorage()->clear();
-                    $this->translation->getManager()->getStorage()->clear();
-                    $this->cache = new Container("cache");
-                    $this->translation = new Container("translations");
-                    $authSession = new Container('ul');
-                    $authSession->getManager()->getStorage()->clear();
-                    throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
-                }
+            }
+            else
+            {
+                $this->cache->getManager()->getStorage()->clear();
+                $this->translation->getManager()->getStorage()->clear();
+                $authSession = new Container('ul');
+                $authSession->getManager()->getStorage()->clear();
+                $auth->clearIdentity();
+                unset($this->cache->user);
+                unset($authSession);
+                $this->cache = null;
+                throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
             }
         }
     }
@@ -222,11 +233,11 @@ class IndexController extends AbstractActionController
 
         // this is needed due to the friendly/RESTful urls
         // check to see if menu caption with - or _ exist (we check for the whole menu caption), if not, replace them and check again
-        $matches = $this->getTable("Menu")->fetchList(false, "caption = '{$param}' AND language='".$this->translation->language."'");
+        $matches = $this->getTable("Menu")->fetchList(false, "caption = '{$param}' AND language='".$this->langTranslation."'");
         if (!$matches->current())
         {
             $param = str_replace(array("-","_"), array(" ","/"), $param);
-            $matches = $this->getTable("Menu")->fetchList(false, "caption LIKE '%{$param}%' AND language='".$this->translation->language."'");
+            $matches = $this->getTable("Menu")->fetchList(false, "caption LIKE '%{$param}%' AND language='".$this->langTranslation."'");
         }
 
         if(count($matches) > 0)
@@ -335,7 +346,7 @@ class IndexController extends AbstractActionController
             $this->view->hideMainMenu = true;
             try
             {
-                $contents = $this->getTable("Content")->fetchList(false, "id='{$submenuId}' AND language='".$this->translation->language."'", "menuOrder ASC");
+                $contents = $this->getTable("Content")->fetchList(false, "id='{$submenuId}' AND language='".$this->langTranslation."'", "menuOrder ASC");
             }
             catch(\Exception $e)
             {
@@ -345,27 +356,24 @@ class IndexController extends AbstractActionController
         else
         {
             $this->view->hideMainMenu = false;
-            if(Functions::strLength($param) == 0)
+            if(Functions::strLength($param) === 0)
             {
                 $this->getResponse()->setStatusCode(404);
                 $this->view->setTemplate('layout/error-layout');
                 return $this->view;
             }
-            try
+            $menu = $this->matchSEOMenu($param);
+            if (!empty($menu["submenu"]))
             {
-                $menu = $this->matchSEOMenu($param);
-                if (!empty($menu["submenu"]))
-                {
-                    $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
-                }
-                else if(!empty($menu["menu"]))
-                {
-                    $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->translation->language."'", "menuOrder ASC");
-                }
+                $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
             }
-            catch(\Exception $e)
+            else if(!empty($menu["menu"]))
             {
-                throw new \Exception("An error has occurred");
+                $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
+            }
+            else
+            {
+                throw new \Exception("Oops, an error has occurred.");
             }
         }
         $this->setMetaTags($contents);
@@ -395,8 +403,12 @@ class IndexController extends AbstractActionController
                 if ($result)
                 {
                     $this->cache->success = $this->translation->CONTACT_SUCCESS;
-                    return $this->redirect()->toUrl("/");
                 }
+                else
+                {
+                    $this->cache->error = $this->translation->CONTACT_ERROR;
+                }
+                return $this->redirect()->toUrl("/contact");
             }
             else
             {
@@ -409,10 +421,11 @@ class IndexController extends AbstractActionController
                     }
                 }
                 $this->errorNoParam($error);
-                return $this->redirect()->toUrl("/");
+                return $this->redirect()->toUrl("/contact");
             }
         }
         return $this->view;
     }
 }
+
 ?>

@@ -14,7 +14,6 @@ class NewsController extends IndexController
     public function newsAction()
     {
         $post = (string) $this->getParam("post", null);
-        echo \Zend\Debug\Debug::dump($post, null, true, true);exit;
         if(!empty($post) && Functions::strLength($post) > 2)
         {
             try

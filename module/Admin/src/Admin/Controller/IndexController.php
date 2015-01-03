@@ -24,10 +24,10 @@ class IndexController extends AbstractActionController
     public $view = null;
 
     /**
-     * @param null $session holds language data as well as all terms
+     * @param null $translation holds language data as well as all terms
      * @return Int|String
      */
-    public $session = null;
+    public $translation = null;
     
     /**
      * @param array $breadcrumbs returns an array with links with the current user position on the website
@@ -41,7 +41,7 @@ class IndexController extends AbstractActionController
     public function __construct()
     {
         $this->view = new ViewModel();
-        $this->session = new Container("translations");
+        $this->translation = new Container("translations");
         $this->breadcrumbs[] = array("reference" => "/admin","name" => "Home");
         $this->initCache();
     }
@@ -56,15 +56,12 @@ class IndexController extends AbstractActionController
     {
         // $this->initAdminIdentity();
         parent::onDispatch($e);
-        if(class_exists("Admin\Model\Language"))
+        if(!class_exists("Admin\Model\Language"))
         {
-            $this->initLanguages();
+            throw new Exception\RuntimeException($this->translation->LANGUAGE_CLASS_NOT_FOUND);
         }
-        else
-        {
-            throw new Exception\RuntimeException("Language class was not found");
-        }
-
+        
+        $this->initLanguages();
         $this->initViewVars();
         $this->initBreadcrumbs();
         $this->initMenus();
@@ -111,16 +108,16 @@ class IndexController extends AbstractActionController
     public function initViewVars()
     {
         // session object
-        $this->view->session = $this->session;
+        $this->view->session = $this->translation;
 
         // all active languages
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
 
         // current language
-        $this->view->languageObject = $this->getTable("Language")->getLanguage($this->session->language);
+        $this->view->languageObject = $this->getTable("Language")->getLanguage($this->translation->language);
 
         // current language id
-        $this->view->language = $this->session->language;
+        $this->view->language = $this->translation->language;
     }
 
     /** 
@@ -163,17 +160,17 @@ class IndexController extends AbstractActionController
      */
     public function initLanguages()
     {
-        $this->session = new Container('translations');
+        $this->translation = new Container('translations');
 
-        if($this->session->language == null)
+        if($this->translation->language == null)
         {
-            $this->session->language = 1;
-            $this->session = Functions::initTranslations($this->session->language, true);
+            $this->translation->language = 1;
+            $this->translation = Functions::initTranslations($this->translation->language, true);
         }
         else
         {
-            $this->view->language = $this->getTable("Language")->getLanguage($this->session->language);
-            $this->session = Functions::initTranslations($this->session->language, false);
+            $this->view->language = $this->getTable("Language")->getLanguage($this->translation->language);
+            $this->translation = Functions::initTranslations($this->translation->language, false);
         }
     }
 
@@ -198,36 +195,29 @@ class IndexController extends AbstractActionController
                     }
                     else
                     {
-                        $checkAdminExistence = null;
-                        throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
+                        unset($checkAdminExistence);
+                        $this->clearUser();
                     }
                 }
                 else
                 {
-                    throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
+                    unset($checkAdminExistence);
+                    $this->clearUser();
                 }
             }
-            else
-            {
-                $this->cache->getManager()->getStorage()->clear();
-                $this->session->getManager()->getStorage()->clear();
-                $this->cache = new Container("cache");
-                $this->session = new Container("translations");
-                $authSession = new Container('Zend_Auth');
-                $authSession->getManager()->getStorage()->clear();
-                throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
-            }
+            $this->clearUser();
         }
-        else
-        {
-            $this->cache->getManager()->getStorage()->clear();
-            $this->session->getManager()->getStorage()->clear();
-            $this->cache = new Container("cache");
-            $this->session = new Container("translations");
-            $authSession = new Container('Zend_Auth');
-            $authSession->getManager()->getStorage()->clear();
-            throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
-        }
+    }
+
+    private function clearUser()
+    {
+        $this->cache->getManager()->getStorage()->clear();
+        $this->translation->getManager()->getStorage()->clear();
+        $this->cache = new Container("cache");
+        $this->translation = new Container("translations");
+        $authSession = new Container('ul');
+        $authSession->getManager()->getStorage()->clear();
+        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }
 
     /**

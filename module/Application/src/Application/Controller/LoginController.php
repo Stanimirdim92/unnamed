@@ -136,7 +136,7 @@ class LoginController extends IndexController
             if ($user->getDeleted())
             {
                 $this->cache->error = $this->translation->DISABLED_ACCOUNT;
-                return $this->redirect()->toUrl("/");
+                return $this->logoutAction("/login");
             }
             if ($user->getAdmin())
             {
@@ -148,7 +148,8 @@ class LoginController extends IndexController
             $user->setIp($remote->getIpAddress());
             $this->getTable('user')->saveUser($user);
 
-            $data->role = $role;
+            $data->role = (int) $role;
+            $data->logged = true;
             $auth->getStorage()->write($data);
             $this->cache->user = $user;
             $this->cache->role = (int) $role;
@@ -168,25 +169,23 @@ class LoginController extends IndexController
         }
 
         $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
-        if (count($tokenExist) != 1)
+        if (count($tokenExist) !== 1)
         {
             $this->errorNoParam($this->translation->LINK_EXPIRED);
             return $this->redirect()->toUrl("/login");
         }
-        else
-        {
-            $form = new NewPasswordForm($tokenExist);
-            $form->get("password")->setLabel($this->translation->PASSWORD)->setAttribute("placeholder", $this->translation->PASSWORD);
-            $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
-            $form->get("resetpw")->setValue($this->translation->RESET_PW);
 
-            // temporary create new view variable to hold the user id.
-            // After the password is reset the variable is destroyed.
-            // Hidden fields will work, but they are more easier to hack.
-            $this->cache->resetpwUserId = $tokenExist->current()->user;
-            $this->view->form = $form;
-            return $this->view;
-        }
+        $form = new NewPasswordForm($tokenExist);
+        $form->get("password")->setLabel($this->translation->PASSWORD)->setAttribute("placeholder", $this->translation->PASSWORD);
+        $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
+        $form->get("resetpw")->setValue($this->translation->RESET_PW);
+
+        // temporary create new view variable to hold the user id.
+        // After the password is reset the variable is destroyed.
+        // Hidden fields will work, but they are more easier to hack.
+        $this->cache->resetpwUserId = $tokenExist->current()->user;
+        $this->view->form = $form;
+        return $this->view;
     }
 
     public function newpasswordprocessAction()
@@ -260,17 +259,15 @@ class LoginController extends IndexController
 
                     $message = $this->translation->NEW_PW_TEXT." ".$_SERVER["SERVER_NAME"]."/login/newpassword/id/{$token}";
                     $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@localhost", $_SERVER["SERVER_NAME"]);
-                    if ($result)
-                    {
-                        $this->cache->success = $this->translation->PW_SENT." ".$formData['email'];
-                        $this->view->setTerminal(true);
-                        return $this->redirect()->toUrl("/");
-                    }
-                    else
+                    if (!$result)
                     {
                         $this->cache->error = "Error! Email could not be sent";
                         return $this->redirect()->toUrl("/login/resetpassword");
                     }
+                    
+                    $this->cache->success = $this->translation->PW_SENT." ".$formData['email'];
+                    $this->view->setTerminal(true);
+                    return $this->redirect()->toUrl("/");
                 }
                 else
                 {
@@ -312,6 +309,10 @@ class LoginController extends IndexController
         $authSession->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
+        unset($this->cache->user);
+        unset($authSession);
+        $this->cache = null;
+        $this->translation = null;
         if ($redirectTo == '')
         {
             $redirectTo = "/";

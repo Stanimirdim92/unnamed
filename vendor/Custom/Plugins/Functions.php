@@ -6,8 +6,6 @@ use Zend\Db\Adapter\Driver\Pdo\Statement;
 use Zend\Db\Adapter\Adapter;
 use Zend\Math\Rand;
 
-require '/vendor/Custom/Plugins/Password.php';
-
 class Functions
 {
     /**
@@ -105,6 +103,8 @@ class Functions
      */
     public static function createPassword($password = null)
     {
+        require '/vendor/Custom/Plugins/Password.php';
+
         if (empty($password))
         {
             throw new Exception("Password cannot be empty");

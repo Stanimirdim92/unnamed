@@ -97,9 +97,11 @@ class Module implements Feature\AutoloaderProviderInterface,
                     }
                     else
                     {
-                        // add logger
+                        $service = $services->get('AdminErrorHandling');
+                        $service->logException("add msg");
                         $response->setStatusCode(HttpResponse::STATUS_CODE_401);
                         $event->setResult($response);
+                        $response->sendHeaders();
                         $event->stopPropagation();
                     }
                 }
@@ -114,7 +116,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 $exception = $event->getParam("exception");
                 if (!$exception)
                 {
-                    $event->getResponse()->setStatusCode(404);
+                    $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
                     $viewModel = $event->getViewModel();
                     $viewModel->setTemplate('layout/error-layout');
                     $event->stopPropagation();
@@ -143,7 +145,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                         Controller: " . $controller . ",
                         Controller action: " . $action . ",
                         User role: " . $userRole. ",
-                        User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+                        User id: " . isset($cache->user->id) ? $cache->user->id : "Guest". ",
                         Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
                         IP: " . $remote->getIpAddress() . ",
                         Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
@@ -158,13 +160,11 @@ class Module implements Feature\AutoloaderProviderInterface,
                     else
                     {
                         $service->logException($exception);
-                        $controllerRedirect->plugin('redirect')->toUrl("/admin");
+                        $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
+                        $viewModel = $event->getViewModel();
+                        $viewModel->setTemplate('layout/error-layout');
+                        $event->stopPropagation();
                     }
-                    $response = $event->getResponse();
-                    $response->setStatusCode(HttpResponse::STATUS_CODE_404);
-                    $event->setResult($response);
-                    $event->stopPropagation();
-                    return;
                 }
             }
         });

@@ -47,7 +47,7 @@ class Module implements Feature\AutoloaderProviderInterface,
      *
      * @return bool
      */
-    public function isSSL()
+    private function isSSL()
     {
         if (isset($_SERVER['HTTPS']))
         {
@@ -98,9 +98,9 @@ class Module implements Feature\AutoloaderProviderInterface,
             if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
             {
                 $response->setStatusCode(500);
-                $event->setResult($response);
+                $e->setResult($response);
                 $response->sendHeaders();
-                $event->stopPropagation();
+                $e->stopPropagation();
             }
 
             if(!$e->getRouteMatch() || strtolower($e->getRouteMatch()->getMatchedRouteName()) === "application")
@@ -108,7 +108,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 $exception = $e->getParam("exception");
                 if (!$exception)
                 {
-                    $e->getResponse()->setStatusCode(404);
+                    $response->setStatusCode(404);
+                    $e->setResult($response);
+                    $response->sendHeaders();
                     $viewModel = $e->getViewModel();
                     $viewModel->setTemplate('layout/error-layout');
                 }
@@ -150,10 +152,11 @@ class Module implements Feature\AutoloaderProviderInterface,
                     {
                         $service->logException($exception);
                     }
-                    $e->getResponse()->setStatusCode(404);
+                    $response->setStatusCode(404);
+                    $e->setResult($response);
+                    $response->sendHeaders();
                     $viewModel = $e->getViewModel();
                     $viewModel->setTemplate('layout/error-layout');
-                    $e->stopPropagation();
                 }
             }
         });
@@ -167,14 +170,24 @@ class Module implements Feature\AutoloaderProviderInterface,
     {
         $matches = $e->getRouteMatch();
         $action = $matches->getParam('param');
-        if (strtolower($action) === "index")
-        {
-            $action = "Home"; // must be set from db
-        }
-        else if (empty($action))
+
+        if (empty($action))
         {
             $action = $matches->getParam('action');
+            if ($action === "index" && $matches->getMatchedRouteName() !== 'application')
+            {
+                $action = $matches->getMatchedRouteName();
+            }
+            else if ($action !== "index")
+            {
+                $action .= ($matches->getParam("post") ? " - ".$matches->getParam("post") : "");
+            }
+            else
+            {       
+                $action = "Home"; // must be set from db
+            }
         }
+
         $siteName = 'ZendPress'; // must be set from db
         $headTitleHelper = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('headTitle');
         $headTitleHelper->append($siteName);
@@ -191,7 +204,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 'Application\Controller\Login'        => 'Application\Controller\LoginController',
                 'Application\Controller\Registration' => 'Application\Controller\RegistrationController',
                 'Application\Controller\Profile'      => 'Application\Controller\ProfileController',
-                'Application\Controller\News'      => 'Application\Controller\NewsController',
+                'Application\Controller\News'         => 'Application\Controller\NewsController',
             ),
         );
         return $config;
