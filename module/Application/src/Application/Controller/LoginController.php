@@ -1,15 +1,15 @@
 <?php
 namespace Application\Controller;
 
-use Application\Controller\IndexController;
 use Zend\Authentication\AuthenticationService;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
-use Application\Form\LoginForm;
+use Application\Controller\IndexController;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 use Application\Model\ResetPassword;
+use Application\Form\LoginForm;
 
 use Custom\Plugins\Mailing;
 use Custom\Plugins\Functions;
@@ -165,7 +165,7 @@ class LoginController extends IndexController
         $token = (string) $this->getParam('id', null);
         if (Functions::strLength($token) != 64)
         {
-            throw new \Exception("Token mismatch");
+            throw new \Exception($this->translation->TOKEN_MISTMATCH);
         }
 
         $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
@@ -211,7 +211,7 @@ class LoginController extends IndexController
                     $this->cache->success = $this->translation->NEW_PW_SUCCESS;
                     return $this->redirect()->toUrl("/login");
                 }
-                throw new Exception\RuntimeException("Password could not be generated.");
+                throw new Exception\RuntimeException($this->translation->PASSWORD_NOT_GENERATED);
             }
             else
             {
@@ -261,7 +261,7 @@ class LoginController extends IndexController
                     $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@localhost", $_SERVER["SERVER_NAME"]);
                     if (!$result)
                     {
-                        $this->cache->error = "Error! Email could not be sent";
+                        $this->cache->error = $this->translation->EMAIL_NOT_SENT;
                         return $this->redirect()->toUrl("/login/resetpassword");
                     }
                     

@@ -100,7 +100,7 @@ class MenuTable
         return $row;
     }
 
-    public function deleteMenu($id)
+    public function deleteMenu($id = 0)
     {
         $this->_tableGateway->delete(array('id' => (int) $id));
     }
@@ -116,24 +116,21 @@ class MenuTable
             'description' => (string) $menu->description,
             'menutype' => (int) $menu->menutype,
             'footercolumn' => (int) $menu->footercolumn,
+            'menulink' => (string) $menu->menulink,
         );
         $id = (int)$menu->id;
-        if ($id == 0) 
+        if ($id === 0) 
         {
             $this->_tableGateway->insert($data);
             $menu->id = $this->_tableGateway->lastInsertValue;
         }
-        else 
+
+        if (!$this->getMenu($id)) 
         {
-            if ($this->getMenu($id)) 
-            {
-                $this->_tableGateway->update($data, array('id' => $id));
-            }
-            else 
-            {
-                throw new \Exception();
-            }
+            throw new \Exception();
         }
+        $this->_tableGateway->update($data, array('id' => $id));
+            
         return $menu;
     }
     

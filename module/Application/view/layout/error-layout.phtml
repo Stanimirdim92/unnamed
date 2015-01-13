@@ -1,1 +1,13 @@
-<pre class="prettyprint linenums"><?php echo $this->exception->getMessage() ?></pre>
+<pre class="prettyprint linenums">
+    <?php 
+        if (isset($this->exception))
+        {
+            echo $this->escapeHtml($this->exception->getMessage());
+        }
+        else
+        {
+            echo"<h2>".$this->translate('A 404 error occurred')."</h2>";
+            echo $this->message;
+        }
+    ?>
+</pre>

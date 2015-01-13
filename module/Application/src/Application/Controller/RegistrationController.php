@@ -49,7 +49,7 @@ class RegistrationController extends IndexController
                     $this->cache->success = $this->translation->REGISTRATION_SUCCESS;
                     return $this->redirect()->toUrl("/login");
                 }
-                throw new Exception\RuntimeException("Password could not be generated.");
+                throw new Exception\RuntimeException($this->translation->PASSWORD_NOT_GENERATED);
             }
         }
         else

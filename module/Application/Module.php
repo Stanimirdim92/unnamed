@@ -8,6 +8,8 @@ use Zend\Log\Writer\Stream as LogWriterStream;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
+// use Zend\Cache\StorageFactory;
+// use Zend\Session\SaveHandler\Cache;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
@@ -15,20 +17,21 @@ use Zend\Session\SessionManager;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
-
-use Application\View\Helper;
-use Application\Controller\ErrorHandling as ErrorHandlingService;
-
 use Zend\Mvc\MvcEvent;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use Zend\Http\PhpEnvironment\RemoteAddress;
+use Zend\EventManager\EventInterface;
 
+use Application\View\Helper;
+use Application\Controller\ErrorHandling as ErrorHandlingService;
 use Application\Model\ResetPassword;
 use Application\Model\ResetPasswordTable;
 
 class Module implements Feature\AutoloaderProviderInterface,
-                        Feature\ServiceProviderInterface
+                        Feature\ServiceProviderInterface,
+                        Feature\ConfigProviderInterface,
+                        Feature\BootstrapListenerInterface
 {
     /**
      * @param array $config Holds cookies params
@@ -38,6 +41,16 @@ class Module implements Feature\AutoloaderProviderInterface,
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config);
         $sessionManager = new SessionManager($sessionConfig);
+        // $memCached = StorageFactory::factory(array(
+        //     'adapter' => array(
+        //        'name' => 'memcached',
+        //        'options' => array(
+        //            'server' => 'zend.localhost',
+        //        ),
+        //     ),
+        // ));
+        // $saveHandler = new Cache($memCached);
+        // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
         Container::setDefaultManager($sessionManager);
     }
@@ -67,7 +80,7 @@ class Module implements Feature\AutoloaderProviderInterface,
      * make sure to log errors and redirect to error-layout
      * @param \Zend\Mvc\MvcEvent $e
      */
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(EventInterface $e)
     {
         /**
          * Init sessions and cookies before everything else
@@ -169,7 +182,7 @@ class Module implements Feature\AutoloaderProviderInterface,
     public function setLayoutTitle(MvcEvent $e)
     {
         $matches = $e->getRouteMatch();
-        $action = $matches->getParam('param');
+        $action = $matches->getParam('title');
 
         if (empty($action))
         {
@@ -205,6 +218,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 'Application\Controller\Registration' => 'Application\Controller\RegistrationController',
                 'Application\Controller\Profile'      => 'Application\Controller\ProfileController',
                 'Application\Controller\News'         => 'Application\Controller\NewsController',
+                'Application\Controller\Menu'         => 'Application\Controller\MenuController',
             ),
         );
         return $config;

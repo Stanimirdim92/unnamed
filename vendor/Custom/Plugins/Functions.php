@@ -13,11 +13,6 @@ class Functions
      */
     private static $bcryptCost = 13;
 
-    /**
-     * @var bool $translation
-     */
-    private static $translation = null;
-
     /** 
      * This method loads into translation all term translations from the database
      *
@@ -39,13 +34,15 @@ class Functions
             $language = 1;
         }
         
-        static::$translation = new Container('translations');
-        if(!isset(static::$translation->initialized) || $reload)
+        $translation = new Container('translations');
+        if(!isset($translation->initialized) || $reload)
         {
             $query = "SELECT `termtranslation`.`translation`, `term`.`name`
-                    FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term`
-                    WHERE `termtranslation`.`language`='{$language}'
-                    ORDER BY `term`.`name` ASC";
+                      FROM `term` 
+                      INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term`
+                      WHERE `termtranslation`.`language`='{$language}'
+                      ORDER BY `term`.`name` ASC";
+
             $result = self::createPlainQuery($query);
             if (count($result) > 0)
             {
@@ -53,25 +50,24 @@ class Functions
                 {
                     if(!empty($r['name']))
                     {
-                        static::$translation->__set($r['name'], $r['translation']);
+                        $translation->__set($r['name'], $r['translation']);
                     }
                 }
-                static::$translation->initialized = true;
+                $translation->initialized = true;
             }
         }
-        return static::$translation;
+        return $translation;
     }
 
     /**
      * Create plain mysql queries.
      *
-     * @param String $query
-     * @param Bool $returnResults
-     * @return Adapter|ResultSet
+     * @param String $query the plain query
+     * @param Bool $returnResults specify if the function should return results
+     * @return array
      */
     public static function createPlainQuery($query = null, $returnResults = true)
     {
-        $query = trim($query);
         if (empty($query))
         {
             $returnResults = false;
@@ -137,7 +133,7 @@ class Functions
      */
     public static function generateToken($number = null)
     {
-        if (is_int($number) && $number === 48)
+        if ($number === 48)
         {
             $str = Rand::getBytes($number, true);
             $token = base64_encode($str);
@@ -145,11 +141,9 @@ class Functions
             {
                 return $token;
             }
-            $cache->error = "Generated token must be 64 characters long";
-            return $this->redirect()->toUrl("/");
+            throw new Exception("Error while generating a token");
         }
-        $cache->error = "Error while generating a token";
-        return $this->redirect()->toUrl("/");
+        throw new Exception("Error while generating a token");
     }
 }
 ?>

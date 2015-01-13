@@ -8,7 +8,7 @@ use Zend\ServiceManager\ServiceManager;
 
 class Menu implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    protected $_inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
@@ -47,13 +47,16 @@ class Menu implements InputFilterAwareInterface
 
 
     private $_footercolumn = 0;
+
+
+    private $_menulink = null;
     
-    public function setServiceManager($sm)
+    public function setServiceManager(ServiceManager $sm)
     {
         $this->_serviceManager = $sm;
     }
 
-    public function exchangeArray($data)
+    public function exchangeArray(array $data)
     {
         $this->_id = (isset($data['id'])) ? $data['id'] : null;
         $this->_caption = (isset($data['caption'])) ? $data['caption'] : null;
@@ -62,15 +65,15 @@ class Menu implements InputFilterAwareInterface
         $this->_parent = (isset($data['parent'])) ? $data['parent'] : null;
         $this->_keywords = (isset($data['keywords'])) ? $data['keywords'] : null;
         $this->_description = (isset($data['description'])) ? $data['description'] : null;
-        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : null;
         $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : null;
-
+        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : null;
+        $this->_menulink = (isset($data['menulink'])) ? $data['menulink'] : null;
     }
 
     /**
      * constructor
      */
-    public function __construct(array $options = null, ServiceManager $sm=null)
+    public function __construct(array $options = null, ServiceManager $sm = null)
     {
         if (is_array($options) && $options instanceof Traversable)
         {
@@ -94,7 +97,7 @@ class Menu implements InputFilterAwareInterface
      * Set id
      * @param int
      */
-    public function setId(int $id)
+    public function setId($id = 0)
     {
         $this->_id = $id;
     }
@@ -104,7 +107,7 @@ class Menu implements InputFilterAwareInterface
     * Set caption
     * @param String $caption 
     */
-    public function setCaption($caption)
+    public function setCaption($caption = null)
     {
         $this->_caption = $caption;
     }
@@ -122,7 +125,7 @@ class Menu implements InputFilterAwareInterface
     * Set menuOrder
     * @param int $menuOrder 
     */
-    public function setMenuOrder($menuOrder)
+    public function setMenuOrder($menuOrder = 1)
     {
         $this->_menuOrder = $menuOrder;
     }
@@ -140,7 +143,7 @@ class Menu implements InputFilterAwareInterface
     * Set Language
     * @param int $ 
     */
-    public function setLanguage($language)
+    public function setLanguage($language = 1)
     {
         $this->_language = $language;
     }
@@ -161,11 +164,11 @@ class Menu implements InputFilterAwareInterface
     {
         try
         {
-            return $this->serviceManager->get('LanguageTable')->getLanguage("{$this->language}");
+            return $this->serviceManager->get('LanguageTable')->getLanguage($this->_language);
         }
         catch (\Exception $e)
         {
-            return null;
+            return $e;
         }
     }
     
@@ -173,7 +176,7 @@ class Menu implements InputFilterAwareInterface
     * Set parent
     * @param int $parent 
     */
-    public function setParent($parent)
+    public function setParent($parent = 0)
     {
         $this->_parent = $parent;
     }
@@ -188,103 +191,121 @@ class Menu implements InputFilterAwareInterface
     }
  
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getParentObject()
     {
         try
         {
-            return $this->serviceManager->get('MenuTable')->getMenu("{$this->parent}");
+            return $this->serviceManager->get('MenuTable')->getMenu($this->_parent);
         }
         catch (\Exception $e)
         {
-            return null;
+            return $e;
         }
     }
     
     /**
-    * Set keywords
-    * @param String $keywords 
-    */
-    public function setKeywords($keywords)
+     * Set keywords
+     * @param String $keywords 
+     */
+    public function setKeywords($keywords = null)
     {
         $this->_keywords = $keywords;
     }
 
     /**
-    * Get keywords
-    * @return String
-    */
+     * Get keywords
+     * @return String
+     */
     public function getKeywords()
     {
         return $this->_keywords;
     }
      
     /**
-    * Set description
-    * @param String $description 
-    */
-    public function setDescription($description)
+     * Set description
+     * @param null $description 
+     */
+    public function setDescription($description = null)
     {
         $this->_description = $description;
     }
 
     /**
-    * Get description
-    * @return String
-    */
+     * Get description
+     * @return String
+     */
     public function getDescription()
     {
         return $this->_description;
     }
 
     /**
-    * Set menutype
-    * @param Int $menutype 
-    */
-    public function setMenuType($menutype)
+     * Set menutype
+     * @param Int $menutype 
+     */
+    public function setMenuType($menutype = 0)
     {
         $this->_menutype = $menutype;
     }
 
     /**
-    * Get menutype
-    * @return Int
-    */
+     * Get menutype
+     * @return Int
+     */
     public function getMenuType()
     {
         return $this->_menutype;
     }
 
     /**
-    * Set footercolumn
-    * @param Int $footercolumn 
-    */
-    public function setFooterColumn($footercolumn)
+     * Set footercolumn
+     * @param Int $footercolumn 
+     */
+    public function setFooterColumn($footercolumn = 0)
     {
         $this->_footercolumn = $footercolumn;
     }
 
     /**
-    * Get footercolumn
-    * @return Int
-    */
+     * Get footercolumn
+     * @return Int
+     */
     public function getFooterColumn()
     {
         return $this->_footercolumn;
     }
 
     /**
-    * Get menutype name
-    * @return string
-    */
+     * Set menulink
+     * @param null $menulink 
+     */
+    public function setMenuLink($menulink = null)
+    {
+        $this->_menulink = $menulink;
+    }
+
+    /**
+     * Get menulink
+     * @return Int
+     */
+    public function getMenuLink()
+    {
+        return $this->_menulink;
+    }
+
+    /**
+     * Get menutype name
+     * @return string
+     */
     public function getMenuTypeAsName()
     {
-        if ($this->_menutype == 0)
+        if ($this->getMenuType() == 0)
             return "As main menu";
-        else if ($this->_menutype == 1)
+        else if ($this->getMenuType() == 1)
             return "As category menu";
-        else if ($this->_menutype == 3)
+        else if ($this->getMenuType() == 3)
             return "As footer menu";
         else
             return "As SEO menu";
@@ -325,9 +346,9 @@ class Menu implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
+        foreach($data as $key => $value)
         {
-            if (!in_array($key,$skip))
+            if (!in_array($key, $skip))
             {
                 $returnValue[] = $key;
             }
@@ -346,25 +367,23 @@ class Menu implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties(array $skip, $toJson = false)
     {
+        $skip[] = "_serviceManager";
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
+        foreach($data as $key => $value)
         {
-            if (!in_array($key,$skip))
+            if (!in_array($key, $skip))
             {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->$key;
             }
         }
+        if ($toJson)
+        {
+            return \Zend\Json\Json::encode($returnValue);
+        }
         return $returnValue;
-    }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
     }
     
     public function setInputFilter(InputFilterInterface $inputFilter)
@@ -383,6 +402,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"caption",
@@ -393,6 +423,12 @@ class Menu implements InputFilterAwareInterface
                 ),
                 'validators' => array(
                     array('name' => 'NotEmpty'),
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                        ),
+                    ),
                 ),
             ));
             $inputFilter->add(array(
@@ -401,6 +437,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"language",
@@ -408,12 +455,34 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"parent",
                 "required" => false,
                 'filters'  => array(
                     array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
                 ),
             ));
             $inputFilter->add(array(
@@ -423,6 +492,14 @@ class Menu implements InputFilterAwareInterface
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
                 ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"description",
@@ -431,12 +508,31 @@ class Menu implements InputFilterAwareInterface
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
                 ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"menutype",
                 "required" => false,
                 'filters'  => array(
                     array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
                 ),
             ));
 
@@ -445,6 +541,36 @@ class Menu implements InputFilterAwareInterface
                 "required" => false,
                 'filters'  => array(
                     array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[0-9]+',
+                            'messages' => array(
+                                'Invalid input, only 0-9 characters allowed'
+                            ),
+                        ),
+                    ),
+                ),
+            ));
+             $inputFilter->add(array(
+                "name"=>"menulink",
+                "required" => true,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '[a-zA-Z][a-zA-Z0-9-]+$',
+                            'messages' => array(
+                                'Invalid input, only alpha numeric characters allowed'
+                            ),
+                        ),
+                    ),
                 ),
             ));
             $this->_inputFilter = $inputFilter;
@@ -478,3 +604,5 @@ class Menu implements InputFilterAwareInterface
         return $this->_caption;
     }
 }
+
+?>

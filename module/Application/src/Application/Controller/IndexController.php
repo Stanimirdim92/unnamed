@@ -67,7 +67,7 @@ class IndexController extends AbstractActionController
         foreach($temp as $m)
         {
             $menus[] = $m;
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . $m->id."' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . (int) $m->id."' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
         }
         $this->view->menus = $menus;
         $this->view->submenus = $submenus;
@@ -146,7 +146,6 @@ class IndexController extends AbstractActionController
      * See if user is logged in.
      * Crazy logic, but it does the trick.
      *
-     * @see \Application\Controller\LoginController
      * @throws AuthorizationException
      * @return void
      */
@@ -162,20 +161,29 @@ class IndexController extends AbstractActionController
                 {
                     return $this->redirect()->toUrl("/");
                 }
+                else
+                {
+                    $this->clearUser();
+                }
             }
             else
             {
-                $this->cache->getManager()->getStorage()->clear();
-                $this->translation->getManager()->getStorage()->clear();
-                $authSession = new Container('ul');
-                $authSession->getManager()->getStorage()->clear();
-                $auth->clearIdentity();
-                unset($this->cache->user);
-                unset($authSession);
-                $this->cache = null;
-                throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+                $this->clearUser();
             }
         }
+    }
+
+    private function clearUser()
+    {
+        $this->cache->getManager()->getStorage()->clear();
+        $this->translation->getManager()->getStorage()->clear();
+        $authSession = new Container('ul');
+        $authSession->getManager()->getStorage()->clear();
+        $auth->clearIdentity();
+        unset($this->cache->user);
+        unset($authSession);
+        $this->cache = null;
+        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }
 
     /**
@@ -200,7 +208,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @param null $message holds the generated error
+     * @param null $message holds the generated error(s)
      * @return string|array
      */
     protected function errorNoParam($message = null)
@@ -220,106 +228,69 @@ class IndexController extends AbstractActionController
         $this->view->setTerminal(true);
     }
 
-    /**
-     * @param  null $param is the menu/controller name passed as string from the URL
-     * @return array containting menu ids
-     */
-    public function matchSEOMenu($param = null)
-    {
-        if (empty($param))
-        {
-           throw new Exception\InvalidArgumentException(__METHOD__ . ' must not be empty');
-        }
-
-        // this is needed due to the friendly/RESTful urls
-        // check to see if menu caption with - or _ exist (we check for the whole menu caption), if not, replace them and check again
-        $matches = $this->getTable("Menu")->fetchList(false, "caption = '{$param}' AND language='".$this->langTranslation."'");
-        if (!$matches->current())
-        {
-            $param = str_replace(array("-","_"), array(" ","/"), $param);
-            $matches = $this->getTable("Menu")->fetchList(false, "caption LIKE '%{$param}%' AND language='".$this->langTranslation."'");
-        }
-
-        if(count($matches) > 0)
-        {
-            $location = array("menu" => null, "submenu" => null);
-            $match = $matches->current();
-            if(!$match->getParent())
-            {
-                $location["menu"] = (int) $match->getId();
-            }
-            else
-            {
-                $location["submenu"] = (int) $match->getId();
-                $location["menu"] = (int) $match->getParent();
-            }
-            return $location;
-        }
-        return false;
-    }
-
+// not done
     public function setMetaTags($obj = null, $isPage = true)
     {
-        $description = $keywords = $extract = $preview = $title = null;
+        // $description = $keywords = $extract = $preview = $title = null;
 
-        if (empty($obj))
-        {
-            return false;
-        }
+        // if (empty($obj))
+        // {
+        //     return false;
+        // }
 
-        /**
-         * This section is called when we enter the pageAction and request a menu.
-         */
-        if ($isPage === true)
-        {
-            $description = $obj->current()->getMenuObject()->getDescription();
-            $keywords = $obj->current()->getMenuObject()->getKeywords();
-            $extract = $obj->current()->getExtract();
-            $preview = $obj->current()->getPreview();
-            $title = $obj->current()->getTitle();
-            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
-        }
-        /**
-         * This section is called when we request newspost. 
-         *
-         * @see Application\Controller\NewsController
-         */
-        else if ($isPage === "news")
-        {
-            $extract = $obj->current()->getExtract();
-            $preview = $obj->current()->getPreview();
-            $title = $obj->current()->getTitle();
-            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
-        }
-        /**
-         * All other pages? Maybe load the text from the database
-         */
-        else
-        {
-            $description = $obj->current()->getMenuObject()->getDescription();
-            $keywords = $obj->current()->getMenuObject()->getKeywords();
-            $extract = $obj->current()->getExtract();
-            $preview = $obj->current()->getPreview();
-            $title = $obj->current()->getTitle(); //cannot be empty
-        }
+        // /**
+        //  * This section is called when we enter the pageAction and request a menu.
+        //  */
+        // if ($isPage === true)
+        // {
+        //     $description = $obj->current()->getMenuObject()->getDescription();
+        //     $keywords = $obj->current()->getMenuObject()->getKeywords();
+        //     $extract = $obj->current()->getExtract();
+        //     $preview = $obj->current()->getPreview();
+        //     $title = $obj->current()->getTitle();
+        //     (empty($extract) ? $extract = $obj->current()->getText() : $extract);
+        // }
+        // /**
+        //  * This section is called when we request newspost. 
+        //  *
+        //  * @see Application\Controller\NewsController
+        //  */
+        // else if ($isPage === "news")
+        // {
+        //     $extract = $obj->current()->getExtract();
+        //     $preview = $obj->current()->getPreview();
+        //     $title = $obj->current()->getTitle();
+        //     (empty($extract) ? $extract = $obj->current()->getText() : $extract);
+        // }
+        // /**
+        //  * All other pages? Maybe load the text from the database
+        //  */
+        // else
+        // {
+        //     $description = $obj->current()->getMenuObject()->getDescription();
+        //     $keywords = $obj->current()->getMenuObject()->getKeywords();
+        //     $extract = $obj->current()->getExtract();
+        //     $preview = $obj->current()->getPreview();
+        //     $title = $obj->current()->getTitle(); //cannot be empty
+        // }
         
-        (empty($description) ? $description = "test desc" : $description);
-        (empty($keywords) ? $keywords = "test keyw" : $keywords);
-        (empty($preview) ? $preview = "" : $preview);
+        // (empty($description) ? $description = "test desc" : $description);
+        // (empty($keywords) ? $keywords = "test keyw" : $keywords);
+        // (empty($preview) ? $preview = "" : $preview);
 
-        $hm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
-        $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
-        $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
-        // TODO: clear the new lines from the text. See the source code ctrl+u
-        $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($extract), 0, 100)."..."."'>\r\n");
-        $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
-        $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
+        // $hm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
+        // $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
+        // $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
+        // // TODO: clear the new lines from the text. See the source code ctrl+u
+        // $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($extract), 0, 100)."..."."'>\r\n");
+        // $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
+        // $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
         
-        $hm->appendName('keywords', $keywords);
-        $hm->appendName('description', $description);
-        $hm->appendProperty('og:image', $preview);
-        $hm->appendProperty("og:title", $title);
-        $hm->appendProperty("og:description", $description);
+        // $hm->appendName('keywords', $keywords);
+        // $hm->appendName('description', $description);
+        // $hm->appendProperty('og:image', $preview);
+        // $hm->appendProperty("og:title", $title);
+        // $hm->appendProperty("og:description", $description);
     }
 
 /****************************************************
@@ -328,56 +299,6 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        return $this->view;
-    }
-
-    /**
-     * Get the contents for the menu/submenu
-     *
-     * @return mixed Object holding the menu text, name etc.
-     */
-    public function pageAction()
-    {
-        $param = (string) $this->getParam("param");
-        $submenuId = (int) $this->getParam('id');
-
-        if ($submenuId && is_int($submenuId))
-        {
-            $this->view->hideMainMenu = true;
-            try
-            {
-                $contents = $this->getTable("Content")->fetchList(false, "id='{$submenuId}' AND language='".$this->langTranslation."'", "menuOrder ASC");
-            }
-            catch(\Exception $e)
-            {
-                throw new \Exception("An error has occurred");
-            }
-        }
-        else
-        {
-            $this->view->hideMainMenu = false;
-            if(Functions::strLength($param) === 0)
-            {
-                $this->getResponse()->setStatusCode(404);
-                $this->view->setTemplate('layout/error-layout');
-                return $this->view;
-            }
-            $menu = $this->matchSEOMenu($param);
-            if (!empty($menu["submenu"]))
-            {
-                $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
-            }
-            else if(!empty($menu["menu"]))
-            {
-                $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
-            }
-            else
-            {
-                throw new \Exception("Oops, an error has occurred.");
-            }
-        }
-        $this->setMetaTags($contents);
-        $this->view->contents = $contents;
         return $this->view;
     }
 

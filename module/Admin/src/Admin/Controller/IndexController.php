@@ -223,10 +223,11 @@ class IndexController extends AbstractActionController
     /**
      * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code
      *
-     * @param unknown $param
-     * @return String|Int|Null|Object|Boolean
+     * @param String $paramName
+     * @param null $default
+     * @return mixed
      */
-    public function getParam($paramName, $default = null)
+    protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
         if(!$param) 
@@ -237,29 +238,26 @@ class IndexController extends AbstractActionController
         {
             return $default;
         }
-        else
-        {
-            return $param;
-        }
+        return $param;
     }
 
     /**
-     * @param String $message
-     * @return string
+     * @param null $message holds the generated error(s)
+     * @return string|array
      */
-    public function errorNoParam($message = '')
+    protected function errorNoParam($message = null)
     {
-        if($message != '')
+        if(!empty($message))
         {
             $this->cache->error = $message;
         }
-        else if ($message == 'no_id')
+        else if ($message === 'no_id')
         {
-            $this->cache->error = "No id was set";
+            $this->cache->error = $this->translation->NO_ID_SET;
         }
         else
         {
-            $this->cache->error = "Error!";
+            $this->cache->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
     }

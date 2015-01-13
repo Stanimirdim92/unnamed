@@ -1,0 +1,33 @@
+<?php
+if (count($this->contents) > 0)
+{
+    /*@var $c \Admin\Model\Content */
+    foreach($this->contents as $c)
+    {
+        echo "<h2 itemscope itemprop='name'>".$c->getTitle()."</h2>";
+
+        if($c->getPreview() != null)
+        {
+            $image = "/userfiles/preview/".$c->getPreview();
+ ?>
+            <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                <a itemprop="url" href="<?=$image?>" id="news_image" title="<?=$c->getTitle();?>">
+                    <img itemprop="image" src="<?=$image?>" title="<?=$c->getTitle();?>" alt="<?=$c->getTitle();?>" />
+                </a>
+            </figure>
+<?php
+        }
+
+        echo "<p itemscope itemprop='text' class='post-text'>".$c->getText()."</p>";
+        if ($c->getMenuObject()->getParent())
+        {
+            $mainMenu = strtolower(str_replace(" ", "-", $c->getMenuObject()->getParentObject()->getCaption()));
+            echo "<p><a itemprop='url' class='main-menu' href='/menu/{$mainMenu}'>main menu</a></p>";
+        }
+    }
+}
+else
+{
+    echo "<h3 itemscope itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
+}
+?>
