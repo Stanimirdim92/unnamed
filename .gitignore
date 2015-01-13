@@ -7,7 +7,6 @@ nbproject
 .project
 .settings
 composer.lock
-/vendor
 /config/autoload
 /data/logs
 /public/fileupload/files
