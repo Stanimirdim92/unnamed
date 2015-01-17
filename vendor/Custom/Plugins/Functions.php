@@ -22,11 +22,6 @@ class Functions
      */
     public static function initTranslations($language = 1, $reload = false)
     {
-        if (!$language || !is_int($language))
-        {
-            throw new \Exception("Invalid language was selected");
-        }
-
         $total = self::createPlainQuery("SELECT COUNT(id) FROM `language` WHERE `active`='1'");
 
         if($language < 1 || $language > $total)
@@ -39,8 +34,9 @@ class Functions
         {
             $query = "SELECT `termtranslation`.`translation`, `term`.`name`
                       FROM `term` 
-                      INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term`
-                      WHERE `termtranslation`.`language`='{$language}'
+                      INNER JOIN `termtranslation`
+                      ON `term`.`id`=`termtranslation`.`term`
+                      WHERE `termtranslation`.`language`='".(int)$language."'
                       ORDER BY `term`.`name` ASC";
 
             $result = self::createPlainQuery($query);

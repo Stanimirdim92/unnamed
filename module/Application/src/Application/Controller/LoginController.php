@@ -116,7 +116,7 @@ class LoginController extends IndexController
                     $error[] = $value;
                 }
             }
-            $this->errorNoParam($error);
+            $this->setErrorNoParam($error);
             return $this->redirect()->toUrl("/login");
         }
 
@@ -171,7 +171,7 @@ class LoginController extends IndexController
         $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
         if (count($tokenExist) !== 1)
         {
-            $this->errorNoParam($this->translation->LINK_EXPIRED);
+            $this->setErrorNoParam($this->translation->LINK_EXPIRED);
             return $this->redirect()->toUrl("/login");
         }
 
@@ -223,7 +223,7 @@ class LoginController extends IndexController
                         $error[] = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toUrl("/login");
             }
         }
@@ -271,7 +271,7 @@ class LoginController extends IndexController
                 }
                 else
                 {
-                    $this->errorNoParam($this->translation->EMAIL." <b>".$formData["email"]."</b> ".$this->translation->NOT_FOUND);
+                    $this->setErrorNoParam($this->translation->EMAIL." <b>".$formData["email"]."</b> ".$this->translation->NOT_FOUND);
                     return $this->redirect()->toUrl("/login/resetpassword");
                 }
             }
@@ -285,7 +285,7 @@ class LoginController extends IndexController
                         $error[] = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toUrl("/login");
             }
         }

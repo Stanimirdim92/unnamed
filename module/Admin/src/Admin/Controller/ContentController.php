@@ -96,7 +96,7 @@ class ContentController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'content'));
         }
         try
@@ -105,7 +105,7 @@ class ContentController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Content was not found");
+            $this->setErrorNoParam("Content was not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'content'));
         }
             $this->view->content = $content;
@@ -226,7 +226,7 @@ class ContentController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'content'));
             }
         }
@@ -240,7 +240,7 @@ class ContentController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'content'));
         }
         try
@@ -266,7 +266,7 @@ class ContentController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'content'));
         }
         try

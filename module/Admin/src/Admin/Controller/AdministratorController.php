@@ -69,7 +69,7 @@ class AdministratorController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         try
@@ -81,7 +81,7 @@ class AdministratorController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Administrator not found");
+            $this->setErrorNoParam("Administrator not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         return $this->view;
@@ -132,7 +132,7 @@ class AdministratorController extends IndexController
                 }
                 else
                 {
-                    $this->errorNoParam($this->NO_ID);
+                    $this->setErrorNoParam($this->NO_ID);
                     return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
                 }
             }
@@ -146,7 +146,7 @@ class AdministratorController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
             }
         }
@@ -160,7 +160,7 @@ class AdministratorController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         try
@@ -173,7 +173,7 @@ class AdministratorController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Administrator not found");
+            $this->setErrorNoParam("Administrator not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         $this->cache->success = "Administrator was successfully deleted";
@@ -185,7 +185,7 @@ class AdministratorController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         try
@@ -195,7 +195,7 @@ class AdministratorController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Administrator not found");
+            $this->setErrorNoParam("Administrator not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
         }
         $this->addBreadcrumb(array("reference"=>"/admin/administrator/detail/id/{$administrator->id}", "name"=>" Administrator details"));

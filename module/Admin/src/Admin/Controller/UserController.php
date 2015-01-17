@@ -63,7 +63,7 @@ class UserController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         try
@@ -75,7 +75,7 @@ class UserController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("User not found");
+            $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         return $this->view;
@@ -105,8 +105,8 @@ class UserController extends IndexController
                 $name = str_replace(" ", "_", $formData["name"]);
                 $existingUser = $this->getTable("user")->fetchList(false, "name = '{$name}' AND id != '{$user->id}'");
                 $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."' AND id != '{$user->id}'");
-                (sizeof($existingUser) > 0 ? $this->errorNoParam($this->session->USERNAME_EXIST." <b>{$name}</b> ".$this->session->ALREADY_EXIST) : "");
-                (sizeof($existingEmail) > 0 ? $this->errorNoParam($this->session->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->session->ALREADY_EXIST) : "");
+                (sizeof($existingUser) > 0 ? $this->setErrorNoParam($this->session->USERNAME_EXIST." <b>{$name}</b> ".$this->session->ALREADY_EXIST) : "");
+                (sizeof($existingEmail) > 0 ? $this->setErrorNoParam($this->session->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->session->ALREADY_EXIST) : "");
 
                 if(sizeof($existingEmail) == 0 && sizeof($existingUser) == 0)
                 {
@@ -133,7 +133,7 @@ class UserController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'user'));
             }
         }
@@ -147,7 +147,7 @@ class UserController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         try
@@ -156,7 +156,7 @@ class UserController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("User not found");
+            $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         $this->cache->success = "User was successfully deleted";
@@ -181,7 +181,7 @@ class UserController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         try
@@ -191,7 +191,7 @@ class UserController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("User not found");
+            $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
         $this->addBreadcrumb(array("reference"=>"/admin/user/detail/id/{$user->id}", "name"=>"User &laquo;". $user->toString()."&raquo; details"));

@@ -16,7 +16,7 @@ class Menu implements InputFilterAwareInterface
      *
      * @var $_serviceManager ServiceManager 
      */
-    private $_serviceManager;
+    private $_serviceManager = null;
 
     /**
      * @param Int $_id
@@ -51,9 +51,12 @@ class Menu implements InputFilterAwareInterface
 
     private $_menulink = null;
     
-    public function setServiceManager(ServiceManager $sm)
+    public function setServiceManager($sm = null)
     {
-        $this->_serviceManager = $sm;
+        if ($sm instanceof ServiceManager || $sm === null)
+        {
+            $this->_serviceManager = $sm;
+        }
     }
 
     public function exchangeArray(array $data)
@@ -593,6 +596,7 @@ class Menu implements InputFilterAwareInterface
         $clone->setDescription($this->_description);
         $clone->setMenuType($this->_menutype);
         $clone->setFooterColumn($this->_footercolumn);
+        $clone->setMenuLink($this->_menulink);
         return $clone;
     }
     

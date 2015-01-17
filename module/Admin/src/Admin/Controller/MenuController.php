@@ -78,7 +78,7 @@ class MenuController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
         }
         try
@@ -87,7 +87,7 @@ class MenuController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Menu was not found");
+            $this->setErrorNoParam("Menu was not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
         }
         $this->view->menu = $menu;
@@ -153,7 +153,7 @@ class MenuController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
         }
         try
@@ -180,7 +180,7 @@ class MenuController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(! $id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
         }
         try

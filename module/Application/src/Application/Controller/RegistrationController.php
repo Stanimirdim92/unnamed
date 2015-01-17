@@ -18,7 +18,7 @@ class RegistrationController extends IndexController
     {
         if(!$this->getRequest()->isPost())
         {
-            $this->errorNoParam();
+            $this->setErrorNoParam();
         }
 
         $form = new RegistrationForm(array('action' => '/registration/processregistration','method' => 'post'));
@@ -29,7 +29,7 @@ class RegistrationController extends IndexController
         {
             $formData = $form->getData();
             $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
-            (count($existingEmail) > 0 ? $this->errorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
+            (count($existingEmail) > 0 ? $this->setErrorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
             
             if(count($existingEmail) === 0)
             {
@@ -62,7 +62,7 @@ class RegistrationController extends IndexController
                     $error[] = $value;
                 }
             }
-            $this->errorNoParam($error);
+            $this->setErrorNoParam($error);
             return $this->redirect()->toUrl("/registration");
         }
     }

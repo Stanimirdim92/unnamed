@@ -69,7 +69,7 @@ class TermCategoryController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
         try
@@ -81,7 +81,7 @@ class TermCategoryController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term category not found");
+            $this->setErrorNoParam("Term category not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
         return $this->view;
@@ -126,7 +126,7 @@ class TermCategoryController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
             }
         }
@@ -140,7 +140,7 @@ class TermCategoryController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
         try
@@ -149,7 +149,7 @@ class TermCategoryController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term category not found");
+            $this->setErrorNoParam("Term category not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
         $this->cache->success = "Term category was successfully deleted";

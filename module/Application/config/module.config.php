@@ -15,12 +15,13 @@ return array(
             'application' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route' => '/[:controller[/][:action[/id/:id][/page/:page]]]',
+                    'route' => '/[:controller[/][:action[/id/:id][/page/:page][/search/:search]]]',
                     'constraints' => array(
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
                         'page'       => '[0-9]+',
+                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*'
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
@@ -29,16 +30,16 @@ return array(
                     ),
                 ),
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
+                'child_routes'  => array(
+                    'default'   => array(
                         'type'    => 'Wildcard',
                         'options' => array(
                         ),
                     ),
                 ),
             ),
-            'contact' => array(
-                'type' => 'Segment',
+            'contact'     => array(
+                'type'    => 'Segment',
                 'options' => array(
                     'route'    => '/contact',
                     'defaults' => array(
@@ -81,9 +82,9 @@ return array(
                     'constraints' => array(
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id' => '[0-9]+',
-                        'page' => '[0-9]+',
-                        'search' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                        'id'         => '[0-9]+',
+                        'page'       => '[0-9]+',
+                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*'
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Admin\Controller',
@@ -115,8 +116,8 @@ return array(
             'layout/error-layout'     => __DIR__ . '/../../Application/view/layout/error-layout.phtml',
         ),
         'template_path_stack' => array(
-            'Admin'         => __DIR__ . '/../../Admin/view',
-            'Application'   => __DIR__ . '/../../Application/view',
+            'Admin'           => __DIR__ . '/../../Admin/view',
+            'Application'     => __DIR__ . '/../../Application/view',
         ),
         'strategies' => array(
             'ViewJsonStrategy',

@@ -41,8 +41,14 @@
         <link rel="stylesheet" media="screen" href="/front/css/style.css">
     </head>
     <body>
-        <?php echo $this->layout()->content;?>
         <?php
+            foreach($view->menus as $key => $menu)
+            {   
+                $menu->setServiceManager(null);
+                echo \Zend\Debug\Debug::dump($menu, null, false);
+            }
+            echo $this->layout()->content;
+
             if(!empty($view->cache->warning))
             {
                 foreach ($view->cache->warning as $value)

@@ -79,7 +79,7 @@ class TermController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
         try
@@ -91,7 +91,7 @@ class TermController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term not found");
+            $this->setErrorNoParam("Term not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
         return $this->view;
@@ -138,7 +138,7 @@ class TermController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'term'));
             }
         }
@@ -152,7 +152,7 @@ class TermController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
         try
@@ -161,7 +161,7 @@ class TermController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term not found");
+            $this->setErrorNoParam("Term not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
         $this->cache->success = "Term was successfully saved";

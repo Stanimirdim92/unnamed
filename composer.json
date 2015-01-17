@@ -8,10 +8,10 @@
         "zendpress",
         "zp"
     ],
-    "homepage": "zendpress.com",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zendframework": "2.3.*"
+        "zendframework/zendframework": "2.3.*",
+        "phpsec/phpsec":"0.6.*"
     },
     "autoload": {
         "psr-4":{

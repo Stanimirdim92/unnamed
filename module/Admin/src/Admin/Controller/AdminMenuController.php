@@ -82,7 +82,7 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         try
@@ -94,7 +94,7 @@ class AdminMenuController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Admin menu not found");
+            $this->setErrorNoParam("Admin menu not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         return $this->view;
@@ -136,7 +136,7 @@ class AdminMenuController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
             }
         }
@@ -150,7 +150,7 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         try
@@ -159,7 +159,7 @@ class AdminMenuController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Admin menu not found");
+            $this->setErrorNoParam("Admin menu not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         $this->cache->success = "Admin menu was successfully deleted";
@@ -171,7 +171,7 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         try
@@ -180,7 +180,7 @@ class AdminMenuController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Admin menu not found");
+            $this->setErrorNoParam("Admin menu not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
         }
         $this->view->adminmenu = $adminmenu;

@@ -75,7 +75,7 @@ class LanguageController extends IndexController
         $id = $this->getParam("id", 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         try
@@ -87,7 +87,7 @@ class LanguageController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Language not found");
+            $this->setErrorNoParam("Language not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         return $this->view;
@@ -132,7 +132,7 @@ class LanguageController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'language'));
             }
         }
@@ -146,7 +146,7 @@ class LanguageController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         try
@@ -155,7 +155,7 @@ class LanguageController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Language not found");
+            $this->setErrorNoParam("Language not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         $this->cache->success = "Language was successfully deleted";
@@ -167,7 +167,7 @@ class LanguageController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         try
@@ -177,7 +177,7 @@ class LanguageController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Language not found");
+            $this->setErrorNoParam("Language not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'language'));
         }
         $this->addBreadcrumb(array("reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"));

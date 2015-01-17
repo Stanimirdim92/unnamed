@@ -63,7 +63,7 @@ class CurrencyController extends IndexController
         $id = $this->getParam("id", 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
         try
@@ -75,7 +75,7 @@ class CurrencyController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Currency not found");
+            $this->setErrorNoParam("Currency not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
         return $this->view;
@@ -120,7 +120,7 @@ class CurrencyController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
             }
         }
@@ -134,7 +134,7 @@ class CurrencyController extends IndexController
     //     $id = (int) $this->getParam('id', 0);
     //     if(!$id)
     //     {
-    //         $this->errorNoParam($this->NO_ID);
+    //         $this->setErrorNoParam($this->NO_ID);
     //         return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
     //     }
     //     try
@@ -143,7 +143,7 @@ class CurrencyController extends IndexController
     //     }
     //     catch(\Exception $ex)
     //     {
-    //         $this->errorNoParam("Currency not found");
+    //         $this->setErrorNoParam("Currency not found");
     //         return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
     //     }
     //     $this->cache->success = "Currency was successfully deleted";
@@ -155,7 +155,7 @@ class CurrencyController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
         try
@@ -165,7 +165,7 @@ class CurrencyController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Currency not found");
+            $this->setErrorNoParam("Currency not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
         $this->addBreadcrumb(array("reference"=>"/admin/currency/detail/id/{$curr->id}", "name"=>"currency &laquo;". $curr->toString()."&raquo; details"));

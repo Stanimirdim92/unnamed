@@ -245,7 +245,7 @@ class IndexController extends AbstractActionController
      * @param null $message holds the generated error(s)
      * @return string|array
      */
-    protected function errorNoParam($message = null)
+    protected function setErrorNoParam($message = null)
     {
         if(!empty($message))
         {

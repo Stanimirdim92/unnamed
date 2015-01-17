@@ -41,8 +41,8 @@ class ProfileController extends IndexController
                 // $name = str_replace(" ", "_", $formData["name"]);
                 // $existingUser = $this->getTable("user")->fetchList(false, "name = '{$name}' AND id != '{$user->id}'");
                 $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."' AND id != '{$user->id}'");
-                // (count($existingUser) > 0 ? $this->errorNoParam($this->translation->NAME_EXIST." <b>{$name}</b> ".$this->translation->ALREADY_EXIST) : "");
-                (count($existingEmail) > 0 ? $this->errorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
+                // (count($existingUser) > 0 ? $this->setErrorNoParam($this->translation->NAME_EXIST." <b>{$name}</b> ".$this->translation->ALREADY_EXIST) : "");
+                (count($existingEmail) > 0 ? $this->setErrorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
 
                 if(count($existingEmail) === 0 /*&& count($existingUser) == 0*/)
                 {
@@ -76,7 +76,7 @@ class ProfileController extends IndexController
                         $error[] = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toUrl("/");
             }
         }

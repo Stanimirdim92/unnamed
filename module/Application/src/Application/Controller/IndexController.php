@@ -60,16 +60,14 @@ class IndexController extends AbstractActionController
         $this->initViewVars();
 
         // Store all menus in a variable for the front page
-        $temp = $this->getTable("Menu")->fetchList(false, "parent='0' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
-        $menus = $submenus = array();
-        $menuId = $submenuId = null;
+        $temp = $this->getTable("Menu")->fetchList(false, "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $submenus = array();
 
         foreach($temp as $m)
         {
-            $menus[] = $m;
             $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . (int) $m->id."' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
         }
-        $this->view->menus = $menus;
+        $this->view->menus = $temp;
         $this->view->submenus = $submenus;
         return $this->view;
     }
@@ -101,6 +99,7 @@ class IndexController extends AbstractActionController
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
+        $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->controllerShort = strtolower('__CONTROLLER__');
         $this->view->controllerLong = $this->params('controller');
         $this->view->action = $this->params('action');
@@ -117,11 +116,6 @@ class IndexController extends AbstractActionController
         {
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
-        }
-        else
-        {
-            $this->view->language = $this->getTable("Language")->getLanguage($this->translation->language);
-            $this->translation = Functions::initTranslations($this->translation->language);
         }
     }
 
@@ -151,25 +145,15 @@ class IndexController extends AbstractActionController
      */
     protected function checkIdentity()
     {
-        if(isset($this->cache->user) && $this->cache->user instanceof \Admin\Model\User)
+        $auth = new \Zend\Authentication\AuthenticationService();
+        if($auth->hasIdentity())
         {
-            $auth = new \Zend\Authentication\AuthenticationService();
-            if($auth->hasIdentity())
+            if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
+                (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
             {
-                if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
-                    (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
-                {
-                    return $this->redirect()->toUrl("/");
-                }
-                else
-                {
-                    $this->clearUser();
-                }
+                return $this->redirect()->toUrl("/");
             }
-            else
-            {
-                $this->clearUser();
-            }
+            $this->clearUser();
         }
     }
 
@@ -211,7 +195,7 @@ class IndexController extends AbstractActionController
      * @param null $message holds the generated error(s)
      * @return string|array
      */
-    protected function errorNoParam($message = null)
+    protected function setsetErrorNoParam($message = null)
     {
         if(!empty($message))
         {
@@ -321,14 +305,11 @@ class IndexController extends AbstractActionController
                 $formData = $form->getData();
                 $to = "stanimirdim92@gmail.com"; // must be set from db
                 $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
-                if ($result)
-                {
-                    $this->cache->success = $this->translation->CONTACT_SUCCESS;
-                }
-                else
+                if (!$result)
                 {
                     $this->cache->error = $this->translation->CONTACT_ERROR;
                 }
+                $this->cache->success = $this->translation->CONTACT_SUCCESS;
                 return $this->redirect()->toUrl("/contact");
             }
             else
@@ -341,7 +322,7 @@ class IndexController extends AbstractActionController
                         $error[] = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toUrl("/contact");
             }
         }

@@ -60,7 +60,7 @@ class TermTranslationController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
         try
@@ -72,7 +72,7 @@ class TermTranslationController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term translation not found");
+            $this->setErrorNoParam("Term translation not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
         return $this->view;
@@ -145,7 +145,7 @@ class TermTranslationController extends IndexController
                         $error = $value;
                     }
                 }
-                $this->errorNoParam($error);
+                $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
             }
         }
@@ -157,7 +157,7 @@ class TermTranslationController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if(!$id)
         {
-            $this->errorNoParam($this->NO_ID);
+            $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
         try
@@ -166,7 +166,7 @@ class TermTranslationController extends IndexController
         }
         catch(\Exception $ex)
         {
-            $this->errorNoParam("Term translation not found");
+            $this->setErrorNoParam("Term translation not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
         $this->cache->success = "Term translation was successfully deleted";
