@@ -109,15 +109,15 @@ return array(
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'layout/error-layout',
         'exception_template'       => 'layout/error-layout',
-        // This will be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
+        // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
         // 'default_template_suffix' => 'php',
         'template_map' => array(
             'application/layout'      => __DIR__ . '/../../Application/view/layout/layout.phtml',
             'layout/error-layout'     => __DIR__ . '/../../Application/view/layout/error-layout.phtml',
         ),
         'template_path_stack' => array(
-            'Admin'           => __DIR__ . '/../../Admin/view',
             'Application'     => __DIR__ . '/../../Application/view',
+            'Admin'           => __DIR__ . '/../../Admin/view',
         ),
         'strategies' => array(
             'ViewJsonStrategy',

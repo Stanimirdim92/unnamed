@@ -1,18 +1,9 @@
 <?php
 $children = $this->viewModel()->getCurrent()->getChildren();
 $view = $children[0];
-$langName = "";
-if (isset($view->lang->name))
-{
-    $langName = $view->lang->name;
-}
-else
-{
-    $langName = "en";
-}
 ?>
 <!doctype html>
-<html lang="<?=$langName?>" class="no-js">
+<html lang="en" class="no-js">
     <head>
         <meta charset="utf-8">
         <title><?=$view->webTitle?></title>
@@ -34,51 +25,57 @@ else
         <div class="breadcrumbs">
             <ul>
             <?php
-            if(isset($view->breadcrumbs))
-            {
                 foreach($view->breadcrumbs as $bread)
                 {
                     echo "<li><a title='".$bread['name']."' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
                 }
-            }
             ?>
             </ul>
         </div>
-        <?php echo $this->layout()->content;?>
+        <?php 
+            echo $this->layout()->content;
     
-        <?php
-            if(isset($view->cache) && $view->cache->warning && $view->cache->warning!="")
+            if(!empty($view->cache->warning))
             {
+                foreach ($view->cache->warning as $value)
+                {
         ?>
-              <div class="alert alert-warning fade in">
+              <div class="alert alert-warning">
                 <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                <i class="fa-fw fa fa-warning"></i> <p><?=$view->cache->warning?></p>
+                <i class="fa-fw fa fa-warning"></i> <?=$value?>
               </div>
         <?php
+                }
                 $view->cache->warning = null;
-              }
-              if(isset($view->cache) && $view->cache->success && $view->cache->success!="")
-              {
+            }
+            
+            if(!empty($view->cache->success))
+            {
+                foreach ($view->cache->success as $value)
+                {
         ?>
-              <div class="alert alert-success fade in">
+              <div class="alert alert-success">
                 <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                <i class="fa-fw fa fa-check"></i> <p><?=$view->cache->success?></p>
+                <i class="fa-fw fa fa-check"></i> <?=$value?>
               </div>
         <?php
-                //reset the message after showing once
+                }
                 $view->cache->success = null;
-              }
+            }
               
-              if(isset($view->cache) && $view->cache->error && $view->cache->error!="")
-              {
+            if(!empty($view->cache->error))
+            {
+                foreach ($view->cache->error as $value)
+                {
         ?>
-              <div class="alert alert-danger fade in">
+              <div class="alert alert-danger">
                 <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                <i class="fa-fw fa fa-times"></i> <p><?=$view->cache->error?></p>
+                <i class="fa-fw fa fa-times"></i> <?=$value?>
               </div>
         <?php
+                }
                 $view->cache->error = null;
-              }
+            }
         ?>
         <script src="/front/js/jquery.min.js"></script>
         <script defer src="/back/js/custom.js"></script>

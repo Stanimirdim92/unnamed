@@ -23,20 +23,21 @@ use Admin\Model\MenuTable;
 use Admin\Controller\ErrorHandling as ErrorHandlingService;
 use Admin\View\Helper;
 
+use Zend\Session\Container;
+
+use Zend\Log\Logger;
+use Zend\Log\Writer\Stream as LogWriterStream;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Log\Logger;
-use Zend\Session\Container;
-use Zend\Log\Writer\Stream as LogWriterStream;
+
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
-
-use Zend\EventManager\EventInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use Zend\Http\PhpEnvironment\RemoteAddress;
+use Zend\EventManager\EventInterface;
 
 use Custom\Error\AuthorizationException;
 
@@ -47,66 +48,67 @@ class Module implements Feature\AutoloaderProviderInterface,
 {
     /**
      * make sure to log errors and redirect to admin index
-     * @param Event $e
+     * @param \Zend\Mvc\MvcEvent $e
      */
     public function onBootstrap(EventInterface $e)
     {
         $application = $e->getTarget();
         $eventManager = $application->getEventManager();
         $services = $application->getServiceManager();
+        $req = $services->get("Request");
 
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $event) use ($services)
-        {
-            $request  = $event->getRequest();
-            $response = $event->getResponse();
+        // $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $event) use ($services)
+        // {
+        //     $request  = $event->getRequest();
+        //     $response = $event->getResponse();
 
-            // Not HTTP? Kill it before it lays eggs!
-            if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
-            {
-                $response->setStatusCode(500);
-                $event->setResult($response);
-                $response->sendHeaders();
-                $event->stopPropagation();
-            }
+        //     // Not HTTP? Kill it before it lays eggs!
+        //     if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
+        //     {
+        //         $response->setStatusCode(500);
+        //         $event->setResult($response);
+        //         $response->sendHeaders();
+        //         $event->stopPropagation();
+        //     }
 
-            if (strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
-            {
-                $authAdapter = $services->get('Admin\AuthenticationAdapter');
-                $authAdapter->setRequest($request);
-                $authAdapter->setResponse($response);
-                $result = $authAdapter->authenticate();
-                if ($result->isValid())
-                {
-                    $ok = false;
-                    $identity = $result->getIdentity();
-                    $file = file_get_contents($_SERVER["DOCUMENT_ROOT"].'../../config/autoload/real/basic_passwd.txt');
-                    $lines = explode("\n", $file);
+        //     if (strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
+        //     {
+        //         $authAdapter = $services->get('Admin\AuthenticationAdapter');
+        //         $authAdapter->setRequest($request);
+        //         $authAdapter->setResponse($response);
+        //         $result = $authAdapter->authenticate();
+        //         if ($result->isValid())
+        //         {
+        //             $ok = false;
+        //             $identity = $result->getIdentity();
+        //             $file = file_get_contents($_SERVER["DOCUMENT_ROOT"].'../../config/autoload/real/basic_passwd.txt');
+        //             $lines = explode("\n", $file);
 
-                    foreach ($lines as $value)
-                    {
-                        $str = explode(":", $value);
-                        if ($identity["username"] == $str[0] && $identity["realm"] == "admin")
-                        {
-                            $ok = true;
-                            break;
-                        }
-                    }
-                    if ($ok)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        $service = $services->get('AdminErrorHandling');
-                        $service->logException("add msg");
-                        $response->setStatusCode(HttpResponse::STATUS_CODE_401);
-                        $event->setResult($response);
-                        $response->sendHeaders();
-                        $event->stopPropagation();
-                    }
-                }
-            }
-        });
+        //             foreach ($lines as $value)
+        //             {
+        //                 $str = explode(":", $value);
+        //                 if ($identity["username"] == $str[0] && $identity["realm"] == "admin")
+        //                 {
+        //                     $ok = true;
+        //                     break;
+        //                 }
+        //             }
+        //             if ($ok)
+        //             {
+        //                 return true;
+        //             }
+        //             else
+        //             {
+        //                 $service = $services->get('AdminErrorHandling');
+        //                 $service->logException("add msg");
+        //                 $response->setStatusCode(HttpResponse::STATUS_CODE_401);
+        //                 $event->setResult($response);
+        //                 $response->sendHeaders();
+        //                 $event->stopPropagation();
+        //             }
+        //         }
+        //     }
+        // });
 
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($services)
         {
@@ -150,10 +152,10 @@ class Module implements Feature\AutoloaderProviderInterface,
                         IP: " . $remote->getIpAddress() . ",
                         Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
                         Date: " . date("Y-m-d H:i:s", time()) . ",
-                        Full URL: ".$_SERVER["REQUEST_URI"].",
+                        Full URL: ".$req->getRequestUri().",
                         User port: ".$_SERVER["REMOTE_PORT"].",
                         Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                        Method used: " . $_SERVER['REQUEST_METHOD'] . "\n";
+                        Method used: " . $req->getMethod() . "\n";
                         $service->logAuthorisationError($message);
                         $controllerRedirect->plugin('redirect')->toUrl("/");
                     }
@@ -354,7 +356,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Menu(null, $sm));
+                    $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $sm));
                     return new TableGateway('menu', $dbAdapter, null, $resultSetPrototype);
                 },
             ),

@@ -101,6 +101,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
         $sm = $app->getServiceManager();
+        $req = $sm->get("Request");
 
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
@@ -155,10 +156,10 @@ class Module implements Feature\AutoloaderProviderInterface,
                         IP: " . $remote->getIpAddress() . ",
                         Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
                         Date: " . date("Y-m-d H:i:s", time()) . ",
-                        Full URL: ".$_SERVER["REQUEST_URI"].",
+                        Full URL: ".$req->getRequestUri().",
                         User port: ".$_SERVER["REMOTE_PORT"].",
                         Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                        Method used: " . $_SERVER['REQUEST_METHOD'] . "\n";
+                        Method used: " . $req->getMethod() . "\n";
                         $service->logAuthorisationError($message);
                     }
                     else

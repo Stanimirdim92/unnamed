@@ -19,6 +19,17 @@ class MenuTable
         $this->_tableGateway = $sm->get("MenuTableGateway");
     }
 
+    /**
+     * Main function for handlin MySQL queries
+     *
+     * @param  bool   $paginated should we use pagination or no
+     * @param  null $where     WHERE condition
+     * @param  null $order     ORDER condition
+     * @param  null $limit     LIMIT condition
+     * @param  null $offset    OFFSET condition
+     *
+     * @return ResultSet
+     */
     public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
     {
         if($paginated)
@@ -33,7 +44,7 @@ class MenuTable
             if($offset!=null)
                 $select->offset($offset);
             $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new Menu(null, $this->_serviceManager));
+            $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($select,$this->_tableGateway->getAdapter(),$resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
@@ -60,15 +71,15 @@ class MenuTable
      * Fetch all records from the DB by joining them
      * @param string $join
      * @param string $on
-     * @param string $where
-     * @param string $order
-     * @param string $limit
-     * @param string $offset
+     * @param null $where
+     * @param null $order
+     * @param null $limit
+     * @param null $offset
      * @return unknown
      */
     public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->_tableGateway->select(function(Select $select)  use ($join, $on, $where, $order, $limit, $offset)
+        $resultSet = $this->_tableGateway->select(function(Select $select) use ($join, $on, $where, $order, $limit, $offset)
         {
             //when joining rename all columns from the joined table in order to avoid name clash
             //this means when both tables have a column id the second table will have id renamed to id1
@@ -86,37 +97,45 @@ class MenuTable
     }
     
     /**
+     * @param int $id menu id
      * @return Menu
      */
     public function getMenu($id = 0)
     {
         $id  = (int) $id;
         $rowset = $this->_tableGateway->select(array('id' => $id));
-        $row = $rowset->current();
-        if (!$row) 
+        if (!$rowset->current()) 
         {
             throw new \Exception();
         }
-        return $row;
+        return $rowset->current();
     }
 
+    /**
+     * @param int $id menu id
+     * @return Menu
+     */
     public function deleteMenu($id = 0)
     {
         $this->_tableGateway->delete(array('id' => (int) $id));
     }
-    
+
+    /**
+     * @param Menu $menu
+     * @return Menu
+     */
     public function saveMenu(Menu $menu)
     {
         $data = array(
-            'caption' => (string) $menu->caption,
-            'menuOrder' => (int) $menu->menuOrder,
-            'language' => (int) $menu->language,
-            'parent' => (int) $menu->parent,
-            'keywords' => (string) $menu->keywords,
-            'description' => (string) $menu->description,
-            'menutype' => (int) $menu->menutype,
+            'caption'      => (string) $menu->caption,
+            'menuOrder'    => (int) $menu->menuOrder,
+            'language'     => (int) $menu->language,
+            'parent'       => (int) $menu->parent,
+            'keywords'     => (string) $menu->keywords,
+            'description'  => (string) $menu->description,
+            'menutype'     => (int) $menu->menutype,
             'footercolumn' => (int) $menu->footercolumn,
-            'menulink' => (string) $menu->menulink,
+            'menulink'     => (string) $menu->menulink,
         );
         $id = (int)$menu->id;
         if ($id === 0) 
@@ -133,7 +152,11 @@ class MenuTable
             
         return $menu;
     }
-    
+
+    /**
+     * @param int $id menu id
+     * @return Menu
+     */
     public function duplicate($id)
     {
         $menu = $this->getMenu($id);

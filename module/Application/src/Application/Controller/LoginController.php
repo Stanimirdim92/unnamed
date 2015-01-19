@@ -5,7 +5,6 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
-use Application\Controller\IndexController;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 use Application\Model\ResetPassword;
@@ -15,7 +14,7 @@ use Custom\Plugins\Mailing;
 use Custom\Plugins\Functions;
 use Custom\Error\AuthorizationException;
 
-class LoginController extends IndexController
+class LoginController extends \Application\Controller\IndexController
 {
     /**
      * User access
@@ -30,7 +29,7 @@ class LoginController extends IndexController
     /**
      * @var Zend\Db\Adapter\Adapter
      */
-    private $adapter;
+    private $adapter = null;
 
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -61,6 +60,7 @@ class LoginController extends IndexController
             $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
             return $bcrypt->verify($passwordProvided, $passwordInDatabase);
         };
+
         $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
         $authAdapter->setIdentity($options[$identity]);
         $authAdapter->setCredential($options[$credential]);
@@ -258,7 +258,7 @@ class LoginController extends IndexController
                     $this->getTable("resetpassword")->saveResetPassword($resetpw);
 
                     $message = $this->translation->NEW_PW_TEXT." ".$_SERVER["SERVER_NAME"]."/login/newpassword/id/{$token}";
-                    $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@localhost", $_SERVER["SERVER_NAME"]);
+                    $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@".$_SERVER["SERVER_NAME"], $_SERVER["SERVER_NAME"]);
                     if (!$result)
                     {
                         $this->cache->error = $this->translation->EMAIL_NOT_SENT;

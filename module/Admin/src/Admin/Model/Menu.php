@@ -19,38 +19,69 @@ class Menu implements InputFilterAwareInterface
     private $_serviceManager = null;
 
     /**
-     * @param Int $_id
+     * @var Int $_id
      * @return int
      */
     private $_id = 0;
 
-
+    /**
+     * @var null $_caption
+     * @return string
+     */
     private $_caption = null;
 
-
+    /**
+     * @var Int $_menuOrder
+     * @return int
+     */
     private $_menuOrder = 0;
 
-
+    /**
+     * @var null $_language
+     * @return int
+     */
     private $_language = null;
 
-
+    /**
+     * @var Int $_parent
+     * @return int
+     */
     private $_parent = 0;
 
-
+    /**
+     * @var null $_keywords
+     * @return string
+     */
     private $_keywords = null;
 
-
+    /**
+     * @var null $_description
+     * @return string
+     */
     private $_description = null;
 
-
+    /**
+     * @var Int $_menutype
+     * @return int
+     */
     private $_menutype = 0;
 
-
+    /**
+     * @var Int $_footercolumn
+     * @return int
+     */
     private $_footercolumn = 0;
 
-
+    /**
+     * @var null $_id
+     * @return string
+     */
     private $_menulink = null;
     
+    /**
+     * @var null $sm
+     * @return ServiceManager
+     */
     public function setServiceManager($sm = null)
     {
         if ($sm instanceof ServiceManager || $sm === null)
@@ -59,6 +90,10 @@ class Menu implements InputFilterAwareInterface
         }
     }
 
+    /**
+     * @var array $data
+     * @return mixed
+     */
     public function exchangeArray(array $data)
     {
         $this->_id = (isset($data['id'])) ? $data['id'] : null;
@@ -76,16 +111,10 @@ class Menu implements InputFilterAwareInterface
     /**
      * constructor
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options, ServiceManager $sm)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
-            $this->exchangeArray($options);
-        }
-        if($sm!=null)
-        {
-            $this->_serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
+        $this->_serviceManager = $sm;
     }
     
     /**

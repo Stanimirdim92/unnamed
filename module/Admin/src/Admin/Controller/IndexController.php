@@ -1,7 +1,6 @@
 <?php
 namespace Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Cache\Storage\Adapter\Session;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -9,31 +8,34 @@ use Zend\Session\Container;
 use Custom\Error\AuthorizationException;
 use Custom\Plugins\Functions;
 
-class IndexController extends AbstractActionController
+class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 {
     /**
-     * @param null $cache holds any other session information, contains warning,success and error vars that are shown just once and then reset
-     * @return unknown
+     * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
+     * @return Zend\Session\Container|mixed
      */
-    public $cache = null;
+    protected $cache = null;
 
     /**
-     * @param null $view creates instance to view model
-     * @return Zend\View\Model\ViewModel Zend View Model
+     * @var null $view creates instance to view model
+     * @return Zend\View\Model\ViewModel
      */
-    public $view = null;
+    protected $view = null;
 
     /**
-     * @param null $translation holds language data as well as all terms
-     * @return Int|String
+     * @var null $translation holds language data as well as all translations
+     * @return Zend\Session\Container
      */
-    public $translation = null;
+    protected $translation = null;
+    protected $langTranslation = null;
     
     /**
-     * @param array $breadcrumbs returns an array with links with the current user position on the website
+     * @var array $breadcrumbs returns an array with links with the current user position on the website
      * @return Array
      */
-    public $breadcrumbs = array();
+    protected $breadcrumbs = array();
+
+    const NO_ID = 'no_id';
 
     /**
      * constructor
@@ -42,44 +44,34 @@ class IndexController extends AbstractActionController
     {
         $this->view = new ViewModel();
         $this->translation = new Container("translations");
-        $this->breadcrumbs[] = array("reference" => "/admin","name" => "Home");
+        $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
         $this->initCache();
+        // keeping it simple and DRY
+        $this->langTranslation = ((int) $this->translation->language ? (int) $this->translation->language : 1);
     }
 
     /**
      * Initialize any variables before controller actions
      *
      * @throws Exception\RuntimeException
-     * @param MvcEvent $e
+     * @param \Zend\Mvc\MvcEvent $e
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         // $this->initAdminIdentity();
         parent::onDispatch($e);
-        if(!class_exists("Admin\Model\Language"))
-        {
-            throw new Exception\RuntimeException($this->translation->LANGUAGE_CLASS_NOT_FOUND);
-        }
-        
+
         $this->initLanguages();
         $this->initViewVars();
         $this->initBreadcrumbs();
         $this->initMenus();
-        
-        $this->view->controller = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
-        $this->view->action = $this->params('action');
+
         return $this->view;
     }
 
-    /**
-     * @param String $name
-     * @return Ambigous <object, multitype:>
-     */
-    public function getTable($name)
-    {
-        return $this->getServiceLocator()->get($name."Table");
-    }
-
+/****************************************************
+ * START OF ALL INIT FUNCTIONS
+ ****************************************************/
     /** 
      * initialize breadcrumbs (if necessary)
      */
@@ -88,18 +80,18 @@ class IndexController extends AbstractActionController
         $this->view->breadcrumbs = $this->breadcrumbs;
     }
 
-    public function addBreadcrumb($breadcrumb)
-    {
-        $this->breadcrumbs[] = $breadcrumb;
-    }
-
-    /** 
+    /**
      * initialize any session variables in this method
+     * 
+     * @return Zend\Session\Container
      */
     public function initCache()
     {
-        $this->cache = new Container("cache");
-        $this->view->cache = $this->cache;
+        if (empty($this->cache))
+        {
+            $this->cache = new Container("cache");
+            $this->view->cache = $this->cache;
+        }
     }
 
     /**
@@ -107,17 +99,13 @@ class IndexController extends AbstractActionController
      */
     public function initViewVars()
     {
-        // session object
-        $this->view->session = $this->translation;
-
-        // all active languages
+        $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
-
-        // current language
-        $this->view->languageObject = $this->getTable("Language")->getLanguage($this->translation->language);
-
-        // current language id
-        $this->view->language = $this->translation->language;
+        $this->view->languageId = $this->langTranslation;
+        $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
+        $this->view->controllerShort = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
+        $this->view->controllerLong = $this->params('controller');
+        $this->view->action = $this->params('action');
     }
 
     /** 
@@ -126,8 +114,7 @@ class IndexController extends AbstractActionController
     public function initMenus()
     {
         $controller = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
-        $this->view->controller = $controller;
-        $action =  $this->params('action');
+        $action = $this->params('action');
         $this->view->action = $action;
         $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
         $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
@@ -137,88 +124,96 @@ class IndexController extends AbstractActionController
     }
 
     /** 
+     * initialize languages and language-related stuff like translations.
+     */
+    public function initLanguages()
+    {
+        $this->translation = new Container('translations');
+        if(empty($this->translation->language))
+        {
+            $this->translation->language = 1;
+            $this->translation = Functions::initTranslations($this->translation->language, true);
+        }
+    }
+/****************************************************
+ * START OF ALL MAIN/SHARED FUNCTIONS
+ ****************************************************/
+
+    public function addBreadcrumb(array $breadcrumb)
+    {
+        $this->breadcrumbs[] = $breadcrumb;
+    }
+
+    /**
+     * @param String $name
+     * @return Ambigous <object, multitype:>
+     */
+    public function getTable($name = null)
+    {
+        if (!is_string($name) || empty($name))
+        {
+            throw new Exception\InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
+        }
+        return $this->getServiceLocator()->get($name . "Table");
+    }
+
+    /** 
      * this function tries to retrieve the current menu based on controller and action
      * In theory it is impossible to have 2 menus with same set of controller and action
+     *
+     * @param  string $controller
+     * @param string $action
+     * @return null|AdminMenu
      */
     public function getSelectedMenu($controller, $action)
     {
         $temp = $this->getTable("AdminMenu")->fetchList(false, "controller='{$controller}' AND action='{$action}'", "parent DESC");
-        if(sizeof($temp) > 0)
+        if(count($temp) > 0)
         {
             return $temp->current();
         }
         else
         {
             $temp = $this->getTable("AdminMenu")->fetchList(false, "controller='{$controller}'", "parent ASC");
-            if(sizeof($temp) > 0) return $temp->current();
+            if(count($temp) > 0) return $temp->current();
         }
         return null;
     }
 
-    /** 
-     * initialize languages and language-related stuff like translations.
-     */
-    public function initLanguages()
-    {
-        $this->translation = new Container('translations');
+    // private function initAdminIdentity()
+    // {
+    //     $auth = new \Zend\Authentication\AuthenticationService();
+    //     if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
+    //     {
+    //         if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
+    //             (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
+    //         {
+    //             return $this->redirect()->toUrl("/");
+    //         }
+    //         $this->clearUser();
+    //     }
+    //     $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$this->cache->user->id}'");
+    //     if (sizeof($checkAdminExistence) == 1)
+    //     {
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         unset($checkAdminExistence);
+    //         $this->clearUser();
+    //     }
+    // }
 
-        if($this->translation->language == null)
-        {
-            $this->translation->language = 1;
-            $this->translation = Functions::initTranslations($this->translation->language, true);
-        }
-        else
-        {
-            $this->view->language = $this->getTable("Language")->getLanguage($this->translation->language);
-            $this->translation = Functions::initTranslations($this->translation->language, false);
-        }
-    }
-
-    public function indexAction()
-    {
-        return $this->view;
-    }
-
-    // check admin identity before initialize anything else
-    private function initAdminIdentity()
-    {
-        if (is_object($this->cache) && isset($this->cache) && $this->cache instanceof \Zend\Session\Container)
-        {
-            if(is_object($this->cache->user) && isset($this->cache->user) && $this->cache->user instanceof \Admin\Model\User)
-            {
-                if($this->cache->role == 10 && $this->cache->logged && $this->cache->user->admin == 1)
-                {
-                    $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$this->cache->user->id}'");
-                    if (sizeof($checkAdminExistence) == 1)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        unset($checkAdminExistence);
-                        $this->clearUser();
-                    }
-                }
-                else
-                {
-                    unset($checkAdminExistence);
-                    $this->clearUser();
-                }
-            }
-            $this->clearUser();
-        }
-    }
-
-    private function clearUser()
-    {
-        $this->cache->getManager()->getStorage()->clear();
-        $this->translation->getManager()->getStorage()->clear();
-        $this->cache = new Container("cache");
-        $this->translation = new Container("translations");
-        $authSession = new Container('ul');
-        $authSession->getManager()->getStorage()->clear();
-        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
-    }
+    // private function clearUser()
+    // {
+    //     $this->cache->getManager()->getStorage()->clear();
+    //     $this->translation->getManager()->getStorage()->clear();
+    //     $this->cache = new Container("cache");
+    //     $this->translation = new Container("translations");
+    //     $authSession = new Container('ul');
+    //     $authSession->getManager()->getStorage()->clear();
+    //     throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+    // }
 
     /**
      * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code
@@ -251,7 +246,7 @@ class IndexController extends AbstractActionController
         {
             $this->cache->error = $message;
         }
-        else if ($message === 'no_id')
+        else if ($message === static::NO_ID)
         {
             $this->cache->error = $this->translation->NO_ID_SET;
         }
@@ -260,6 +255,15 @@ class IndexController extends AbstractActionController
             $this->cache->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
+    }
+
+/****************************************************
+ * START OF ALL ACTION METHODS
+ ****************************************************/
+
+    public function indexAction()
+    {
+        return $this->view;
     }
 }
 ?>

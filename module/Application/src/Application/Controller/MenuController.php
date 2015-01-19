@@ -1,9 +1,7 @@
 <?php
 namespace Application\Controller;
 
-use Application\Controller\IndexController;
-
-class MenuController extends IndexController
+class MenuController extends \Application\Controller\IndexController
 {
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -13,20 +11,20 @@ class MenuController extends IndexController
     /**
      * Get the contents for the menu/submenu
      *
-     * @return mixed Object holding the menu text, name etc.
+     * @return Content
      */
     public function menuAction()
     {
-        $param = (string) $this->getParam("title");
+        $title = (string) $this->getParam("title");
 
-        if(empty($param))
+        if(empty($title))
         {
             $this->getResponse()->setStatusCode(404);
             $this->view->setTemplate('layout/error-layout');
             return $this->view;
         }
 
-        $menu = $this->matchSEOMenu($param);
+        $menu = $this->matchSEOMenu($title);
 
         if (!empty($menu["menu"]))
         {
@@ -38,30 +36,25 @@ class MenuController extends IndexController
         }
         else
         {
-            throw new \Exception("Oops, an error has occurred.");
+            throw new \Exception($this->translation->OOPS_ERROR);
         }
 
         $this->view->contents = $contents;
-        // $this->setMetaTags($contents);
+        $this->setMetaTags($contents);
         return $this->view;
     }
 
     /**
-     * @param  null $param is the menu/controller name passed as string from the URL
-     * @return array containting menu ids
+     * @param  null $title is the menu/controller name passed as string from the URL
+     * @return array containting menu/submenu ids
      */
-    private function matchSEOMenu($param = null)
+    private function matchSEOMenu($title = null)
     {
-        $matches = $this->getTable("Menu")->fetchList(false, "caption = '{$param}' AND language='".$this->langTranslation."'");
-        if (!$matches->current())
-        {
-            $param = str_replace(array("-","_"), array(" ","/"), $param);
-            $matches = $this->getTable("Menu")->fetchList(false, "caption LIKE '%{$param}%' AND language='".$this->langTranslation."'");
-        }
+        $matches = $this->getTable("Menu")->fetchList(false, "menulink = '{$title}' AND language='".$this->langTranslation."'");
 
         if(count($matches) === 1)
         {
-            $location = array("menu" => null, "submenu" => null);
+            $location = array("menu" => 0, "submenu" => 0);
 
             if($matches->current()->getParent())
             {

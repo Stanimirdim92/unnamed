@@ -1,12 +1,10 @@
 <?php
 namespace Application\Controller;
 
-use Application\Controller\IndexController;
 use Application\Form\RegistrationForm;
 use Custom\Plugins\Functions;
-use Zend\Http\PhpEnvironment\RemoteAddress;
 
-class RegistrationController extends IndexController
+class RegistrationController extends \Application\Controller\IndexController
 {
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -18,7 +16,7 @@ class RegistrationController extends IndexController
     {
         if(!$this->getRequest()->isPost())
         {
-            $this->setErrorNoParam();
+            return $this->redirect()->toUrl("/registration");
         }
 
         $form = new RegistrationForm(array('action' => '/registration/processregistration','method' => 'post'));
@@ -41,7 +39,7 @@ class RegistrationController extends IndexController
                     $registerUser->setPassword($pw);
                     $registerUser->setSalt("");
                     $registerUser->setRegistered(date("Y-m-d H:i:s", time()));
-                    $remote = new RemoteAddress();
+                    $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
                     $registerUser->setIp($remote->getIpAddress());
                     $registerUser->setEmail($formData['email']);
                     $registerUser->setLanguage($this->translation->language);

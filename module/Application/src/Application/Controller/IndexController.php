@@ -1,7 +1,6 @@
 <?php
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Cache\Storage\Adapter\Session;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -10,27 +9,29 @@ use Custom\Error\AuthorizationException;
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
 
-class IndexController extends AbstractActionController
+class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 {
     /**
-     * @param null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
+     * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
      * @return Zend\Session\Container|mixed
      */
-    public $cache = null;
+    protected $cache = null;
 
     /**
-     * @param null $view creates instance to view model
+     * @var null $view creates instance to view model
      * @return Zend\View\Model\ViewModel
      */
-    public $view = null;
+    protected $view = null;
 
     /**
-     * @param null $translation holds language data as well as all translations
+     * @var null $translation holds language data as well as all translations
      * @return Zend\Session\Container
      */
-    public $translation = null;
-    public $langTranslation = null;
+    protected $translation = null;
+    protected $langTranslation = null;
     
+    const NO_ID = 'no_id';
+
     /**
      * constructor
      */
@@ -45,6 +46,7 @@ class IndexController extends AbstractActionController
 
     /**
      * Initialize any variables before controller actions
+     * 
      * @param \Zend\Mvc\MvcEvent $e
      * @throws Exception\RuntimeException
      */
@@ -52,23 +54,9 @@ class IndexController extends AbstractActionController
     {
         parent::onDispatch($e);
 
-        if(!class_exists("Admin\Model\Language"))
-        {
-            throw new Exception\RuntimeException($this->translation->LANGUAGE_CLASS_NOT_FOUND);
-        }
         $this->initLanguages();
         $this->initViewVars();
-
-        // Store all menus in a variable for the front page
-        $temp = $this->getTable("Menu")->fetchList(false, "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
-        $submenus = array();
-
-        foreach($temp as $m)
-        {
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "parent='" . (int) $m->id."' AND menutype='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
-        }
-        $this->view->menus = $temp;
-        $this->view->submenus = $submenus;
+        $this->initMenus();
         return $this->view;
     }
 
@@ -100,10 +88,10 @@ class IndexController extends AbstractActionController
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
         $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controllerShort = strtolower('__CONTROLLER__');
+        $this->view->controllerShort = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
         $this->view->controllerLong = $this->params('controller');
         $this->view->action = $this->params('action');
-        $this->view->baseURL = $this->getRequest()->getRequestUri();
+        $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
     }
 
     /** 
@@ -117,6 +105,22 @@ class IndexController extends AbstractActionController
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
         }
+    }
+
+    /**
+     * initialize all menus for the front page
+     */
+    public function initMenus()
+    {
+        $temp = $this->getTable("Menu")->fetchList(false, "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $submenus = array();
+
+        foreach($temp as $m)
+        {
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "(parent='" . (int) $m->id."' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+        }
+        $this->view->menus = $temp;
+        $this->view->submenus = $submenus;
     }
 
 /****************************************************
@@ -146,7 +150,7 @@ class IndexController extends AbstractActionController
     protected function checkIdentity()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
-        if($auth->hasIdentity())
+        if($auth->hasIdentity() && $this->cache->user instanceof \Admin\Model\User)
         {
             if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
                 (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
@@ -195,13 +199,13 @@ class IndexController extends AbstractActionController
      * @param null $message holds the generated error(s)
      * @return string|array
      */
-    protected function setsetErrorNoParam($message = null)
+    protected function setErrorNoParam($message = null)
     {
         if(!empty($message))
         {
             $this->cache->error = $message;
         }
-        else if ($message === 'no_id')
+        else if ($message === static::NO_ID)
         {
             $this->cache->error = $this->translation->NO_ID_SET;
         }
@@ -213,7 +217,7 @@ class IndexController extends AbstractActionController
     }
 
 // not done
-    public function setMetaTags($obj = null, $isPage = true)
+    public function setMetaTags($obj = null, $page = true)
     {
         // $description = $keywords = $extract = $preview = $title = null;
 

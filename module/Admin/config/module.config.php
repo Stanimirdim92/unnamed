@@ -11,6 +11,8 @@ return array(
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'layout/error-layout',
         'exception_template'       => 'layout/error-layout',
+        // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
+        // 'default_template_suffix' => 'php',      
         'template_map' => array(
             'error/404'               => __DIR__ . '/../../Application/view/layour/error-layout.phtml',
             'error/index'             => __DIR__ . '/../../Application/view/layour/error-layout.phtml',

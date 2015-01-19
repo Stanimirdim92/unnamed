@@ -4,28 +4,16 @@ namespace Admin\Controller;
 use Zend\Session\Container;
 use Zend\File\Transfer\Adapter\Http;
 
-use Admin\Controller\IndexController;
 use Admin\Model\Menu;
 use Admin\Form\MenuForm;
 
 use Custom\Error\AuthorizationException;
 
 
-class MenuController extends IndexController
+class MenuController extends \Admin\Controller\IndexController
 {
-    /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
-     */
-    private $MAX_COUNT = 200;
-
-    /**
-     * @param string $NO_ID
-     * @return string
-     */
-    protected $NO_ID = "no_id"; // const!!!
+    const MAX_COUNT = 200;
+    const NO_ID = "no_id";
 
     /**
      * Initialize any variables before controller actions
@@ -43,18 +31,13 @@ class MenuController extends IndexController
      */
     public function indexAction()
     {
-        $where = "parent='0' AND language='".$this->session->language."'";
-        $order = "menuOrder ASC";
-        /* @var $table MenuTable */
-        $table = $this->getTable("menu");
-        $temp = $table->fetchList(false, $where, $order);
-        $menus = $submenus = array();
+        $temp = $table->fetchList(false, "parent='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $submenus = array();
         foreach($temp as $m)
         {
-            $menus[] = $m;
-            $submenus[$m->id] = $table->fetchList(false, "parent='{$m->id}' AND language='{$this->session->language}'", "menuOrder ASC");
+            $submenus[$m->id] = $this->getTable("menu")->fetchList(false, "parent='".(int)$m->id."' AND language='{$this->langTranslation}'", "menuOrder ASC");
         }
-        $this->view->menus = $menus;
+        $this->view->menus = $temp;
         $this->view->submenus = $submenus;
         return $this->view;
     }
@@ -76,9 +59,9 @@ class MenuController extends IndexController
     public function modifyAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(! $id)
+        if(!$id)
         {
-            $this->setErrorNoParam($this->NO_ID);
+            $this->setErrorNoParam(static::NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
         }
         try
@@ -99,13 +82,13 @@ class MenuController extends IndexController
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      */
-    public function showForm($label='Add', $menu=null)
+    public function showForm($label='Add',Menu $menu=null)
     {
         if($menu==null) $menu = new Menu();
 
         $form = new MenuForm($menu,
                 $this->getTable("language")->fetchList(false, null, "id ASC"),
-                $this->getTable("menu")->fetchList(false, "parent='0' AND language='{$this->session->language}'", "menuOrder ASC", $this->MAX_COUNT)
+                $this->getTable("menu")->fetchList(false, "parent='0' AND language='{$this->langTranslation}'", "menuOrder ASC", static::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
@@ -120,8 +103,8 @@ class MenuController extends IndexController
                 // see if we have menu with the exact same caption.
                 if ($this->params("action") == 'add')
                 {
-                    $existingMenu = $this->getTable('menu')->fetchList(false, "parent='0' AND language='{$this->session->language}' AND `menutype` = '".$formData['menutype']."' AND `caption` = '".$formData['caption']."'");
-                    if (sizeof($existingMenu) > 0)
+                    $existingMenu = $this->getTable('menu')->fetchList(false, "parent='0' AND language='{$this->langTranslation}' AND `menutype` = '".$formData['menutype']."' AND `menulink` = '".$formData['menulink']."'");
+                    if (count($existingMenu) > 0)
                     {
                         $this->cache->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
                         $this->view->setTerminal(true);
@@ -158,7 +141,7 @@ class MenuController extends IndexController
         }
         try
         {
-            $menu = $this->getTable("menu")->fetchList(false, "id='{$id}' AND language='{$this->session->language}'");
+            $menu = $this->getTable("menu")->fetchList(false, "id='{$id}' AND language='{$this->langTranslation}'");
             if (!$menu->current())
             {
                 $this->cache->error = "Access denied";
@@ -185,7 +168,7 @@ class MenuController extends IndexController
         }
         try
         {
-            $menu = $this->getTable("menu")->fetchList(false, "id='{$id}' AND language='{$this->session->language}'");
+            $menu = $this->getTable("menu")->fetchList(false, "id='{$id}' AND language='{$this->langTranslation}'");
             if (!$menu->current())
             {
                 $this->cache->error = "Access denied";

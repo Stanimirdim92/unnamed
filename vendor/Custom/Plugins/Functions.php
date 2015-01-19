@@ -2,8 +2,7 @@
 namespace Custom\Plugins;
 
 use Zend\Session\Container;
-use Zend\Db\Adapter\Driver\Pdo\Statement;
-use Zend\Db\Adapter\Adapter;
+// use Zend\Db\Adapter\Driver\Pdo\Statement;
 use Zend\Math\Rand;
 
 class Functions
@@ -71,7 +70,7 @@ class Functions
         }
 
         $local = include($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
-        $db = new Adapter($local['db']);
+        $db = new \Zend\Db\Adapter\Adapter($local['db']);
         $stmt = $db->createStatement();
         $stmt->prepare($query);
         $result = $stmt->execute();
