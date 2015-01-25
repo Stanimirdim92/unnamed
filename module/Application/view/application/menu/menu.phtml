@@ -1,7 +1,9 @@
 <?php
 if (count($this->contents) > 0)
 {
-    /*@var $c \Admin\Model\Content */
+    /**
+     * @var $c \Admin\Model\Content
+     */
     foreach($this->contents as $c)
     {
         echo "<h2 itemscope itemprop='name'>".$c->getTitle()."</h2>";

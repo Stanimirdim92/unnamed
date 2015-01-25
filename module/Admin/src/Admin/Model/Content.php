@@ -1,12 +1,14 @@
 <?php
 namespace Admin\Model;
 
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceManager;
 
-
-class Content
+class Content implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    protected $_inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
@@ -14,47 +16,91 @@ class Content
      *
      * @var $_serviceManager ServiceManager 
      */
-    private $_serviceManager;
+    private $_serviceManager = null;
 
     /**
-     * @param Int $_id
+     * @var Int $_id
      * @return int
      */
-    private $_id;
+    private $_id = 0;
 
+    /**
+     * @var Int $_id
+     * @return int
+     */
+    private $_menu = 0;
 
-    private $_menu;
+    /**
+     * @var null $_title
+     * @return string
+     */
+    private $_title = null;
 
+    /**
+     * @var null $_preview
+     * @return string
+     */
+    private $_preview = null;
 
-    private $_title;
+    /**
+     * @var null $_extract
+     * @return string
+     */
+    private $_extract = null;
 
+    /**
+     * @var null $_text
+     * @return string
+     */
+    private $_text = null;
 
-    private $_preview;
+    /**
+     * @var Int $_id
+     * @return int
+     */
+    private $_menuOrder = 0;
 
+    /**
+     * @var Int $_id
+     * @return int
+     */
+    private $_type = 0;
 
-    private $_extract;
+    /**
+     * @var null $_date
+     * @return string
+     */
+    private $_date = "0000-00-00 00:00:00";
 
+    /**
+     * @var Int $_language
+     * @return int
+     */
+    private $_language = 1;
 
-    private $_text;
-
-
-    private $_menuOrder;
-
-
-    private $_type;
-
-
-    private $_date;
-
-
-    private $_language;
+    /**
+     * @var Int $_titleLink
+     * @return int
+     */
+    private $_titleLink = null;
     
-    public function setServiceManager($sm)
+    /**
+     * @param null $sm
+     * @return ServiceManager
+     */
+    public function setServiceManager($sm = null)
     {
-        $this->_serviceManager = $sm;
+        if ($sm instanceof ServiceManager || $sm === null)
+        {
+            $this->_serviceManager = $sm;
+        }
     }
 
-    public function exchangeArray($data)
+    /**
+     * @var array $data
+     * @return mixed
+     */
+    public function exchangeArray(array $data)
     {
         $this->_id = (isset($data['id'])) ? $data['id'] : null;
         $this->_menu = (isset($data['menu'])) ? $data['menu'] : null;
@@ -66,7 +112,7 @@ class Content
         $this->_type = (isset($data['type'])) ? $data['type'] : null;
         $this->_date = (isset($data['date'])) ? $data['date'] : null;
         $this->_language = (isset($data['language'])) ? $data['language'] : null;
-
+        $this->_titleLink = (isset($data['titleLink'])) ? $data['titleLink'] : null;
     }
 
     /**
@@ -96,7 +142,7 @@ class Content
      * Set id
      * @param int
      */
-    public function setId(int $id)
+    public function setId($id = 0)
     {
         $this->_id = $id;
     }
@@ -104,9 +150,9 @@ class Content
     
     /**
     * Set Menu
-    * @param int $ 
+    * @param int $menu
     */
-    public function setMenu($menu)
+    public function setMenu($menu = 0)
     {
         $this->_menu = $menu;
     }
@@ -127,19 +173,19 @@ class Content
     {
         try
         {
-            return $this->serviceManager->get('MenuTable')->getMenu($this->menu);
+            return $this->serviceManager->get('MenuTable')->getMenu($this->_menu);
         }
         catch (\Exception $e)
         {
-            return null;
+            return $e->getMessage();
         }
     }
     
     /**
     * Set title
-    * @param String $title 
+    * @param null $title 
     */
-    public function setTitle($title)
+    public function setTitle($title = null)
     {
         $this->_title = $title;
     }
@@ -152,12 +198,30 @@ class Content
     {
         return $this->_title;
     }
+
+    /**
+    * Set titleLink
+    * @param null $titleLink 
+    */
+    public function setTitleLink($titleLink = null)
+    {
+        $this->_titleLink = $titleLink;
+    }
+
+    /**
+    * Get titleLink
+    * @return String
+    */
+    public function getTitleLink()
+    {
+        return $this->_titleLink;
+    }
      
     /**
     * Set preview
     * @param String $preview 
     */
-    public function setPreview($preview)
+    public function setPreview($preview = null)
     {
         $this->_preview = $preview;
     }
@@ -175,7 +239,7 @@ class Content
     * Set extract
     * @param String $extract 
     */
-    public function setExtract($extract)
+    public function setExtract($extract = null)
     {
         $this->_extract = $extract;
     }
@@ -193,7 +257,7 @@ class Content
     * Set text
     * @param String $text 
     */
-    public function setText($text)
+    public function setText($text = null)
     {
         $this->_text = $text;
     }
@@ -211,7 +275,7 @@ class Content
     * Set order
     * @param int $menuOrder 
     */
-    public function setMenuOrder($menuOrder)
+    public function setMenuOrder($menuOrder = 0)
     {
         $this->_menuOrder = $menuOrder;
     }
@@ -229,7 +293,7 @@ class Content
     * Set type
     * @param int $type 
     */
-    public function setType($type)
+    public function setType($type = 0)
     {
         $this->_type = $type;
     }
@@ -247,7 +311,7 @@ class Content
     * Set date
     * @param String $date 
     */
-    public function setDate($date)
+    public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->_date = $date;
     }
@@ -263,9 +327,9 @@ class Content
      
     /**
     * Set Language
-    * @param int $ 
+    * @param int $language
     */
-    public function setLanguage($language)
+    public function setLanguage($language = 1)
     {
         $this->_language = $language;
     }
@@ -286,11 +350,11 @@ class Content
     {
         try
         {
-            return $this->serviceManager->get('LanguageTable')->getLanguage("{$this->language}");
+            return $this->serviceManager->get('LanguageTable')->getLanguage($this->_language);
         }
         catch (\Exception $e)
         {
-            return null;
+            return $e->getMessage();
         }
     }
 
@@ -350,28 +414,25 @@ class Content
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties(array $skip, $toJson = false)
     {
+        $skip[] = "_serviceManager";
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
+        foreach($data as $key => $value)
         {
-            if (!in_array($key,$skip))
+            if (!in_array($key, $skip))
             {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->$key;
             }
+        }
+        if ($toJson)
+        {
+            return \Zend\Json\Json::encode($returnValue);
         }
         return $returnValue;
     }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
-    }
    
-    
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -388,7 +449,18 @@ class Content
         $clone->setType($this->_type);
         $clone->setDate($this->_date);
         $clone->setLanguage($this->_language);
+        $clone->setTitleLink($this->titleLink);
         return $clone;
+    }
+
+    public function setInputFilter(InputFilterInterface $inputFilter)
+    {
+        throw new \Exception("Not used");
+    }
+    
+    public function getInputFilter()
+    {
+        
     }
 
     /**

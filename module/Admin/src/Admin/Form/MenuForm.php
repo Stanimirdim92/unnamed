@@ -15,6 +15,7 @@ class MenuForm extends Form
         $elements[0]->setLabel('Caption');
         $elements[0]->setAttributes(array(
             'required'   => true,
+            'id'         => "seo-caption",
             'size'        => 40,
             'placeholder' => 'Caption',
         ));
@@ -40,7 +41,7 @@ class MenuForm extends Form
         $elements[2]->setAttributes(array(
             'required'   => false,
             'size'        => 40,
-            'placeholder' => 'Keywords',
+            'placeholder' => 'Keywords (max 15 words)',
         ));
         if($options!=null and $options->keywords)
             $elements[2]->setValue($options->keywords);
@@ -50,7 +51,7 @@ class MenuForm extends Form
         $elements[3]->setAttributes(array(
             'required'   => false,
             'size'        => 40,
-            'placeholder' => 'Description',
+            'placeholder' => 'Description (max 150 characters)',
         ));
         if($options!=null and $options->description)
             $elements[3]->setValue($options->description);
@@ -73,7 +74,7 @@ class MenuForm extends Form
         $elements[5]->setLabel('parent');
         $valueOptions = array();
 
-        $valueOptions[0] = 'Select a parent';        
+        $valueOptions[0] = 'Select parent menu';        
         foreach($parents as $item)
         {
             $valueOptions[$item->id] = $item->toString();
@@ -85,23 +86,23 @@ class MenuForm extends Form
         }
 
         $elements[6] = new Element\Select('menutype');
-        $elements[6]->setLabel('Choose menu type')->setLabelAttributes(array("style" => "width: 200px;display: inline-block;"));
+        $elements[6]->setLabel('Choose menu type');
         $valueOptions = array();
-        $valueOptions[0] = "As main menu";
-        $valueOptions[1] = "As category menu";
-        $valueOptions[2] = "As SEO menu (next to category menu)";
-        $valueOptions[3] = "As footer menu";
+        $valueOptions[0] = "Main menu";
+        $valueOptions[1] = "Left menu";
+        $valueOptions[2] = "Right menu";
+        $valueOptions[3] = "Footer menu";
         $elements[6]->setValueOptions($valueOptions)->setAttribute("id", "menutype");
         if($options!=null and $options->menutype)
             $elements[6]->setValue($options->menutype);
 
         $elements[7] = new Element\Select('footercolumn');
-        $elements[7]->setLabel('Choose footer column')->setLabelAttributes(array("id" => "footercolumn"));
+        $elements[7]->setLabel('Choose footer column');
         $valueOptions = array();
-        $valueOptions[1] = "Information";
-        $valueOptions[2] = "Custom service";
-        $valueOptions[3] = "Extras";
-        $valueOptions[4] = "My account";
+        $valueOptions[1] = "Column one";
+        $valueOptions[2] = "Column two";
+        $valueOptions[3] = "Column three";
+        $valueOptions[4] = "Column four";
         $elements[7]->setValueOptions($valueOptions);
         if($options!=null and $options->footercolumn)
             $elements[7]->setValue($options->footercolumn);
@@ -109,10 +110,15 @@ class MenuForm extends Form
         $elements[66] = new Element\Submit('submit');
         $elements[66]->setAttribute('id', 'submitbutton');
 
+        $elements[8] = new Element\Csrf('s');
+
         if($options!=null)
         {
             $elements[77] = new Element\Hidden('id');
             $elements[77]->setValue($options->id);
+            $elements[78] = new Element\Hidden('menulink');
+            $elements[78]->setAttribute('id', 'menulink');
+            $elements[78]->setValue($options->menulink);
         }
 
         foreach($elements as $e)

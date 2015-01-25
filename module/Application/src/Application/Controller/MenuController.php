@@ -9,8 +9,9 @@ class MenuController extends \Application\Controller\IndexController
     }
 
     /**
-     * Get the contents for the menu/submenu
+     * Get the contents for the menu/submenu. First we check for parent menu and if not found we call the submenu
      *
+     * @throws Exception If no menu is found
      * @return Content
      */
     public function menuAction()
@@ -19,52 +20,20 @@ class MenuController extends \Application\Controller\IndexController
 
         if(empty($title))
         {
-            $this->getResponse()->setStatusCode(404);
-            $this->view->setTemplate('layout/error-layout');
-            return $this->view;
+            $this->setErrorCode();
         }
 
-        $menu = $this->matchSEOMenu($title);
-
-        if (!empty($menu["menu"]))
+        $contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "menu.menulink = '{$title}' AND (type='0') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+        
+        // for now if there is no content for the menu we wil lshow 404 page, but this might change
+        if (!count($contents))
         {
-            $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["menu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
-        }
-        else if(!empty($menu["submenu"]))
-        {
-            $contents = $this->getTable("Content")->fetchList(false, "menu='{$menu["submenu"]}' AND language='".$this->langTranslation."'", "menuOrder ASC");
-        }
-        else
-        {
-            throw new \Exception($this->translation->OOPS_ERROR);
+            $this->setErrorCode();
         }
 
         $this->view->contents = $contents;
-        $this->setMetaTags($contents);
+        // $this->setMetaTags($contents);
         return $this->view;
-    }
-
-    /**
-     * @param  null $title is the menu/controller name passed as string from the URL
-     * @return array containting menu/submenu ids
-     */
-    private function matchSEOMenu($title = null)
-    {
-        $matches = $this->getTable("Menu")->fetchList(false, "menulink = '{$title}' AND language='".$this->langTranslation."'");
-
-        if(count($matches) === 1)
-        {
-            $location = array("menu" => 0, "submenu" => 0);
-
-            if($matches->current()->getParent())
-            {
-                $location["menu"] = (int) $matches->current()->getId();
-                $location["submenu"] = (int) $matches->current()->getParent();
-            }
-            $location["menu"] = (int) $matches->current()->getId();
-            return $location;
-        }
-        return false;
     }
 }
 ?>

@@ -14,7 +14,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
      * @return Zend\Session\Container|mixed
      */
-    protected $cache = null;
+    public $cache = null;
 
     /**
      * @var null $view creates instance to view model
@@ -246,7 +246,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         {
             $this->cache->error = $message;
         }
-        else if ($message === static::NO_ID)
+        else if ($message === self::NO_ID)
         {
             $this->cache->error = $this->translation->NO_ID_SET;
         }

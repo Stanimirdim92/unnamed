@@ -1,4 +1,4 @@
-(function (w, d, $, undefined) {
+;(function (w, d, $, undefined) {
     'use strict';
     // Avoid `console` errors in browsers that lack a console.
     var method;
@@ -32,7 +32,8 @@
 })(this, document, jQuery);
 
 // Place any jQuery/helper plugins in here.
-$(document).ready(function () {
+$(document).ready(function ($) {
+    'use strict';
     /*
      * Custom dialog window for delete button
      */
@@ -49,9 +50,16 @@ $(document).ready(function () {
         a.preventDefault();
     });
 
-    $(".usersearch").on("keydown", function () {
+    /*
+     * replace this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
+     */
+    $("#seo-caption").on("keyup", function () {
+        var $menulink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
+        $("#menulink").val($menulink);
+    });
+
+    $(".usersearch").on("keyup", function () {
         var $search = $(".usersearch").val();
-        var $id = $("input#id").val();
         if ($.trim($search).length > 2) {
             $.ajax({
                 type: "GET",
@@ -74,7 +82,7 @@ $(document).ready(function () {
                     $("#results").html("<ul class='table-row'><li class='table-cell'>"+$user["_id"]+"</li><li class='table-cell'>"+$user["_name"]+" "+$user["_surname"]+"</li><li class='table-cell'>"+$user["_username"]+"</li><li class='table-cell'>"+$user["_email"]+"</li><li class='table-cell'>"+$user["_lastLogin"]+"</li><li class='table-cell'>"+$del+"</li><li class='table-cell'>"+$user["_registered"]+"</li><li class='table-cell'><a href='/admin/user/detail/id/"+$user["_id"]+"' class='btn btn-sm blue' title='"+result.details+"'><i class='fa fa-info'></i></a></li><li class='table-cell'><a href='/admin/user/modify/id/"+$user["_id"]+"' class='btn btn-sm orange' title='"+result.modify+"'><i class='fa fa-pencil'></i></a></li><li class='table-cell'><a id='delete_"+$user["_id"]+"' href='#' title='"+result.deleteuser+"' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a><div id='delete_delete_"+$user["_id"]+"' class='dialog_hide'><p>"+result.delete_text+" &laquo;"+$user["_username"]+"&raquo;&quest;</p><ul><li><a class='btn delete' href='/admin/user/delete/id/"+$user["_id"]+"'><i class='fa fa-trash-o'></i>&nbsp; "+result.deleteuser+"</a></li><li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; "+result.cancel+"</a></li></ul></div></li></ul>");
                 });
             }).fail(function (a) {
-                console.log("Error:" + a);
+                console.log("Error:" + a); //TODO must create a dialog popup
             });
             $("#results").show();
             $("#linked").hide();

@@ -13,7 +13,7 @@ class NewsController extends \Application\Controller\IndexController
         $post = (string) $this->getParam("post", null);
         if(!empty($post))
         {
-            $new = $this->getTable("Content")->fetchList(false, "type='1' AND menu='0' AND titleLink='{$post}' AND language='".$this->langTranslation."'", "date DESC");
+            $new = $this->getTable("Content")->fetchList(false, array(), "type='1' AND menu='0' AND titleLink='{$post}' AND language='".$this->langTranslation."'", "date DESC");
             if (count($new) == 0)
             {
                 throw new \Exception($this->translation->NEWS_NOT_FOUND);
@@ -23,7 +23,7 @@ class NewsController extends \Application\Controller\IndexController
         }
         else
         {
-            $news = $this->getTable("content")->fetchList(true, "type='1' AND menu='0' AND language='".$this->langTranslation."'", "date DESC");
+            $news = $this->getTable("content")->fetchList(true, array(), "type='1' AND menu='0' AND language='".$this->langTranslation."'", "date DESC");
             $news->setCurrentPageNumber((int)$this->params('page', 1));
             $news->setItemCountPerPage(10);
             $this->view->news = $news;

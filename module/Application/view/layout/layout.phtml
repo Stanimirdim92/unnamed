@@ -45,7 +45,9 @@
             foreach($view->menus as $key => $menu)
             {   
                 $menu->setServiceManager(null);
-                echo \Zend\Debug\Debug::dump($menu, null, false);
+            ?>
+                <a href="/menu/<?=$menu->getMenuLink();?>"><?=$menu->getCaption();?></a>
+            <?php
             }
             echo $this->layout()->content;
 

@@ -79,7 +79,7 @@ class Menu implements InputFilterAwareInterface
     private $_menulink = null;
     
     /**
-     * @var null $sm
+     * @param null $sm
      * @return ServiceManager
      */
     public function setServiceManager($sm = null)
@@ -110,11 +110,17 @@ class Menu implements InputFilterAwareInterface
 
     /**
      * constructor
+     *
+     * @param array $options
+     * @param ServiceManager|null $sm
      */
-    public function __construct(array $options, ServiceManager $sm)
+    public function __construct(array $options, $sm = null)
     {
         $this->exchangeArray($options);
-        $this->_serviceManager = $sm;
+        if ($sm instanceof ServiceManager || $sm === null)
+        {
+            $this->_serviceManager = $sm;
+        }
     }
     
     /**
@@ -200,7 +206,7 @@ class Menu implements InputFilterAwareInterface
         }
         catch (\Exception $e)
         {
-            return $e;
+            return $e->getMessage();
         }
     }
     
@@ -233,7 +239,7 @@ class Menu implements InputFilterAwareInterface
         }
         catch (\Exception $e)
         {
-            return $e;
+            return $e->getMessage();
         }
     }
     
@@ -333,14 +339,14 @@ class Menu implements InputFilterAwareInterface
      */
     public function getMenuTypeAsName()
     {
-        if ($this->getMenuType() == 0)
-            return "As main menu";
-        else if ($this->getMenuType() == 1)
-            return "As category menu";
-        else if ($this->getMenuType() == 3)
-            return "As footer menu";
+        if ($this->getMenuType() === 0)
+            return "Main menu";
+        else if ($this->getMenuType() === 1)
+            return "Left menu";
+        else if ($this->getMenuType() === 3)
+            return "Footer menu";
         else
-            return "As SEO menu";
+            return "Right menu";
     }
  
     /**
@@ -434,17 +440,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
             $inputFilter->add(array(
                 "name"=>"caption",
@@ -469,17 +475,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
             $inputFilter->add(array(
                 "name"=>"language",
@@ -487,17 +493,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
             $inputFilter->add(array(
                 "name"=>"parent",
@@ -505,17 +511,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
             $inputFilter->add(array(
                 "name"=>"keywords",
@@ -545,6 +551,8 @@ class Menu implements InputFilterAwareInterface
                         'name'    => 'StringLength',
                         'options' => array(
                             'encoding' => 'UTF-8',
+                            'min' => 0,
+                            'max' => 150,
                         ),
                     ),
                 ),
@@ -555,17 +563,17 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
 
             $inputFilter->add(array(
@@ -574,36 +582,36 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[0-9]+',
-                            'messages' => array(
-                                'Invalid input, only 0-9 characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
              $inputFilter->add(array(
                 "name"=>"menulink",
-                "required" => true,
+                "required" => false,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
                 ),
-                'validators' => array(
-                    array(
-                        'name' => 'Regex',
-                        'options' => array(
-                            'pattern' => '[a-zA-Z][a-zA-Z0-9-]+$',
-                            'messages' => array(
-                                'Invalid input, only alpha numeric characters allowed'
-                            ),
-                        ),
-                    ),
-                ),
+                // 'validators' => array(
+                //     array(
+                //         'name' => 'Regex',
+                //         'options' => array(
+                //             'pattern' => '[0-9]',
+                //             'messages' => array(
+                //                 'Invalid input, only 0-9 characters allowed'
+                //             ),
+                //         ),
+                //     ),
+                // ),
             ));
             $this->_inputFilter = $inputFilter;
         }

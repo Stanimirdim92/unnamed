@@ -88,7 +88,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
         $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controllerShort = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
         $this->view->controllerLong = $this->params('controller');
         $this->view->action = $this->params('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
@@ -112,12 +111,12 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initMenus()
     {
-        $temp = $this->getTable("Menu")->fetchList(false, "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $temp = $this->getTable("Menu")->fetchList(false, array(), "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
         $submenus = array();
 
         foreach($temp as $m)
         {
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, "(parent='" . (int) $m->id."' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array(), "(parent='" . (int) $m->id."' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
         }
         $this->view->menus = $temp;
         $this->view->submenus = $submenus;
@@ -214,6 +213,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
             $this->cache->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
+    }
+
+    protected function setErrorCode($code = 404)
+    {
+        $this->getResponse()->setStatusCode($code);
+        $this->view->setTemplate('layout/error-layout');
+        return $this->view;
     }
 
 // not done

@@ -51,7 +51,7 @@ return array(
             'news' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/news[/post/:post][/page/:page]',
+                    'route' => '/news[/][post/:post][/page/:page]',
                     'constraints' => array(
                         'post' => '[a-zA-Z][a-zA-Z0-9_-]+',
                         'page' => '[0-9]+',
