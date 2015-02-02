@@ -41,7 +41,7 @@ class MenuForm extends Form
         $elements[2]->setAttributes(array(
             'required'   => false,
             'size'        => 40,
-            'placeholder' => 'Keywords (max 15 words)',
+            'placeholder' => 'Keywords (max 15 words) seperate by commas',
         ));
         if($options!=null and $options->keywords)
             $elements[2]->setValue($options->keywords);
@@ -116,10 +116,11 @@ class MenuForm extends Form
         {
             $elements[77] = new Element\Hidden('id');
             $elements[77]->setValue($options->id);
-            $elements[78] = new Element\Hidden('menulink');
-            $elements[78]->setAttribute('id', 'menulink');
-            $elements[78]->setValue($options->menulink);
         }
+        $elements[78] = new Element\Hidden('menulink');
+        $elements[78]->setAttribute('id', 'menulink');
+        if($options!=null)
+            $elements[78]->setValue($options->menulink);
 
         foreach($elements as $e)
         {

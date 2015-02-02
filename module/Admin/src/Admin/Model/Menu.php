@@ -1,4 +1,38 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Menu
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
 use Zend\InputFilter\InputFilter;
@@ -14,7 +48,7 @@ class Menu implements InputFilterAwareInterface
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var ServiceManager $_serviceManager
      */
     private $_serviceManager = null;
 
@@ -114,10 +148,13 @@ class Menu implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options, $sm = null)
+    public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        $this->exchangeArray($options);
-        if ($sm instanceof ServiceManager || $sm === null)
+        if (is_array($options) && $options instanceof Traversable)
+        {
+            $this->exchangeArray($options);
+        }
+        if($sm != null)
         {
             $this->_serviceManager = $sm;
         }
@@ -440,17 +477,6 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
             ));
             $inputFilter->add(array(
                 "name"=>"caption",
@@ -465,6 +491,8 @@ class Menu implements InputFilterAwareInterface
                         'name'    => 'StringLength',
                         'options' => array(
                             'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 200,
                         ),
                     ),
                 ),
@@ -475,17 +503,14 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"language",
@@ -493,17 +518,14 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"parent",
@@ -511,17 +533,14 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"keywords",
@@ -535,6 +554,8 @@ class Menu implements InputFilterAwareInterface
                         'name'    => 'StringLength',
                         'options' => array(
                             'encoding' => 'UTF-8',
+                            'min' => 0,
+                            'max' => 200,
                         ),
                     ),
                 ),
@@ -563,17 +584,14 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
             ));
 
             $inputFilter->add(array(
@@ -582,17 +600,14 @@ class Menu implements InputFilterAwareInterface
                 'filters'  => array(
                     array('name' => 'Int'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
             ));
              $inputFilter->add(array(
                 "name"=>"menulink",
@@ -600,18 +615,8 @@ class Menu implements InputFilterAwareInterface
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
+                    array('name' => 'StringToLower'),
                 ),
-                // 'validators' => array(
-                //     array(
-                //         'name' => 'Regex',
-                //         'options' => array(
-                //             'pattern' => '[0-9]',
-                //             'messages' => array(
-                //                 'Invalid input, only 0-9 characters allowed'
-                //             ),
-                //         ),
-                //     ),
-                // ),
             ));
             $this->_inputFilter = $inputFilter;
         }

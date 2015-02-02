@@ -1,7 +1,40 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Index
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Controller;
 
-use Zend\Cache\Storage\Adapter\Session;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
@@ -14,7 +47,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
      * @return Zend\Session\Container|mixed
      */
-    public $cache = null;
+    protected $cache = null;
 
     /**
      * @var null $view creates instance to view model
@@ -27,6 +60,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return Zend\Session\Container
      */
     protected $translation = null;
+
+    /**
+     * DRY variable to hold the language. Easier to work with
+     *
+     * @var null
+     * @return int $this->translation->language
+     */
     protected $langTranslation = null;
     
     /**
@@ -35,6 +75,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected $breadcrumbs = array();
 
+    /**
+     * Used to detect actions without IDs. Inherited in all other classes
+     */
     const NO_ID = 'no_id';
 
     /**
@@ -58,7 +101,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        // $this->initAdminIdentity();
+        $this->initAdminIdentity();
         parent::onDispatch($e);
 
         $this->initLanguages();
@@ -103,8 +146,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
         $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controllerShort = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
-        $this->view->controllerLong = $this->params('controller');
+        $this->view->controller = $this->params('controller');
         $this->view->action = $this->params('action');
     }
 
@@ -180,40 +222,46 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return null;
     }
 
-    // private function initAdminIdentity()
-    // {
-    //     $auth = new \Zend\Authentication\AuthenticationService();
-    //     if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
-    //     {
-    //         if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
-    //             (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
-    //         {
-    //             return $this->redirect()->toUrl("/");
-    //         }
-    //         $this->clearUser();
-    //     }
-    //     $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$this->cache->user->id}'");
-    //     if (sizeof($checkAdminExistence) == 1)
-    //     {
-    //         return true;
-    //     }
-    //     else
-    //     {
-    //         unset($checkAdminExistence);
-    //         $this->clearUser();
-    //     }
-    // }
+    /**
+     * Is the user admin? Few steps are called before this.
+     * 1. Module.php calls htpasswd via apache
+     * 2. On success go to Login Controller.
+     * 3. On success run this function. If all went fine access admin
+     *
+     * @throws AuthorizationException If wrong credentials
+     * @return true|false
+     */
+    private function initAdminIdentity()
+    {
+        $auth = new \Zend\Authentication\AuthenticationService();
+        if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
+        {
+            if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
+                (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
+            {
+                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$auth->getIdentity()->id}'");
+                if (count($checkAdminExistence) === 1)
+                {
+                    return $this->redirect()->toUrl("/");
+                }
+                unset($checkAdminExistence);
+                $this->clearUser();
+            }
+            $this->clearUser();
+        }
+        $this->clearUser();
+    }
 
-    // private function clearUser()
-    // {
-    //     $this->cache->getManager()->getStorage()->clear();
-    //     $this->translation->getManager()->getStorage()->clear();
-    //     $this->cache = new Container("cache");
-    //     $this->translation = new Container("translations");
-    //     $authSession = new Container('ul');
-    //     $authSession->getManager()->getStorage()->clear();
-    //     throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
-    // }
+    private function clearUser()
+    {
+        $this->cache->getManager()->getStorage()->clear();
+        $this->translation->getManager()->getStorage()->clear();
+        $this->cache = new Container("cache");
+        $this->translation = new Container("translations");
+        $authSession = new Container('ul');
+        $authSession->getManager()->getStorage()->clear();
+        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+    }
 
     /**
      * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code
@@ -257,6 +305,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->setTerminal(true);
     }
 
+    protected function setErrorCode($code = 404)
+    {
+        $this->getResponse()->setStatusCode($code);
+        $this->view->setTemplate('layout/error-layout');
+        return $this->view;
+    }
+
 /****************************************************
  * START OF ALL ACTION METHODS
  ****************************************************/
@@ -266,4 +321,5 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return $this->view;
     }
 }
+
 ?>

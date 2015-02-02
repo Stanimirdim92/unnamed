@@ -1,4 +1,37 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Application\Module
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
@@ -98,83 +131,68 @@ class Module implements Feature\AutoloaderProviderInterface,
 
         $app = $e->getTarget();
         $em = $app->getEventManager();
+        $sm = $app->getServiceManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
-        $sm = $app->getServiceManager();
-        $req = $sm->get("Request");
 
+        $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'setLayoutTitle'));
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
-            $request  = $e->getRequest();
-            $response = $e->getResponse();
-
-            // Not HTTP? Kill it before it lays eggs!
-            if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
+            $exception = $e->getParam("exception");
+            if (!$exception)
             {
-                $response->setStatusCode(500);
-                $e->setResult($response);
-                $response->sendHeaders();
-                $e->stopPropagation();
+                $this->errorResponse($e);
             }
-
-            if(!$e->getRouteMatch() || strtolower($e->getRouteMatch()->getMatchedRouteName()) === "application")
+            else
             {
-                $exception = $e->getParam("exception");
-                if (!$exception)
+                $cache = new Container("cache");
+                $remote = new RemoteAddress();
+                $service = $sm->get('ApplicationErrorHandling');
+                if(get_class($exception)==="Custom\Error\AuthorizationException")
                 {
-                    $response->setStatusCode(404);
-                    $e->setResult($response);
-                    $response->sendHeaders();
-                    $viewModel = $e->getViewModel();
-                    $viewModel->setTemplate('layout/error-layout');
+                    $userRole = "Guest";
+                    if ($cache->role === 1)
+                    {
+                        $userRole = 1;
+                    }
+                    else if ($cache->role === 10)
+                    {
+                        $userRole = 10;
+                    }
+                    $routeMatch = $e->getRouteMatch();
+                    $controller = $routeMatch->getParam('controller');
+                    $action = $routeMatch->getParam('action');
+                    $message = " *** APPLICATION LOG ***
+                    Controller: " . $controller . ",
+                    Controller action: " . $action . ",
+                    User role: " . $userRole. ",
+                    User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+                    Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+                    IP: " . $remote->getIpAddress() . ",
+                    Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
+                    Date: " . date("Y-m-d H:i:s", time()) . ",
+                    Full URL: ".$sm->get("Request")->getRequestUri().",
+                    User port: ".$_SERVER["REMOTE_PORT"].",
+                    Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+                    Method used: " . $sm->get("Request")->getMethod() . "\n";
+                    $service->logAuthorisationError($message);
                 }
                 else
                 {
-                    $cache = new Container("cache");
-                    $remote = new RemoteAddress();
-                    $service = $sm->get('ApplicationErrorHandling');
-                    if(get_class($exception)==="Custom\Error\AuthorizationException")
-                    {
-                        $userRole = "Guest";
-                        if ($cache->role === 1)
-                        {
-                            $userRole = 1;
-                        }
-                        else if ($cache->role === 10)
-                        {
-                            $userRole = 10;
-                        }
-                        $routeMatch = $e->getRouteMatch();
-                        $controller = $routeMatch->getParam('controller');
-                        $action = $routeMatch->getParam('action');
-                        $message = " *** APPLICATION LOG ***
-                        Controller: " . $controller . ",
-                        Controller action: " . $action . ",
-                        User role: " . $userRole. ",
-                        User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-                        Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-                        IP: " . $remote->getIpAddress() . ",
-                        Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
-                        Date: " . date("Y-m-d H:i:s", time()) . ",
-                        Full URL: ".$req->getRequestUri().",
-                        User port: ".$_SERVER["REMOTE_PORT"].",
-                        Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                        Method used: " . $req->getMethod() . "\n";
-                        $service->logAuthorisationError($message);
-                    }
-                    else
-                    {
-                        $service->logException($exception);
-                    }
-                    $response->setStatusCode(404);
-                    $e->setResult($response);
-                    $response->sendHeaders();
-                    $viewModel = $e->getViewModel();
-                    $viewModel->setTemplate('layout/error-layout');
+                    $service->logException($exception);
+                    $this->errorResponse($e);
                 }
             }
         });
-        $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'setLayoutTitle'));
+    }
+
+    public function errorResponse($e)
+    {
+        $e->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
+        $e->getResponse()->sendHeaders();
+        $e->setResult($e->getResponse());
+        $e->getViewModel()->setTemplate('layout/error-layout');
+        $e->stopPropagation();
     }
     
     /**

@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * Activate proper Zend DevTools for lower PHP versions
+ */
+if (isset($_SERVER['DEBUG_ENV']) && $_SERVER['DEBUG_ENV'] == true) {
+    if (version_compare(PHP_VERSION, '5.4', '<')) {
+      define('REQUEST_MICROTIME', microtime(true));
+    }
+}
+
  /**
   * Display all errors when APPLICATION_ENV is development.
   */
- if ($_SERVER['APPLICATION_ENV'] === 'development') {
+ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'development') {
      error_reporting(E_ALL);
      ini_set("display_errors", 1);
      ini_set("display_startup_errors", 1);

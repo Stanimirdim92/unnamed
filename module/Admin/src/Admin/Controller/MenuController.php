@@ -1,4 +1,38 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *mits
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Menu
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Controller;
 
 use Zend\Session\Container;
@@ -11,8 +45,20 @@ use Custom\Error\AuthorizationException;
 
 class MenuController extends \Admin\Controller\IndexController
 {
+    /**
+     * Query limit
+     */
     const MAX_COUNT = 200;
-    const NO_ID = "no_id";
+
+    /**
+     * Controller name to which will redirect
+     */
+    const CONTROLLER_NAME = "menu";
+
+    /**
+     * Route name to which will redirect
+     */
+    const ADMIN_ROUTE = "admin";
 
     /**
      * Initialize any variables before controller actions
@@ -60,17 +106,17 @@ class MenuController extends \Admin\Controller\IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->setErrorNoParam(self::NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            $this->setErrorNoParam(IndexController::NO_ID);
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         try
         {
-            $menu = $this->getTable("menu")->getMenu($id);
+            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
         }
         catch(\Exception $ex)
         {
             $this->setErrorNoParam("Menu was not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->view->menu = $menu;
         $this->addBreadcrumb(array("reference"=>"/admin/menu/modify/id/{$menu->getId()}", "name"=>"Modify menu &laquo;".$menu->toString()."&raquo;"));
@@ -86,10 +132,10 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function showForm($label = 'Add', Menu $menu = null)
     {
-        if($menu==null) $menu = new Menu(array());
+        if($menu==null) $menu = new Menu(array(), null);
 
         $form = new MenuForm($menu,
-                $this->getTable("language")->fetchList(false, null, "id ASC"),
+                $this->getTable("language")->fetchList(false, "active='1'", "name DESC"),
                 $this->getTable("menu")->fetchList(false, array('language', 'parent'), "parent='0' AND language='{$this->langTranslation}'", "menuOrder ASC", self::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);
@@ -109,11 +155,10 @@ class MenuController extends \Admin\Controller\IndexController
                     {
                         $this->cache->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
                 }
                 $menu->exchangeArray($formData);
-                 // no menus with the current session language -> set the menu to its default value
                 if ($formData["parent"] == null)
                 {
                     $menu->setParent(0);
@@ -121,7 +166,7 @@ class MenuController extends \Admin\Controller\IndexController
                 $this->getTable("menu")->saveMenu($menu);
                 $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
             else
             {
@@ -134,7 +179,7 @@ class MenuController extends \Admin\Controller\IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
     }
@@ -147,25 +192,26 @@ class MenuController extends \Admin\Controller\IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->setErrorNoParam(self::NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            $this->setErrorNoParam(IndexController::NO_ID);
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         try
         {
-            $menu = $this->getTable("menu")->fetchList(false, array('id', "language"), "id='{$id}' AND language='{$this->langTranslation}'");
-            if (!$menu->current())
+            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
+            if (!$menu)
             {
                 throw new AuthorizationException("Access Denied");
-                return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
         catch(\Exception $ex)
         {
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            $this->setErrorNoParam($ex->getMessage());
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
-        $this->cache->success = "Menu &laquo;".$menu->current()->toString()."&raquo; was successfully deleted";
-        $this->getTable("menu")->deleteMenu($menu->current()->getId());
-        return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully deleted";
+        $this->getTable("menu")->deleteMenu($menu->getId());
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
 
 
@@ -174,24 +220,25 @@ class MenuController extends \Admin\Controller\IndexController
         $id = (int) $this->getParam("id", 0);
         if(!$id)
         {
-            $this->setErrorNoParam(self::NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            $this->setErrorNoParam(IndexController::NO_ID);
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         try
         {
-            $menu = $this->getTable("menu")->fetchList(false, array('id', 'language'), "id='{$id}' AND language='{$this->langTranslation}'");
-            if (!$menu->current())
+            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
+            if (!$menu)
             {
                 throw new AuthorizationException("Access Denied");
-                return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
         catch(\Exception $ex)
         {
-            return $this->redirect()->toRoute('admin', array('controller' => 'menu'));
+            $this->setErrorNoParam($ex->getMessage());
+            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
-        $this->view->menu = $menu->current();
-        $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->current()->getId()."", "name"=>"Menu &laquo;". $menu->current()->toString()."&raquo; details"));
+        $this->view->menu = $menu;
+        $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"));
         return $this->view;
     }
     /**
@@ -200,9 +247,8 @@ class MenuController extends \Admin\Controller\IndexController
 	public function cloneAction()
 	{
 		$id = (int) $this->getParam("id", 0);
-        $menu = $this->getTable("menu")->duplicate($id);
+        $menu = $this->getTable("menu")->duplicate($id, $this->langTranslation);
         $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
-        $this->redirect()->toUrl("/admin/menu");
-        return $this->view;
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
 	}
 }

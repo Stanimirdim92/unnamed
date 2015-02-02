@@ -1,4 +1,38 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Module
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin;
 
 use Admin\Model\Term;
@@ -34,6 +68,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use Zend\Http\PhpEnvironment\RemoteAddress;
@@ -55,7 +90,6 @@ class Module implements Feature\AutoloaderProviderInterface,
         $application = $e->getTarget();
         $eventManager = $application->getEventManager();
         $services = $application->getServiceManager();
-        $req = $services->get("Request");
 
         // $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $event) use ($services)
         // {
@@ -112,64 +146,63 @@ class Module implements Feature\AutoloaderProviderInterface,
 
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($services)
         {
-            $route = strtolower($event->getRouteMatch()->getMatchedRouteName());
-            if (!$event->getRouteMatch() || $route === "admin")
+            $exception = $event->getParam("exception");
+            if (!$exception)
             {
-                $exception = $event->getParam("exception");
-                if (!$exception)
+                $this->errorResponse($event);
+            }
+            else
+            {
+                $service = $services->get('AdminErrorHandling');
+                $controllerRedirect = $event->getTarget();
+                if(get_class($exception)=="Custom\Error\AuthorizationException")
                 {
-                    $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
-                    $viewModel = $event->getViewModel();
-                    $viewModel->setTemplate('layout/error-layout');
-                    $event->stopPropagation();
+                    $cache = new Container("cache");
+                    $remote = new RemoteAddress();
+                    $userRole = "Guest";
+                    if ($cache->role === 1)
+                    {
+                        $userRole = 1;
+                    }
+                    else if ($cache->role === 10)
+                    {
+                        $userRole = 10;
+                    }
+                    $routeMatch = $event->getRouteMatch();
+                    $controller = $routeMatch->getParam('controller');
+                    $action = $routeMatch->getParam('action');
+                    $message = " *** ADMIN LOG ***
+                    Controller: " . $controller . ",
+                    Controller action: " . $action . ",
+                    User role: " . $userRole. ",
+                    User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+                    Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+                    IP: " . $remote->getIpAddress() . ",
+                    Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
+                    Date: " . date("Y-m-d H:i:s", time()) . ",
+                    Full URL: ".$services->get("Request")->getRequestUri().",
+                    User port: ".$_SERVER["REMOTE_PORT"].",
+                    Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+                    Method used: " . $services->get("Request")->getMethod() . "\n";
+                    $service->logAuthorisationError($message);
+                    $controllerRedirect->plugin('redirect')->toUrl("/");
                 }
                 else
                 {
-                    $service = $services->get('AdminErrorHandling');
-                    $controllerRedirect = $event->getTarget();
-                    if(get_class($exception)=="Custom\Error\AuthorizationException")
-                    {
-                        $cache = new Container("cache");
-                        $remote = new RemoteAddress();
-                        $userRole = "Guest";
-                        if ($cache->role === 1)
-                        {
-                            $userRole = 1;
-                        }
-                        else if ($cache->role === 10)
-                        {
-                            $userRole = 10;
-                        }
-                        $routeMatch = $event->getRouteMatch();
-                        $controller = $routeMatch->getParam('controller');
-                        $action = $routeMatch->getParam('action');
-                        $message = " *** ADMIN LOG ***
-                        Controller: " . $controller . ",
-                        Controller action: " . $action . ",
-                        User role: " . $userRole. ",
-                        User id: " . isset($cache->user->id) ? $cache->user->id : "Guest". ",
-                        Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-                        IP: " . $remote->getIpAddress() . ",
-                        Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
-                        Date: " . date("Y-m-d H:i:s", time()) . ",
-                        Full URL: ".$req->getRequestUri().",
-                        User port: ".$_SERVER["REMOTE_PORT"].",
-                        Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                        Method used: " . $req->getMethod() . "\n";
-                        $service->logAuthorisationError($message);
-                        $controllerRedirect->plugin('redirect')->toUrl("/");
-                    }
-                    else
-                    {
-                        $service->logException($exception);
-                        $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
-                        $viewModel = $event->getViewModel();
-                        $viewModel->setTemplate('layout/error-layout');
-                        $event->stopPropagation();
-                    }
+                    $service->logException($exception);
+                    $this->errorResponse($event);
                 }
             }
         });
+    }
+
+    public function errorResponse($event)
+    {
+        $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
+        $event->getResponse()->sendHeaders();
+        $event->setResult($event->getResponse());
+        $event->getViewModel()->setTemplate('layout/error-layout');
+        $event->stopPropagation();
     }
 
     public function getConfig()
@@ -186,8 +219,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 'Admin\Controller\User'             => 'Admin\Controller\UserController',
                 'Admin\Controller\Administrator'    => 'Admin\Controller\AdministratorController',
                 'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
-                'Admin\Controller\Content'          => 'Admin\Controller\ContentController',
-                
+                'Admin\Controller\Content'          => 'Admin\Controller\ContentController', 
             ),
         );
         return $config;

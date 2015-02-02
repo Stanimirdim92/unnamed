@@ -1,8 +1,39 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Application\Index
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
 namespace Application\Controller;
 
-use Zend\Cache\Storage\Adapter\Session;
-use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
 use Custom\Error\AuthorizationException;
@@ -28,8 +59,18 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return Zend\Session\Container
      */
     protected $translation = null;
+
+    /**
+     * DRY variable to hold the language. Easier to work with
+     *
+     * @var null
+     * @return int $this->translation->language
+     */
     protected $langTranslation = null;
     
+    /**
+     * Used to detect actions without IDs. Inherited in all other classes
+     */
     const NO_ID = 'no_id';
 
     /**
@@ -37,7 +78,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function __construct()
     {
-        $this->view = new ViewModel();
+        $this->view = new \Zend\View\Model\ViewModel();
         $this->translation = new Container('translations');
         $this->initCache();
         // keeping it simple and DRY
@@ -88,7 +129,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
         $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controllerLong = $this->params('controller');
+        $this->view->controller = $this->params('controller');
         $this->view->action = $this->params('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
     }
@@ -127,7 +168,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  ****************************************************/
 
     /**
-     * @param String $name
+     * @param null $name
      * @return Ambigous <object, multitype:>
      */
     public function getTable($name = null)
@@ -204,7 +245,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         {
             $this->cache->error = $message;
         }
-        else if ($message === static::NO_ID)
+        else if ($message === self::NO_ID)
         {
             $this->cache->error = $this->translation->NO_ID_SET;
         }
@@ -222,69 +263,65 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return $this->view;
     }
 
-// not done
-    public function setMetaTags($obj = null, $page = true)
+    /**
+     * SEO
+     *
+     * @param null $obj  returns Content object
+     * @param null $page controller name menu|news
+     * @return  void
+     */
+    public function setMetaTags($obj = null, $page = null)
     {
-        // $description = $keywords = $extract = $preview = $title = null;
+        $description = $keywords = $text = $preview = $title = null;
 
-        // if (empty($obj))
-        // {
-        //     return false;
-        // }
+        if (!count($obj->current()))
+        {
+            return false;
+        }
 
-        // /**
-        //  * This section is called when we enter the pageAction and request a menu.
-        //  */
-        // if ($isPage === true)
-        // {
-        //     $description = $obj->current()->getMenuObject()->getDescription();
-        //     $keywords = $obj->current()->getMenuObject()->getKeywords();
-        //     $extract = $obj->current()->getExtract();
-        //     $preview = $obj->current()->getPreview();
-        //     $title = $obj->current()->getTitle();
-        //     (empty($extract) ? $extract = $obj->current()->getText() : $extract);
-        // }
-        // /**
-        //  * This section is called when we request newspost. 
-        //  *
-        //  * @see Application\Controller\NewsController
-        //  */
-        // else if ($isPage === "news")
-        // {
-        //     $extract = $obj->current()->getExtract();
-        //     $preview = $obj->current()->getPreview();
-        //     $title = $obj->current()->getTitle();
-        //     (empty($extract) ? $extract = $obj->current()->getText() : $extract);
-        // }
-        // /**
-        //  * All other pages? Maybe load the text from the database
-        //  */
-        // else
-        // {
-        //     $description = $obj->current()->getMenuObject()->getDescription();
-        //     $keywords = $obj->current()->getMenuObject()->getKeywords();
-        //     $extract = $obj->current()->getExtract();
-        //     $preview = $obj->current()->getPreview();
-        //     $title = $obj->current()->getTitle(); //cannot be empty
-        // }
+        /**
+         * This section is called when we are looking for a menu
+         *
+         * @see Application\Controller\MenuController
+         */
+        if ($page === "menu")
+        {
+            $description = $obj->current()->getMenuObject()->getDescription();
+            $keywords = $obj->current()->getMenuObject()->getKeywords();
+            $text = $obj->current()->getText();
+            $preview = $obj->current()->getPreview();
+            $title = $obj->current()->getTitle();
+        }
+        /**
+         * This section is called when we request newspost. 
+         *
+         * @see Application\Controller\NewsController
+         */
+        else if ($page === "news")
+        {
+            $extract = $obj->current()->getExtract();
+            $preview = $obj->current()->getPreview();
+            $title = $obj->current()->getTitle();
+            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
+        }
         
-        // (empty($description) ? $description = "test desc" : $description);
-        // (empty($keywords) ? $keywords = "test keyw" : $keywords);
-        // (empty($preview) ? $preview = "" : $preview);
+        (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
+        (empty($text) ? $text = "" : $text);
+        (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
+        (empty($preview) ? $preview = "" : $preview);
 
-        // $hm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
-        // $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
-        // $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
-        // // TODO: clear the new lines from the text. See the source code ctrl+u
-        // $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($extract), 0, 100)."..."."'>\r\n");
-        // $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
-        // $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
+        $vhm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
+        $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
+        $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
+        $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 100)."..."."'>\r\n");
+        $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
+        $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
         
-        // $hm->appendName('keywords', $keywords);
-        // $hm->appendName('description', $description);
-        // $hm->appendProperty('og:image', $preview);
-        // $hm->appendProperty("og:title", $title);
-        // $hm->appendProperty("og:description", $description);
+        $vhm->appendName('keywords', $keywords);
+        $vhm->appendName('description', $description);
+        $vhm->appendProperty('og:image', $preview);
+        $vhm->appendProperty("og:title", $title);
+        $vhm->appendProperty("og:description", $description);
     }
 
 /****************************************************

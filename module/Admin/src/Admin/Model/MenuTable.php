@@ -1,4 +1,38 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Menu
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
 use Zend\Db\TableGateway\TableGateway;
@@ -13,12 +47,17 @@ class MenuTable
     /**
      * @var TableGateway
      */
-    private $_tableGateway;
+    private $_tableGateway = null;
 
     /**
      * @var ServiceManager
      */
-    private $_serviceManager;
+    private $_serviceManager = null;
+
+    /**
+     * @var string $_tableName
+     */
+    private $_tableName = "menu";
 
     public function __construct(ServiceManager $sm)
     {
@@ -43,12 +82,11 @@ class MenuTable
         $offset = (int) $offset;
         if($paginated)
         {
-            $select = new Select("menu");
+            $select = new Select($this->_tableName);
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(),$resultSetPrototype);
-            $paginator = new Paginator($paginatorAdapter);
-            return $paginator;
+            return new Paginator($paginatorAdapter);
         }
         else
         {
@@ -74,6 +112,8 @@ class MenuTable
      */
     public function fetchJoin($pagination = false, $join = '', $on = '', $where = null, $order = null, $limit = null, $offset = null)
     {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
         if ($pagination)
         {
             
@@ -84,8 +124,6 @@ class MenuTable
             {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
-                $limit = (int) $limit;
-                $offset = (int) $offset;
                 $select->join($join, $on, array("id1"=>"id"));
                 $this->queryColumns($select, array(), $where, $order, $limit, $offset);
             });
@@ -124,9 +162,9 @@ class MenuTable
      * @param int $id menu id
      * @return Menu
      */
-    public function getMenu($id = 0)
+    public function getMenu($id = 0, $language = 1)
     {
-        $rowset = $this->_tableGateway->select(array('id' => (int) $id));
+        $rowset = $this->_tableGateway->select(array('id' => (int) $id, 'language' => (int) $language));
         if (!$rowset->current()) 
         {
             throw new \Exception("Oops error.");
@@ -181,9 +219,9 @@ class MenuTable
      * @param int $id menu id
      * @return Menu
      */
-    public function duplicate($id = 0)
+    public function duplicate($id = 0, $language = 1)
     {
-        $menu = $this->getMenu($id);
+        $menu = $this->getMenu($id, $language);
         $clone = $menu->getCopy();
         $this->saveMenu($clone);
         return $clone;
