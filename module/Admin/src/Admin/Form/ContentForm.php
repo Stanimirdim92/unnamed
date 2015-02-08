@@ -1,4 +1,37 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Content
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
 namespace Admin\Form;
 
 use Zend\Form\Form;
@@ -16,6 +49,7 @@ class ContentForm extends Form
         $elements[0]->setAttributes(array(
             'required'   => true,
             'size'        => 40,
+            'id'         => "seo-caption",
             'placeholder' => 'Title',
         ));
 
@@ -24,9 +58,9 @@ class ContentForm extends Form
 
         if($options->preview!=null)
         {
-            $elements[101] = new Element\Image('currentpreview');
+            $elements[101] = new Element\Image('preview');
             $elements[101]->setLabel('Current preview')
-                          ->setAttribute('id', 'currentpreview')
+                          ->setAttribute('id', 'preview')
                           ->setAttribute('height', 100)
                           ->setAttribute('disabled', 'disabled')
                           ->setAttribute('class', 'file')
@@ -45,17 +79,9 @@ class ContentForm extends Form
                           ->setAttribute('class', 'file')->setValue('/userfiles/preview/default_logo.png');
         }
 
-        $elements[2] = new Element\Textarea('extract');
-        $elements[2]->setLabel('Extract')
-                          ->setAttribute('class', 'tinymce')
-                          ->setAttribute('rows', 15)
-                          ->setAttribute('cols', 80);
-        if($options!=null and $options->extract)
-            $elements[2]->setValue($options->extract);
-
         $elements[3] = new Element\Textarea('text');
         $elements[3]->setLabel('Text')
-                          ->setAttribute('class', 'tinymce')
+                          ->setAttribute('class', 'ckeditor')
                           ->setAttribute('rows', 15)
                           ->setAttribute('cols', 80);
         if($options!=null and $options->text)
@@ -136,7 +162,12 @@ class ContentForm extends Form
             $elements[10] = new Element\Hidden('id');
             $elements[10]->setValue($options->id);
         }
+        $elements[78] = new Element\Hidden('titleLink');
+        $elements[78]->setAttribute('id', 'titleLink');
+        if($options!=null)
+            $elements[78]->setValue($options->titleLink);
 
+        $elements[88] = new Element\Csrf('s');
         foreach($elements as $e)
         {
             $this->add($e);

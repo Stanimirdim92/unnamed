@@ -186,7 +186,10 @@ class Module implements Feature\AutoloaderProviderInterface,
         });
     }
 
-    public function errorResponse($e)
+    /**
+     * @param \Zend\Mvc\MvcEvent $e
+     */
+    public function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
         $e->getResponse()->sendHeaders();
@@ -299,7 +302,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new ResetPassword(null, $sm));
+                    $resultSetPrototype->setArrayObjectPrototype(new ResetPassword(array(), $sm));
                     return new TableGateway('resetpassword', $dbAdapter, null, $resultSetPrototype);
                 },
             ),

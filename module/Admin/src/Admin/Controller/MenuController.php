@@ -46,11 +46,6 @@ use Custom\Error\AuthorizationException;
 class MenuController extends \Admin\Controller\IndexController
 {
     /**
-     * Query limit
-     */
-    const MAX_COUNT = 200;
-
-    /**
      * Controller name to which will redirect
      */
     const CONTROLLER_NAME = "menu";
@@ -136,7 +131,7 @@ class MenuController extends \Admin\Controller\IndexController
 
         $form = new MenuForm($menu,
                 $this->getTable("language")->fetchList(false, "active='1'", "name DESC"),
-                $this->getTable("menu")->fetchList(false, array('language', 'parent'), "parent='0' AND language='{$this->langTranslation}'", "menuOrder ASC", self::MAX_COUNT)
+                $this->getTable("menu")->fetchList(false, array('language', 'parent'), "parent='0' AND language='{$this->langTranslation}'", "menuOrder ASC", IndexController::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
@@ -159,7 +154,7 @@ class MenuController extends \Admin\Controller\IndexController
                     }
                 }
                 $menu->exchangeArray($formData);
-                if ($formData["parent"] == null)
+                if (empty($formData["parent"]))
                 {
                     $menu->setParent(0);
                 }
@@ -200,7 +195,7 @@ class MenuController extends \Admin\Controller\IndexController
             $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
             if (!$menu)
             {
-                throw new AuthorizationException("Access Denied");
+                throw new AuthorizationException(IndexController::ACCESS_DENIED);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
@@ -209,8 +204,8 @@ class MenuController extends \Admin\Controller\IndexController
             $this->setErrorNoParam($ex->getMessage());
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
-        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully deleted";
         $this->getTable("menu")->deleteMenu($menu->getId());
+        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
 
@@ -228,7 +223,7 @@ class MenuController extends \Admin\Controller\IndexController
             $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
             if (!$menu)
             {
-                throw new AuthorizationException("Access Denied");
+                throw new AuthorizationException(IndexController::ACCESS_DENIED);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
@@ -241,6 +236,7 @@ class MenuController extends \Admin\Controller\IndexController
         $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"));
         return $this->view;
     }
+    
     /**
      * This action will clone the object with the provided id and return to the index view
      */

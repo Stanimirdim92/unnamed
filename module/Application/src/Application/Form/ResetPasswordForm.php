@@ -15,27 +15,23 @@ class ResetPasswordForm extends Form
         $elements[0] = new Element\Email("email");
         $elements[0]->setAttributes(array(
             'required'    => true,
-            'min'         => 3,
-            'max'         => 20,
+            'min'         => 5,
             'size'        => 30,
             'placeholder' => 'johnsmith@example.com',
         ));
 
+        $elements[8] = new Element\Csrf('s');
         $elements[10] = new Element\Submit("resetpw");
         $elements[10]->setAttributes(array(
             'id'    => 'submitbutton',
         ));
-
-        foreach($elements as $e)
-        {
-            $this->add($e);
-        }
 
         $inputFilter = new \Zend\InputFilter\InputFilter();
         $factory = new \Zend\InputFilter\Factory();
 
         $inputFilter->add($factory->createInput(array(
             "name"=>"email",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -58,5 +54,11 @@ class ResetPasswordForm extends Form
                 array('name' => 'NotEmpty'),
             ),
         )));
+        $this->setInputFilter($inputFilter);
+
+        foreach($elements as $e)
+        {
+            $this->add($e);
+        }
     }
 }

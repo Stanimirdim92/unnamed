@@ -57,6 +57,7 @@ class UserSettingsForm extends Form
         else
             $elements[5]->setValue("YYYY-MM-DD");
 
+        $elements[8] = new Element\Csrf('s');
         $elements[11] = new Element\Submit('submit');
         $elements[11]->setAttributea(array(
             'id' => 'submitbutton'

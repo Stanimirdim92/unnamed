@@ -1,65 +1,105 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Application\ResetPassword
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Application\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceManager;
 
 class ResetPassword
 {
-    private $_inputFilter;
-
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
      * @var $_serviceManager ServiceManager 
      */
-    private $_serviceManager; 
+    private $_serviceManager = null; 
 
     /**
      * @param Int $_id
      * @return int
      */
-    private $_id;
+    private $_id = 0;
 
     /**
      * @param string $_password
      * @return string
      */
-    private $_token;
+    private $_token = null;
 
     /**
      * @param string $_ip
      * @return string
      */
-    private $_ip;
+    private $_ip = null;
 
     /**
      * @param string $_date
      * @return string
      */
-    private $_date;
+    private $_date = "0000-00-00 00:00:00";
 
     /**
      * @param int $_user
      * @return int
      */
-    private $_user;
+    private $_user = 0;
 
-    public function setServiceManager(ServiceManager $sm)
+    /**
+     * @param null $sm
+     * @return ServiceManager
+     */
+    public function setServiceManager($sm = null)
     {
-        $this->_serviceManager = $sm;
+        if ($sm instanceof ServiceManager || $sm === null)
+        {
+            $this->_serviceManager = $sm;
+        }
     }
 
-    public function exchangeArray($data)
+    /**
+     * @var array $data
+     * @return mixed
+     */
+    public function exchangeArray(array $data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
+        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
         $this->_ip = (isset($data['ip'])) ? $data['ip'] : null;
-        $this->_date = (isset($data['date'])) ? $data['date'] : null;
+        $this->_date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
         $this->_token = (isset($data['token'])) ? $data['token'] : null;
-        $this->_user = (isset($data['user'])) ? $data['user'] : null;
+        $this->_user = (isset($data['user'])) ? $data['user'] : 0;
     }
 
     /**
@@ -89,7 +129,7 @@ class ResetPassword
      * Set id
      * @param int
      */
-    public function setId(int $id)
+    public function setId($id = 0)
     {
         $this->_id = $id;
     }
@@ -98,7 +138,7 @@ class ResetPassword
     * Set token
     * @param String $token 
     */
-    public function setToken($token)
+    public function setToken($token = null)
     {
         $this->_token = $token;
     }
@@ -109,14 +149,14 @@ class ResetPassword
     */
     public function getToken()
     {
-        return $this->_password;
+        return $this->_token;
     }
 
     /**
     * Set ip
     * @param String $ip 
     */
-    public function setIp($ip)
+    public function setIp($ip = null)
     {
         $this->_ip = $ip;
     }
@@ -134,7 +174,7 @@ class ResetPassword
     * Set date
     * @param Int $date 
     */
-    public function setDate($date)
+    public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->_date = $date;
     }
@@ -152,7 +192,7 @@ class ResetPassword
     * Set user
     * @param Int $user 
     */
-    public function setUser($user)
+    public function setUser($user = null)
     {
         $this->_user = $user;
     }
@@ -177,7 +217,7 @@ class ResetPassword
         }
         catch (\Exception $e)
         {
-            return null;
+            return $e->getMessage();
         }
     }
 
@@ -237,24 +277,22 @@ class ResetPassword
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties(array $skip, $toJson = false)
     {
+        $skip[] = "_serviceManager";
         $returnValue = array();
         $data = get_class_vars(get_class($this));
         foreach($data as $key => $value)
         {
-            if (!in_array($key,$skip))
+            if (!in_array($key, $skip))
             {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->$key;
             }
         }
+        if ($toJson)
+        {
+            return \Zend\Json\Json::encode($returnValue);
+        }
         return $returnValue;
-    }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
     }
 }

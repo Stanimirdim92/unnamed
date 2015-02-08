@@ -1,30 +1,8 @@
 <?php
-    if($this->form)
-    {
-        $form = $this->form;
-        $form->prepare();
-        $form->setAttribute('method', 'post');
-        echo $this->form()->openTag($form);
-?>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('name')); ?>
-            </fieldset>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('email')); ?>
-            </fieldset>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('subject')); ?>
-            </fieldset>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('message')); ?>
-            </fieldset>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('captcha')); ?>
-            </fieldset>
-            <fieldset>
-                <?php echo $this->formRow($this->form->get('submit')); ?>
-            </fieldset>
-<?php
-        echo $this->form()->closeTag($form);
-    }
+    $form = $this->form;
+    $form->prepare();
+    $form->setAttribute('method', 'post');
+    echo $this->form()->openTag($form);
+    echo $this->formCollection($form);
+    echo $this->form()->closeTag();
 ?>

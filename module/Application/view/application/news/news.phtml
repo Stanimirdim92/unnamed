@@ -5,7 +5,6 @@ if(count($this->news) > 0)
     {
         $dateTime = date("Y-m-d", strtotime($new->getDate()));
         $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
-        $text = ($new->getText() != null ? $new->getText() : $new->getExtract());
 ?>
             <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
                 <?php if ($new->getPreview() != null) { ?>
@@ -22,7 +21,7 @@ if(count($this->news) > 0)
                 <time datetime="<?=$dateTime?>" class="post-date">
                     <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
                 </time>
-                <p itemscope itemprop="text" class="post-text"><?=substr(strip_tags($text), 0, 300)."...";?></p>
+                <p itemscope itemprop="text" class="post-text"><?=substr(strip_tags($new->getText()), 0, 300)."...";?></p>
                 <br>
                 <?php if (strlen($new->getText()) > 0)
                 {
@@ -40,7 +39,6 @@ else if(count($this->new) === 1 && count($this->news) === 0)
 {
     $dateTime = date("Y-m-d", strtotime($this->new->getDate()));
     $dateTimeShow = date("M d, Y", strtotime($this->new->getDate()));
-    $text = ($this->new->getText() != null ? $this->new->getText() : $this->new->getExtract());
 ?>
     <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
         <?php if ($this->new->getPreview() != null) { ?>
@@ -54,7 +52,7 @@ else if(count($this->new) === 1 && count($this->news) === 0)
         <time datetime="<?=$dateTime?>" class="post-date">
             <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
         </time>
-        <div itemprop="text" class="post-text"><?=$text?></div>
+        <div itemprop="text" class="post-text"><?=$this->new->getText()?></div>
         <p><a itemprop="url" href="/news" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
     </article>
 <?php

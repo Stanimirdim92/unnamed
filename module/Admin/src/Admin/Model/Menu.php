@@ -74,7 +74,7 @@ class Menu implements InputFilterAwareInterface
      * @var null $_language
      * @return int
      */
-    private $_language = null;
+    private $_language = 1;
 
     /**
      * @var Int $_parent
@@ -130,15 +130,15 @@ class Menu implements InputFilterAwareInterface
      */
     public function exchangeArray(array $data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
+        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
         $this->_caption = (isset($data['caption'])) ? $data['caption'] : null;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : null;
-        $this->_language = (isset($data['language'])) ? $data['language'] : null;
+        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : 0;
+        $this->_language = (isset($data['language'])) ? $data['language'] : 1;
         $this->_parent = (isset($data['parent'])) ? $data['parent'] : null;
         $this->_keywords = (isset($data['keywords'])) ? $data['keywords'] : null;
         $this->_description = (isset($data['description'])) ? $data['description'] : null;
-        $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : null;
-        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : null;
+        $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : 0;
+        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : 0;
         $this->_menulink = (isset($data['menulink'])) ? $data['menulink'] : null;
     }
 
@@ -507,7 +507,7 @@ class Menu implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),

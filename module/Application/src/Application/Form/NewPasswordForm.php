@@ -15,15 +15,18 @@ class NewPasswordForm extends Form
         $elements[1] = new Element\Password("password");
         $elements[1]->setAttributes(array(
             'required'    => true,
+            'min'         => 8,
             'size'        => 30,
         ));
 
         $elements[2] = new Element\Password("repeatpw");
         $elements[2]->setAttributes(array(
             'required'    => true,
+            'min'         => 8,
             'size'        => 30,
         ));
 
+        $elements[8] = new Element\Csrf('s');
         $elements[20] = new Element\Submit("resetpw");
         $elements[20]->setAttributes(array(
             'id'    => 'submitbutton',
@@ -33,6 +36,7 @@ class NewPasswordForm extends Form
         $factory = new \Zend\InputFilter\Factory();
         $inputFilter->add($factory->createInput(array(
             "name"=>"password",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -50,6 +54,7 @@ class NewPasswordForm extends Form
         )));
         $inputFilter->add($factory->createInput(array(
             'name' => 'repeatpw',
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),

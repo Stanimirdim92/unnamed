@@ -15,8 +15,7 @@ class LoginForm extends Form
         $elements[0] = new Element\Email("email");
         $elements[0]->setAttributes(array(
             'required'    => true,
-            'min'         => 3,
-            'max'         => 20,
+            'min'         => 5,
             'size'        => 30,
             'placeholder' => 'johnsmith@example.com',
         ));
@@ -24,25 +23,23 @@ class LoginForm extends Form
         $elements[1] = new Element\Password("password");
         $elements[1]->setAttributes(array(
             'required'    => true,
+            'min'         => 8,
             'size'        => 30,
             'placeholder' => '123456789',
         ));
 
+        $elements[8] = new Element\Csrf('s');
         $elements[10] = new Element\Submit("login");
         $elements[10]->setAttributes(array(
             'id'    => 'submitbutton',
         ));
-
-        foreach($elements as $e)
-        {
-            $this->add($e);
-        }
 
         $inputFilter = new \Zend\InputFilter\InputFilter();
         $factory = new \Zend\InputFilter\Factory();
 
         $inputFilter->add($factory->createInput(array(
             "name"=>"email",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -83,5 +80,11 @@ class LoginForm extends Form
                 array('name' => 'NotEmpty'),
             ),
         )));
+        $this->setInputFilter($inputFilter);
+
+        foreach($elements as $e)
+        {
+            $this->add($e);
+        }
     }
 }

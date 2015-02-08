@@ -35,7 +35,6 @@
 
 namespace Admin\Model;
 
-use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
@@ -47,12 +46,12 @@ class ContentTable
     /**
      * @var TableGateway
      */
-    private $_tableGateway;
+    private $_tableGateway = null;
 
     /**
      * @var ServiceManager
      */
-    private $_serviceManager;
+    private $_serviceManager = null;
 
     /**
      * @var string $_tableName
@@ -177,34 +176,37 @@ class ContentTable
         $this->_tableGateway->delete(array('id' => (int) $id));
     }
     
-    public function saveContent(Content $content)
+    public function saveContent(Content $content = null)
     {
         $data = array(
-        'menu'      => (int) $content->menu,
-        'title'     => (string) $content->title,
-        'preview'   => (string) $content->preview,
-        'extract'   => (string) $content->extract,
-        'text'      => (string) $content->text,
-        'menuOrder' => (int) $content->menuOrder,
-        'type'      => (int) $content->type,
-        'date'      => (string) $content->date,
-        'language'  => (int) $content->language,
-        'titleLink' => (string) $content->titleLink,
-
+            'menu'      => (int) $content->menu,
+            'title'     => (string) $content->title,
+            'preview'   => (string) $content->preview,
+            'text'      => (string) $content->text,
+            'menuOrder' => (int) $content->menuOrder,
+            'type'      => (int) $content->type,
+            'date'      => (string) $content->date,
+            'language'  => (int) $content->language,
+            'titleLink' => (string) $content->titleLink,
         );
-        $id = (int)$content->id;
-        if ($id == 0) 
+        $id = $content->id;
+        $language = $content->language;
+        if (!$id) 
         {
             $this->_tableGateway->insert($data);
             $content->id = $this->_tableGateway->lastInsertValue;
         }
-
-        if (!$this->getContent($id)) 
+        else
         {
-            throw new \Exception("Oops error.");
+            if (!$this->getContent($id, $language))
+            {
+                throw new \Exception("Oops error.");
+            }
+            $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
-        $this->_tableGateway->update($data, array('id' => $id));
-
+        unset($id);
+        unset($language);
+        unset($data);
         return $content;
     }
     

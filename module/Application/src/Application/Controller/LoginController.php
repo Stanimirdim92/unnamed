@@ -63,7 +63,7 @@ class LoginController extends \Application\Controller\IndexController
     /**
      * @var Zend\Db\Adapter\Adapter
      */
-    private $adapter = null;
+    private $_adapter = null;
 
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -108,12 +108,11 @@ class LoginController extends \Application\Controller\IndexController
      */
     private function getAdapter()
     {
-        if(!$this->adapter)
+        if(!$this->_adapter)
         {
-            $sm = $this->getServiceLocator();
-            $this->adapter = $sm->get('Zend\Db\Adapter\Adapter');
+            $this->_adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
         }
-        return $this->adapter;
+        return $this->_adapter;
     }
 
     /**
@@ -197,12 +196,12 @@ class LoginController extends \Application\Controller\IndexController
     public function newpasswordAction()
     {   
         $token = (string) $this->getParam('id', null);
-        if (Functions::strLength($token) != 64)
+        if (Functions::strLength($token) !== 64)
         {
             throw new \Exception($this->translation->TOKEN_MISTMATCH);
         }
 
-        $tokenExist = $this->getTable("resetpassword")->fetchList(false, "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
+        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("token", "date"), "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
         if (count($tokenExist) !== 1)
         {
             $this->setErrorNoParam($this->translation->LINK_EXPIRED);
@@ -333,7 +332,7 @@ class LoginController extends \Application\Controller\IndexController
      * @param string $redirectTo
      * @return void
      */
-    protected function logoutAction($redirectTo = '')
+    protected function logoutAction($redirectTo = null)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
@@ -347,7 +346,7 @@ class LoginController extends \Application\Controller\IndexController
         unset($authSession);
         $this->cache = null;
         $this->translation = null;
-        if ($redirectTo == '')
+        if (!$redirectTo)
         {
             $redirectTo = "/";
         }

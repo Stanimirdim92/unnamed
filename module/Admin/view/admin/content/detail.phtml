@@ -21,21 +21,16 @@ $content = $this->content;
 </tr>
 <tr>
     <td class='definition'>Preview</td>
-    <td class='admin al l'><?
+    <td class='admin al l'><?php
     if($content->preview)
     {
-        ?><img src='/userfiles/preview/<?=$content->preview?>' width='150'><?
+        ?><img src='/userfiles/preview/<?=$content->preview?>' width='150'><?php
     }
     else
     {
-        ?><img src='/back/img/noimg.png' width='100'><?
+        ?><img src='/back/img/noimg.png' width='100'><?php
     }
 ?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Extract</td>
-    <td class='admin al l'><?=$content->extract?>
     </td>
 </tr>
 <tr>
@@ -62,13 +57,13 @@ $content = $this->content;
 <tr>
     <td class='definition'>Language</td>
     <td class='admin al l'>
-<?
+<?php
     $language = $content->getLanguageObject();
     if($language!=null)
     {
 ?>
         <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?
+<?php
         echo $language->toString();
     }
 ?>
@@ -78,13 +73,13 @@ $content = $this->content;
 <tr>
     <td class='definition'>Menu</td>
     <td class='admin al l'>
-<?
+<?php
     $menu = $content->getMenuObject();
-    if($menu!=null)
+    if($menu != null)
     {
 ?>
         <a class='btn btn-labeled btn-default blue' title='Menu details' href='/admin/menu/detail/id/<?=$menu->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?
+<?php
         echo $menu->toString();
     }
 ?>

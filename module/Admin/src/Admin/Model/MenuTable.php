@@ -35,7 +35,6 @@
 
 namespace Admin\Model;
 
-use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
@@ -185,7 +184,7 @@ class MenuTable
      * @param Menu $menu
      * @return Menu
      */
-    public function saveMenu(Menu $menu)
+    public function saveMenu(Menu $menu = null)
     {
         $data = array(
             'caption'      => (string) $menu->caption,
@@ -198,7 +197,8 @@ class MenuTable
             'footercolumn' => (int) $menu->footercolumn,
             'menulink'     => (string) $menu->menulink,
         );
-        $id = (int)$menu->id;
+        $id = $menu->id;
+        $language = $menu->language;
         if (!$id) 
         {
             $this->_tableGateway->insert($data);
@@ -206,12 +206,15 @@ class MenuTable
         }
         else
         {
-            if (!$this->getMenu($id))
+            if (!$this->getMenu($id, $language))
             {
                 throw new \Exception("Oops error.");
             }
-            $this->_tableGateway->update($data, array('id' => $id));
+            $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
+        unset($id);
+        unset($language);
+        unset($data);
         return $menu;
     }
 

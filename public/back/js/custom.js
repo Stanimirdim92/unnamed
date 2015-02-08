@@ -37,25 +37,37 @@ $(document).ready(function ($) {
     /*
      * Custom dialog window for delete button
      */
-    $(".dialog_delete").on("click", function (a) {
+    $(".dialog_delete").on("click", function (e) {
+        e.preventDefault();
         $("#delete_" + $(this).attr("id")).fadeIn(650);
-        a.preventDefault();
     });
 
     /*
      * Custom cancel button for delete dialog. Acts as a close button
      */
-    $(".cancel").on("click", function (a) {
+    $(".cancel").on("click", function (e) {
+        e.preventDefault();
         $(".dialog_hide").fadeOut(650);
-        a.preventDefault();
     });
 
     /*
      * replace this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
      */
+    if ($("#titleLink") !== "undefined" && $("#titleLink") !== null) {
+        $("#titleLink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
+    }
+    if ($("#menulink") !== "undefined" && $("#menulink") !== null) {    
+        $("#menulink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
+    }
+
     $("#seo-caption").on("keyup", function () {
-        var $menulink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
-        $("#menulink").val($menulink);
+        var $seolink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
+        if ($("#menulink") !== undefined || $("#menulink") !== null) {
+            $("#titleLink").val($seolink);
+        }
+        else {
+            $("#menulink").val($seolink);
+        }
     });
 
     $(".usersearch").on("keyup", function () {

@@ -14,7 +14,6 @@
             <TR>
               <TH>ID</TH>
               <TH>title</TH>
-              <TH>extract</TH>
               <TH>order</TH>
               <TH>date</TH>
               <TH>details</TH>
@@ -29,20 +28,20 @@ $menu = null;
 /* @var $item Admin\Model\Content */
 foreach($this->contents as $item)
 {
-    if($item->menu!=0 AND ($menu==null or $menu->id!=$item->menu))
+    if($item->menu!=0 && ($menu==null || $menu->id!=$item->menu))
     {
         $menu = $item->getMenuObject();
 ?>
 <TR>
     <TH colspan="8"><b><?=$menu->caption?></b></TH>
 </TR>
-<?
+<?php
     }
 ?>
 <TR>
     <TD class='admin c'><?=$item->id?></TD>
     <TD class='admin'><?=$item->title?></TD>
-    <TD class='admin'><?=substr(strip_tags($item->extract),0,200)?>...</TD>
+    <TD class='admin'><?=substr(strip_tags($item->text),0,200)?>...</TD>
     <TD class='admin'><?=$item->menuOrder?></TD>
     <TD class='admin'><?=$item->date?></TD>
     <TD class='admin c'>
@@ -62,23 +61,23 @@ foreach($this->contents as $item)
     </div>
     </TD>
 </TR>
-<?
+<?php
 }
 // fetch all contents that have value content.menu=0 and type=0
-if (sizeof($this->contentMenusWithoutMenu) > 0)
+if (count($this->contentMenusWithoutMenu) > 0)
 {
 ?>
   <tr class="c">
     <td colspan="8"><strong>Content menus with menu set to 0</strong></td>
   </tr>
-<?
+<?php
   foreach ($this->contentMenusWithoutMenu as $wm)
   {
 ?>
     <TR>
         <TD class='admin c'><?=$wm->id?></TD>
         <TD class='admin'><?=$wm->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($wm->extract),0,200)?>...</TD>
+        <TD class='admin'><?=substr(strip_tags($wm->text),0,200)?>...</TD>
         <TD class='admin'><?=$wm->menuOrder?></TD>
         <TD class='admin'><?=$wm->date?></TD>
         <TD class='admin c'>
@@ -98,24 +97,24 @@ if (sizeof($this->contentMenusWithoutMenu) > 0)
         </div>
         </TD>
     </TR>
-<?
+<?php
   }
 }
 
-if (sizeof($this->menuReport) > 0)
+if (count($this->menuReport) > 0)
 {
 ?>
   <tr class="c">
     <td colspan="8"><strong>Contents without menu (menu was deleted)</strong></td>
   </tr>
-<?
+<?php
   foreach ($this->menuReport as $cwm)
   {
 ?>
     <TR>
         <TD class='admin c'><?=$cwm->id?></TD>
         <TD class='admin'><?=$cwm->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($cwm->extract),0,200)?>...</TD>
+        <TD class='admin'><?=substr(strip_tags($cwm->text),0,200)?>...</TD>
         <TD class='admin'><?=$cwm->menuOrder?></TD>
         <TD class='admin'><?=$cwm->date?></TD>
         <TD class='admin c'>
@@ -135,25 +134,25 @@ if (sizeof($this->menuReport) > 0)
         </div>
         </TD>
     </TR>
-<?
+<?php
   }
 }
 
 // fetch all contents that have value content.menu=0 and type=1
-if (sizeof($this->contentNewsWithoutMenu) > 0)
+if (count($this->contentNewsWithoutMenu) > 0)
 {
 ?>
   <tr class="c">
     <td colspan="8"><strong>Content news with menu set to 0</strong></td>
   </tr>
-<?
+<?php
   foreach ($this->contentNewsWithoutMenu as $wm2)
   {
 ?>
     <TR>
         <TD class='admin c'><?=$wm2->id?></TD>
         <TD class='admin'><?=$wm2->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($wm2->extract),0,200)?>...</TD>
+        <TD class='admin'><?=substr(strip_tags($wm2->text),0,200)?>...</TD>
         <TD class='admin'><?=$wm2->menuOrder?></TD>
         <TD class='admin'><?=$wm2->date?></TD>
         <TD class='admin c'>
@@ -173,13 +172,12 @@ if (sizeof($this->contentNewsWithoutMenu) > 0)
         </div>
         </TD>
     </TR>
-<?
+<?php
   }
 }
 ?>
           </TBODY>
         </TABLE>
   </div>
-  <!-- end widget content -->
 </div>
 </div>

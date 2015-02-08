@@ -13,7 +13,7 @@ class RegistrationForm extends Form
 
         $elements = array();
 
-        $elements[0] = new Element("name");
+        $elements[0] = new Element\Text("name");
         $elements[0]->setAttributes(array(
             'required'    => true,
             'min'         => 3,
@@ -25,6 +25,7 @@ class RegistrationForm extends Form
         $elements[1]->setAttributes(array(
             'required'    => true,
             'size'        => 30,
+            'min'         => 8,
             'placeholder' => '123456789',
         ));
 
@@ -39,6 +40,7 @@ class RegistrationForm extends Form
         $elements[3]->setAttributes(array(
             'required'    => true,
             'size'        => 30,
+            'min'         => 3,
             'placeholder' => 'johnsmith@example.com',
         ));
 
@@ -63,6 +65,7 @@ class RegistrationForm extends Form
             'class'       => 'captcha-input',
         ));
 
+        $elements[8] = new Element\Csrf('s');
         $elements[20] = new Element\Submit("register");
         $elements[20]->setAttributes(array(
             'id'    => 'submitbutton',
@@ -72,6 +75,7 @@ class RegistrationForm extends Form
         $factory = new \Zend\InputFilter\Factory();
         $inputFilter->add($factory->createInput(array(
             "name"=>"email",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -84,11 +88,19 @@ class RegistrationForm extends Form
                         'messages' => array('emailAddressInvalidFormat' => "Email address doesn't appear to be valid."),
                     ),
                 ),
+                array(
+                    'name'    => 'StringLength',
+                    'options' => array(
+                        'encoding' => 'UTF-8',
+                        'min'      => 5,
+                    ),
+                ),
                 array('name' => 'NotEmpty'),
             ),
         )));
         $inputFilter->add($factory->createInput(array(
             "name"=>"name",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -106,6 +118,7 @@ class RegistrationForm extends Form
         )));
         $inputFilter->add($factory->createInput(array(
             "name"=>"password",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -123,6 +136,7 @@ class RegistrationForm extends Form
         )));
         $inputFilter->add($factory->createInput(array(
             'name' => 'repeatpw',
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),

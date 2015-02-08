@@ -77,12 +77,6 @@ class Content implements InputFilterAwareInterface
     private $_preview = null;
 
     /**
-     * @var null $_extract
-     * @return string
-     */
-    private $_extract = null;
-
-    /**
      * @var null $_text
      * @return string
      */
@@ -113,8 +107,8 @@ class Content implements InputFilterAwareInterface
     private $_language = 1;
 
     /**
-     * @var Int $_titleLink
-     * @return int
+     * @var null $_titleLink
+     * @return string
      */
     private $_titleLink = null;
     
@@ -136,16 +130,15 @@ class Content implements InputFilterAwareInterface
      */
     public function exchangeArray(array $data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_menu = (isset($data['menu'])) ? $data['menu'] : null;
+        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
+        $this->_menu = (isset($data['menu'])) ? $data['menu'] : 0;
         $this->_title = (isset($data['title'])) ? $data['title'] : null;
         $this->_preview = (isset($data['preview'])) ? $data['preview'] : null;
-        $this->_extract = (isset($data['extract'])) ? $data['extract'] : null;
         $this->_text = (isset($data['text'])) ? $data['text'] : null;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : null;
-        $this->_type = (isset($data['type'])) ? $data['type'] : null;
-        $this->_date = (isset($data['date'])) ? $data['date'] : null;
-        $this->_language = (isset($data['language'])) ? $data['language'] : null;
+        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : 0;
+        $this->_type = (isset($data['type'])) ? $data['type'] : 0;
+        $this->_date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
+        $this->_language = (isset($data['language'])) ? $data['language'] : 1;
         $this->_titleLink = (isset($data['titleLink'])) ? $data['titleLink'] : null;
     }
 
@@ -270,24 +263,6 @@ class Content implements InputFilterAwareInterface
     public function getPreview()
     {
         return $this->_preview;
-    }
-     
-    /**
-    * Set extract
-    * @param String $extract 
-    */
-    public function setExtract($extract = null)
-    {
-        $this->_extract = $extract;
-    }
-
-    /**
-    * Get extract
-    * @return String
-    */
-    public function getExtract()
-    {
-        return $this->_extract;
     }
      
     /**
@@ -480,7 +455,6 @@ class Content implements InputFilterAwareInterface
         $clone->setMenu($this->_menu);
         $clone->setTitle($this->_title);
         $clone->setPreview($this->_preview);
-        $clone->setExtract($this->_extract);
         $clone->setText($this->_text);
         $clone->setMenuOrder($this->_menuOrder);
         $clone->setType($this->_type);
@@ -497,7 +471,147 @@ class Content implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        //TODO add inputfilter
+        if (!$this->_inputFilter) 
+        {
+            $inputFilter = new InputFilter();
+            $inputFilter->add(array(
+                'name'     => 'id',
+                'required' => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+            $inputFilter->add(array(
+                'name'     => 'preview',
+                'required' => false,
+            ));
+            $inputFilter->add(array(
+                "name"=>"title",
+                "required" => true,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array('name' => 'NotEmpty'),
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 200,
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"text",
+                "required" => true,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array('name' => 'NotEmpty'),
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"menuOrder",
+                "required" => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]+$/',
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"language",
+                "required" => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]$/',
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"menu",
+                "required" => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-9]+$/',
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"type",
+                "required" => false,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+                'validators' => array(
+                    array(
+                        'name' => 'Regex',
+                        'options' => array(
+                            'pattern' => '/^[0-1]$/',
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"date",
+                "required" => false,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min' => 0,
+                            'max' => 150,
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                "name"=>"titleLink",
+                "required" => false,
+                'filters' => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                    array('name' => 'StringToLower'),
+                ),
+            ));
+            $this->_inputFilter = $inputFilter;
+        }
+        return $this->_inputFilter;
     }
 
     /**

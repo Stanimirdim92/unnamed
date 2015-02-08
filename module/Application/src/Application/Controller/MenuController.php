@@ -45,7 +45,6 @@ class MenuController extends \Application\Controller\IndexController
     /**
      * Get the contents for the menu/submenu. First we check for parent menu and if not found we call the submenu
      *
-     * @throws Exception If no menu is found
      * @return Content
      */
     public function menuAction()
@@ -54,7 +53,7 @@ class MenuController extends \Application\Controller\IndexController
         if(empty($title)) $this->setErrorCode();
 
         $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "`menu`.`menulink` = '{$title}' AND (content.type='0' AND content.menu != '0' AND content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC");
-        $this->setMetaTags($this->view->contents);
+        $this->setMetaTags($this->view->contents, "menu");
         return $this->view;
     }
 }

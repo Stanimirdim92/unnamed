@@ -284,7 +284,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
          *
          * @see Application\Controller\MenuController
          */
-        if ($page === "menu")
+        if ($page === "menu" && $obj->current())
         {
             $description = $obj->current()->getMenuObject()->getDescription();
             $keywords = $obj->current()->getMenuObject()->getKeywords();
@@ -297,16 +297,15 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
          *
          * @see Application\Controller\NewsController
          */
-        else if ($page === "news")
+        else if ($page === "news" && $obj->current())
         {
             $extract = $obj->current()->getExtract();
             $preview = $obj->current()->getPreview();
             $title = $obj->current()->getTitle();
             (empty($extract) ? $extract = $obj->current()->getText() : $extract);
         }
-        
         (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
-        (empty($text) ? $text = "" : $text);
+        (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
         (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
         (empty($preview) ? $preview = "" : $preview);
 
@@ -351,12 +350,16 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
             {
                 $formData = $form->getData();
                 $to = "stanimirdim92@gmail.com"; // must be set from db
-                $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
-                if (!$result)
+                try
+                {
+                    $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
+                    $this->cache->success = $this->translation->CONTACT_SUCCESS;
+                } 
+                catch (\Exception $e)
                 {
                     $this->cache->error = $this->translation->CONTACT_ERROR;
+                    $this->setErrorNoParam($e->getMessage());
                 }
-                $this->cache->success = $this->translation->CONTACT_SUCCESS;
                 return $this->redirect()->toUrl("/contact");
             }
             else

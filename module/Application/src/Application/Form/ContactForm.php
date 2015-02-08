@@ -9,36 +9,45 @@ use Zend\InputFilter;
 
 class ContactForm extends Form
 {
+    /**
+     * @var null $inputFilter
+     */
+    protected $inputFilter = null;
+
+    /**
+     * @var array $elements
+     */
+    protected $elements = array();
+
     public function __construct()
     {
         parent::__construct('contact_form');
 
-        $elements = array();
-
-        $elements[0] = new Element\Text('name');
-        $elements[0]->setAttributes(array(
+        $this->elements[0] = new Element\Text('name');
+        $this->elements[0]->setAttributes(array(
             'required'    => true,
             'min'         => 3,
             'max'         => 20,
             'size'        => 30,
         ));
 
-        $elements[1] = new Element\Text('email');
-        $elements[1]->setAttributes(array(
+        $this->elements[1] = new Element\Text('email');
+        $this->elements[1]->setAttributes(array(
             'required'    => true,
+            'min'         => 5,
             'size'        => 30,
             'placeholder' => 'johnsmith@example.com',
         ));
 
-        $elements[2] = new Element\Text('subject');
-        $elements[2]->setAttributes(array(
+        $this->elements[2] = new Element\Text('subject');
+        $this->elements[2]->setAttributes(array(
             'required'    => true,
             'min'         => 3,
             'size'        => 30,
         ));
 
-        $elements[4] = new Element\Textarea('message');
-        $elements[4]->setAttributes(array(
+        $this->elements[4] = new Element\Textarea('message');
+        $this->elements[4]->setAttributes(array(
             'required'     => true,
             'rows'         => 8,
             'cols'         => 70,
@@ -56,22 +65,24 @@ class ContactForm extends Form
         );
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
-        $elements[3] = new Element\Captcha('captcha');
-        $elements[3]->setCaptcha($captchaImage);
-        $elements[3]->setAttributes(array(
+        $this->elements[3] = new Element\Captcha('captcha');
+        $this->elements[3]->setCaptcha($captchaImage);
+        $this->elements[3]->setAttributes(array(
             'required'    => true,
             'size'        => 30,
             'class'       => 'captcha-input',
         ));
 
-        $elements[5] = new Element\Submit('submit');
-        $elements[5]->setAttributes(array(
+        $this->elements[5] = new Element\Submit('submit');
+        $this->elements[5]->setAttributes(array(
             'id'    => 'submitbutton',
         ));
+        
+        $this->elements[8] = new Element\Csrf('s');
 
-        $inputFilter = new \Zend\InputFilter\InputFilter();
+        $this->inputFilter = new \Zend\InputFilter\InputFilter();
         $factory = new \Zend\InputFilter\Factory();
-        $inputFilter->add($factory->createInput(array(
+        $this->inputFilter->add($factory->createInput(array(
             "name"=>"email",
             'required' => true,
             'filters' => array(
@@ -90,14 +101,13 @@ class ContactForm extends Form
                     'name'    => 'StringLength',
                     'options' => array(
                         'encoding' => 'UTF-8',
-                        'min'      => 3,
-                        'max'      => 25,
+                        'min'      => 5,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
             ),
         )));
-        $inputFilter->add($factory->createInput(array(
+        $this->inputFilter->add($factory->createInput(array(
             "name"=>"subject",
             'required' => true,
             'filters'  => array(
@@ -116,12 +126,11 @@ class ContactForm extends Form
                 array('name' => 'NotEmpty'),
             ),
         )));
-        $inputFilter->add($factory->createInput(array(
+        $this->inputFilter->add($factory->createInput(array(
             "name"=>"message",
             'required' => true,
             'filters'  => array(
                 array('name' => 'StripTags'),
-                // array('name' => 'StringTrim'),
             ),
             'validators' => array(
                 array(
@@ -129,29 +138,34 @@ class ContactForm extends Form
                     'options' => array(
                         'encoding' => 'UTF-8',
                         'min'      => 3,
-                        'max'      => 1000,
+                        'max'      => 3000,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
             ),
         )));
-        $inputFilter->add($factory->createInput(array(
-                "name"=>"captcha",
-                'required' => true,
-                'validators' => array(
-                    array(
-                        'name' => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min' => 3,
-                            'max' => 20,
-                        ),
-                    ),
-                    array('name' => 'NotEmpty'),
-                ),
-                )));
-        $inputFilter->add($factory->createInput(array(
+        // $this->inputFilter->add($factory->createInput(array(
+        //     "name"=>"captcha",
+        //     'required' => true,
+        //     'filters' => array(
+        //         array('name' => 'StripTags'),
+        //         array('name' => 'StringTrim'),
+        //     ),
+        //     'validators' => array(
+        //         array(
+        //             'name' => 'StringLength',
+        //             'options' => array(
+        //                 'encoding' => 'UTF-8',
+        //                 'min' => 3,
+        //                 'max' => 30,
+        //             ),
+        //         ),
+        //         array('name' => 'NotEmpty'),
+        //     ),
+        // )));
+        $this->inputFilter->add($factory->createInput(array(
             "name"=>"name",
+            'required' => true,
             'filters' => array(
                 array('name' => 'StripTags'),
                 array('name' => 'StringTrim'),
@@ -168,8 +182,8 @@ class ContactForm extends Form
                 array('name' => 'NotEmpty'),
             ),
         )));
-        $this->setInputFilter($inputFilter);
-        foreach($elements as $e)
+        $this->setInputFilter($this->inputFilter);
+        foreach($this->elements as $e)
         {
             $this->add($e);
         }

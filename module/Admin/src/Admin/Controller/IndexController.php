@@ -81,6 +81,16 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     const NO_ID = 'no_id';
 
     /**
+     * Query limit
+     */
+    const MAX_COUNT = 200;
+
+    /**
+     * Used when throwing AuthorizationException
+     */
+    const ACCESS_DENIED = "Access Denied";
+
+    /**
      * constructor
      */
     public function __construct()
@@ -101,7 +111,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->initAdminIdentity();
+        // $this->initAdminIdentity();
         parent::onDispatch($e);
 
         $this->initLanguages();
