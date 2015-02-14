@@ -53,7 +53,7 @@ class NewsController extends \Application\Controller\IndexController
                 throw new \Exception($this->translation->NEWS_NOT_FOUND);
             }
             $this->view->new = $new->current();
-            $this->setMetaTags($new, "news");
+            $this->setMetaTags($new);
         }
         else
         {

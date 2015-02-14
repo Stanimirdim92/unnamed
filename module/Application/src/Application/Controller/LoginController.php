@@ -159,7 +159,7 @@ class LoginController extends \Application\Controller\IndexController
         $role = self::ROLE_USER;
         if(!$result->isValid())
         {
-            $this->cache->error = $this->translation->WRONG_EMAIL_AND_PW;
+            $this->cache->error = $this->translation->LOGGIN_ERROR;
             return $this->redirect()->toUrl("/login");
         }
         else
@@ -168,7 +168,7 @@ class LoginController extends \Application\Controller\IndexController
             $user = $this->getTable('user')->getUser($data->id);
             if ($user->getDeleted())
             {
-                $this->cache->error = $this->translation->DISABLED_ACCOUNT;
+                $this->cache->error = $this->translation->LOGGIN_ERROR;
                 return $this->logoutAction("/login");
             }
             if ($user->getAdmin())
@@ -342,8 +342,7 @@ class LoginController extends \Application\Controller\IndexController
         $authSession->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
-        unset($this->cache->user);
-        unset($authSession);
+        unset($this->cache->user, $authSession, $auth);
         $this->cache = null;
         $this->translation = null;
         if (!$redirectTo)

@@ -71,7 +71,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * Used to detect actions without IDs. Inherited in all other classes
      */
-    const NO_ID = 'no_id';
+    const NO_ID = 'Not found';
 
     /**
      * constructor
@@ -128,9 +128,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
-        $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controller = $this->params('controller');
-        $this->view->action = $this->params('action');
+        $this->view->controller = $this->getParam('__CONTROLLER__');
+        $this->view->action = $this->getParam('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
     }
 
@@ -182,7 +181,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * See if user is logged in.
-     * Crazy logic, but it does the trick.
      *
      * @throws AuthorizationException
      * @return void
@@ -192,12 +190,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $auth = new \Zend\Authentication\AuthenticationService();
         if($auth->hasIdentity() && $this->cache->user instanceof \Admin\Model\User)
         {
-            if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
-                (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
+            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && 
+                ($this->cache->role === 1 || $this->cache->role === 10) && 
+                ($this->cache->logged === true) 
+              )
             {
                 return $this->redirect()->toUrl("/");
             }
-            $this->clearUser();
+            // $this->clearUser();
         }
     }
 
@@ -270,52 +270,36 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param null $page controller name menu|news
      * @return  void
      */
-    public function setMetaTags($obj = null, $page = null)
+    public function setMetaTags($obj = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
-        if (!count($obj->current()))
+        if ($obj->current())
         {
-            return false;
-        }
-
-        /**
-         * This section is called when we are looking for a menu
-         *
-         * @see Application\Controller\MenuController
-         */
-        if ($page === "menu" && $obj->current())
-        {
-            $description = $obj->current()->getMenuObject()->getDescription();
-            $keywords = $obj->current()->getMenuObject()->getKeywords();
+            if ($obj->current()->getMenuObject() instanceof \Admin\Model\Menu)
+            {
+                $description = $obj->current()->getMenuObject()->getDescription();
+                $keywords = $obj->current()->getMenuObject()->getKeywords();
+            }
             $text = $obj->current()->getText();
             $preview = $obj->current()->getPreview();
             $title = $obj->current()->getTitle();
         }
-        /**
-         * This section is called when we request newspost. 
-         *
-         * @see Application\Controller\NewsController
-         */
-        else if ($page === "news" && $obj->current())
-        {
-            $extract = $obj->current()->getExtract();
-            $preview = $obj->current()->getPreview();
-            $title = $obj->current()->getTitle();
-            (empty($extract) ? $extract = $obj->current()->getText() : $extract);
-        }
+
+        // must be set from db
         (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
         (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
         (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
         (empty($preview) ? $preview = "" : $preview);
+        (empty($title) ? $title = "ZendPress" : $title);
 
-        $vhm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
-        $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder');
-        $placeholder->getContainer("customHead")->append("<meta itemprop='name' content='ZendPress'>\r\n");
-        $placeholder->getContainer("customHead")->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 100)."..."."'>\r\n");
-        $placeholder->getContainer("customHead")->append("<meta itemprop='title' content='".$title."'>\r\n");
-        $placeholder->getContainer("customHead")->append("<meta itemprop='image' content='".$preview."'>\r\n");
+        $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder')->getContainer("customHead");
+        $placeholder->append("<meta itemprop='name' content='ZendPress'>\r\n");
+        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
+        $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
+        $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
         
+        $vhm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
         $vhm->appendName('keywords', $keywords);
         $vhm->appendName('description', $description);
         $vhm->appendProperty('og:image', $preview);

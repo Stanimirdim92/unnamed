@@ -78,7 +78,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * Used to detect actions without IDs. Inherited in all other classes
      */
-    const NO_ID = 'no_id';
+    const NO_ID = 'Not found';
 
     /**
      * Query limit
@@ -126,7 +126,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
     /** 
-     * initialize breadcrumbs (if necessary)
+     * initialize breadcrumbs
+     * @return  array
      */
     public function initBreadcrumbs()
     {
@@ -155,9 +156,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
         $this->view->languageId = $this->langTranslation;
-        $this->view->language = $this->getTable("Language")->getLanguage($this->langTranslation);
-        $this->view->controller = $this->params('controller');
-        $this->view->action = $this->params('action');
+        $this->view->controller = $this->getParam('__CONTROLLER__');
+        $this->view->action = $this->getParam('action');
     }
 
     /** 
@@ -165,14 +165,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initMenus()
     {
-        $controller = strtolower(substr($this->params('controller'), strrpos($this->params('controller'),"\\")+1));
-        $action = $this->params('action');
-        $this->view->action = $action;
         $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
         $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-        $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$controller}'", "menuOrder");
-        // get the currently selected menu
-        $this->view->selected = $this->getSelectedMenu($controller, $action);
+        $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
     }
 
     /** 
@@ -209,57 +204,39 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return $this->getServiceLocator()->get($name . "Table");
     }
 
-    /** 
-     * this function tries to retrieve the current menu based on controller and action
-     * In theory it is impossible to have 2 menus with same set of controller and action
-     *
-     * @param  string $controller
-     * @param string $action
-     * @return null|AdminMenu
-     */
-    public function getSelectedMenu($controller, $action)
-    {
-        $temp = $this->getTable("AdminMenu")->fetchList(false, "controller='{$controller}' AND action='{$action}'", "parent DESC");
-        if(count($temp) > 0)
-        {
-            return $temp->current();
-        }
-        else
-        {
-            $temp = $this->getTable("AdminMenu")->fetchList(false, "controller='{$controller}'", "parent ASC");
-            if(count($temp) > 0) return $temp->current();
-        }
-        return null;
-    }
-
     /**
-     * Is the user admin? Few steps are called before this.
-     * 1. Module.php calls htpasswd via apache
+     * Is the user admin? Lets check that.
+     * 1. Module.php calls config/real/basic_passwd.txt via ZendPress AuthenticationAdapter for apache like auth
      * 2. On success go to Login Controller.
      * 3. On success run this function. If all went fine access admin
      *
-     * @throws AuthorizationException If wrong credentials
-     * @return true|false
+     * @throws AuthorizationException If wrong credentials or not in administrator table
+     * @return bool
      */
     private function initAdminIdentity()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
         if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
         {
-            if( (($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $this->cache->logged) && 
-                (($this->cache->role === 1 || $this->cache->role === 10) && $this->cache->logged))
+            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && 
+                ($this->cache->role === 1 || $this->cache->role === 10) && 
+                ($this->cache->logged === true)
+              )
             {
                 $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$auth->getIdentity()->id}'");
                 if (count($checkAdminExistence) === 1)
                 {
-                    return $this->redirect()->toUrl("/");
+                    return $this->redirect()->toUrl("/admin");
                 }
                 unset($checkAdminExistence);
                 $this->clearUser();
+                return $this->redirect()->toUrl("/");
             }
             $this->clearUser();
+            return $this->redirect()->toUrl("/");
         }
         $this->clearUser();
+        return $this->redirect()->toUrl("/");
     }
 
     private function clearUser()

@@ -53,14 +53,9 @@ $(document).ready(function ($) {
     /*
      * replace this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
      */
-    if ($("#titleLink") !== "undefined" && $("#titleLink") !== null) {
-        $("#titleLink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
-    }
-    if ($("#menulink") !== "undefined" && $("#menulink") !== null) {    
-        $("#menulink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
-    }
 
-    $("#seo-caption").on("keyup", function () {
+
+    $("#seo-caption").on("keyup select change", function () {
         var $seolink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
         if ($("#menulink") !== undefined || $("#menulink") !== null) {
             $("#titleLink").val($seolink);

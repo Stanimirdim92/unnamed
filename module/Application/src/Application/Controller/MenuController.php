@@ -37,6 +37,9 @@ namespace Application\Controller;
 
 class MenuController extends \Application\Controller\IndexController
 {
+    /**
+     * @param MvcEvent $e
+     */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
@@ -53,7 +56,7 @@ class MenuController extends \Application\Controller\IndexController
         if(empty($title)) $this->setErrorCode();
 
         $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "`menu`.`menulink` = '{$title}' AND (content.type='0' AND content.menu != '0' AND content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC");
-        $this->setMetaTags($this->view->contents, "menu");
+        $this->setMetaTags($this->view->contents);
         return $this->view;
     }
 }

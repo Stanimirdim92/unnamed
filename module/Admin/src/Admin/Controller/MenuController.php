@@ -99,18 +99,9 @@ class MenuController extends \Admin\Controller\IndexController
     public function modifyAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $menu = $this->crud($id);
+        if (!$menu)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Menu was not found");
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->view->menu = $menu;
@@ -185,23 +176,9 @@ class MenuController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $menu = $this->crud($id);
+        if (!$menu)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
-            if (!$menu)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->getTable("menu")->deleteMenu($menu->getId());
@@ -213,23 +190,9 @@ class MenuController extends \Admin\Controller\IndexController
     public function detailAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $menu = $this->crud($id);
+        if (!$menu)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
-            if (!$menu)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->view->menu = $menu;
@@ -247,4 +210,33 @@ class MenuController extends \Admin\Controller\IndexController
         $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
 	}
+
+    /**
+     * See if there is an actual menu.
+     * The function is used in all CRUD operations
+     *
+     * @param  int    $id the menu id
+     * @throws AuthorizationException If menu was not found
+     * @return Menu
+     */
+    private function crud($id = 0)
+    {
+        if(!$id)
+        {
+            $this->setErrorNoParam(IndexController::NO_ID);
+        }
+        try
+        {
+            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
+            if (!$menu)
+            {
+                throw new AuthorizationException(IndexController::ACCESS_DENIED);
+            }
+            return $menu;
+        }
+        catch(\Exception $ex)
+        {
+            $this->setErrorNoParam($ex->getMessage());
+        }
+    }
 }

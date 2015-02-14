@@ -410,7 +410,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
     }
     
     /**
@@ -442,7 +442,7 @@ class Menu implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip, $toJson = false)
+    public function getProperties(array $skip, $serializable = false)
     {
         $skip[] = "_serviceManager";
         $returnValue = array();
@@ -454,9 +454,9 @@ class Menu implements InputFilterAwareInterface
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($toJson)
+        if ($serializable)
         {
-            return \Zend\Json\Json::encode($returnValue);
+            return serialize($returnValue);
         }
         return $returnValue;
     }
@@ -522,7 +522,7 @@ class Menu implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),
@@ -537,7 +537,7 @@ class Menu implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),
@@ -588,7 +588,7 @@ class Menu implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),
@@ -604,7 +604,7 @@ class Menu implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),

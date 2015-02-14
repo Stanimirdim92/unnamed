@@ -68,8 +68,6 @@ class ContentForm extends Form
             $elements[201] = new Element\Checkbox('removepreview');
         	$elements[201]->setLabel('Remove preview')
                           	      ->setAttribute('id', 'removepreview');
-            // if($options!=null and $options->preview)
-            //     $elements[1]->setValue($options->preview);
         }
         else
         {

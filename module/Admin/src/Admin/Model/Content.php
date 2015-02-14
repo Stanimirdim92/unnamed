@@ -394,7 +394,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
     }
     
     /**
@@ -426,7 +426,7 @@ class Content implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip, $toJson = false)
+    public function getProperties(array $skip, $serializable = false)
     {
         $skip[] = "_serviceManager";
         $returnValue = array();
@@ -438,9 +438,9 @@ class Content implements InputFilterAwareInterface
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($toJson)
+        if ($serializable)
         {
-            return \Zend\Json\Json::encode($returnValue);
+            return serialize($returnValue);
         }
         return $returnValue;
     }
@@ -482,8 +482,30 @@ class Content implements InputFilterAwareInterface
                 ),
             ));
             $inputFilter->add(array(
-                'name'     => 'preview',
-                'required' => false,
+                "name"=>"preview",
+                "required" => false,
+                'validators' => array(
+                    array(
+                        'name' => 'Zend\Validator\File\Size',
+                        'options' => array(
+                            'min' => 0,
+                            'max' => 3145728, //3mb
+                            'useByteString' => true,
+                        )
+                    ),
+                    array(
+                        'name' => 'Zend\Validator\File\Extension',
+                        'options' => array(
+                            'extension' => array(
+                                'jpg',
+                                'gif',
+                                'png',
+                                'jpeg',
+                            ), 
+                            'case' => true,
+                        ),
+                    ),
+                ),
             ));
             $inputFilter->add(array(
                 "name"=>"title",
@@ -547,7 +569,7 @@ class Content implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-9]$/',
+                            'pattern' => '/^[0-9]+$/',
                         ),
                     ),
                 ),
@@ -577,7 +599,7 @@ class Content implements InputFilterAwareInterface
                     array(
                         'name' => 'Regex',
                         'options' => array(
-                            'pattern' => '/^[0-1]$/',
+                            'pattern' => '/^[0-1]+$/',
                         ),
                     ),
                 ),
@@ -591,11 +613,10 @@ class Content implements InputFilterAwareInterface
                 ),
                 'validators' => array(
                     array(
-                        'name'    => 'StringLength',
+                        'name' => 'date',
                         'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min' => 0,
-                            'max' => 150,
+                            'locale' => 'en',
+                            'format' => 'Y-m-d H:i:s'
                         ),
                     ),
                 ),

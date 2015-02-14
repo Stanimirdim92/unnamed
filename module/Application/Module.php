@@ -135,7 +135,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
 
-        $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'setLayoutTitle'));
+        $em->attach(MvcEvent::EVENT_RENDER, array($this, 'setLayoutTitle'));
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
             $exception = $e->getParam("exception");
@@ -218,7 +218,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 $action .= ($matches->getParam("post") ? " - ".$matches->getParam("post") : "");
             }
             else
-            {       
+            {
                 $action = "Home"; // must be set from db
             }
         }

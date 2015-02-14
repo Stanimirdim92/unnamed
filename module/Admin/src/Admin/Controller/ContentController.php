@@ -123,18 +123,9 @@ class ContentController extends \Admin\Controller\IndexController
     public function modifyAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $content = $this->crud($id);
+        if (!$content)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $content = $this->getTable("content")->getContent($id, $this->langTranslation);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Content was not found");
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->view->content = $content;
@@ -186,28 +177,25 @@ class ContentController extends \Admin\Controller\IndexController
                 $formData = $form->getData();
                 if(isset($formData['removepreview']) && $formData['removepreview'] && $content != null)
                 {
-                    if (file_exists($_SERVER['DOCUMENT_ROOT'].'/public/userfiles/preview/'.$content->preview))
-                    {
-                        unlink($_SERVER['DOCUMENT_ROOT'] . '/public/userfiles/preview/' . $content->preview);
-                        $content->setPreview("");
-                    }
-                    else
+                    if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview))
                     {
                         $this->cache->error = "Image doesn't exist in that directory";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
+                    unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->preview);
+                    $content->setPreview("");
                 }
-                if($formData['preview']['name']!= NULL)
+                if($formData['preview']['name'] != null)
                 {
                     $adapter = new Http();
-                    $adapter->setDestination($_SERVER['DOCUMENT_ROOT'].'/public/userfiles/preview/');
-                    if($adapter->isValid('preview')) 
+                    $adapter->setDestination($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/');
+                    if($adapter->isValid('preview'))
                     {
                         // remove the old image from the directory if exists
-                        if($content->preview != null && file_exists($_SERVER['DOCUMENT_ROOT'].'/public/userfiles/preview/'.$content->preview))
+                        if($content->preview != null && file_exists($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview))
                         {
-                            unlink($_SERVER['DOCUMENT_ROOT'].'/public/userfiles/preview/'.$content->preview);    
+                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview);    
                         }
                         $param = $this->params()->fromFiles('preview');
                         $adapter->receive($param['name']);
@@ -267,23 +255,9 @@ class ContentController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $content = $this->crud($id);
+        if (!$content)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $content = $this->getTable("content")->getContent($id, $this->langTranslation);
-            if (!$content)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->getTable("content")->deleteContent($content->id);
@@ -295,23 +269,9 @@ class ContentController extends \Admin\Controller\IndexController
     public function detailAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
+        $content = $this->crud($id);
+        if (!$content)
         {
-            $this->setErrorNoParam(IndexController::NO_ID);
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        try
-        {
-            $content = $this->getTable("content")->getContent($id, $this->langTranslation);
-            if (!$content)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
             return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
         }
         $this->view->content = $content;
@@ -329,5 +289,34 @@ class ContentController extends \Admin\Controller\IndexController
         $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
+    }
+
+    /**
+     * See if there is an actual con
+     * The function is used in all CRUD operations
+     * 
+     * @param  int    $id the con id
+     * @throws AuthorizationException If con was not found
+     * @return Content
+     */
+    private function crud($id = 0)
+    {
+        if(!$id)
+        {
+            $this->setErrorNoParam(IndexController::NO_ID);
+        }
+        try
+        {
+            $content = $this->getTable("content")->getContent($id, $this->langTranslation);
+            if (!$content)
+            {
+                throw new AuthorizationException(IndexController::ACCESS_DENIED);
+            }
+            return $content;
+        }
+        catch(\Exception $ex)
+        {
+            $this->setErrorNoParam($ex->getMessage());
+        }
     }
 }

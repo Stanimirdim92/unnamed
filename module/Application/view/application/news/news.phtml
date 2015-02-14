@@ -7,14 +7,17 @@ if(count($this->news) > 0)
         $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
 ?>
             <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
-                <?php if ($new->getPreview() != null) { ?>
+<?php           if ($new->getPreview() != null)
+                {
+?>
                     <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
-                        <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview()?>" id="news_image" title="<?=$new->getTitle()?>">
-                            <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview()?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle()?>" />
+                        <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview();?>" id="news_image" title="<?=$new->getTitle();?>">
+                            <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview();?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle();?>" />
                         </a>
                     </figure>
-                <?php } ?>
-
+<?php           
+                } 
+?>
                 <h2 itemscope itemprop="name" class="post-title">
                     <a itemprop="url" href="/news/post/<?=$new->getTitleLink()?>"><?=$new->getTitle()?></a>
                 </h2>
@@ -23,13 +26,13 @@ if(count($this->news) > 0)
                 </time>
                 <p itemscope itemprop="text" class="post-text"><?=substr(strip_tags($new->getText()), 0, 300)."...";?></p>
                 <br>
-                <?php if (strlen($new->getText()) > 0)
+<?php           if (strlen($new->getText()) > 0)
                 {
-                ?>
-                    <p><a itemscope itemprop="url" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more" href="/news/post/<?=$new->getTitleLink()?>?>"><?=$this->translation->READ_MORE?></a></p>
-                <?php
+?>
+                    <p><a itemscope itemprop="url" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more" href="<?=$this->url('news', array('post' => $new->getTitleLink()));?>"><?=$this->translation->READ_MORE?></a></p>
+<?php
                 }
-                ?>
+?>
             </article>
 <?php
     }
@@ -53,7 +56,7 @@ else if(count($this->new) === 1 && count($this->news) === 0)
             <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
         </time>
         <div itemprop="text" class="post-text"><?=$this->new->getText()?></div>
-        <p><a itemprop="url" href="/news" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
+        <p><a itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
     </article>
 <?php
 }

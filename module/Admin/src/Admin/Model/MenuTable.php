@@ -53,11 +53,6 @@ class MenuTable
      */
     private $_serviceManager = null;
 
-    /**
-     * @var string $_tableName
-     */
-    private $_tableName = "menu";
-
     public function __construct(ServiceManager $sm)
     {
         $this->_serviceManager = $sm;
@@ -81,7 +76,7 @@ class MenuTable
         $offset = (int) $offset;
         if($paginated)
         {
-            $select = new Select($this->_tableName);
+            $select = new Select("menu");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(),$resultSetPrototype);
