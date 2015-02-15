@@ -19,11 +19,6 @@ class ResetPasswordTable
      */
     private $_serviceManager = null;
 
-    /**
-     * @var string $_tableName
-     */
-    private $_tableName = "resetpassword";
-
     public function __construct(ServiceManager $sm)
     {
         $this->_serviceManager = $sm;
@@ -47,7 +42,7 @@ class ResetPasswordTable
         $offset = (int) $offset;
         if($paginated)
         {
-            $select = new Select($this->_tableName);
+            $select = new Select("resetpassword");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new ResetPassword(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(),$resultSetPrototype);

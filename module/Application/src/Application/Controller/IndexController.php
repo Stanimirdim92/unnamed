@@ -82,7 +82,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->translation = new Container('translations');
         $this->initCache();
         // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language ? (int) $this->translation->language : 1);
+        $this->langTranslation = ((int) $this->translation->language !== 0 ? (int) $this->translation->language : 1);
     }
 
     /**
@@ -197,11 +197,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
             {
                 return $this->redirect()->toUrl("/");
             }
-            // $this->clearUser();
+            // $this->clearUserData();
         }
     }
 
-    private function clearUser()
+    private function clearUserData()
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();

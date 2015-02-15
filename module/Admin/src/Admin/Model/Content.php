@@ -501,6 +501,8 @@ class Content implements InputFilterAwareInterface
                                 'gif',
                                 'png',
                                 'jpeg',
+                                'bmp',
+                                'webp',
                             ), 
                             'case' => true,
                         ),

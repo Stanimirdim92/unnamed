@@ -2,31 +2,25 @@
 if (count($this->contents) > 0)
 {
     $c = $this->contents->current();
-    /**
-     * @var $c \Admin\Model\Content
-     */
-    // foreach($this->contents as $c)
-    // {
-        echo "<h2 itemscope itemprop='name'>{$c->getTitle()}</h2>";
+    echo "<h2 itemscope itemprop='name'>{$c->getTitle()}</h2>";
 
-        if($c->getPreview() != null)
-        {
+    if($c->getPreview() != null)
+    {
  ?>
-            <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
-                <a itemprop="url" href="/userfiles/preview/<?=$c->getPreview();?>" id="news_image" title="<?=$c->getTitle();?>">
-                    <img itemprop="image" src="/userfiles/preview/<?=$c->getPreview();?>" title="<?=$c->getTitle();?>" alt="<?=$c->getTitle();?>" />
-                </a>
-            </figure>
+        <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+            <a itemprop="url" href="/userfiles/preview/<?=$c->getPreview();?>" id="news_image" title="<?=$c->getTitle();?>">
+                <img itemprop="image" src="/userfiles/preview/<?=$c->getPreview();?>" title="<?=$c->getTitle();?>" alt="<?=$c->getTitle();?>" />
+            </a>
+        </figure>
 <?php
-        }
+    }
 
-        echo "<p itemscope itemprop='text' class='post-text'>{$c->getText()}</p>";
-        echo "<br>";
-        if ($c->getMenuObject()->getParent() != null)
-        {
-            echo "<p><a itemprop='url' class='main-menu' href='".$this->url('menu', array('title' => $c->getMenuObject()->getParentObject()->getMenuLink()))."'>{$c->getMenuObject()->getParentObject()->getCaption()}</a></p>";
-        }
-    // }
+    echo "<p itemscope itemprop='text' class='post-text'>{$c->getText()}</p>";
+    echo "<br>";
+    if ($c->getMenuObject()->getParent() != null)
+    {
+        echo "<p><a itemprop='url' class='main-menu' href='".$this->url('menu', array('title' => $c->getMenuObject()->getParentObject()->getMenuLink()))."'>{$c->getMenuObject()->getParentObject()->getCaption()}</a></p>";
+    }
 }
 else
 {

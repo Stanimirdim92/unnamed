@@ -245,7 +245,7 @@ class ResetPassword
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
     }
     
     /**
@@ -277,7 +277,7 @@ class ResetPassword
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip, $toJson = false)
+    public function getProperties(array $skip, $serializable = false)
     {
         $skip[] = "_serviceManager";
         $returnValue = array();
@@ -289,9 +289,9 @@ class ResetPassword
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($toJson)
+        if ($serializable)
         {
-            return \Zend\Json\Json::encode($returnValue);
+            return serialize($returnValue);
         }
         return $returnValue;
     }

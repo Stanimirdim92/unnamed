@@ -77,11 +77,13 @@ class ContentController extends \Admin\Controller\IndexController
         {
             // fetch all contents that have value content.menu=0 and type=1
             $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", "id ASC");
+            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "content.date DESC");
         }
         if ($type === 0)
         {
             // fetch all contents that have value content.menu=0 and type=0
             $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", "id ASC");
+            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
         $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", "id ASC");
@@ -94,15 +96,6 @@ class ContentController extends \Admin\Controller\IndexController
             }
         }
         $this->view->menuReport = $menuReport;
-
-        if($type === 0)
-        {
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='{$type}') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
-        }
-        else
-        {
-            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='{$type}') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "content.date DESC");
-        }
         return $this->view;
     }
     

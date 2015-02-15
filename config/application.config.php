@@ -4,8 +4,8 @@ use Zend\Stdlib\ArrayUtils;
 $config = array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'EdpModuleLayouts',
         'Application',
+        'EdpModuleLayouts',
         'Admin',
         'ZendDeveloperTools',
     ),
@@ -64,7 +64,7 @@ $cacheConfig = array(
     'module_map_cache_key' => '1cf4c26ec62554e65b00134eed95a538',
 
     // The path in which to cache merged configuration.
-    'cache_dir' => 'data/cache/',
+    'cache_dir' => './data/cache/',
 
     // Whether or not to enable modules dependency checking.
     // Enabled by default, prevents usage of modules that depend on other modules

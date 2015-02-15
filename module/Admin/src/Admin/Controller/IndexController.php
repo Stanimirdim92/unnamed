@@ -100,7 +100,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
         $this->initCache();
         // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language ? (int) $this->translation->language : 1);
+        $this->langTranslation = ((int) $this->translation->language !== 0 ? (int) $this->translation->language : 1);
     }
 
     /**
