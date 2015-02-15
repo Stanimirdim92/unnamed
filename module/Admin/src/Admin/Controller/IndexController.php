@@ -35,7 +35,6 @@
 
 namespace Admin\Controller;
 
-use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
 use Custom\Error\AuthorizationException;
@@ -95,7 +94,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function __construct()
     {
-        $this->view = new ViewModel();
+        $this->view = new \Zend\View\Model\ViewModel();
         $this->translation = new Container("translations");
         $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
         $this->initCache();
@@ -141,7 +140,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initCache()
     {
-        if (empty($this->cache))
+        if (!$this->cache)
         {
             $this->cache = new Container("cache");
             $this->view->cache = $this->cache;
@@ -155,7 +154,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     {
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
-        $this->view->languageId = $this->langTranslation;
         $this->view->controller = $this->getParam('__CONTROLLER__');
         $this->view->action = $this->getParam('action');
     }
@@ -176,7 +174,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function initLanguages()
     {
         $this->translation = new Container('translations');
-        if(empty($this->translation->language))
+        if(!$this->translation->language)
         {
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
@@ -197,9 +195,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function getTable($name = null)
     {
-        if (!is_string($name) || empty($name))
+        if (!is_string($name) || !$name)
         {
-            throw new Exception\InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
+            throw new \Exception(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
     }
@@ -229,17 +227,17 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
                     return $this->redirect()->toUrl("/admin");
                 }
                 unset($checkAdminExistence);
-                $this->clearUser();
+                $this->clearUserData();
                 return $this->redirect()->toUrl("/");
             }
-            $this->clearUser();
+            $this->clearUserData();
             return $this->redirect()->toUrl("/");
         }
-        $this->clearUser();
+        $this->clearUserData();
         return $this->redirect()->toUrl("/");
     }
 
-    private function clearUser()
+    private function clearUserData()
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();

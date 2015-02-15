@@ -1,21 +1,18 @@
 <?php
-    $children = $this->viewModel()->getCurrent()->getChildren();
-    $view = $children[0];
-    $title = $this->headTitle()->renderTitle();
-    $baseURL = $view->baseURL;
+    $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html prefix="og: http://ogp.me/ns#" lang="en">
+<html prefix="og: http://ogp.me/ns#" lang="<?=$view->langName?>">
     <head>
         <meta charset="utf-8">
-        <title><?=$title;?></title>
+        <title><?=$this->headTitle()->renderTitle();?></title>
         <?=$this->headMeta();?>
         
         <meta property="og:type" content="article">
-        <meta property="og:url" content="<?=$baseURL?>">
-        <meta property="og:site_name" content="<?=$title;?>">
+        <meta property="og:url" content="<?=$view->baseURL?>">
+        <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle();?>">
         <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
-        <link rel="canonical" href="<?=$baseURL?>">
+        <link rel="canonical" href="<?=$view->baseURL?>">
         <!-- <meta name="robots" content="index, follow" /> -->
         <!-- <meta name="Googlebot" content="index, follow" /> -->
         <!-- <meta name="revisit-after" content="3 Days" /> -->
@@ -47,7 +44,7 @@
             {   
                 $menu->setServiceManager(null);
 ?>
-                <a href="/menu/<?=$menu->getMenuLink();?>"><?=$menu->getCaption();?></a>
+                <a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()));?>'><?=$menu->getCaption();?></a>
 <?php
             }
 
@@ -57,12 +54,12 @@
             {
                 if (is_array($view->cache->warning))
                 {
-                    foreach ($view->cache->warning as $value)
+                    foreach ($view->cache->warning as $warning)
                     {
 ?>
                   <div class="alert alert-warning">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-warning"></i> <?=$value?>
+                    <i class="fa-fw fa fa-warning"></i> <?=$warning;?>
                   </div>
 <?php
                     }
@@ -83,12 +80,12 @@
             {
                 if (is_array($view->cache->success))
                 {
-                    foreach ($view->cache->success as $value)
+                    foreach ($view->cache->success as $success)
                     {
 ?>
                   <div class="alert alert-success">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$value?>
+                    <i class="fa-fw fa fa-check"></i> <?=$success;?>
                   </div>
 <?php
                     }
@@ -98,7 +95,7 @@
 ?>
                   <div class="alert alert-success">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$view->cache->success?>
+                    <i class="fa-fw fa fa-check"></i> <?=$view->cache->success;?>
                   </div>
 <?php
                 }
@@ -109,12 +106,12 @@
             {
                 if (is_array($view->cache->error))
                 {
-                    foreach ($view->cache->error as $value)
+                    foreach ($view->cache->error as $error)
                     {
 ?>
                   <div class="alert alert-danger">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$value?>
+                    <i class="fa-fw fa fa-times"></i> <?=$error;?>
                   </div>
 <?php
                     }
@@ -124,10 +121,10 @@
 ?>
                   <div class="alert alert-danger">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$view->cache->error?>
+                    <i class="fa-fw fa fa-times"></i> <?=$view->cache->error;?>
                   </div>
-                }
 <?php
+                }
                 $view->cache->error = null;
             }
 ?>

@@ -32,6 +32,7 @@
  * @version    0.03
  * @link       TBA
  */
+
 /**
  * Activate proper Zend DevTools for lower PHP versions
  */

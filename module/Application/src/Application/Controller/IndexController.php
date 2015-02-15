@@ -111,7 +111,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initCache()
     {
-        if (empty($this->cache))
+        if (!$this->cache)
         {
             $this->cache = new Container("cache");
             $this->view->cache = $this->cache;
@@ -125,9 +125,10 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initViewVars()
     {
+        $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
-        $this->view->languageId = $this->langTranslation;
+        $this->view->langName = $lang->name;
         $this->view->controller = $this->getParam('__CONTROLLER__');
         $this->view->action = $this->getParam('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
@@ -139,7 +140,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function initLanguages()
     {
         $this->translation = new Container('translations');
-        if(empty($this->translation->language))
+        if(!$this->translation->language)
         {
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
@@ -172,9 +173,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function getTable($name = null)
     {
-        if (!is_string($name) || empty($name))
+        if (!is_string($name) || !$name))
         {
-            throw new Exception\InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
+            throw new \Exception(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
     }

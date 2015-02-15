@@ -1,4 +1,4 @@
-;(function (w, d, $, undefined) {
+;(function (w, d, undefined) {
     'use strict';
     // Avoid `console` errors in browsers that lack a console.
     var method;
@@ -29,7 +29,7 @@
     // At least Safari 3+: "[object HTMLElementConstructor]"
     var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
     var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
-})(this, document, jQuery);
+})(this, document);
 
 // Place any jQuery/helper plugins in here.
 $(document).ready(function ($) {
