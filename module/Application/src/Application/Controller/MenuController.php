@@ -55,7 +55,7 @@ class MenuController extends \Application\Controller\IndexController
         $title = (string) $this->getParam("title");
         if(empty($title)) $this->setErrorCode();
 
-        $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "`menu`.`menulink` = '{$title}' AND (content.type='0' AND content.menu != '0' AND content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC");
+        $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "inner", array("menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation), null, "menu.parent ASC, menu.menuOrder ASC");
         $this->setMetaTags($this->view->contents);
         return $this->view;
     }

@@ -82,13 +82,8 @@ class LoginController extends \Application\Controller\IndexController
      * @var Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter
      * @return DbTable|Adapter
      */
-    private function getAuthAdapter(array $options, $table = "user", $identity = "email", $credential = "password")
+    private function getAuthAdapter(array $options = array(), $table = "user", $identity = "email", $credential = "password")
     {
-        if (!is_array($options))
-        {
-            throw new Exception\InvalidArgumentException(__METHOD__ . ' expects an array');
-        }
-
         $credentialCallback = function ($passwordInDatabase, $passwordProvided)
         {
             $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));

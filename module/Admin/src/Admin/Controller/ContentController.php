@@ -77,25 +77,28 @@ class ContentController extends \Admin\Controller\IndexController
         {
             // fetch all contents that have value content.menu=0 and type=1
             $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "content.date DESC");
+            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", "content.date DESC");
         }
         if ($type === 0)
         {
             // fetch all contents that have value content.menu=0 and type=0
             $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0') AND (content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
         $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", "id ASC");
-        $menuReport = array();
-        foreach ($contentsWithoutMenu as $cwm)
+        if (count($contentsWithoutMenu > 0)) 
         {
-            if (!$cwm->getMenuObject())
+            $menuReport = array();
+            foreach ($contentsWithoutMenu as $cwm)
             {
-                $menuReport[] = $cwm;
+                if (!$cwm->getMenuObject())
+                {
+                    $menuReport[] = $cwm;
+                }
             }
+            $this->view->menuReport = $menuReport;
         }
-        $this->view->menuReport = $menuReport;
         return $this->view;
     }
     
@@ -110,20 +113,48 @@ class ContentController extends \Admin\Controller\IndexController
     }
 
     /**
-     * This action presents a modify form for Content object with a given id
+     * This action presents a modify form for Content object with a given id and session language
      * Upon POST the form is processed and saved
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        $content = $this->crud($id);
-        if (!$content)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
         $this->view->content = $content;
         $this->addBreadcrumb(array("reference"=>"/admin/content/modify/id/{$content->id}", "name"=>"Modify content &laquo;".$content->toString()."&raquo;"));
         $this->showForm('Modify', $content);
+        return $this->view;
+    }
+
+    /**
+     * this action deletes a content object with a provided id and session language
+     */
+    public function deleteAction()
+    {
+        $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
+        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully deleted";
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+    }
+
+    /**
+     * this action shows content details from the provided id and session language
+     */
+    public function detailAction()
+    {
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
+        $this->view->content = $content;
+        $this->addBreadcrumb(array("reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->toString()."&raquo; details"));
+        return $this->view;
+    }
+
+    /**
+     * This action will clone the object with the provided id and return to the index view
+     */
+    public function cloneAction()
+    {
+        $id = (int) $this->getParam("id", 0);
+        $content = $this->getTable("content")->duplicate($id, $this->langTranslation);
+        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully cloned";
+        $this->redirect()->toUrl("/admin/content");
         return $this->view;
     }
     
@@ -239,77 +270,6 @@ class ContentController extends \Admin\Controller\IndexController
                 $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
-        }
-    }
-    
-    /**
-     * this action deletes a content object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam("id", 0);
-        $content = $this->crud($id);
-        if (!$content)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        $this->getTable("content")->deleteContent($content->id);
-        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-    }
-
-
-    public function detailAction()
-    {
-        $id = (int) $this->getParam("id", 0);
-        $content = $this->crud($id);
-        if (!$content)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        $this->view->content = $content;
-        $this->addBreadcrumb(array("reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->toString()."&raquo; details"));
-        return $this->view;
-    }
-
-    /**
-     * This action will clone the object with the provided id and return to the index view
-     */
-    public function cloneAction()
-    {
-        $id = (int) $this->getParam("id", 0);
-        $content = $this->getTable("content")->duplicate($id, $this->langTranslation);
-        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully cloned";
-        $this->redirect()->toUrl("/admin/content");
-        return $this->view;
-    }
-
-    /**
-     * See if there is an actual con
-     * The function is used in all CRUD operations
-     * 
-     * @param  int    $id the con id
-     * @throws AuthorizationException If con was not found
-     * @return Content
-     */
-    private function crud($id = 0)
-    {
-        if(!$id)
-        {
-            $this->setErrorNoParam(IndexController::NO_ID);
-        }
-        try
-        {
-            $content = $this->getTable("content")->getContent($id, $this->langTranslation);
-            if (!$content)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-            }
-            return $content;
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
         }
     }
 }

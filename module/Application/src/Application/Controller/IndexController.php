@@ -152,14 +152,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function initMenus()
     {
-        $temp = $this->getTable("Menu")->fetchList(false, array(), "(parent='0' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", "menuOrder ASC");
         $submenus = array();
 
-        foreach($temp as $m)
+        foreach($menu as $submenu)
         {
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array(), "(parent='" . (int) $m->id."' AND menutype='0') AND language='".$this->langTranslation."'", "menuOrder ASC");
+            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", "menuOrder ASC");
         }
-        $this->view->menus = $temp;
+        $this->view->menus = $menu;
         $this->view->submenus = $submenus;
     }
 
@@ -173,7 +173,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function getTable($name = null)
     {
-        if (!is_string($name) || !$name))
+        if (!is_string($name) || !$name)
         {
             throw new \Exception(__METHOD__ . ' must be string and must not be empty');
         }

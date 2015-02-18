@@ -42,13 +42,13 @@ use Zend\ServiceManager\ServiceManager;
 
 class Content implements InputFilterAwareInterface
 {
-    protected $_inputFilter;
+    /**
+     * @var null $_inputFilter inputFilter
+     */
+    protected $_inputFilter = null;
 
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
-     * Please, note that this is not the best way, but it does the job.
-     *
-     * @var $_serviceManager ServiceManager 
+     * @var null $_serviceManager ServiceManager 
      */
     private $_serviceManager = null;
 
@@ -113,22 +113,19 @@ class Content implements InputFilterAwareInterface
     private $_titleLink = null;
     
     /**
-     * @param null $sm
-     * @return ServiceManager
+     * @param null $sm ServiceManager
+     * @return ServiceManager|null
      */
-    public function setServiceManager($sm = null)
+    public function setServiceManager(ServiceManager $sm = null)
     {
-        if ($sm instanceof ServiceManager || $sm === null)
-        {
-            $this->_serviceManager = $sm;
-        }
+        $this->_serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data)
+    public function exchangeArray(array $data = array())
     {
         $this->_id = (isset($data['id'])) ? $data['id'] : 0;
         $this->_menu = (isset($data['menu'])) ? $data['menu'] : 0;
@@ -148,16 +145,10 @@ class Content implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = array(), ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
-            $this->exchangeArray($options);
-        }
-        if($sm != null)
-        {
-            $this->_serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
+        $this->_serviceManager = $sm;
     }
     
     /**
@@ -383,10 +374,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
-            $this->{'_'. $property} = $value;
-        }
+        (property_exists($this, '_'. $property) ? $this->{'_'. $property} = $value : null);
     }
 
     /**
@@ -426,9 +414,8 @@ class Content implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip, $serializable = false)
+    public function getProperties(array $skip = array(), $serializable = false)
     {
-        $skip[] = "_serviceManager";
         $returnValue = array();
         $data = get_class_vars(get_class($this));
         foreach($data as $key => $value)

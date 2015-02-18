@@ -101,7 +101,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             {
                 return true;
             }
-        } 
+        }
         else if (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT']))
         {
             return true;
@@ -143,47 +143,58 @@ class Module implements Feature\AutoloaderProviderInterface,
             {
                 $this->errorResponse($e);
             }
-            else
-            {
-                $cache = new Container("cache");
-                $remote = new RemoteAddress();
-                $service = $sm->get('ApplicationErrorHandling');
-                if(get_class($exception)==="Custom\Error\AuthorizationException")
-                {
-                    $userRole = "Guest";
-                    if ($cache->role === 1)
-                    {
-                        $userRole = 1;
-                    }
-                    else if ($cache->role === 10)
-                    {
-                        $userRole = 10;
-                    }
-                    $routeMatch = $e->getRouteMatch();
-                    $controller = $routeMatch->getParam('controller');
-                    $action = $routeMatch->getParam('action');
-                    $message = " *** APPLICATION LOG ***
-                    Controller: " . $controller . ",
-                    Controller action: " . $action . ",
-                    User role: " . $userRole. ",
-                    User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-                    Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-                    IP: " . $remote->getIpAddress() . ",
-                    Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
-                    Date: " . date("Y-m-d H:i:s", time()) . ",
-                    Full URL: ".$sm->get("Request")->getRequestUri().",
-                    User port: ".$_SERVER["REMOTE_PORT"].",
-                    Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                    Method used: " . $sm->get("Request")->getMethod() . "\n";
-                    $service->logAuthorisationError($message);
-                }
-                else
-                {
-                    $service->logException($exception);
-                    $this->errorResponse($e);
-                }
-            }
+
+            $service = $sm->get('ApplicationErrorHandling');
+            $this->logError($service, $exception, $e, $sm);
         });
+    }
+
+    /**
+     * @param  ApplicationErrorHandling $service
+     * @param  Exception $exception
+     * @param  MvcEvent $e
+     * @param  ServiceManager $sm
+     *
+     * @return [type]            
+     */
+    private function logError($service, $exception, $e, $sm)
+    {
+        if(get_class($exception)==="Custom\Error\AuthorizationException")
+        {
+            $cache = new Container("cache");
+            $remote = new RemoteAddress();
+            $userRole = "Guest";
+            if ($cache->role === 1)
+            {
+                $userRole = 1;
+            }
+            else if ($cache->role === 10)
+            {
+                $userRole = 10;
+            }
+            $routeMatch = $e->getRouteMatch();
+            $controller = $routeMatch->getParam('controller');
+            $action = $routeMatch->getParam('action');
+            $message = " *** APPLICATION LOG ***
+            Controller: " . $controller . ",
+            Controller action: " . $action . ",
+            User role: " . $userRole. ",
+            User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+            Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+            IP: " . $remote->getIpAddress() . ",
+            Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
+            Date: " . date("Y-m-d H:i:s", time()) . ",
+            Full URL: ".$sm->get("Request")->getRequestUri().",
+            User port: ".$_SERVER["REMOTE_PORT"].",
+            Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+            Method used: " . $sm->get("Request")->getMethod() . "\n";
+            $service->logAuthorisationError($message);
+        }
+        else
+        {
+            $service->logException($exception);
+            $this->errorResponse($e);
+        }
     }
 
     /**

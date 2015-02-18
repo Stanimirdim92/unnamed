@@ -70,18 +70,17 @@ class ContentTable
      * @param  null $offset    OFFSET condition
      * @return ResultSet|Paginator
      */
-    public function fetchList($paginated = false, array $columns, $where = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = array(), $where = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
-        if($paginated)
+        if($paginated === true)
         {
             $select = new Select("content");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(),$resultSetPrototype);
-            $paginator = new Paginator($paginatorAdapter);
-            return $paginator;
+            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
+            return new Paginator($paginatorAdapter);
         }
         else
         {
@@ -107,7 +106,9 @@ class ContentTable
      */
     public function fetchJoin($pagination = false, $join = '', $on = '', $where = null, $order = null, $limit = null, $offset = null)
     {
-        if ($pagination)
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+        if ($pagination === true)
         {
             
         }
@@ -117,11 +118,10 @@ class ContentTable
             {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
-                $limit = (int) $limit;
-                $offset = (int) $offset;
                 $select->join($join, $on, array("id1"=>"id"));
                 $this->queryColumns($select, array(), $where, $order, $limit, $offset);
             });
+            $resultSet->buffer();
             return $resultSet;
         }
     }
@@ -138,7 +138,7 @@ class ContentTable
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns, $where, $order, $limit, $offset)
+    private function queryColumns(Select $select, array $columns = array(), $where, $order, $limit, $offset)
     {
         if(is_array($columns) && !empty($columns))
             $select->columns($columns);
@@ -154,6 +154,9 @@ class ContentTable
     }
     
     /**
+     * @param int $id content id
+     * @param int $language user language
+     * @throws Exception If content is not found
      * @return Content
      */
     public function getContent($id = 0, $language = 1)
@@ -161,16 +164,35 @@ class ContentTable
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, "language" => (int) $language));
         if (!$rowset->current()) 
         {
-            throw new \Exception("Oops error.");
+            throw new \Exception("Couldn't find content");
         }
         return $rowset->current();
     }
 
-    public function deleteContent($id = 0)
+    /**
+     * Delete a content based on the provided id and language
+     * 
+     * @param int $id content id
+     * @param int $language user language
+     * @throws Exception If content is not found
+     * @return Content
+     */
+    public function deleteContent($id = 0, $language = 1)
     {
+        if (!$this->getContent($id, $language))
+        {
+            throw new \Exception("Couldn't delete content");
+        }
         $this->_tableGateway->delete(array('id' => (int) $id));
     }
     
+    /**
+     * Save or update content based on the provided id and language
+     *
+     * @param  Content|null $content
+     * @throws Exception If content is not found
+     * @return Content
+     */
     public function saveContent(Content $content = null)
     {
         $data = array(
@@ -184,8 +206,8 @@ class ContentTable
             'language'  => (int) $content->language,
             'titleLink' => (string) $content->titleLink,
         );
-        $id = $content->id;
-        $language = $content->language;
+        $id = (int) $content->id;
+        $language = (int) $content->language;
         if (!$id) 
         {
             $this->_tableGateway->insert($data);
@@ -195,7 +217,7 @@ class ContentTable
         {
             if (!$this->getContent($id, $language))
             {
-                throw new \Exception("Oops error.");
+                throw new \Exception("Couldn't save content");
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
@@ -205,9 +227,21 @@ class ContentTable
         return $content;
     }
     
+    /**
+     * duplicate a content 
+     *
+     * @param  int    $id
+     * @param  int    $language
+     *
+     * @return Content
+     */
     public function duplicate($id = 0, $language = 1)
     {
         $content = $this->getContent($id, $language);
+        if (!$content)
+        {
+            throw new \Exception("Couldn't clone content");
+        }
         $clone = $content->getCopy();
         $this->saveContent($clone);
 		return $clone;
