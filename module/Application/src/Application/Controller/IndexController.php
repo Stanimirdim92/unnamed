@@ -309,6 +309,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     public function indexAction()
     {
+        throw new \Exception("Error Processing Request", 1);
+        
         return $this->view;
     }
 

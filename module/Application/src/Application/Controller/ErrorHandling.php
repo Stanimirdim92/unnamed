@@ -15,10 +15,12 @@ class ErrorHandling
         $i = 1;
         do {
             $messages[] = $i++ . ": " . $e->getMessage();
-        } while ($e = $e->getPrevious());
+        } while ($e->getPrevious());
 
-        $log = "Exception:n" . implode("n", $messages).PHP_EOL."Code:".$e->getCode()."File:".PHP_EOL.$e->getFile();
-        $log .= PHP_EOL."Trace:n" . $e->getTraceAsString();
+        $log =  PHP_EOL."Exception: ".implode("", $messages);
+        $log .=  PHP_EOL."Code: ".$e->getCode();
+        $log .=  PHP_EOL."File: ".$e->getFile();
+        $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
         $this->_logger->err($log);
     }
 

@@ -91,9 +91,12 @@ class Module implements Feature\AutoloaderProviderInterface,
         {
             if (!$e->getParam("exception"))
             {
-                $this->errorResponse($e);
+                return $this->errorResponse($e);
             }
-            $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
+            else
+            {
+                return $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
+            }
         });
     }
 
@@ -105,7 +108,7 @@ class Module implements Feature\AutoloaderProviderInterface,
      *
      * @return [type]            
      */
-    private function logError($service, $exception, MvcEvent $e, ServiceManager $sm, $userRole = null)
+    private function logError($service, $exception, $e, $sm, $userRole = null)
     {
         if(get_class($exception) === "Custom\Error\AuthorizationException")
         {
@@ -119,7 +122,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             {
                 $userRole = $cache->role;
             }
-            $message = " *** ADMIN LOG ***
+            $message = " *** APPLICATION LOG ***
             Controller: " . $e->getRouteMatch()->getParam('controller') . ",
             Controller action: " . $e->getRouteMatch()->getParam('action') . ",
             User role: " . $userRole. ",
@@ -146,7 +149,7 @@ class Module implements Feature\AutoloaderProviderInterface,
      */
     private function errorResponse(MvcEvent $e)
     {
-        $e->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
+        $e->getResponse()->setStatusCode(404);
         $e->getResponse()->sendHeaders();
         $e->setResult($e->getResponse());
         $e->getViewModel()->setTemplate('layout/error-layout');
