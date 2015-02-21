@@ -35,14 +35,10 @@
 
 namespace Admin\Controller;
 
-use Zend\Session\Container;
 use Zend\File\Transfer\Adapter\Http;
 
 use Admin\Model\Content;
 use Admin\Form\ContentForm;
-
-use Custom\Error\AuthorizationException;
-
 
 class ContentController extends \Admin\Controller\IndexController
 {
@@ -130,7 +126,7 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function deleteAction()
     {
-        $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
+        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
         $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }

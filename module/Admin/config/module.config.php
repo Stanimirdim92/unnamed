@@ -18,8 +18,5 @@ return array(
             'error/index'             => __DIR__ . '/../../Application/view/layour/error-layout.phtml',
             'layout/error-layout'     => __DIR__ . '/../../Application/view/layout/error-layout.phtml',    
         ),
-        'strategies' => array(
-            'ViewJsonStrategy',
-        ),
     ),
 );

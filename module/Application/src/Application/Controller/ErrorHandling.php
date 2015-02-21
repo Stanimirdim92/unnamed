@@ -1,35 +1,31 @@
 <?php
 namespace Application\Controller;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as LogWriterStream;
 
 class ErrorHandling
 {
-    protected $logger;
+    private $_logger;
 
     public function __construct($logger)
     {
-        $this->logger = $logger;
+        $this->_logger = $logger;
     }
 
     public function logException($e)
     {
-        $trace = $e->getTraceAsString();
         $i = 1;
         do {
             $messages[] = $i++ . ": " . $e->getMessage();
         } while ($e = $e->getPrevious());
 
-        $log = "Exception:n" . implode("n", $messages);
-        $log .= "nTrace:n" . $trace;
-        $this->logger->err($log);
+        $log = "Exception:n" . implode("n", $messages).PHP_EOL."Code:".$e->getCode()."File:".PHP_EOL.$e->getFile();
+        $log .= PHP_EOL."Trace:n" . $e->getTraceAsString();
+        $this->_logger->err($log);
     }
 
-    public function logAuthorisationError($errorMsg)
+    public function logAuthorisationError($errorMsg = null)
     {
-        $filename = 'denyAccess_' . date('F') . '.txt';
-        $log = new Logger();
-        $writer = new LogWriterStream('./data/logs/' . $filename);
+        $log = new \Zend\Log\Logger();
+        $writer = new \Zend\Log\Writer\Stream('./data/logs/denyAccess_' . date('F') . '.txt');
         $log->addWriter($writer);
         $log->info($errorMsg);
         return $log;

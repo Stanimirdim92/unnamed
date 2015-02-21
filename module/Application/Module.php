@@ -51,9 +51,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\EventManager\EventInterface;
 
 use Application\View\Helper;
@@ -138,14 +135,11 @@ class Module implements Feature\AutoloaderProviderInterface,
         $em->attach(MvcEvent::EVENT_RENDER, array($this, 'setLayoutTitle'));
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
-            $exception = $e->getParam("exception");
-            if (!$exception)
+            if (!$e->getParam("exception"))
             {
                 $this->errorResponse($e);
             }
-
-            $service = $sm->get('ApplicationErrorHandling');
-            $this->logError($service, $exception, $e, $sm);
+            $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
         });
     }
 
@@ -157,27 +151,23 @@ class Module implements Feature\AutoloaderProviderInterface,
      *
      * @return [type]            
      */
-    private function logError($service, $exception, $e, $sm)
+    private function logError($service, $exception, MvcEvent $e, ServiceManager $sm, $userRole = null)
     {
-        if(get_class($exception)==="Custom\Error\AuthorizationException")
+        if(get_class($exception) === "Custom\Error\AuthorizationException")
         {
             $cache = new Container("cache");
-            $remote = new RemoteAddress();
-            $userRole = "Guest";
+            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
             if ($cache->role === 1)
             {
-                $userRole = 1;
+                $userRole = $cache->role;
             }
             else if ($cache->role === 10)
             {
-                $userRole = 10;
+                $userRole = $cache->role;
             }
-            $routeMatch = $e->getRouteMatch();
-            $controller = $routeMatch->getParam('controller');
-            $action = $routeMatch->getParam('action');
             $message = " *** APPLICATION LOG ***
-            Controller: " . $controller . ",
-            Controller action: " . $action . ",
+            Controller: " . $e->getRouteMatch()->getParam('controller') . ",
+            Controller action: " . $e->getRouteMatch()->getParam('action') . ",
             User role: " . $userRole. ",
             User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
             Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
@@ -193,14 +183,14 @@ class Module implements Feature\AutoloaderProviderInterface,
         else
         {
             $service->logException($exception);
-            $this->errorResponse($e);
         }
+        $this->errorResponse($e);
     }
 
     /**
      * @param \Zend\Mvc\MvcEvent $e
      */
-    public function errorResponse(MvcEvent $e)
+    private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
         $e->getResponse()->sendHeaders();
@@ -214,29 +204,25 @@ class Module implements Feature\AutoloaderProviderInterface,
      */
     public function setLayoutTitle(MvcEvent $e)
     {
-        $matches = $e->getRouteMatch();
-        $action = $matches->getParam('title');
-
+        $action = $e->getRouteMatch()->getParam('title');
         if (empty($action))
         {
-            $action = $matches->getParam('action');
-            if ($action === "index" && $matches->getMatchedRouteName() !== 'application')
+            $action = $e->getRouteMatch()->getParam('action');
+            if ($action === "index" && $e->getRouteMatch()->getMatchedRouteName() !== 'application')
             {
-                $action = $matches->getMatchedRouteName();
+                $action = $e->getRouteMatch()->getMatchedRouteName();
             }
             else if ($action !== "index")
             {
-                $action .= ($matches->getParam("post") ? " - ".$matches->getParam("post") : "");
+                $action .= ($e->getRouteMatch()->getParam("post") ? " - ".$e->getRouteMatch()->getParam("post") : "");
             }
             else
             {
                 $action = "Home"; // must be set from db
             }
         }
-
-        $siteName = 'ZendPress'; // must be set from db
         $headTitleHelper = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('headTitle');
-        $headTitleHelper->append($siteName);
+        $headTitleHelper->append('ZendPress'); // must be set from db
         $headTitleHelper->setSeparator(' - ');
         $headTitleHelper->append(ucfirst($action));
     }
@@ -263,8 +249,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             'factories' => array(
                 'Params' => function (ServiceLocatorInterface $helpers)
                 {
-                    $sl = $helpers->getServiceLocator();
-                    $app = $sl->get('Application');
+                    $app = $helpers->getServiceLocator()->get('Application');
                     return new Helper\Params($app->getRequest(), $app->getMvcEvent());
                 }
             ),
@@ -291,30 +276,25 @@ class Module implements Feature\AutoloaderProviderInterface,
             'factories' => array(
                 'ApplicationErrorHandling' =>  function ($sm)
                 {
-                    $logger = $sm->get('Logger');
-                    $service = new ErrorHandlingService($logger);
-                    return $service;
+                    return new ErrorHandlingService($sm->get('Logger'));
                 },
                 'Logger' => function ($sm)
                 {
-                    $filename = 'front_end_log_' . date('F') . '.txt';
                     $log = new Logger();
-                    $writer = new LogWriterStream('./data/logs/' . $filename);
+                    $writer = new LogWriterStream('./data/logs/front_end_log_' . date('F') . '.txt');
                     $log->addWriter($writer);
                     return $log;
                 },
 
                 'ResetPasswordTable' => function ($sm)
                 {
-                    $table = new ResetPasswordTable($sm);
-                    return $table;
+                    return new ResetPasswordTable($sm);
                 },
                 'ResetPasswordTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new ResetPassword(array(), $sm));
-                    return new TableGateway('resetpassword', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('resetpassword', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
             ),
         );

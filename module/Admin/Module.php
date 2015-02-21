@@ -68,10 +68,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\EventManager\EventInterface;
 
 use Custom\Error\AuthorizationException;
@@ -87,122 +83,74 @@ class Module implements Feature\AutoloaderProviderInterface,
      */
     public function onBootstrap(EventInterface $e)
     {
-        $application = $e->getTarget();
-        $eventManager = $application->getEventManager();
-        $services = $application->getServiceManager();
+        $app = $e->getTarget();
+        $em = $app->getEventManager();
+        $sm = $app->getServiceManager();
 
-        // $eventManager->attach(MvcEvent::EVENT_DISPATCH, function (MvcEvent $event) use ($services)
-        // {
-        //     $request  = $event->getRequest();
-        //     $response = $event->getResponse();
-
-        //     // Not HTTP? Kill it before it lays eggs!
-        //     if (!($request instanceof HttpRequest && $response instanceof HttpResponse))
-        //     {
-        //         $response->setStatusCode(500);
-        //         $event->setResult($response);
-        //         $response->sendHeaders();
-        //         $event->stopPropagation();
-        //     }
-
-        //     if (strtolower($event->getRouteMatch()->getMatchedRouteName()) === "admin")
-        //     {
-        //         $authAdapter = $services->get('Admin\AuthenticationAdapter');
-        //         $authAdapter->setRequest($request);
-        //         $authAdapter->setResponse($response);
-        //         $result = $authAdapter->authenticate();
-        //         if ($result->isValid())
-        //         {
-        //             $ok = false;
-        //             $identity = $result->getIdentity();
-        //             $file = file_get_contents($_SERVER["DOCUMENT_ROOT"].'../../config/autoload/real/basic_passwd.txt');
-        //             $lines = explode("\n", $file);
-
-        //             foreach ($lines as $value)
-        //             {
-        //                 $str = explode(":", $value);
-        //                 if ($identity["username"] == $str[0] && $identity["realm"] == "admin")
-        //                 {
-        //                     $ok = true;
-        //                     break;
-        //                 }
-        //             }
-        //             if ($ok)
-        //             {
-        //                 return true;
-        //             }
-        //             else
-        //             {
-        //                 $service = $services->get('AdminErrorHandling');
-        //                 $service->logException("add msg");
-        //                 $response->setStatusCode(HttpResponse::STATUS_CODE_401);
-        //                 $event->setResult($response);
-        //                 $response->sendHeaders();
-        //                 $event->stopPropagation();
-        //             }
-        //         }
-        //     }
-        // });
-
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($services)
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
-            $exception = $event->getParam("exception");
-            if (!$exception)
+            if (!$e->getParam("exception"))
             {
-                $this->errorResponse($event);
+                $this->errorResponse($e);
             }
-            else
-            {
-                $service = $services->get('AdminErrorHandling');
-                $controllerRedirect = $event->getTarget();
-                if(get_class($exception)=="Custom\Error\AuthorizationException")
-                {
-                    $cache = new Container("cache");
-                    $remote = new RemoteAddress();
-                    $userRole = "Guest";
-                    if ($cache->role === 1)
-                    {
-                        $userRole = 1;
-                    }
-                    else if ($cache->role === 10)
-                    {
-                        $userRole = 10;
-                    }
-                    $routeMatch = $event->getRouteMatch();
-                    $controller = $routeMatch->getParam('controller');
-                    $action = $routeMatch->getParam('action');
-                    $message = " *** ADMIN LOG ***
-                    Controller: " . $controller . ",
-                    Controller action: " . $action . ",
-                    User role: " . $userRole. ",
-                    User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-                    Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-                    IP: " . $remote->getIpAddress() . ",
-                    Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
-                    Date: " . date("Y-m-d H:i:s", time()) . ",
-                    Full URL: ".$services->get("Request")->getRequestUri().",
-                    User port: ".$_SERVER["REMOTE_PORT"].",
-                    Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-                    Method used: " . $services->get("Request")->getMethod() . "\n";
-                    $service->logAuthorisationError($message);
-                    $controllerRedirect->plugin('redirect')->toUrl("/");
-                }
-                else
-                {
-                    $service->logException($exception);
-                    $this->errorResponse($event);
-                }
-            }
+            $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
         });
     }
 
-    public function errorResponse($event)
+    /**
+     * @param  ApplicationErrorHandling $service
+     * @param  Exception $exception
+     * @param  MvcEvent $e
+     * @param  ServiceManager $sm
+     *
+     * @return [type]            
+     */
+    private function logError($service, $exception, MvcEvent $e, ServiceManager $sm, $userRole = null)
     {
-        $event->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
-        $event->getResponse()->sendHeaders();
-        $event->setResult($event->getResponse());
-        $event->getViewModel()->setTemplate('layout/error-layout');
-        $event->stopPropagation();
+        if(get_class($exception) === "Custom\Error\AuthorizationException")
+        {
+            $cache = new Container("cache");
+            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
+            if ($cache->role === 1)
+            {
+                $userRole = $cache->role;
+            }
+            else if ($cache->role === 10)
+            {
+                $userRole = $cache->role;
+            }
+            $message = " *** ADMIN LOG ***
+            Controller: " . $e->getRouteMatch()->getParam('controller') . ",
+            Controller action: " . $e->getRouteMatch()->getParam('action') . ",
+            User role: " . $userRole. ",
+            User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+            Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+            IP: " . $remote->getIpAddress() . ",
+            Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
+            Date: " . date("Y-m-d H:i:s", time()) . ",
+            Full URL: ".$sm->get("Request")->getRequestUri().",
+            User port: ".$_SERVER["REMOTE_PORT"].",
+            Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+            Method used: " . $sm->get("Request")->getMethod() . "\n";
+            $service->logAuthorisationError($message);
+        }
+        else
+        {
+            $service->logException($exception);
+        }
+        $this->errorResponse($e);
+    }
+
+    /**
+     * @param \Zend\Mvc\MvcEvent $e
+     */
+    private function errorResponse(MvcEvent $e)
+    {
+        $e->getResponse()->setStatusCode(HttpResponse::STATUS_CODE_404);
+        $e->getResponse()->sendHeaders();
+        $e->setResult($e->getResponse());
+        $e->getViewModel()->setTemplate('layout/error-layout');
+        $e->stopPropagation();
     }
 
     public function getConfig()
@@ -231,8 +179,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             'factories' => array(
                 'Params' => function (ServiceLocatorInterface $helpers)
                 {
-                    $services = $helpers->getServiceLocator();
-                    $app = $services->get('Application');
+                    $app = $helpers->getServiceLocator()->get('Application');
                     return new Helper\Params($app->getRequest(), $app->getMvcEvent());
                 }
             ),
@@ -278,10 +225,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'AdminMenuTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new AdminMenu(null, $sm));
-                    return new TableGateway('adminmenu', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('adminmenu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'TermTable' => function ($sm)
@@ -290,10 +236,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'TermTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Term());
-                    return new TableGateway('term', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('term', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'TermCategoryTable' => function ($sm)
@@ -302,10 +247,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'TermCategoryTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-                    return new TableGateway('termcategory', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('termcategory', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'TermTranslationTable' => function ($sm)
@@ -314,10 +258,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'TermTranslationTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
-                    return new TableGateway('termtranslation', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('termtranslation', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'LanguageTable' => function ($sm)
@@ -326,10 +269,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'LanguageTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Language(null, $sm));
-                    return new TableGateway('language', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('language', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'UserTable' => function ($sm)
@@ -338,10 +280,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'UserTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new User(null, $sm));
-                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'UserClassTable' => function ($sm)
@@ -350,10 +291,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'UserClassTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new UserClass(null, $sm));
-                    return new TableGateway('userclass', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('userclass', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'AdministratorTable' => function ($sm)
@@ -362,10 +302,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'AdministratorTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Administrator(null, $sm));
-                    return new TableGateway('administrator', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('administrator', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'ContentTable' => function ($sm)
@@ -374,10 +313,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'ContentTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $sm));
-                    return new TableGateway('content', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('content', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
                 'MenuTable' => function ($sm)
@@ -386,10 +324,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                 },
                 'MenuTableGateway' => function ($sm)
                 {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $sm));
-                    return new TableGateway('menu', $dbAdapter, null, $resultSetPrototype);
+                    return new TableGateway('menu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
             ),
         );

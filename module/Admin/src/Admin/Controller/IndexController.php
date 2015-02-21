@@ -117,7 +117,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->initViewVars();
         $this->initBreadcrumbs();
         $this->initMenus();
-
         return $this->view;
     }
 
@@ -128,7 +127,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize breadcrumbs
      * @return  array
      */
-    public function initBreadcrumbs()
+    private function initBreadcrumbs()
     {
         $this->view->breadcrumbs = $this->breadcrumbs;
     }
@@ -138,7 +137,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * 
      * @return Zend\Session\Container
      */
-    public function initCache()
+    private function initCache()
     {
         if (!$this->cache)
         {
@@ -150,7 +149,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * initialize any view related stuff
      */
-    public function initViewVars()
+    private function initViewVars()
     {
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
@@ -161,7 +160,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /** 
      * initialize the admin menus
      */
-    public function initMenus()
+    private function initMenus()
     {
         $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
         $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
@@ -171,7 +170,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /** 
      * initialize languages and language-related stuff like translations.
      */
-    public function initLanguages()
+    private function initLanguages()
     {
         $this->translation = new Container('translations');
         if(!$this->translation->language)
@@ -184,7 +183,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
 
-    public function addBreadcrumb(array $breadcrumb)
+    protected function addBreadcrumb(array $breadcrumb)
     {
         $this->breadcrumbs[] = $breadcrumb;
     }
@@ -193,7 +192,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param String $name
      * @return Ambigous <object, multitype:>
      */
-    public function getTable($name = null)
+    protected function getTable($name = null)
     {
         if (!is_string($name) || !$name)
         {

@@ -94,7 +94,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
-
         $this->initLanguages();
         $this->initViewVars();
         $this->initMenus();
@@ -109,7 +108,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * 
      * @return Zend\Session\Container
      */
-    public function initCache()
+    private function initCache()
     {
         if (!$this->cache)
         {
@@ -123,7 +122,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      *
      * @return Zend\Session\Container
      */
-    public function initViewVars()
+    private function initViewVars()
     {
         $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
@@ -137,7 +136,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /** 
      * initialize languages and language-related stuff like translations.
      */
-    public function initLanguages()
+    private function initLanguages()
     {
         $this->translation = new Container('translations');
         if(!$this->translation->language)
@@ -147,17 +146,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         }
     }
 
-    /**
-     * initialize all menus for the front page
-     */
-    public function initMenus()
+    private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", "menuOrder ASC");
+        $menu = $this->getTable("Menu")->fetchList(false, array("parent", "caption", "menulink", "footercolumn", "menutype", "id"), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
 
         foreach($menu as $submenu)
         {
-            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", "menuOrder ASC");
+            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array("parent", "caption", "footercolumn", "menutype", "menulink"), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         $this->view->menus = $menu;
         $this->view->submenus = $submenus;
@@ -171,7 +167,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param null $name
      * @return Ambigous <object, multitype:>
      */
-    public function getTable($name = null)
+    protected function getTable($name = null)
     {
         if (!is_string($name) || !$name)
         {
@@ -209,8 +205,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $authSession = new Container('ul');
         $authSession->getManager()->getStorage()->clear();
         $auth->clearIdentity();
-        unset($this->cache->user);
-        unset($authSession);
+        unset($this->cache->user, $authSession);
         $this->cache = null;
         throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }
@@ -275,7 +270,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     {
         $description = $keywords = $text = $preview = $title = null;
 
-        if ($obj->current())
+        if ($obj)
         {
             if ($obj->current()->getMenuObject() instanceof \Admin\Model\Menu)
             {

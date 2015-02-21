@@ -45,7 +45,7 @@ class Content implements InputFilterAwareInterface
     /**
      * @var null $_inputFilter inputFilter
      */
-    protected $_inputFilter = null;
+    private $_inputFilter = null;
 
     /**
      * @var null $_serviceManager ServiceManager 
@@ -127,16 +127,16 @@ class Content implements InputFilterAwareInterface
      */
     public function exchangeArray(array $data = array())
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
-        $this->_menu = (isset($data['menu'])) ? $data['menu'] : 0;
-        $this->_title = (isset($data['title'])) ? $data['title'] : null;
-        $this->_preview = (isset($data['preview'])) ? $data['preview'] : null;
-        $this->_text = (isset($data['text'])) ? $data['text'] : null;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : 0;
-        $this->_type = (isset($data['type'])) ? $data['type'] : 0;
-        $this->_date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
-        $this->_language = (isset($data['language'])) ? $data['language'] : 1;
-        $this->_titleLink = (isset($data['titleLink'])) ? $data['titleLink'] : null;
+        $this->_id = (isset($data['id'])) ? $data['id'] : $this->_id;
+        $this->_menu = (isset($data['menu'])) ? $data['menu'] : $this->_menu;
+        $this->_title = (isset($data['title'])) ? $data['title'] : $this->_title;
+        $this->_preview = (isset($data['preview'])) ? $data['preview'] : $this->_preview;
+        $this->_text = (isset($data['text'])) ? $data['text'] : $this->_text;
+        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->_menuOrder;
+        $this->_type = (isset($data['type'])) ? $data['type'] : $this->_type;
+        $this->_date = (isset($data['date'])) ? $data['date'] : $this->_date;
+        $this->_language = (isset($data['language'])) ? $data['language'] : $this->_language;
+        $this->_titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->_titleLink;
     }
 
     /**

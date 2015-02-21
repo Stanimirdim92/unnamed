@@ -56,7 +56,7 @@ foreach($this->menus as $item)
     {
         foreach($this->submenus[$item->getId()] as $sub)
         {
-            ?>
+?>
             <TR>
                 <TD class='admin'><?=$sub->getCaption()?></TD>
                 <TD class='admin'><?=$sub->getMenuOrder()?></TD>
@@ -80,7 +80,7 @@ foreach($this->menus as $item)
                 </div>
                 </TD>
                 </TR>
-            <?php
+<?php
         }
     }
 }

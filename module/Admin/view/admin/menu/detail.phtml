@@ -43,29 +43,29 @@ $menu = $this->menu;
 <TR>
     <TD class='definition'>Language</TD>
     <TD class='admin al l'>
-<?
+<?php
     $language = $menu->getLanguageObject();
     if($language!=null)
     {
 ?>
         <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?
+<?php
         echo $language->toString();
     }
 ?>
     </TD>
 </TR>
 
+<?php
+    $parent = $menu->getParentObject();
+    if($parent instanceof \Admin\Model\Menu && count($parent) > 0)
+    {
+?>
 <TR>
     <TD class='definition'>Parent</TD>
     <TD class='admin al l'>
-<?
-    $parent = $menu->getParentObject();
-    if($parent!=null)
-    {
-?>
         <a class='btn btn-labeled btn-default blue' title='Parent details' href='/admin/menu/detail/id/<?=$parent->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?
+<?php
         echo $parent->toString();
     }
 ?>

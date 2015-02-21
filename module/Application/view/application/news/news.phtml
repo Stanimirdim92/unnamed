@@ -44,6 +44,7 @@ else if(count($this->new) === 1 && count($this->news) === 0)
     $dateTimeShow = date("M d, Y", strtotime($this->new->getDate()));
 ?>
     <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
+        <h2 itemprop="name" class="post-title"><?=$this->new->getTitle();?></h2>
         <?php if ($this->new->getPreview() != null) { ?>
             <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
                 <a itemprop="url" href="/userfiles/preview/<?=$this->new->getPreview();?>" id="news_image" title="<?=$this->new->getTitle();?>">
@@ -51,18 +52,17 @@ else if(count($this->new) === 1 && count($this->news) === 0)
                 </a>
             </figure>
         <?php } ?>
-        <h2 itemprop="name" class="post-title"><?=$this->new->getTitle();?></h2>
         <time datetime="<?=$dateTime?>" class="post-date">
-            <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
+            <?=$this->translation->POSTED_ON?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow;?>
         </time>
-        <div itemprop="text" class="post-text"><?=$this->new->getText()?></div>
-        <p><a itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW?></a></p>
+        <div itemprop="text" class="post-text"><?=$this->new->getText();?></div>
+        <p><a itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translation->BACK_TO_NEWS_OVERVIEW;?>" class="read-more"><?=$this->translation->BACK_TO_NEWS_OVERVIEW;?></a></p>
     </article>
 <?php
 }
 else
 {
-    echo "<h3 itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
+    echo "<h3 itemscope itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
 }
 
 ?>

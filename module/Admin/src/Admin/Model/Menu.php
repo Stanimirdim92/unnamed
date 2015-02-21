@@ -45,7 +45,7 @@ class Menu implements InputFilterAwareInterface
     /**
      * @var null $_inputFilter inputFilter
      */
-    protected $_inputFilter = null;
+    private $_inputFilter = null;
 
     /**
      * @var null $_serviceManager ServiceManager 
@@ -127,16 +127,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function exchangeArray(array $data = array())
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
-        $this->_caption = (isset($data['caption'])) ? $data['caption'] : null;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : 0;
-        $this->_language = (isset($data['language'])) ? $data['language'] : 1;
-        $this->_parent = (isset($data['parent'])) ? $data['parent'] : null;
-        $this->_keywords = (isset($data['keywords'])) ? $data['keywords'] : null;
-        $this->_description = (isset($data['description'])) ? $data['description'] : null;
-        $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : 0;
-        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : 0;
-        $this->_menulink = (isset($data['menulink'])) ? $data['menulink'] : null;
+        $this->_id = (isset($data['id'])) ? $data['id'] : $this->_id;
+        $this->_caption = (isset($data['caption'])) ? $data['caption'] : $this->_caption;
+        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->_menuOrder;
+        $this->_language = (isset($data['language'])) ? $data['language'] : $this->_language;
+        $this->_parent = (isset($data['parent'])) ? $data['parent'] : $this->_parent;
+        $this->_keywords = (isset($data['keywords'])) ? $data['keywords'] : $this->_keywords;
+        $this->_description = (isset($data['description'])) ? $data['description'] : $this->_description;
+        $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : $this->_menutype;
+        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->_footercolumn;
+        $this->_menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->_menulink;
     }
 
     /**

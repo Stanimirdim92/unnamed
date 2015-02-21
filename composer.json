@@ -1,6 +1,6 @@
 {
-    "name": "Zend Press",
-    "description": "Wordpress ported to Zend 2",
+    "name": "ZendPress",
+    "description": "Wordpress ported to Zend Framework 2",
     "license": "BSD-3-Clause",
     "keywords": [
         "framework",
@@ -9,9 +9,8 @@
         "zp"
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.3.7",
         "zendframework/zendframework": "2.3.*",
-        "phpsec/phpsec":"0.6.*",
         "zendframework/zend-developer-tools": "dev-master"
     },
     "autoload": {

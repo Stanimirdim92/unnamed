@@ -53,7 +53,15 @@ class ContentTable
      */
     private $_serviceManager = null;
 
-    public function __construct(ServiceManager $sm)
+    const PRE_AND = "AND";
+    const PRE_OR = "OR";
+    const PRE_NULL = null;
+    const JOIN_INNER = 'inner';
+    const JOIN_OUTER = 'outer';
+    const JOIN_LEFT = 'left';
+    const JOIN_RIGHT = 'right';
+
+    public function __construct(ServiceManager $sm = null)
     {
         $this->_serviceManager = $sm;
         $this->_tableGateway = $sm->get("ContentTableGateway");
@@ -65,12 +73,13 @@ class ContentTable
      * @param  bool $paginated should we use pagination or no
      * @param  array $columns  substitute * with the columns you need
      * @param  null $where     WHERE condition
+     * @param  null $group     GROUP condition
      * @param  null $order     ORDER condition
      * @param  null $limit     LIMIT condition
      * @param  null $offset    OFFSET condition
      * @return ResultSet|Paginator
      */
-    public function fetchList($paginated = false, array $columns = array(), $where = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
@@ -79,17 +88,17 @@ class ContentTable
             $select = new Select("content");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
+            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
             return new Paginator($paginatorAdapter);
         }
         else
         {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $order, $limit, $offset)
+            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset)
             {
-                $this->queryColumns($select, $columns, $where, $order, $limit, $offset);
+                $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
-            return $resultSet;
+            return ($resultSet->valid() ? $resultSet : null);
         }
     }
 
@@ -99,30 +108,36 @@ class ContentTable
      * @param string $join    table name
      * @param string $on      table colums
      * @param null $where     WHERE condition
+     * @param null $group     GROUP condition
      * @param null $order     ORDER condition
      * @param null $limit     LIMIT condition
      * @param null $offset    OFFSET condition
      * @return ResultSet
      */
-    public function fetchJoin($pagination = false, $join = '', $on = '', $where = null, $order = null, $limit = null, $offset = null)
+    public function fetchJoin($pagination = false, $join = '', $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
+        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER)))
+        {
+            $joinType = self::JOIN_INNER;
+        }
+
         if ($pagination === true)
         {
             
         }
         else
         {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($join, $on, $where, $order, $limit, $offset)
+            $resultSet = $this->_tableGateway->select(function(Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset)
             {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
-                $select->join($join, $on, array("id1"=>"id"));
-                $this->queryColumns($select, array(), $where, $order, $limit, $offset);
+                $select->join($join, $on, array("id1"=>"id"), $joinType);
+                $this->queryColumns($select, array(), $where, self::PRE_NULL, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
-            return $resultSet;
+            return ($resultSet->valid() ? $resultSet : null);
         }
     }
 
@@ -131,19 +146,33 @@ class ContentTable
      *
      * @param  Select $select 
      * @param  array  $columns
-     * @param  null $where  
-     * @param  null $order  
-     * @param  null $limit  
-     * @param  null $offset 
+     * @param  null $where
+     * @param  null $group
+     * @param  null $predicate
+     * @param  null $order
+     * @param  null $limit
+     * @param  null $offset
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns = array(), $where, $order, $limit, $offset)
+    private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if(is_array($columns) && !empty($columns))
             $select->columns($columns);
-        if($where != null)
+        if(is_array($where) && !empty($where))
+        {
+            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL)))
+            {
+                $predicate = self::PRE_NULL;
+            }
+            $select->where($where, $predicate);
+        }
+        else if ($where != null)
+        {
             $select->where($where);
+        }
+        if($group != null)
+            $select->group($group);
         if($order != null)
             $select->order($order);
         if($limit != null)
@@ -221,9 +250,7 @@ class ContentTable
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
-        unset($id);
-        unset($language);
-        unset($data);
+        unset($id, $language, $data);
         return $content;
     }
     

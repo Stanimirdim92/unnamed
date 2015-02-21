@@ -35,13 +35,8 @@
 
 namespace Admin\Controller;
 
-use Zend\Session\Container;
-use Zend\File\Transfer\Adapter\Http;
-
 use Admin\Model\Menu;
 use Admin\Form\MenuForm;
-
-use Custom\Error\AuthorizationException;
 
 class MenuController extends \Admin\Controller\IndexController
 {
@@ -71,13 +66,14 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function indexAction()
     {
-        $temp = $this->getTable("menu")->fetchList(false, array(), "parent='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
+        $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
-        foreach($temp as $m)
+
+        foreach($menu as $submenu)
         {
-            $submenus[$m->getId()] = $this->getTable("menu")->fetchList(false, array(), "parent='".(int)$m->getId()."' AND language='{$this->langTranslation}'", "menuOrder ASC");
+            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
-        $this->view->menus = $temp;
+        $this->view->menus = $menu;
         $this->view->submenus = $submenus;
         return $this->view;
     }
@@ -98,16 +94,43 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        $menu = $this->crud($id);
-        if (!$menu)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
+        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->langTranslation);
         $this->view->menu = $menu;
         $this->addBreadcrumb(array("reference"=>"/admin/menu/modify/id/{$menu->getId()}", "name"=>"Modify menu &laquo;".$menu->toString()."&raquo;"));
         $this->showForm('Modify', $menu);
         return $this->view;
+    }
+
+        /**
+     * this action deletes a menu object with a provided id
+     */
+    public function deleteAction()
+    {
+        $this->getTable("menu")->deleteMenu($this->getParam("id", 0), $this->langTranslation);
+        $this->cache->success = "Menu was successfully deleted";
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+    }
+
+    /**
+     * this action shows menu details from the provided id and session language
+     */
+    public function detailAction()
+    {
+        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->langTranslation);
+        $this->view->menu = $menu;
+        $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"));
+        return $this->view;
+    }
+    
+    /**
+     * This action will clone the object with the provided id and return to the index view
+     */
+    public function cloneAction()
+    {
+        $id = (int) $this->getParam("id", 0);
+        $menu = $this->getTable("menu")->duplicate($id, $this->langTranslation);
+        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
     
     /**
@@ -118,11 +141,11 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function showForm($label = 'Add', Menu $menu = null)
     {
-        if($menu==null) $menu = new Menu(array(), null);
+        if($menu == null) $menu = new Menu(array(), null);
 
         $form = new MenuForm($menu,
                 $this->getTable("language")->fetchList(false, "active='1'", "name DESC"),
-                $this->getTable("menu")->fetchList(false, array('language', 'parent'), "parent='0' AND language='{$this->langTranslation}'", "menuOrder ASC", IndexController::MAX_COUNT)
+                $this->getTable("Menu")->fetchList(false, array('language', 'parent'), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC", IndexController::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
@@ -136,8 +159,8 @@ class MenuController extends \Admin\Controller\IndexController
                 // see if we have menu with the exact same caption.
                 if ($this->params("action") == 'add')
                 {
-                    $existingMenu = $this->getTable('menu')->fetchList(false, array('menulink', 'menutype', 'language', 'parent'), "parent='0' AND language='{$this->langTranslation}' AND `menutype` = '".$formData['menutype']."' AND `menulink` = '".$formData['menulink']."'");
-                    if (count($existingMenu) > 0)
+                    $existingMenu = $this->getTable('menu')->fetchList(false, array('menulink', 'menutype', 'language', 'parent'), array("parent" => 0, "language" => $this->langTranslation, "menutype" => $formData['menutype'], "menulink" => $formData['menulink']), "AND", null);
+                    if ($existingMenu->count() > 0)
                     {
                         $this->cache->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
                         $this->view->setTerminal(true);
@@ -167,76 +190,6 @@ class MenuController extends \Admin\Controller\IndexController
                 $this->setErrorNoParam($error);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
-        }
-    }
-    
-    /**
-     * this action deletes a menu object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam("id", 0);
-        $menu = $this->crud($id);
-        if (!$menu)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        $this->getTable("menu")->deleteMenu($menu->getId());
-        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-    }
-
-
-    public function detailAction()
-    {
-        $id = (int) $this->getParam("id", 0);
-        $menu = $this->crud($id);
-        if (!$menu)
-        {
-            return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-        }
-        $this->view->menu = $menu;
-        $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"));
-        return $this->view;
-    }
-    
-    /**
-     * This action will clone the object with the provided id and return to the index view
-     */
-	public function cloneAction()
-	{
-		$id = (int) $this->getParam("id", 0);
-        $menu = $this->getTable("menu")->duplicate($id, $this->langTranslation);
-        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-	}
-
-    /**
-     * See if there is an actual menu.
-     * The function is used in all CRUD operations
-     *
-     * @param  int    $id the menu id
-     * @throws AuthorizationException If menu was not found
-     * @return Menu
-     */
-    private function crud($id = 0)
-    {
-        if(!$id)
-        {
-            $this->setErrorNoParam(IndexController::NO_ID);
-        }
-        try
-        {
-            $menu = $this->getTable("menu")->getMenu($id, $this->langTranslation);
-            if (!$menu)
-            {
-                throw new AuthorizationException(IndexController::ACCESS_DENIED);
-            }
-            return $menu;
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam($ex->getMessage());
         }
     }
 }

@@ -62,7 +62,7 @@ class MenuTable
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
 
-    public function __construct(ServiceManager $sm)
+    public function __construct(ServiceManager $sm = null)
     {
         $this->_serviceManager = $sm;
         $this->_tableGateway = $sm->get("MenuTableGateway");
@@ -73,14 +73,14 @@ class MenuTable
      *
      * @param  bool $paginated should we use pagination or no
      * @param  array $columns  substitute * with the columns you need
-     * @param  array $where    WHERE condition
+     * @param  null $where     WHERE condition
      * @param  null $group     GROUP condition
      * @param  null $order     ORDER condition
      * @param  null $limit     LIMIT condition
      * @param  null $offset    OFFSET condition
      * @return ResultSet|Paginator
      */
-    public function fetchList($paginated = false, array $columns = array(), array $where = array(), $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
@@ -89,17 +89,17 @@ class MenuTable
             $select = new Select("menu");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
+            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
             return new Paginator($paginatorAdapter);
         }
         else
         {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $group, $order, $limit, $offset)
+            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset)
             {
-                $this->queryColumns($select, $columns, $where, $group, $order, $limit, $offset);
+                $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
-            return $resultSet;
+            return ($resultSet->valid() ? $resultSet : null);
         }
     }
 
@@ -115,7 +115,7 @@ class MenuTable
      * @param null $offset    OFFSET condition
      * @return ResultSet
      */
-    public function fetchJoin($pagination = false, $join = '', $on = '', $joinType = self::JOIN_INNER, array $where = array(), $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchJoin($pagination = false, $join = '', $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
@@ -135,10 +135,10 @@ class MenuTable
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
                 $select->join($join, $on, array("id1"=>"id"), $joinType);
-                $this->queryColumns($select, array(), $where, $group, $order, $limit, $offset);
+                $this->queryColumns($select, array(), $where, self::PRE_NULL, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
-            return $resultSet;
+            return ($resultSet->valid() ? $resultSet : false);
         }
     }
 
@@ -147,16 +147,16 @@ class MenuTable
      *
      * @param  Select $select 
      * @param  array  $columns
-     * @param  array $where
+     * @param  null $where
      * @param  null $group
-     * @param  string|null $predicate
+     * @param  null $predicate
      * @param  null $order
      * @param  null $limit
      * @param  null $offset
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns = array(),  array $where = array(), $group = null, $predicate = null, $order = null, $limit = null, $offset = null)
+    private function queryColumns(Select $select, array $columns = array(),  $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if(is_array($columns) && !empty($columns))
             $select->columns($columns);
@@ -168,7 +168,7 @@ class MenuTable
             }
             $select->where($where, $predicate);
         }
-        else
+        else if ($where != null)
         {
             $select->where($where);
         }
@@ -238,7 +238,7 @@ class MenuTable
         );
         $id = (int) $menu->id;
         $language = (int) $menu->language;
-        if (!$id) 
+        if (!$id)
         {
             $this->_tableGateway->insert($data);
             $menu->id = $this->_tableGateway->lastInsertValue;
@@ -251,9 +251,7 @@ class MenuTable
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
-        unset($id);
-        unset($language);
-        unset($data);
+        unset($id, $language, $data);
         return $menu;
     }
 

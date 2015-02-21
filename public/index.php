@@ -34,37 +34,45 @@
  */
 
 /**
- * Activate proper Zend DevTools for lower PHP versions
+ * Check PHP and MySQL versions
  */
-if (isset($_SERVER['DEBUG_ENV']) && $_SERVER['DEBUG_ENV'] == true) {
-    if (version_compare(PHP_VERSION, '5.4', '<')) {
-      define('REQUEST_MICROTIME', microtime(true));
-    }
+define("REQ_PHP_VER", "5.3.7");
+define("ZEND_PRESS_VER", "0.03");
+
+if (version_compare(REQ_PHP_VER, PHP_VERSION, '>' )) {
+    die(sprintf('Your server is running PHP version %1$s but ZendPress %2$s requires at least %3$s.', PHP_VERSION, ZEND_PRESS_VER, REQ_PHP_VER));
 }
 
- /**
-  * Display all errors when APPLICATION_ENV is development.
-  */
- if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'development') {
-     error_reporting(E_ALL);
-     ini_set("display_errors", 1);
-     ini_set("display_startup_errors", 1);
-     ini_set("track_errors", 1);
- }
+if(!extension_loaded('mysql') && !extension_loaded('mysqli')) {
+    die(sprintf('Your PHP installation appears to be missing the MySQL extension which is required by ZendPress.'));
+}
 
- /**
-  * This makes our life easier when dealing with paths. Everything is relative
-  * to the application root now.
-  */
- chdir(dirname(__DIR__));
+/**
+ * Display all errors when APPLICATION_ENV is development.
+ */
+if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'development') {
+    if (version_compare(PHP_VERSION, '5.4', '<')) {
+        define('REQUEST_MICROTIME', microtime(true));
+    }
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
+    ini_set("display_startup_errors", 1);
+    ini_set("track_errors", 1);
+}
 
- // Decline static file requests back to the PHP built-in webserver
- if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
-     return false;
- }
+/**
+ * This makes our life easier when dealing with paths. Everything is relative
+ * to the application root now.
+ */
+chdir(dirname(__DIR__));
 
- // Setup autoloading
- require 'init_autoloader.php';
+// Decline static file requests back to the PHP built-in webserver
+if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
+    return false;
+}
 
- // Run the application!
- Zend\Mvc\Application::init(require 'config/application.config.php')->run();
+// Setup autoloading
+require 'init_autoloader.php';
+
+// Run the application!
+Zend\Mvc\Application::init(require 'config/application.config.php')->run();
