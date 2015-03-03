@@ -263,7 +263,7 @@ class Menu implements InputFilterAwareInterface
     {
         try
         {
-            return $this->serviceManager->get('MenuTable')->getMenu($this->_parent);
+            return $this->serviceManager->get('MenuTable')->getMenu($this->_parent, $this->_language);
         }
         catch (\Exception $e)
         {

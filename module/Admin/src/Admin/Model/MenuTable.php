@@ -35,12 +35,13 @@
 
 namespace Admin\Model;
 
-use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\ServiceManager\ServiceManager;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\PredicateSet;
+use Zend\ServiceManager\ServiceManager;
 
 class MenuTable
 {
@@ -54,6 +55,9 @@ class MenuTable
      */
     private $_serviceManager = null;
 
+    /**
+     * Define SQL consts to do earlier validation - taken from Zend\Db\Sql\Select.php
+     */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
     const PRE_NULL = null;
@@ -62,10 +66,10 @@ class MenuTable
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
 
-    public function __construct(ServiceManager $sm = null)
+    public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
         $this->_serviceManager = $sm;
-        $this->_tableGateway = $sm->get("MenuTableGateway");
+        $this->_tableGateway = $tg;
     }
 
     /**
@@ -84,6 +88,7 @@ class MenuTable
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
+        $paginated = (bool) $paginated;
         if($paginated === true)
         {
             $select = new Select("menu");
@@ -119,6 +124,7 @@ class MenuTable
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
+        $pagination = (bool) $pagination;
         if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER)))
         {
             $joinType = self::JOIN_INNER;
@@ -156,7 +162,7 @@ class MenuTable
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns = array(),  $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if(is_array($columns) && !empty($columns))
             $select->columns($columns);
@@ -194,7 +200,7 @@ class MenuTable
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, 'language' => (int) $language));
         if (!$rowset->current()) 
         {
-            throw new \Exception("Couldn't find menu");
+            throw new \RuntimeException("Couldn't find menu");
         }
         return $rowset->current();
     }
@@ -211,9 +217,9 @@ class MenuTable
     {
         if (!$this->getMenu($id, $language))
         {
-            throw new \Exception("Couldn't delete menu");
+            throw new \RuntimeException("Couldn't delete menu");
         }
-        $this->_tableGateway->delete(array('id' => (int) $id));
+        $this->_tableGateway->delete(array('id' => (int) $id, "language" => (int) $language));
     }
 
     /**
@@ -247,7 +253,7 @@ class MenuTable
         {
             if (!$this->getMenu($id, $language))
             {
-                throw new \Exception("Couldn't save menu");
+                throw new \RuntimeException("Couldn't save menu");
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
@@ -268,7 +274,7 @@ class MenuTable
         $menu = $this->getMenu($id, $language);
         if (!$menu)
         {
-            throw new \Exception("Couldn't clone menu");
+            throw new \RuntimeException("Couldn't clone menu");
         }
         $clone = $menu->getCopy();
         $this->saveMenu($clone);

@@ -95,11 +95,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function __construct()
     {
         $this->view = new \Zend\View\Model\ViewModel();
-        $this->translation = new Container("translations");
-        $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
+        $this->initTranslation();
         $this->initCache();
-        // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language !== 0 ? (int) $this->translation->language : 1);
+        $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
     }
 
     /**
@@ -110,14 +108,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
+        /**
+         * Check admin status, before anything else
+         */
         // $this->initAdminIdentity();
         parent::onDispatch($e);
-
-        $this->initLanguages();
         $this->initViewVars();
         $this->initBreadcrumbs();
         $this->initMenus();
-        return $this->view;
     }
 
 /****************************************************
@@ -160,30 +158,34 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /** 
      * initialize the admin menus
      */
-    private function initMenus()
-    {
-        $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-        $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-        $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
-    }
+    // private function initMenus()
+    // {
+    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
+    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
+    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
+    // }
 
     /** 
      * initialize languages and language-related stuff like translations.
      */
-    private function initLanguages()
+    private function initTranslation()
     {
         $this->translation = new Container('translations');
+
         if(!$this->translation->language)
         {
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
         }
+        // keeping it simple and DRY
+        $this->langTranslation = ((int) $this->translation->language !== 0 ? $this->translation->language : 1);
     }
+
 /****************************************************
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
 
-    protected function addBreadcrumb(array $breadcrumb)
+    protected function addBreadcrumb(array $breadcrumb = array())
     {
         $this->breadcrumbs[] = $breadcrumb;
     }
@@ -196,19 +198,19 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     {
         if (!is_string($name) || !$name)
         {
-            throw new \Exception(__METHOD__ . ' must be string and must not be empty');
+            throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
     }
 
     /**
      * Is the user admin? Lets check that.
-     * 1. Module.php calls config/real/basic_passwd.txt via ZendPress AuthenticationAdapter for apache like auth
-     * 2. On success go to Login Controller.
-     * 3. On success run this function. If all went fine access admin
+     * 1. If url != /admin/login run this function
+     * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin.
+     * 3. On success run this function. If all went fine, access admin else clear identity and create log
      *
      * @throws AuthorizationException If wrong credentials or not in administrator table
-     * @return bool
+     * @return void
      */
     private function initAdminIdentity()
     {
@@ -236,6 +238,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return $this->redirect()->toUrl("/");
     }
 
+    /**
+     * clear user data - sessions, cache etc
+     * TODO maybe include a logging function
+     *
+     * @return void
+     * @throws AuthorizationException
+     */
     private function clearUserData()
     {
         $this->cache->getManager()->getStorage()->clear();
@@ -265,7 +274,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         {
             return $default;
         }
-        return $param;
+       return trim($param);
     }
 
     /**

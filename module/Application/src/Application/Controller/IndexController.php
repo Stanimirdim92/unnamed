@@ -36,7 +36,6 @@ namespace Application\Controller;
 
 use Zend\Session\Container;
 
-use Custom\Error\AuthorizationException;
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
 
@@ -79,10 +78,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function __construct()
     {
         $this->view = new \Zend\View\Model\ViewModel();
-        $this->translation = new Container('translations');
+        $this->initTranslation();
         $this->initCache();
-        // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language !== 0 ? (int) $this->translation->language : 1);
     }
 
     /**
@@ -94,15 +91,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
-        $this->initLanguages();
-        $this->initViewVars();
         $this->initMenus();
-        return $this->view;
+        $this->initViewVars();
     }
 
 /****************************************************
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
+
     /**
      * initialize any session variables in this method
      * 
@@ -136,14 +132,17 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /** 
      * initialize languages and language-related stuff like translations.
      */
-    private function initLanguages()
+    private function initTranslation()
     {
         $this->translation = new Container('translations');
+
         if(!$this->translation->language)
         {
             $this->translation->language = 1;
             $this->translation = Functions::initTranslations($this->translation->language, true);
         }
+        // keeping it simple and DRY
+        $this->langTranslation = ((int) $this->translation->language !== 0 ? $this->translation->language : 1);
     }
 
     private function initMenus()
@@ -171,7 +170,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     {
         if (!is_string($name) || !$name)
         {
-            throw new \Exception(__METHOD__ . ' must be string and must not be empty');
+            throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
     }
@@ -194,7 +193,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
             {
                 return $this->redirect()->toUrl("/");
             }
-            // $this->clearUserData();
+            $this->clearUserData(); // something is wrong, clear all user data
         }
     }
 
@@ -207,7 +206,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $auth->clearIdentity();
         unset($this->cache->user, $authSession);
         $this->cache = null;
-        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+        throw new \Custom\Error\AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }
 
     /**
@@ -228,7 +227,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         {
             return $default;
         }
-        return $param;
+        return trim($param);
     }
 
     /**
@@ -263,10 +262,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * SEO
      *
      * @param null $obj  returns Content object
-     * @param null $page controller name menu|news
      * @return  void
      */
-    public function setMetaTags($obj = null)
+    protected function setMetaTags($obj = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
@@ -309,8 +307,6 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     public function indexAction()
     {
-        throw new \Exception("Error Processing Request", 1);
-        
         return $this->view;
     }
 

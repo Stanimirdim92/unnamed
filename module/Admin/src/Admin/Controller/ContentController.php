@@ -35,10 +35,7 @@
 
 namespace Admin\Controller;
 
-use Zend\File\Transfer\Adapter\Http;
-
 use Admin\Model\Content;
-use Admin\Form\ContentForm;
 
 class ContentController extends \Admin\Controller\IndexController
 {
@@ -72,18 +69,18 @@ class ContentController extends \Admin\Controller\IndexController
         if ($type === 1)
         {
             // fetch all contents that have value content.menu=0 and type=1
-            $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", "content.date DESC");
+            $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", null, null, "id ASC");
+            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null,  "content.date DESC");
         }
         if ($type === 0)
         {
             // fetch all contents that have value content.menu=0 and type=0
-            $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", null, null, "id ASC");
+            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
-        $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", "id ASC");
-        if (count($contentsWithoutMenu > 0)) 
+        $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
+        if (count($contentsWithoutMenu) > 0) 
         {
             $menuReport = array();
             foreach ($contentsWithoutMenu as $cwm)
@@ -127,7 +124,7 @@ class ContentController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
-        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully deleted";
+        $this->cache->success = "Content was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
 
@@ -147,8 +144,7 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function cloneAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        $content = $this->getTable("content")->duplicate($id, $this->langTranslation);
+        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation);
         $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
@@ -160,21 +156,22 @@ class ContentController extends \Admin\Controller\IndexController
      * @param string $label button title
      * @param  Content|null $menu menu object
      */
-    public function showForm($label = 'Add', Content $content = null)
+    private function showForm($label = 'Add', Content $content = null)
     {
         if($content==null) $content = new Content(array(), null);
         
         $orderMenus = $menus = $submenus = array();
-        $temp = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), "parent='0' AND language='".$this->langTranslation."'", "menuOrder ASC");
-        foreach($temp as $m)
+        $menus = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+        foreach($menus as $m)
         {
-            $menus[] = $m;
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), "parent='" . $m->id."' AND language='".$this->langTranslation."'", "menuOrder ASC");
+            $m->setServiceManager(null);
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => $m->getId(), "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         foreach($menus as $menu)
         {
+            $menu->setServiceManager(null);
             $orderMenus[] = $menu;
-            if(isset($submenus[$menu->id]) && count($submenus[$menu->id])>0)
+            if(isset($submenus[$menu->id]) && count($submenus[$menu->id]) > 0)
             {
                 foreach($submenus[$menu->id] as $sub)
                 {
@@ -182,10 +179,7 @@ class ContentController extends \Admin\Controller\IndexController
                 }
             }
         }
-        $form = new ContentForm($content,
-                                $orderMenus,
-                                $this->getTable("language")->fetchList(false, null, "id ASC")
-        );
+        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("language")->fetchList(false, "active='1'", "id ASC"));
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
         if ($this->getRequest()->isPost())
@@ -197,25 +191,25 @@ class ContentController extends \Admin\Controller\IndexController
                 $formData = $form->getData();
                 if(isset($formData['removepreview']) && $formData['removepreview'] && $content != null)
                 {
-                    if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview))
+                    if (!is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview()))
                     {
                         $this->cache->error = "Image doesn't exist in that directory";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
-                    unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->preview);
+                    unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->getPreview());
                     $content->setPreview("");
                 }
                 if($formData['preview']['name'] != null)
                 {
-                    $adapter = new Http();
+                    $adapter = new \Zend\File\Transfer\Adapter\Http();
                     $adapter->setDestination($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/');
                     if($adapter->isValid('preview'))
                     {
                         // remove the old image from the directory if exists
-                        if($content->preview != null && file_exists($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview))
+                        if($content->preview != null && is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview()))
                         {
-                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->preview);    
+                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview());    
                         }
                         $param = $this->params()->fromFiles('preview');
                         $adapter->receive($param['name']);
@@ -234,7 +228,7 @@ class ContentController extends \Admin\Controller\IndexController
                 }
                 else
                 {
-                    $formData['preview'] = $content->preview;
+                    $formData['preview'] = $content->getPreview();
                 }
                 $content->exchangeArray($formData);
                 

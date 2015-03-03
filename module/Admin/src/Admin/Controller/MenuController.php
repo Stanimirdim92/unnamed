@@ -36,7 +36,6 @@
 namespace Admin\Controller;
 
 use Admin\Model\Menu;
-use Admin\Form\MenuForm;
 
 class MenuController extends \Admin\Controller\IndexController
 {
@@ -71,7 +70,7 @@ class MenuController extends \Admin\Controller\IndexController
 
         foreach($menu as $submenu)
         {
-            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => $submenu->id, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         $this->view->menus = $menu;
         $this->view->submenus = $submenus;
@@ -139,12 +138,13 @@ class MenuController extends \Admin\Controller\IndexController
      * @param string $label button title
      * @param  Menu|null $menu menu object
      */
-    public function showForm($label = 'Add', Menu $menu = null)
+    private function showForm($label = 'Add', Menu $menu = null)
     {
         if($menu == null) $menu = new Menu(array(), null);
 
-        $form = new MenuForm($menu,
-                $this->getTable("language")->fetchList(false, "active='1'", "name DESC"),
+        $menu->setServiceManager(null);
+        $form = new \Admin\Form\MenuForm($menu,
+                $this->getTable("Language")->fetchList(false, "active='1'", "name DESC"),
                 $this->getTable("Menu")->fetchList(false, array('language', 'parent'), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC", IndexController::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);

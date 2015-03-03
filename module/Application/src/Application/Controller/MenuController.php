@@ -46,7 +46,7 @@ class MenuController extends \Application\Controller\IndexController
     }
 
     /**
-     * Get the contents for the menu/submenu. First we check for parent menu and if not found we call the submenu
+     * Get the contents for the menu/submenu.
      *
      * @return Content
      */

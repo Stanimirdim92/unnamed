@@ -81,19 +81,16 @@ class ResetPassword
      * @param null $sm
      * @return ServiceManager
      */
-    public function setServiceManager($sm = null)
+    public function setServiceManager(ServiceManager $sm = null)
     {
-        if ($sm instanceof ServiceManager || $sm === null)
-        {
-            $this->_serviceManager = $sm;
-        }
+        $this->_serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data)
+    public function exchangeArray(array $data = array())
     {
         $this->_id = (isset($data['id'])) ? $data['id'] : 0;
         $this->_ip = (isset($data['ip'])) ? $data['ip'] : null;
@@ -105,16 +102,10 @@ class ResetPassword
     /**
      * constructor
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = array(), ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
-            $this->exchangeArray($options);
-        }
-        if($sm != null)
-        {
-            $this->_serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
+        $this->_serviceManager = $sm;
     }
     
     /**
@@ -277,9 +268,8 @@ class ResetPassword
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip, $serializable = false)
+    public function getProperties(array $skip = array("_serviceManager"), $serializable = false)
     {
-        $skip[] = "_serviceManager";
         $returnValue = array();
         $data = get_class_vars(get_class($this));
         foreach($data as $key => $value)

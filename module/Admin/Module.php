@@ -49,18 +49,7 @@ use Admin\Model\AdminMenu;
 use Admin\Model\AdminMenuTable;
 use Admin\Model\Administrator;
 use Admin\Model\AdministratorTable;
-use Admin\Model\Content;
-use Admin\Model\ContentTable;
-use Admin\Model\Menu;
-use Admin\Model\MenuTable;
 
-use Admin\Controller\ErrorHandling as ErrorHandlingService;
-use Admin\View\Helper;
-
-use Zend\Session\Container;
-
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as LogWriterStream;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
@@ -68,20 +57,16 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
-use Zend\EventManager\EventInterface;
-
-use Custom\Error\AuthorizationException;
 
 class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ServiceProviderInterface,
-                        Feature\ConfigProviderInterface,
-                        Feature\BootstrapListenerInterface
+                        Feature\ConfigProviderInterface
 {
     /**
      * make sure to log errors and redirect to admin index
      * @param \Zend\Mvc\MvcEvent $e
      */
-    public function onBootstrap(EventInterface $e)
+    public function onBootstrap(MvcEvent $e)
     {
         $app = $e->getTarget();
         $em = $app->getEventManager();
@@ -95,34 +80,34 @@ class Module implements Feature\AutoloaderProviderInterface,
             }
             else
             {
-                return $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
+                return $this->logError($sm->get('AdminErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
             }
         });
     }
 
     /**
-     * @param  ApplicationErrorHandling $service
+     * @param  AdminErrorHandling $service
      * @param  Exception $exception
      * @param  MvcEvent $e
      * @param  ServiceManager $sm
      *
-     * @return [type]            
+     * @return Error
      */
     private function logError($service, $exception, $e, $sm, $userRole = null)
     {
-        if(get_class($exception) === "Custom\Error\AuthorizationException")
+        if($exception instanceof \Custom\Error\AuthorizationException)
         {
-            $cache = new Container("cache");
+            $cache = new \Zend\Session\Container("cache");
             $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
-            if ($cache->role === 1)
+            if ($cache->role == 1)
             {
                 $userRole = $cache->role;
             }
-            else if ($cache->role === 10)
+            else if ($cache->role == 10)
             {
                 $userRole = $cache->role;
             }
-            $message = " *** APPLICATION LOG ***
+            $message = " *** ADMIN LOG ***
             Controller: " . $e->getRouteMatch()->getParam('controller') . ",
             Controller action: " . $e->getRouteMatch()->getParam('action') . ",
             User role: " . $userRole. ",
@@ -150,8 +135,6 @@ class Module implements Feature\AutoloaderProviderInterface,
     private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(404);
-        $e->getResponse()->sendHeaders();
-        $e->setResult($e->getResponse());
         $e->getViewModel()->setTemplate('layout/error-layout');
         $e->stopPropagation();
     }
@@ -183,7 +166,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 'Params' => function (ServiceLocatorInterface $helpers)
                 {
                     $app = $helpers->getServiceLocator()->get('Application');
-                    return new Helper\Params($app->getRequest(), $app->getMvcEvent());
+                    return new \Admin\View\Helper\Params($app->getRequest(), $app->getMvcEvent());
                 }
             ),
         );
@@ -207,20 +190,7 @@ class Module implements Feature\AutoloaderProviderInterface,
     {
         return array(
             'factories' => array(
-                'AdminErrorHandling' =>  function($sm)
-                {
-                    $logger = $sm->get('Logger');
-                    $service = new ErrorHandlingService($logger);
-                    return $service;
-                },
-                'Logger' => function ($sm)
-                {
-                    $filename = 'log_' . date('F') . '.txt';
-                    $log = new Logger();
-                    $writer = new LogWriterStream('./data/logs/' . $filename);
-                    $log->addWriter($writer);
-                    return $log;
-                },
+                'AdminErrorHandling' =>  'Admin\Factory\AdminErrorHandlingFactory',
 
                 'AdminMenuTable' => function ($sm)
                 {
@@ -310,27 +280,9 @@ class Module implements Feature\AutoloaderProviderInterface,
                     return new TableGateway('administrator', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
-                'ContentTable' => function ($sm)
-                {
-                    return new ContentTable($sm);
-                },
-                'ContentTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $sm));
-                    return new TableGateway('content', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
-                'MenuTable' => function ($sm)
-                {
-                    return new MenuTable($sm);
-                },
-                'MenuTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $sm));
-                    return new TableGateway('menu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
+                // 'AdministratorTable' => 'Admin\Factory\AdministratorTableFactory'
+                'ContentTable' => 'Admin\Factory\ContentTableFactory',
+                'MenuTable'    => 'Admin\Factory\MenuTableFactory',
             ),
         );
     }

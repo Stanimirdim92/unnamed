@@ -10,6 +10,7 @@
 # https://httpd.apache.org/docs/current/howto/htaccess.html.
 
 RewriteEngine On
+
 SetEnv APPLICATION_ENV "development"
 # The following rule tells Apache that if the requested filename
 # exists, simply serve it.
@@ -27,7 +28,7 @@ RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 RewriteRule ^(.*) - [E=BASE:%1]
 RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
 
-# CGI does not support apache_response_headers, but we need this header in order to do basic HTTP authtentication.
+# CGI does not support apache_response_headers, but we need this header in order to do basic HTTP authtentication when running with CGI or FastCGI.
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # Block all PHP easter eggs
@@ -75,6 +76,9 @@ RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Za-z]{0,2})
 RewriteRule ^(.*)$ index.php [F,L]
 
 </IfModule>
+
+# Block access to "hidden" directories whose names begin with a period. This
+RewriteRule "(^|/)\." - [F]
 
 #Specify Vary: Accept-Encoding
 <IfModule mod_headers.c>
@@ -334,7 +338,7 @@ AddDefaultCharset utf-8
 # These files may be left by some text editors and can pose a great security
 # danger when anyone has access to them.
 
-<FilesMatch "(^#.*#|\.(git|bak|conf[ig]|dist|fla|in[ci]|log|psd|sh|sql|sw[op])|~)$">
+<FilesMatch "(^#.*#|\.(info|install|make|module|engine|git|bak|conf[ig]|dist|fla|in[ci]|log|psd|sh|sql|sw[op])|~)$">
     # Apache < 2.3
     <IfModule !mod_authz_core.c>
         Order allow,deny
@@ -661,7 +665,8 @@ FileETag None
 <IfModule mod_expires.c>
 
     ExpiresActive on
-    ExpiresDefault                                      "access plus 1 week"
+    # Cache all files for 2 weeks after access (A).
+    ExpiresDefault A1209600
 
   # CSS
     ExpiresByType text/css                              "access plus 1 week"
@@ -888,11 +893,12 @@ FileETag None
     </FilesMatch>
 </IfModule>
 
-<IfModule php5_module>
+<IfModule mod_php5.c>
+    # Block cookie access via js. This might be already set via php.ini
     php_value session.cookie_httponly true
     # 1. If your cart only allows you to add one item at a time, it is possible register_globals is on. This may work to disable it:
     php_flag register_globals off
-
     # 2. If your cart has magic quotes enabled, This may work to disable it:
-    php_flag magic_quotes_gpc Off
+    php_flag magic_quotes_gpc off
+    php_flag magic_quotes_sybase off
 </IfModule>

@@ -40,7 +40,14 @@ use Zend\Form\Element;
 
 class MenuForm extends Form
 {
-    public function __construct($options = null, $languages = array(), $parents = array())
+    /**
+     * Create the menu form
+     *
+     * @param \Admin\Model\Menu|null $options   holds the Menu object
+     * @param array              $languages     ResultSet arrayobject
+     * @param array              $parents       ResultSet arrayobject
+     */
+    public function __construct(\Admin\Model\Menu $options = null,  $languages = array(), $parents = array())
     {
         parent::__construct("menu");
         $elements = array();

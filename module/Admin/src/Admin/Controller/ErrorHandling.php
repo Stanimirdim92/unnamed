@@ -1,5 +1,5 @@
 <?php
-namespace Application\Controller;
+namespace Admin\Controller;
 
 class ErrorHandling
 {

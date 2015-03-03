@@ -39,7 +39,14 @@ use Zend\Form\Element;
 
 class ContentForm extends Form
 {
-    public function __construct($options = null, $menus = array(), $languages = array())
+    /**
+     * Create the content form
+     *
+     * @param \Admin\Model\Content|null $options   holds the Content object
+     * @param array                     $menus     ResultSet arrayobject
+     * @param array                     $languages ResultSet arrayobject
+     */
+    public function __construct(\Admin\Model\Content $options = null, array $menus = array(), $languages = array())
     {
         parent::__construct("content");
         $elements = array();

@@ -35,10 +35,12 @@
 
 namespace Admin\Model;
 
-use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\ServiceManager\ServiceManager;
 
 class ContentTable
@@ -53,6 +55,9 @@ class ContentTable
      */
     private $_serviceManager = null;
 
+    /**
+     * Define SQL consts to do earlier validation - taken from Zend\Db\Sql\Select.php
+     */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
     const PRE_NULL = null;
@@ -61,10 +66,10 @@ class ContentTable
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
 
-    public function __construct(ServiceManager $sm = null)
+    public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
         $this->_serviceManager = $sm;
-        $this->_tableGateway = $sm->get("ContentTableGateway");
+        $this->_tableGateway = $tg;
     }
 
     /**
@@ -83,6 +88,7 @@ class ContentTable
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
+        $paginated = (bool) $paginated;
         if($paginated === true)
         {
             $select = new Select("content");
@@ -118,6 +124,7 @@ class ContentTable
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
+        $pagination = (bool) $pagination;
         if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER)))
         {
             $joinType = self::JOIN_INNER;
@@ -193,7 +200,7 @@ class ContentTable
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, "language" => (int) $language));
         if (!$rowset->current()) 
         {
-            throw new \Exception("Couldn't find content");
+           throw new \RuntimeException("Couldn't find content");
         }
         return $rowset->current();
     }
@@ -210,9 +217,9 @@ class ContentTable
     {
         if (!$this->getContent($id, $language))
         {
-            throw new \Exception("Couldn't delete content");
+            throw new \RuntimeException("Couldn't delete content");
         }
-        $this->_tableGateway->delete(array('id' => (int) $id));
+        $this->_tableGateway->delete(array('id' => (int) $id, "language" => (int) $language));
     }
     
     /**
@@ -246,7 +253,7 @@ class ContentTable
         {
             if (!$this->getContent($id, $language))
             {
-                throw new \Exception("Couldn't save content");
+                throw new \RuntimeException("Couldn't save content");
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
         }
@@ -267,7 +274,7 @@ class ContentTable
         $content = $this->getContent($id, $language);
         if (!$content)
         {
-            throw new \Exception("Couldn't clone content");
+            throw new \RuntimeException("Couldn't clone content");
         }
         $clone = $content->getCopy();
         $this->saveContent($clone);

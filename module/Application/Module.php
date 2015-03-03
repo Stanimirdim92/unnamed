@@ -32,41 +32,28 @@
  * @version    0.03
  * @link       TBA
  */
+
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
-
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as LogWriterStream;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
 
 // use Zend\Cache\StorageFactory;
 // use Zend\Session\SaveHandler\Cache;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
-
 use Zend\ServiceManager\ServiceLocatorInterface;
-
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
-use Zend\EventManager\EventInterface;
-
-use Application\View\Helper;
-use Application\Controller\ErrorHandling as ErrorHandlingService;
-use Application\Model\ResetPassword;
-use Application\Model\ResetPasswordTable;
 
 class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ServiceProviderInterface,
-                        Feature\ConfigProviderInterface,
-                        Feature\BootstrapListenerInterface
+                        Feature\ConfigProviderInterface
 {
     /**
      * @param array $config Holds cookies params
      */
-    public function initSession(array $config)
+    public function initSession(array $config = array())
     {
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config);
@@ -108,9 +95,10 @@ class Module implements Feature\AutoloaderProviderInterface,
 
     /**
      * make sure to log errors and redirect to error-layout
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param MvcEvent $e
+     * @return Events
      */
-    public function onBootstrap(EventInterface $e)
+    public function onBootstrap(MvcEvent $e)
     {
         /**
          * Init sessions and cookies before everything else
@@ -119,7 +107,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             'cookie_lifetime'     => 7200, //2hrs
             'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
             'use_cookies'         => true,
-            'cache_expire'        => 180,  //2hrs
+            'cache_expire'        => 180,  //3hrs
             'cookie_path'         => "/",
             'cookie_secure'       => $this->isSSL(),
             'cookie_httponly'     => true,
@@ -137,11 +125,11 @@ class Module implements Feature\AutoloaderProviderInterface,
         {
             if (!$e->getParam("exception"))
             {
-                return $this->errorResponse($e);
+                $this->errorResponse($e);
             }
             else
             {
-                return $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
+                $this->logError($sm->get('ApplicationErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
             }
         });
     }
@@ -152,19 +140,19 @@ class Module implements Feature\AutoloaderProviderInterface,
      * @param  MvcEvent $e
      * @param  ServiceManager $sm
      *
-     * @return [type]            
+     * @return void
      */
     private function logError($service, $exception, $e, $sm, $userRole = null)
     {
-        if(get_class($exception) === "Custom\Error\AuthorizationException")
+        if($exception instanceof \Custom\Error\AuthorizationException)
         {
             $cache = new Container("cache");
             $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
-            if ($cache->role === 1)
+            if ($cache->role == 1)
             {
                 $userRole = $cache->role;
             }
-            else if ($cache->role === 10)
+            else if ($cache->role == 10)
             {
                 $userRole = $cache->role;
             }
@@ -196,8 +184,6 @@ class Module implements Feature\AutoloaderProviderInterface,
     private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(404);
-        $e->getResponse()->sendHeaders();
-        $e->setResult($e->getResponse());
         $e->getViewModel()->setTemplate('layout/error-layout');
         $e->stopPropagation();
     }
@@ -253,7 +239,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                 'Params' => function (ServiceLocatorInterface $helpers)
                 {
                     $app = $helpers->getServiceLocator()->get('Application');
-                    return new Helper\Params($app->getRequest(), $app->getMvcEvent());
+                    return new \Application\View\Helper\Params($app->getRequest(), $app->getMvcEvent());
                 }
             ),
         );
@@ -277,28 +263,8 @@ class Module implements Feature\AutoloaderProviderInterface,
     {
         return array(
             'factories' => array(
-                'ApplicationErrorHandling' =>  function ($sm)
-                {
-                    return new ErrorHandlingService($sm->get('Logger'));
-                },
-                'Logger' => function ($sm)
-                {
-                    $log = new Logger();
-                    $writer = new LogWriterStream('./data/logs/front_end_log_' . date('F') . '.txt');
-                    $log->addWriter($writer);
-                    return $log;
-                },
-
-                'ResetPasswordTable' => function ($sm)
-                {
-                    return new ResetPasswordTable($sm);
-                },
-                'ResetPasswordTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new ResetPassword(array(), $sm));
-                    return new TableGateway('resetpassword', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
+                'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
+                'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
             ),
         );
     }

@@ -270,12 +270,12 @@ class LoginController extends \Application\Controller\IndexController
             if($form->isValid())
             {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
+                $existingEmail = $this->getTable("User")->fetchList(false, "email = '".$formData['email']."'");
                 
                 if(count($existingEmail) === 1)
                 {
                     $token = Functions::generateToken(48); // returns 64 characters long string
-                    $user = $this->getTable("user")->getUser($existingEmail->current()->id);
+                    $user = $this->getTable("User")->getUser($existingEmail->current()->id);
                     unset($existingEmail);
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
