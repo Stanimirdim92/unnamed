@@ -1,26 +1,58 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category
+ * @package
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
 namespace Admin\Controller;
 
-use Admin\Controller\IndexController;
 use Admin\Model\Language;
-use Admin\Form\LanguageForm;
-use Admin\Form\LanguageSearchForm;
 
-class LanguageController extends IndexController
+class LanguageController extends \Admin\Controller\IndexController
 {
     /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
+     * Controller name to which will redirect
      */
-    private $MAX_COUNT = 200;
+    const CONTROLLER_NAME = "language";
 
     /**
-     * @param string $NO_ID
-     * @return string
+     * Route name to which will redirect
      */
-    protected $NO_ID = "no_id"; // const!!!
+    const ADMIN_ROUTE = "admin";
+
+    /**
+     * Initialize any variables before controller actions
+     *
+     * @param MvcEvent $e
+     */
 
     /**
      * Initialize any variables before controller actions
@@ -38,30 +70,19 @@ class LanguageController extends IndexController
      */
     public function indexAction()
     {
-        $search = $this->getParam("search", null);
-        $where = null;
-        if($search != null)
-        {
-            $where = "`name` LIKE '%{$search}%'";
-        }
-        $order = "name ASC";
-        $paginator = $this->getTable("language")->fetchList(true, $where, $order);
+        $paginator = $this->getTable("language")->fetchList(true, array(), array(), null, null, "name ASC");
         $paginator->setCurrentPageNumber((int)$this->params("page",1));
         $paginator->setItemCountPerPage(50);
         $this->view->paginator = $paginator;
-        $form = new LanguageSearchForm();
-        $form->get("submit")->setValue($this->session->SEARCH);
-        $form->get("search")->setValue($search);
-        $this->view->form = $form;
         return $this->view;
     }
-    
+
     /**
      * This action serves for adding a new object of type Language
      */
     public function addAction()
     {
-        $this->showForm("Language", null);
+        $this->showForm("Add language", null);
         $this->addBreadcrumb(array("reference"=>"/admin/language/add", "name"=>"Add new language"));
         return $this->view;
     }
@@ -72,45 +93,50 @@ class LanguageController extends IndexController
      */
     public function modifyAction()
     {
-        $id = $this->getParam("id", 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
-        try
-        {
-            $language = $this->getTable("language")->getLanguage($id);
-            $this->view->language = $language;
-            $this->addBreadcrumb(array("reference"=>"/admin/language/modify/id/{$language->id}", "name"=>"Modify language &laquo;".$language->toString()."&raquo;"));
-            $this->showForm("Modify", $language);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Language not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
+        $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
+        $this->view->language = $language;
+        $this->addBreadcrumb(array("reference"=>"/admin/language/modify/id/{$language->id}", "name"=>"Modify language &laquo;".$language->toString()."&raquo;"));
+        $this->showForm("Modify language", $language);
         return $this->view;
     }
-    
+
+    /**
+     * this action deletes a language object with a provided id
+     */
+    public function deleteAction()
+    {
+
+        $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
+        $this->cache->success = "Language was successfully deleted";
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+    }
+
+    /**
+     * this action shows language details from the provided id
+     */
+    public function detailAction()
+    {
+        $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
+        $this->view->lang = $lang;
+        $this->addBreadcrumb(array("reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"));
+        return $this->view;
+    }
+
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
-     * @param String $label
-     * @param null|Language $language
+     * @param String $label button title
+     * @param null|Language $language object
      */
-    public function showForm($label = '', $language = null)
+    public function showForm($label = '', Language $language = null)
     {
-        if($language == null)
-        {
-            $language = new Language();
-        }
+        if($language == null) $language = new Language(array(), null);
 
-        $form = new LanguageForm($language);
-
+        $language->setServiceManager(null);
+        $form = new \Admin\Form\LanguageForm($language);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost()) 
+        if ($this->getRequest()->isPost())
         {
             $form->setInputFilter($language->getInputFilter());
             $form->setData($this->getRequest()->getPost());
@@ -118,78 +144,23 @@ class LanguageController extends IndexController
             {
                 $language->exchangeArray($form->getData());
                 $this->getTable("language")->saveLanguage($language);
-                $this->cache->success = $this->session->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->session->SAVE_SUCCESS;
+                $this->cache->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'language'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
             else
             {
-                $error = '';
+                $error = array();
                 foreach($form->getMessages() as $msg)
                 {
                     foreach ($msg as $key => $value)
                     {
-                        $error = $value;
+                        $error[] = $value;
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'language'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
-    }
-    
-    /**
-     * this action deletes a language object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
-        try
-        {
-            $this->getTable("language")->deleteLanguage($id);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Language not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
-        $this->cache->success = "Language was successfully deleted";
-        return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-    }
-
-    public function detailAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
-        try
-        {
-            $lang = $this->getTable("Language")->getLanguage($id);
-            $this->view->lang = $lang;
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Language not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'language'));
-        }
-        $this->addBreadcrumb(array("reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"));
-        return $this->view;
-    }
-
-    public function cloneAction()
-    {
-        $id = $this->getParam("id", 0);
-        $language = $this->getTable("language")->duplicate($id);
-        $this->cache->success = "Language &laquo;".$language->toString()."&raquo; was successfully cloned";
-        $this->redirect()->toUrl("/admin/language");
-        return $this->view;
     }
 }

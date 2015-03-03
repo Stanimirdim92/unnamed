@@ -146,19 +146,19 @@ class Module implements Feature\AutoloaderProviderInterface,
             'invokables' => array(
                 'Admin\Controller\Index'            => 'Admin\Controller\IndexController',
                 'Admin\Controller\AdminMenu'        => 'Admin\Controller\AdminMenuController',
-                'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
                 'Admin\Controller\Term'             => 'Admin\Controller\TermController',
                 'Admin\Controller\TermCategory'     => 'Admin\Controller\TermCategoryController',
                 'Admin\Controller\TermTranslation'  => 'Admin\Controller\TermTranslationController',
                 'Admin\Controller\User'             => 'Admin\Controller\UserController',
                 'Admin\Controller\Administrator'    => 'Admin\Controller\AdministratorController',
+                'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
                 'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
-                'Admin\Controller\Content'          => 'Admin\Controller\ContentController', 
+                'Admin\Controller\Content'          => 'Admin\Controller\ContentController',
             ),
         );
         return $config;
     }
-    
+
     public function getViewHelperConfig()
     {
         return array(
@@ -203,50 +203,6 @@ class Module implements Feature\AutoloaderProviderInterface,
                     return new TableGateway('adminmenu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
-                'TermTable' => function ($sm)
-                {
-                    return new TermTable($sm);
-                },
-                'TermTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Term());
-                    return new TableGateway('term', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
-                'TermCategoryTable' => function ($sm)
-                {
-                    return new TermCategoryTable($sm);
-                },
-                'TermCategoryTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-                    return new TableGateway('termcategory', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
-                'TermTranslationTable' => function ($sm)
-                {
-                    return new TermTranslationTable($sm);
-                },
-                'TermTranslationTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
-                    return new TableGateway('termtranslation', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
-                'LanguageTable' => function ($sm)
-                {
-                    return new LanguageTable($sm);
-                },
-                'LanguageTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Language(null, $sm));
-                    return new TableGateway('language', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
                 'UserTable' => function ($sm)
                 {
                     return new UserTable($sm);
@@ -258,30 +214,10 @@ class Module implements Feature\AutoloaderProviderInterface,
                     return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
-                'UserClassTable' => function ($sm)
-                {
-                    return new UserClassTable($sm);
-                },
-                'UserClassTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new UserClass(null, $sm));
-                    return new TableGateway('userclass', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
 
-                'AdministratorTable' => function ($sm)
-                {
-                    return new AdministratorTable($sm);
-                },
-                'AdministratorTableGateway' => function ($sm)
-                {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Administrator(null, $sm));
-                    return new TableGateway('administrator', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
-                // 'AdministratorTable' => 'Admin\Factory\AdministratorTableFactory'
+                'AdministratorTable' => 'Admin\Factory\AdministratorTableFactory',
                 'ContentTable' => 'Admin\Factory\ContentTableFactory',
+                'LanguageTable' => 'Admin\Factory\LanguageTableFactory',
                 'MenuTable'    => 'Admin\Factory\MenuTableFactory',
             ),
         );

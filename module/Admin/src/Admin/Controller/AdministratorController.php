@@ -1,30 +1,53 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *mits
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Administrator
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Controller;
 
-use Zend\File\Transfer\Adapter\Http;
-
-use Admin\Controller\IndexController;
 use Admin\Model\Administrator;
-use Admin\Form\AdministratorForm;
-use Admin\Form\AdministratorSearchForm;
 
-use Custom\Error\AuthorizationException;
-
-class AdministratorController extends IndexController
+class AdministratorController extends \Admin\Controller\IndexController
 {
     /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
+     * Controller name to which will redirect
      */
-    private $MAX_COUNT = 200;
+    const CONTROLLER_NAME = "administrator";
 
     /**
-     * @param string $NO_ID
-     * @return string
+     * Route name to which will redirect
      */
-    protected $NO_ID = "no_id"; // const!!!
+    const ADMIN_ROUTE = "admin";
 
     /**
      * Initialize any variables before controller actions
@@ -42,8 +65,7 @@ class AdministratorController extends IndexController
      */
     public function indexAction()
     {
-        $order = "id DESC";
-        $paginator = $this->getTable("administrator")->fetchList(true, null, $order);
+        $paginator = $this->getTable("administrator")->fetchList(true, array(), array(), null, null, "id DESC");
         $paginator->setCurrentPageNumber((int)$this->params("page",1));
         $paginator->setItemCountPerPage(15);
         $this->view->paginator = $paginator;
@@ -55,7 +77,7 @@ class AdministratorController extends IndexController
      */
     public function addAction()
     {
-        $this->showForm("Add", null);
+        $this->showForm("Add administrator", null);
         $this->addBreadcrumb(array("reference"=>"/admin/administrator/add", "name"=>"Add new administrator"));
         return $this->view;
     }
@@ -66,58 +88,57 @@ class AdministratorController extends IndexController
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
-        try
-        {
-            $administrator = $this->getTable("administrator")->getAdministrator($id);
-            $this->view->administrator = $administrator;
-            $this->addBreadcrumb(array("reference"=>"/admin/administrator/modify/id/{$administrator->id}", "name"=>"Modify administrator"));
-            $this->showForm("Modify", $administrator);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Administrator not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
+        $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0));
+        $this->view->administrator = $administrator;
+        $this->addBreadcrumb(array("reference"=>"/admin/administrator/modify/id/{$administrator->user}", "name"=>"Modify administrator"));
+        $this->showForm("Modify administrator", $administrator);
         return $this->view;
     }
 
     /**
+     * this action deletes a administrator object with a provided id
+     */
+    public function deleteAction()
+    {
+        $user = $this->getTable("user")->getUser($this->getParam('id', 0));
+        $user->setAdmin(0);
+        $this->getTable("user")->saveUser($user);
+        $this->getTable("administrator")->deleteAdministrator($this->getParam('id', 0));
+        $this->cache->success = "Administrator was successfully deleted";
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+    }
+
+   /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label
      * @param null|Administrator $administrator
      */
-    public function showForm($label='Add', $administrator=null)
+    private function showForm($label='Add administrator', Administrator $administrator = null)
     {
-        if($administrator==null) $administrator = new Administrator();
+        if($administrator==null) $administrator = new Administrator(array(), null);
 
-        $form = new AdministratorForm($administrator);
+        $form = new \Admin\Form\AdministratorForm($administrator);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
         if($this->getRequest()->isPost())
         {
             $form->setInputFilter($administrator->getInputFilter());
-            $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(),$this->getRequest()->getFiles()->toArray()));
+            $form->setData($this->getRequest()->getPost());
             if($form->isValid())
             {
                 $formData = $form->getData();
 
                 $user = $this->getTable("user")->getUser($formData['user']);
                 // valid user id
-                if (sizeof($user) == 1)
+                if (count($user) == 1)
                 {
-                    $adminExist = $this->getTable("administrator")->fetchList(false, "user='{$user->id}'");
-                    if (sizeof($adminExist) > 0)
+                    $adminExist = $this->getTable("administrator")->getAdministrator($user->id);
+                    if (count($adminExist) != 0)
                     {
                         $this->cache->error = $user->toString()." is already administrator";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
                     else
                     {
@@ -127,18 +148,18 @@ class AdministratorController extends IndexController
                         $this->getTable("administrator")->saveAdministrator($administrator);
                         $this->cache->success = "Administrator was successfully saved";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
                 }
                 else
                 {
-                    $this->setErrorNoParam($this->NO_ID);
-                    return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
+                    $this->setErrorNoParam(IndexController::NO_ID);
+                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                 }
             }
             else
             {
-                $error = '';
+                $error = array();
                 foreach($form->getMessages() as $msg)
                 {
                     foreach ($msg as $key => $value)
@@ -147,67 +168,8 @@ class AdministratorController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
             }
         }
-    }
-
-    /**
-     * this action deletes a administrator object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
-        try
-        {
-            $administrator = $this->getTable("administrator")->getAdministrator($id);
-            $user = $this->getTable("user")->getUser($administrator->user);
-            $user->setAdmin(0);
-            $this->getTable("user")->saveUser($user);
-            $this->getTable("administrator")->deleteAdministrator($id);
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Administrator not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
-        $this->cache->success = "Administrator was successfully deleted";
-        return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-    }
-
-    public function detailAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
-        try
-        {
-            $administrator = $this->getTable("administrator")->getAdministrator($id);
-            $this->view->administrator = $administrator;
-        }
-        catch(\Exception $ex)
-        {
-            $this->setErrorNoParam("Administrator not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'administrator'));
-        }
-        $this->addBreadcrumb(array("reference"=>"/admin/administrator/detail/id/{$administrator->id}", "name"=>" Administrator details"));
-        return $this->view;
-    }
-
-    protected function cloneAction()
-    {
-        $id = $this->getParam("id", 0);
-        $administrator = $this->getTable("administrator")->duplicate($id);
-        $this->cache->success = "Administrator was successfully cloned";
-        $this->redirect()->toUrl("/admin/administrator");
-        return $this->view;
     }
 }

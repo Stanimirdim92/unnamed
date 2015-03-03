@@ -1,10 +1,51 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Admin\Language
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Form;
+
 use Zend\Form\Form;
 use Zend\Form\Element;
+
 class LanguageForm extends Form
 {
-    public function __construct($options = null)
+    /**
+     * Create the language form
+     *
+     * @param \Admin\Model\Language|null $options holds language options
+     */
+    public function __construct(\Admin\Model\Language $options = null)
     {
         parent::__construct("language");
         $elements = array();
@@ -13,6 +54,7 @@ class LanguageForm extends Form
         $elements[0]->setLabel('Name');
         $elements[0]->setAttributes(array(
             'required'   => true,
+            'size'        => 40,
             'class'      => 'language-name',
             'placeholder' => 'Name',
         ));
@@ -25,10 +67,9 @@ class LanguageForm extends Form
             $elements[1]->setValue($options->active);
 
         $elements[2] = new Element\Submit('submit');
-        $elements[2]->setAttributes(array(
-            'id' => 'submitbutton',
-            'class' => 'language-button',
-        ));
+        $elements[2]->setAttribute('id', 'submitbutton');
+
+        $elements[69] = new Element\Csrf('s');
 
         if($options!=null)
         {

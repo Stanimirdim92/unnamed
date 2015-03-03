@@ -66,6 +66,10 @@ class MenuTable
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
 
+    /**
+     * @param ServiceManager|null $sm
+     * @param TableGateway|null   $tg
+     */
     public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
         $this->_serviceManager = $sm;
@@ -110,7 +114,7 @@ class MenuTable
 
     /**
      * Fetch all records from the DB by joining them
-     * 
+     *
      * @param string $join    table name
      * @param string $on      table colums
      * @param null $where     WHERE condition
@@ -132,7 +136,7 @@ class MenuTable
 
         if ($pagination === true)
         {
-            
+
         }
         else
         {
@@ -151,7 +155,7 @@ class MenuTable
     /**
      * Prepare all statements before quering the database
      *
-     * @param  Select $select 
+     * @param  Select $select
      * @param  array  $columns
      * @param  null $where
      * @param  null $group
@@ -198,7 +202,7 @@ class MenuTable
     public function getMenu($id = 0, $language = 1)
     {
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, 'language' => (int) $language));
-        if (!$rowset->current()) 
+        if (!$rowset->current())
         {
             throw new \RuntimeException("Couldn't find menu");
         }
@@ -207,7 +211,7 @@ class MenuTable
 
     /**
      * Delete a menu based on the provided id and language
-     * 
+     *
      * @param int $id menu id
      * @param int $language user language
      * @throws Exception If menu is not found
@@ -262,7 +266,7 @@ class MenuTable
     }
 
     /**
-     * duplicate a content 
+     * duplicate a content
      *
      * @param  int    $id
      * @param  int    $language

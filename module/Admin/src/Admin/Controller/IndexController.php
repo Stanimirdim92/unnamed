@@ -67,7 +67,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return int $this->translation->language
      */
     protected $langTranslation = null;
-    
+
     /**
      * @var array $breadcrumbs returns an array with links with the current user position on the website
      * @return Array
@@ -121,7 +121,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 /****************************************************
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
-    /** 
+    /**
      * initialize breadcrumbs
      * @return  array
      */
@@ -132,7 +132,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * initialize any session variables in this method
-     * 
+     *
      * @return Zend\Session\Container
      */
     private function initCache()
@@ -150,22 +150,22 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     private function initViewVars()
     {
         $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
+        $this->view->languages = $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name ASC");
         $this->view->controller = $this->getParam('__CONTROLLER__');
         $this->view->action = $this->getParam('action');
     }
 
-    /** 
+    /**
      * initialize the admin menus
      */
-    // private function initMenus()
-    // {
-    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
-    // }
+    private function initMenus()
+    {
+        $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
+        $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
+        $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
+    }
 
-    /** 
+    /**
      * initialize languages and language-related stuff like translations.
      */
     private function initTranslation()
@@ -217,12 +217,12 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $auth = new \Zend\Authentication\AuthenticationService();
         if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
         {
-            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && 
-                ($this->cache->role === 1 || $this->cache->role === 10) && 
+            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
+                ($this->cache->role === 1 || $this->cache->role === 10) &&
                 ($this->cache->logged === true)
               )
             {
-                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, "user='{$auth->getIdentity()->id}'");
+                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, array(), array("user" => $auth->getIdentity()->id));
                 if (count($checkAdminExistence) === 1)
                 {
                     return $this->redirect()->toUrl("/admin");
@@ -266,7 +266,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
-        if(!$param) 
+        if(!$param)
         {
             $param = $this->params()->fromRoute($paramName, 0);
         }

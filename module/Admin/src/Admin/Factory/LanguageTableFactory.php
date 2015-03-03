@@ -24,7 +24,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Administrator
+ * @category   Admin\Factory
  * @package    ZendPress
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
@@ -32,48 +32,24 @@
  * @version    0.03
  * @link       TBA
  */
-namespace Admin\Form;
+namespace Admin\Factory;
 
-use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
+use Admin\Model\Language;
+use Admin\Model\LanguageTable;
 
-class AdministratorForm extends Form
+class LanguageTableFactory implements FactoryInterface
 {
-    /**
-     * Create administrator form
-     *
-     * @param \Admin\Model\Administrator|null $options [description]
-     */
-    public function __construct(\Admin\Model\Administrator $options = null)
+    public function createService(ServiceLocatorInterface $sm = null)
     {
-        parent::__construct("administrator");
-        $elements = array();
-
-        $elements[5] = new Element\Text('user');
-        $elements[5]->setLabel('User ID');
-        $elements[5]->setAttributes(array(
-            'required'   => true,
-            'size'        => 40,
-            'class'      => 'administrator-user',
-            'placeholder' => 'User ID',
-        ));
-
-        if($options!=null and $options->user)
-            $elements[5]->setValue($options->user);
-
-        $elements[69] = new Element\Csrf('s');
-        $elements[111] = new Element\Submit('submit');
-        $elements[111]->setAttribute('id', 'submitbutton');
-
-        if($options!=null)
-        {
-            $elements[112] = new Element\Hidden('id');
-            $elements[112]->setValue($options->id);
-        }
-
-        foreach($elements as $e)
-        {
-            $this->add($e);
-        }
+        $resultSetPrototype = new ResultSet();
+        $resultSetPrototype->setArrayObjectPrototype(new Language(array(), $sm));
+        $tg = new TableGateway('language', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
+        return new LanguageTable($sm, $tg);
     }
 }
+
+?>

@@ -189,14 +189,14 @@ class LoginController extends \Application\Controller\IndexController
     }
 
     public function newpasswordAction()
-    {   
+    {
         $token = (string) $this->getParam('id', null);
         if (Functions::strLength($token) !== 64)
         {
             throw new \Exception($this->translation->TOKEN_MISTMATCH);
         }
 
-        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("token", "date"), "token='{$token}' AND date >= DATE_SUB( NOW(), INTERVAL 24 HOUR)");
+        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("token", "date"), array("token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"), "AND");
         if (count($tokenExist) !== 1)
         {
             $this->setErrorNoParam($this->translation->LINK_EXPIRED);
@@ -271,7 +271,7 @@ class LoginController extends \Application\Controller\IndexController
             {
                 $formData = $form->getData();
                 $existingEmail = $this->getTable("User")->fetchList(false, "email = '".$formData['email']."'");
-                
+
                 if(count($existingEmail) === 1)
                 {
                     $token = Functions::generateToken(48); // returns 64 characters long string
@@ -292,7 +292,7 @@ class LoginController extends \Application\Controller\IndexController
                         $this->cache->error = $this->translation->EMAIL_NOT_SENT;
                         return $this->redirect()->toUrl("/login/resetpassword");
                     }
-                    
+
                     $this->cache->success = $this->translation->PW_SENT." ".$formData['email'];
                     $this->view->setTerminal(true);
                     return $this->redirect()->toUrl("/");
@@ -320,10 +320,10 @@ class LoginController extends \Application\Controller\IndexController
         return $this->view;
     }
 
-    /** 
+    /**
      * Create new instance of $cache and set it to empty|null
      *
-     * Clear all sessions (cache, translations etc.) 
+     * Clear all sessions (cache, translations etc.)
      * @param string $redirectTo
      * @return void
      */

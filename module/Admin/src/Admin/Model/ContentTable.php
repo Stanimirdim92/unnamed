@@ -66,6 +66,10 @@ class ContentTable
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
 
+    /**
+     * @param ServiceManager|null $sm
+     * @param TableGateway|null   $tg
+     */
     public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
         $this->_serviceManager = $sm;
@@ -110,7 +114,7 @@ class ContentTable
 
     /**
      * Fetch all records from the DB by joining them
-     * 
+     *
      * @param string $join    table name
      * @param string $on      table colums
      * @param null $where     WHERE condition
@@ -132,7 +136,7 @@ class ContentTable
 
         if ($pagination === true)
         {
-            
+
         }
         else
         {
@@ -151,7 +155,7 @@ class ContentTable
     /**
      * Prepare all statements before quering the database
      *
-     * @param  Select $select 
+     * @param  Select $select
      * @param  array  $columns
      * @param  null $where
      * @param  null $group
@@ -188,7 +192,7 @@ class ContentTable
             $select->offset($offset);
         return $select;
     }
-    
+
     /**
      * @param int $id content id
      * @param int $language user language
@@ -198,7 +202,7 @@ class ContentTable
     public function getContent($id = 0, $language = 1)
     {
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, "language" => (int) $language));
-        if (!$rowset->current()) 
+        if (!$rowset->current())
         {
            throw new \RuntimeException("Couldn't find content");
         }
@@ -207,7 +211,7 @@ class ContentTable
 
     /**
      * Delete a content based on the provided id and language
-     * 
+     *
      * @param int $id content id
      * @param int $language user language
      * @throws Exception If content is not found
@@ -221,7 +225,7 @@ class ContentTable
         }
         $this->_tableGateway->delete(array('id' => (int) $id, "language" => (int) $language));
     }
-    
+
     /**
      * Save or update content based on the provided id and language
      *
@@ -244,7 +248,7 @@ class ContentTable
         );
         $id = (int) $content->id;
         $language = (int) $content->language;
-        if (!$id) 
+        if (!$id)
         {
             $this->_tableGateway->insert($data);
             $content->id = $this->_tableGateway->lastInsertValue;
@@ -260,9 +264,9 @@ class ContentTable
         unset($id, $language, $data);
         return $content;
     }
-    
+
     /**
-     * duplicate a content 
+     * duplicate a content
      *
      * @param  int    $id
      * @param  int    $language

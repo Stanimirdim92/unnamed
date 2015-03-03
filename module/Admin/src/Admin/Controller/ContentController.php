@@ -80,7 +80,7 @@ class ContentController extends \Admin\Controller\IndexController
         }
 
         $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
-        if (count($contentsWithoutMenu) > 0) 
+        if (count($contentsWithoutMenu) > 0)
         {
             $menuReport = array();
             foreach ($contentsWithoutMenu as $cwm)
@@ -94,7 +94,7 @@ class ContentController extends \Admin\Controller\IndexController
         }
         return $this->view;
     }
-    
+
     /**
      * This action serves for adding a new object of type Content
      */
@@ -149,7 +149,7 @@ class ContentController extends \Admin\Controller\IndexController
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
     }
-    
+
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
@@ -159,7 +159,7 @@ class ContentController extends \Admin\Controller\IndexController
     private function showForm($label = 'Add', Content $content = null)
     {
         if($content==null) $content = new Content(array(), null);
-        
+
         $orderMenus = $menus = $submenus = array();
         $menus = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         foreach($menus as $m)
@@ -179,7 +179,7 @@ class ContentController extends \Admin\Controller\IndexController
                 }
             }
         }
-        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("language")->fetchList(false, "active='1'", "id ASC"));
+        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "id ASC"));
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
         if ($this->getRequest()->isPost())
@@ -209,7 +209,7 @@ class ContentController extends \Admin\Controller\IndexController
                         // remove the old image from the directory if exists
                         if($content->preview != null && is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview()))
                         {
-                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview());    
+                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview());
                         }
                         $param = $this->params()->fromFiles('preview');
                         $adapter->receive($param['name']);
@@ -224,14 +224,14 @@ class ContentController extends \Admin\Controller\IndexController
                         }
                         $this->setErrorNoParam($error);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-                    }       
+                    }
                 }
                 else
                 {
                     $formData['preview'] = $content->getPreview();
                 }
                 $content->exchangeArray($formData);
-                
+
                 // db table menu is empty, but we are still able to post contents.
                 // if so, simply show those types of contents at the bottom of the table from the index page
                 if (!$formData["menu"])

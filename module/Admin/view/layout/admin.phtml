@@ -32,9 +32,9 @@ $view = $children[0];
             ?>
             </ul>
         </div>
-        <?php 
+        <?php
             echo $this->layout()->content;
-    
+
             if(!empty($view->cache->warning))
             {
                 if (is_array($view->cache->warning))
@@ -60,7 +60,7 @@ $view = $children[0];
                 }
                 $view->cache->warning = null;
             }
-            
+
             if(!empty($view->cache->success))
             {
                 if (is_array($view->cache->success))

@@ -2,12 +2,12 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->session->NAME?></li>
-            <li class="table-cell"><?=$this->session->JOB?></li>
-            <li class="table-cell"><?=$this->session->DESCRIPTION?></li>
-            <li class="table-cell"><?=$this->session->DETAILS?></li>
-            <li class="table-cell"><?=$this->session->MODIFY?></li>
-            <li class="table-cell"><?=$this->session->DELETE?></li>
+            <li class="table-cell"><?=$this->translation->NAME?></li>
+            <li class="table-cell"><?=$this->translation->JOB?></li>
+            <li class="table-cell"><?=$this->translation->DESCRIPTION?></li>
+            <li class="table-cell"><?=$this->translation->DETAILS?></li>
+            <li class="table-cell"><?=$this->translation->MODIFY?></li>
+            <li class="table-cell"><?=$this->translation->DELETE?></li>
         </ul>
 <?php
 /* @var $item Admin\Model\Administrator */
@@ -15,22 +15,19 @@ foreach($this->paginator as $item)
 {
 ?>
         <ul class="table-row">
-            <li class="table-cell"><?=$item->getName()?></li>
-            <li class="table-cell"><?=$item->getJob()?></li>
-            <li class="table-cell"><?=$item->getDescription()?></li>
             <li class="table-cell">
-                <a title='<?=$this->session->DETAILS?>' class='btn blue btn-sm' href='/admin/administrator/detail/id/<?=$item->getId()?>'><i class='fa fa-info'></i></a>
+                <a title='<?=$this->translation->DETAILS?>' class='btn blue btn-sm' href='/admin/user/detail/id/<?=$item->getUser()?>'><?=$item->getUserObject()->getName()?> <i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->session->MODIFY?>' href='/admin/administrator/modify/id/<?=$item->getId()?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translation->MODIFY?>' href='/admin/administrator/modify/id/<?=$item->user?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->session->DELETE?>' id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a>
-                <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
-                    <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getName()?>&raquo;&quest;</p>
+                <a title='<?=$this->translation->DELETE?>' id='delete_<?=$item->user?>' href='#' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a>
+                <div id='delete_delete_<?=$item->user?>' class='dialog_hide'>
+                    <p><?=$this->translation->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getUserObject()->getName()?>&raquo;&quest;</p>
                     <ul>
-                      <li><a class='btn delete' href='/admin/administrator/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
-                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
+                      <li><a class='btn delete' href='/admin/administrator/delete/id/<?=$item->user?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->translation->DELETE?></a></li>
+                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->translation->CANCEL?></a></li>
                     </ul>
                 </div>
             </li>

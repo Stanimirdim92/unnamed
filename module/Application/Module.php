@@ -35,14 +35,7 @@
 
 namespace Application;
 
-use Zend\Mvc\ModuleRouteListener;
-
-// use Zend\Cache\StorageFactory;
-// use Zend\Session\SaveHandler\Cache;
-use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
-use Zend\Session\SessionManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
 
@@ -55,10 +48,10 @@ class Module implements Feature\AutoloaderProviderInterface,
      */
     public function initSession(array $config = array())
     {
-        $sessionConfig = new SessionConfig();
+        $sessionConfig = new \Zend\Session\Config\SessionConfig();
         $sessionConfig->setOptions($config);
-        $sessionManager = new SessionManager($sessionConfig);
-        // $memCached = StorageFactory::factory(array(
+        $sessionManager = new \Zend\Session\SessionManager($sessionConfig);
+        // $memCached = \Zend\Cache\StorageFactory::factory(array(
         //     'adapter' => array(
         //        'name' => 'memcached',
         //        'options' => array(
@@ -66,7 +59,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         //        ),
         //     ),
         // ));
-        // $saveHandler = new Cache($memCached);
+        // $saveHandler = new \Zend\Session\SaveHandler\Cache($memCached);
         // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
         Container::setDefaultManager($sessionManager);
@@ -117,7 +110,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         $app = $e->getTarget();
         $em = $app->getEventManager();
         $sm = $app->getServiceManager();
-        $moduleRouteListener = new ModuleRouteListener();
+        $moduleRouteListener = new \Zend\Mvc\ModuleRouteListener();
         $moduleRouteListener->attach($em);
 
         $em->attach(MvcEvent::EVENT_RENDER, array($this, 'setLayoutTitle'));
@@ -187,7 +180,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         $e->getViewModel()->setTemplate('layout/error-layout');
         $e->stopPropagation();
     }
-    
+
     /**
      * @param \Zend\Mvc\MvcEvent $e
      */
@@ -236,7 +229,7 @@ class Module implements Feature\AutoloaderProviderInterface,
     {
         return array(
             'factories' => array(
-                'Params' => function (ServiceLocatorInterface $helpers)
+                'Params' => function (\Zend\ServiceManager\ServiceLocatorInterface $helpers)
                 {
                     $app = $helpers->getServiceLocator()->get('Application');
                     return new \Application\View\Helper\Params($app->getRequest(), $app->getMvcEvent());
@@ -244,7 +237,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             ),
         );
     }
-    
+
     public function getAutoloaderConfig()
     {
         return array(

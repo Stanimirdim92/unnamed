@@ -15,8 +15,8 @@ if(count($this->news) > 0)
                             <img itemprop="image" style="border: 1px solid rgb(176, 174, 171);margin: 10px 0 0 0;" src="/userfiles/preview/<?=$new->getPreview();?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle();?>" />
                         </a>
                     </figure>
-<?php           
-                } 
+<?php
+                }
 ?>
                 <h2 itemscope itemprop="name" class="post-title">
                     <a itemprop="url" href="/news/post/<?=$new->getTitleLink()?>"><?=$new->getTitle()?></a>
@@ -64,5 +64,4 @@ else
 {
     echo "<h3 itemscope itemprop='name' class='c no-content'>".$this->translation->NO_CONTENT."</h3>";
 }
-
 ?>

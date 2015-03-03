@@ -48,7 +48,7 @@ class Content implements InputFilterAwareInterface
     private $_inputFilter = null;
 
     /**
-     * @var null $_serviceManager ServiceManager 
+     * @var null $_serviceManager ServiceManager
      */
     private $_serviceManager = null;
 
@@ -111,7 +111,7 @@ class Content implements InputFilterAwareInterface
      * @return string
      */
     private $_titleLink = null;
-    
+
     /**
      * @param null $sm ServiceManager
      * @return ServiceManager|null
@@ -141,7 +141,7 @@ class Content implements InputFilterAwareInterface
 
     /**
      * constructor
-     * 
+     *
      * @param array $options
      * @param ServiceManager|null $sm
      */
@@ -150,7 +150,7 @@ class Content implements InputFilterAwareInterface
         $this->exchangeArray($options);
         $this->_serviceManager = $sm;
     }
-    
+
     /**
      * Get id
      */
@@ -158,7 +158,7 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_id;
     }
-    
+
     /**
      * Set id
      * @param int
@@ -167,8 +167,8 @@ class Content implements InputFilterAwareInterface
     {
         $this->_id = $id;
     }
-    
-    
+
+
     /**
     * Set Menu
     * @param int $menu
@@ -186,7 +186,7 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_menu;
     }
- 
+
     /**
     * Get the related object from the DB
     */
@@ -194,17 +194,17 @@ class Content implements InputFilterAwareInterface
     {
         try
         {
-            return $this->serviceManager->get('MenuTable')->getMenu($this->_menu);
+            return $this->_serviceManager->get('MenuTable')->getMenu($this->_menu, $this->_language);
         }
         catch (\Exception $e)
         {
             return $e->getMessage();
         }
     }
-    
+
     /**
     * Set title
-    * @param null $title 
+    * @param null $title
     */
     public function setTitle($title = null)
     {
@@ -222,7 +222,7 @@ class Content implements InputFilterAwareInterface
 
     /**
     * Set titleLink
-    * @param null $titleLink 
+    * @param null $titleLink
     */
     public function setTitleLink($titleLink = null)
     {
@@ -237,10 +237,10 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_titleLink;
     }
-     
+
     /**
     * Set preview
-    * @param String $preview 
+    * @param String $preview
     */
     public function setPreview($preview = null)
     {
@@ -255,10 +255,10 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_preview;
     }
-     
+
     /**
     * Set text
-    * @param String $text 
+    * @param String $text
     */
     public function setText($text = null)
     {
@@ -273,10 +273,10 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_text;
     }
-     
+
     /**
     * Set order
-    * @param int $menuOrder 
+    * @param int $menuOrder
     */
     public function setMenuOrder($menuOrder = 0)
     {
@@ -291,10 +291,10 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_menuOrder;
     }
-     
+
     /**
     * Set type
-    * @param int $type 
+    * @param int $type
     */
     public function setType($type = 0)
     {
@@ -309,10 +309,10 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_type;
     }
-     
+
     /**
     * Set date
-    * @param String $date 
+    * @param String $date
     */
     public function setDate($date = "0000-00-00 00:00:00")
     {
@@ -327,7 +327,7 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_date;
     }
-     
+
     /**
     * Set Language
     * @param int $language
@@ -345,7 +345,7 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_language;
     }
- 
+
     /**
     * Get the related object from the DB
     */
@@ -353,7 +353,7 @@ class Content implements InputFilterAwareInterface
     {
         try
         {
-            return $this->serviceManager->get('LanguageTable')->getLanguage($this->_language);
+            return $this->_serviceManager->get('LanguageTable')->getLanguage($this->_language);
         }
         catch (\Exception $e)
         {
@@ -384,7 +384,7 @@ class Content implements InputFilterAwareInterface
     {
         return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
     }
-    
+
     /**
      * magic serializer
      */
@@ -402,13 +402,13 @@ class Content implements InputFilterAwareInterface
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
-        
+
     }
 
     /**
@@ -431,7 +431,7 @@ class Content implements InputFilterAwareInterface
         }
         return $returnValue;
     }
-   
+
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -455,10 +455,10 @@ class Content implements InputFilterAwareInterface
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
+        if (!$this->_inputFilter)
         {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
@@ -490,7 +490,7 @@ class Content implements InputFilterAwareInterface
                                 'jpeg',
                                 'bmp',
                                 'webp',
-                            ), 
+                            ),
                             'case' => true,
                         ),
                     ),

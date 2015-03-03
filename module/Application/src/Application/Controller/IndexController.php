@@ -66,7 +66,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return int $this->translation->language
      */
     protected $langTranslation = null;
-    
+
     /**
      * Used to detect actions without IDs. Inherited in all other classes
      */
@@ -84,7 +84,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * Initialize any variables before controller actions
-     * 
+     *
      * @param \Zend\Mvc\MvcEvent $e
      * @throws Exception\RuntimeException
      */
@@ -101,7 +101,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * initialize any session variables in this method
-     * 
+     *
      * @return Zend\Session\Container
      */
     private function initCache()
@@ -122,14 +122,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     {
         $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, "active='1'", "name ASC");
-        $this->view->langName = $lang->name;
+        $this->view->languages = $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name ASC");
+        $this->view->langName = $lang->getName();
         $this->view->controller = $this->getParam('__CONTROLLER__');
         $this->view->action = $this->getParam('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
     }
 
-    /** 
+    /**
      * initialize languages and language-related stuff like translations.
      */
     private function initTranslation()
@@ -186,9 +186,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $auth = new \Zend\Authentication\AuthenticationService();
         if($auth->hasIdentity() && $this->cache->user instanceof \Admin\Model\User)
         {
-            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && 
-                ($this->cache->role === 1 || $this->cache->role === 10) && 
-                ($this->cache->logged === true) 
+            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
+                ($this->cache->role === 1 || $this->cache->role === 10) &&
+                ($this->cache->logged === true)
               )
             {
                 return $this->redirect()->toUrl("/");
@@ -219,7 +219,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
-        if(!$param) 
+        if(!$param)
         {
             $param = $this->params()->fromRoute($paramName, 0);
         }
@@ -292,7 +292,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
         $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
         $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
-        
+
         $vhm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
         $vhm->appendName('keywords', $keywords);
         $vhm->appendName('description', $description);
@@ -332,7 +332,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
                 {
                     $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
                     $this->cache->success = $this->translation->CONTACT_SUCCESS;
-                } 
+                }
                 catch (\Exception $e)
                 {
                     $this->cache->error = $this->translation->CONTACT_ERROR;

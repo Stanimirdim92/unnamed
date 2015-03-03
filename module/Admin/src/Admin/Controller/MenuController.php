@@ -76,13 +76,13 @@ class MenuController extends \Admin\Controller\IndexController
         $this->view->submenus = $submenus;
         return $this->view;
     }
-    
+
     /**
      * This action serves for adding a new object of type Menu
      */
     public function addAction()
     {
-        $this->showForm('Add', null);
+        $this->showForm('Add menu', null);
         $this->addBreadcrumb(array("reference"=>"/admin/menu/add", "name"=>"Add a new menu"));
         return $this->view;
     }
@@ -96,11 +96,11 @@ class MenuController extends \Admin\Controller\IndexController
         $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->langTranslation);
         $this->view->menu = $menu;
         $this->addBreadcrumb(array("reference"=>"/admin/menu/modify/id/{$menu->getId()}", "name"=>"Modify menu &laquo;".$menu->toString()."&raquo;"));
-        $this->showForm('Modify', $menu);
+        $this->showForm('Modify menu', $menu);
         return $this->view;
     }
 
-        /**
+    /**
      * this action deletes a menu object with a provided id
      */
     public function deleteAction()
@@ -120,7 +120,7 @@ class MenuController extends \Admin\Controller\IndexController
         $this->addBreadcrumb(array("reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"));
         return $this->view;
     }
-    
+
     /**
      * This action will clone the object with the provided id and return to the index view
      */
@@ -131,20 +131,20 @@ class MenuController extends \Admin\Controller\IndexController
         $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
-    
+
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param string $label button title
      * @param  Menu|null $menu menu object
      */
-    private function showForm($label = 'Add', Menu $menu = null)
+    private function showForm($label = '', Menu $menu = null)
     {
         if($menu == null) $menu = new Menu(array(), null);
 
         $menu->setServiceManager(null);
         $form = new \Admin\Form\MenuForm($menu,
-                $this->getTable("Language")->fetchList(false, "active='1'", "name DESC"),
+                $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name DESC"),
                 $this->getTable("Menu")->fetchList(false, array('language', 'parent'), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC", IndexController::MAX_COUNT)
         );
         $form->get("submit")->setValue($label);
