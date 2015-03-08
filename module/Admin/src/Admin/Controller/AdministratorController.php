@@ -36,6 +36,8 @@
 namespace Admin\Controller;
 
 use Admin\Model\Administrator;
+use Zend\Json\Json;
+use Zend\View\Model\JsonModel;
 
 class AdministratorController extends \Admin\Controller\IndexController
 {
@@ -65,7 +67,7 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     public function indexAction()
     {
-        $paginator = $this->getTable("administrator")->fetchList(true, array(), array(), null, null, "id DESC");
+        $paginator = $this->getTable("administrator")->fetchList(true);
         $paginator->setCurrentPageNumber((int)$this->params("page",1));
         $paginator->setItemCountPerPage(15);
         $this->view->paginator = $paginator;
@@ -108,6 +110,25 @@ class AdministratorController extends \Admin\Controller\IndexController
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
     }
 
+    protected function searchAction()
+    {
+        $search = $this->getParam('ajaxsearch');
+        if (isset($search) && $this->getRequest()->isXmlHttpRequest())
+        {
+            $this->view->setTerminal(true);
+            $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
+            $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
+            $json = array();
+            foreach ($results as $result)
+            {
+                $json[] = Json::encode($result);
+            }
+            return new JsonModel(array(
+                'ajaxsearch' => $json
+            ));
+        }
+    }
+
    /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
@@ -117,7 +138,6 @@ class AdministratorController extends \Admin\Controller\IndexController
     private function showForm($label='Add administrator', Administrator $administrator = null)
     {
         if($administrator==null) $administrator = new Administrator(array(), null);
-
         $form = new \Admin\Form\AdministratorForm($administrator);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;

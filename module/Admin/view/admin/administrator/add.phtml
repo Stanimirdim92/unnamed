@@ -5,7 +5,7 @@
         </a>
     </p>
     <div class='form-inputs'>
-    <?
+    <?php
         $form = $this->form;
         $form->setAttribute('action', $this->url('admin',array('controller' =>'administrator','action' => 'add')));
         $form->prepare();
@@ -14,4 +14,5 @@
         echo $this->form()->closeTag();
     ?>
     </div>
+    <div id="results"></div>
 </div>

@@ -66,27 +66,6 @@ class Module implements Feature\AutoloaderProviderInterface,
     }
 
     /**
-     * Detect SSL/TLS protocol. If true activate cookie_secure key
-     *
-     * @return bool
-     */
-    private function isSSL()
-    {
-        if (isset($_SERVER['HTTPS']))
-        {
-            if ('on' == strtolower($_SERVER['HTTPS']) || '1' == $_SERVER['HTTPS'])
-            {
-                return true;
-            }
-        }
-        else if (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT']))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * make sure to log errors and redirect to error-layout
      * @param MvcEvent $e
      * @return Events
@@ -102,7 +81,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             'use_cookies'         => true,
             'cache_expire'        => 180,  //3hrs
             'cookie_path'         => "/",
-            'cookie_secure'       => $this->isSSL(),
+            'cookie_secure'       => true,
             'cookie_httponly'     => true,
             'name'                => '__zpc' // zend press cookie
         ));

@@ -268,7 +268,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $param = $this->params()->fromPost($paramName, 0);
         if(!$param)
         {
-            $param = $this->params()->fromRoute($paramName, 0);
+            $param = $this->params()->fromRoute($paramName, null);
+        }
+        if(!$param)
+        {
+            $param = $this->params()->fromQuery($paramName, null);
         }
         if(!$param)
         {

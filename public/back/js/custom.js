@@ -51,50 +51,51 @@ $(document).ready(function ($) {
     });
 
     /*
-     * replace this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
+     * replace: this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
      */
-    if ($("#titleLink") !== "undefined" && $("#titleLink") !== null) {
+    if ($("#titleLink").val() !== undefined) {
         $("#titleLink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
     }
-    if ($("#menulink") !== "undefined" && $("#menulink") !== null) {    
+    if ($("#menulink").val() !== undefined) {
         $("#menulink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
     }
 
     $("#seo-caption").on("keyup select change", function () {
         var $seolink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
-        if ($("#menulink") !== undefined || $("#menulink") !== null) {
+        if ($("#menulink").val() !== undefined) {
             $("#titleLink").val($seolink);
         }
         else {
             $("#menulink").val($seolink);
         }
     });
-
-    $(".usersearch").on("keyup", function () {
-        var $search = $(".usersearch").val();
+    var urlSplit = window.location.href.toString().split(window.location.host)[1].split("/");
+    $(".ajax-search").on("keyup", function () {
+        var $search = $(".ajax-search").val();
         if ($.trim($search).length > 2) {
             $.ajax({
                 type: "GET",
-                url: "/admin/user/search",
-                data: {"usersearch": $search},
+                url: "/admin/" + urlSplit[2] + "/search",
+                data: {"ajaxsearch": $search},
                 dataType: "json",
                 contentType: "application/json; charset=utf-8;",
                 cache: !1,
-                beforeSend: function () {
-                    $("#results").val('Fetching data...');
-                },
             }).done(function (result) {
                 $("#results").empty();
-                $.each(result.usersearch, function (key, value) {
-                    var $user = $.parseJSON(value);
-                    var $del = "<i class='fa fa-times'></i>";
-                    if ($user["_deleted"] == 1) {
-                        $del = "<i class='fa fa-check'></i>";
+                $.each(result.ajaxsearch, function (key, value) {
+                    var $ul = $("<ul class='table-row'>");
+                    var $val = $.parseJSON(value);
+                    for (var property in $val) {
+                        if ($val.hasOwnProperty(property)) {
+                            if ($val[property] !== null && $val[property] !== undefined && $val[property] !== '') {
+                                $ul.append("<li class='table-cell'>"+$val[property]+"</li>");
+                            }
+                        }
                     }
-                    $("#results").html("<ul class='table-row'><li class='table-cell'>"+$user["_id"]+"</li><li class='table-cell'>"+$user["_name"]+" "+$user["_surname"]+"</li><li class='table-cell'>"+$user["_username"]+"</li><li class='table-cell'>"+$user["_email"]+"</li><li class='table-cell'>"+$user["_lastLogin"]+"</li><li class='table-cell'>"+$del+"</li><li class='table-cell'>"+$user["_registered"]+"</li><li class='table-cell'><a href='/admin/user/detail/id/"+$user["_id"]+"' class='btn btn-sm blue' title='"+result.details+"'><i class='fa fa-info'></i></a></li><li class='table-cell'><a href='/admin/user/modify/id/"+$user["_id"]+"' class='btn btn-sm orange' title='"+result.modify+"'><i class='fa fa-pencil'></i></a></li><li class='table-cell'><a id='delete_"+$user["_id"]+"' href='#' title='"+result.deleteuser+"' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a><div id='delete_delete_"+$user["_id"]+"' class='dialog_hide'><p>"+result.delete_text+" &laquo;"+$user["_username"]+"&raquo;&quest;</p><ul><li><a class='btn delete' href='/admin/user/delete/id/"+$user["_id"]+"'><i class='fa fa-trash-o'></i>&nbsp; "+result.deleteuser+"</a></li><li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; "+result.cancel+"</a></li></ul></div></li></ul>");
+                    $("#results").append($ul);
                 });
             }).fail(function (a) {
-                console.log("Error:" + a); //TODO must create a dialog popup
+                console.log("Error:", a.responseText); //TODO must create a dialog popup
             });
             $("#results").show();
             $("#linked").hide();

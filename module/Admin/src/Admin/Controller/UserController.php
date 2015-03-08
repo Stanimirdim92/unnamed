@@ -231,7 +231,7 @@ class UserController extends IndexController
     }
 
     /**
-     * 1 is there so we can get a proper user Object 
+     * 1 is there so we can get a proper user Object
      * instead we get a call to undefined function get() in User model
      *
      * @var $users \Admin\Model\User

@@ -54,8 +54,9 @@ class AdministratorForm extends Form
         $elements[5]->setAttributes(array(
             'required'   => true,
             'size'        => 40,
-            'class'      => 'administrator-user',
+            'class'      => 'administrator-user ajax-search',
             'placeholder' => 'User ID',
+            'autocomplete' => "off"
         ));
 
         if($options!=null and $options->user)

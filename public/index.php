@@ -40,6 +40,7 @@ define("REQ_PHP_VER", "5.3.7");
 define("ZEND_PRESS_VER", "0.03");
 
 if (version_compare(REQ_PHP_VER, PHP_VERSION, '>' )) {
+    header( 'Content-Type: text/html; charset=utf-8' );
     die(sprintf('Your server is running PHP version %1$s but ZendPress %2$s requires at least %3$s.', PHP_VERSION, ZEND_PRESS_VER, REQ_PHP_VER));
 }
 if (!extension_loaded("PDO")        &&
@@ -49,7 +50,8 @@ if (!extension_loaded("PDO")        &&
     !extension_loaded("mbstring")   &&
     !extension_loaded("pdo_mysql")
     ) {
-    die(sprintf('One or more if these <b>%1$s</b> required extensions by ZendPress are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring"))));
+    header( 'Content-Type: text/html; charset=utf-8' );
+    die(sprintf('One or more of these <b>%1$s</b> required extensions by ZendPress are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring"))));
 }
 
 /*===================================================================
@@ -64,7 +66,7 @@ $_SERVER = array_merge(array('SERVER_SOFTWARE' => '','REQUEST_URI' => ''), $_SER
 /**
  * Fix for IIS when running with PHP ISAPI
  */
-if (empty($_SERVER['REQUEST_URI']) || 
+if (empty($_SERVER['REQUEST_URI']) ||
    (php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE']))
    ) {
 
@@ -79,7 +81,7 @@ if (empty($_SERVER['REQUEST_URI']) ||
      */
     else if(isset($_SERVER['HTTP_X_REWRITE_URL'])) {
         $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
-    } 
+    }
     else {
         /**
          * Use ORIG_PATH_INFO if there is no PATH_INFO
@@ -123,11 +125,30 @@ if(empty($_SERVER['PHP_SELF'])) {
     $_SERVER['PHP_SELF'] = $PHP_SELF = preg_replace( '/(\?.*)?$/', '', $_SERVER["REQUEST_URI"]);
 }
 
+/**
+ * Set default php.ini settings.
+ *
+ * Below lines includes security|error fixes
+ */
+ini_set('cgi.fix_pathinfo', 0);
+error_reporting(0);
+ini_set("display_errors", 1);
+ini_set("display_startup_errors", 1);
+ini_set("track_errors", 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1);
+if (ini_get('date.timezone') == '') {
+    date_default_timezone_set('UTC');
+}
 
 /**
  * Display all errors when APPLICATION_ENV is development.
  */
 if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'development') {
+    /**
+     * Needed for ZendDeveloperTools
+     */
     if (version_compare(PHP_VERSION, '5.4', '<')) {
         define('REQUEST_MICROTIME', microtime(true));
     }
@@ -153,9 +174,9 @@ if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['RE
 /**
  * Setup autoloading
  */
-require 'init_autoloader.php';
+require_once 'init_autoloader.php';
 
 /**
  * Run the application!
  */
-Zend\Mvc\Application::init(require 'config/application.config.php')->run();
+Zend\Mvc\Application::init(require_once 'config/application.config.php')->run();

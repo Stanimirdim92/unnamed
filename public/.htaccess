@@ -18,11 +18,11 @@ RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
-# The following rewrites all other queries to index.php. The 
+# The following rewrites all other queries to index.php. The
 # condition ensures that if you are using Apache aliases to do
-# mass virtual hosting, the base path will be prepended to 
+# mass virtual hosting, the base path will be prepended to
 # allow proper resolution of the index.php file; it will work
-# in non-aliased environments as well, providing a safe, one-size 
+# in non-aliased environments as well, providing a safe, one-size
 # fits all solution.
 RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 RewriteRule ^(.*) - [E=BASE:%1]
@@ -82,12 +82,12 @@ RewriteRule "(^|/)\." - [F]
 
 #Specify Vary: Accept-Encoding
 <IfModule mod_headers.c>
-  <FilesMatch "\.(js|css|xml|gz|html|php|shtml|jpg|jpeg|gif|png|bmp|rar)$">
+  <FilesMatch "\.(js|css|xml|gz|html|phtml|php|shtml|jpg|jpeg|gif|png|bmp|rar)$">
     Header append Vary: Accept-Encoding
   </FilesMatch>
 </IfModule>
 
-#The following lines prevent .htaccess and .htpasswd files from being viewed by Web clients. 
+#The following lines prevent .htaccess and .htpasswd files from being viewed by Web clients.
 <Files ".ht*">
   Require all denied
 </Files>
@@ -238,7 +238,7 @@ Options -MultiViews
     AddType application/vnd.geo+json                    geojson
     AddType application/ld+json                         jsonld
     AddType application/xml                             atom rdf rss xml
-    
+
   # Video
     AddType video/mp4                                   mp4 m4v f4v f4p
     AddType video/ogg                                   ogv
@@ -318,6 +318,7 @@ AddDefaultCharset utf-8
                      .xloc \
                      .html \
                      .htm \
+                     .phtml \
                      .shtml
 </IfModule>
 
@@ -895,7 +896,7 @@ FileETag None
 
 <IfModule mod_php5.c>
     # Block cookie access via js. This might be already set via php.ini
-    php_value session.cookie_httponly true
+    php_value session.cookie_httponly on
     # 1. If your cart only allows you to add one item at a time, it is possible register_globals is on. This may work to disable it:
     php_flag register_globals off
     # 2. If your cart has magic quotes enabled, This may work to disable it:
