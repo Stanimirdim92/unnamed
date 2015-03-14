@@ -4,9 +4,9 @@ use Zend\Stdlib\ArrayUtils;
 $config = array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-        'Application',
         'EdpModuleLayouts',
         'Admin',
+        'Application',
         'ZendDeveloperTools',
     ),
 

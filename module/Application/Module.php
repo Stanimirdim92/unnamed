@@ -38,6 +38,7 @@ namespace Application;
 use Zend\Session\Container;
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\ModuleRouteListener;
 
 class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ServiceProviderInterface,
@@ -53,15 +54,30 @@ class Module implements Feature\AutoloaderProviderInterface,
         $sessionManager = new \Zend\Session\SessionManager($sessionConfig);
         // $memCached = \Zend\Cache\StorageFactory::factory(array(
         //     'adapter' => array(
-        //        'name' => 'memcached',
-        //        'options' => array(
-        //            'server' => 'zend.localhost',
-        //        ),
+        //        'name'     =>'memcached',
+        //         'lifetime' => 7200,
+        //         'options'  => array(
+        //             'servers'   => array(
+        //                 array(
+        //                     '127.0.0.1',11211
+        //                 ),
+        //             ),
+        //             'namespace'  => 'MYMEMCACHEDNAMESPACE',
+        //             'liboptions' => array(
+        //                 'COMPRESSION' => true,
+        //                 'binary_protocol' => true,
+        //                 'no_block' => true,
+        //                 'connect_timeout' => 100
+        //             )
+        //         ),
         //     ),
         // ));
+
         // $saveHandler = new \Zend\Session\SaveHandler\Cache($memCached);
         // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
+        $sessionManager->getValidatorChain()->attach('session.validate', array( new \Zend\Session\Validator\HttpUserAgent(), 'isValid'));
+        $sessionManager->getValidatorChain()->attach('session.validate', array( new \Zend\Session\Validator\RemoteAddr(), 'isValid'));
         Container::setDefaultManager($sessionManager);
     }
 
@@ -83,13 +99,13 @@ class Module implements Feature\AutoloaderProviderInterface,
             'cookie_path'         => "/",
             'cookie_secure'       => true,
             'cookie_httponly'     => true,
-            'name'                => '__zpc' // zend press cookie
+            'name'                => '__zpc', // zend press cookie
         ));
 
-        $app = $e->getTarget();
+        $app = $e->getApplication();
         $em = $app->getEventManager();
         $sm = $app->getServiceManager();
-        $moduleRouteListener = new \Zend\Mvc\ModuleRouteListener();
+        $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
 
         $em->attach(MvcEvent::EVENT_RENDER, array($this, 'setLayoutTitle'));
@@ -135,7 +151,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
             Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
             IP: " . $remote->getIpAddress() . ",
-            Browser string: " . $_SERVER['HTTP_USER_AGENT'] . ",
+            Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
             Date: " . date("Y-m-d H:i:s", time()) . ",
             Full URL: ".$sm->get("Request")->getRequestUri().",
             User port: ".$_SERVER["REMOTE_PORT"].",

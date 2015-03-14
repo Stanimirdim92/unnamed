@@ -132,9 +132,9 @@ if(empty($_SERVER['PHP_SELF'])) {
  */
 ini_set('cgi.fix_pathinfo', 0);
 error_reporting(0);
-ini_set("display_errors", 1);
-ini_set("display_startup_errors", 1);
-ini_set("track_errors", 1);
+ini_set("display_errors", 0);
+ini_set("display_startup_errors", 0);
+ini_set("track_errors", 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 1);
@@ -174,9 +174,9 @@ if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['RE
 /**
  * Setup autoloading
  */
-require_once 'init_autoloader.php';
+require 'init_autoloader.php';
 
 /**
  * Run the application!
  */
-Zend\Mvc\Application::init(require_once 'config/application.config.php')->run();
+Zend\Mvc\Application::init(require 'config/application.config.php')->run();

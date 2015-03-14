@@ -38,12 +38,11 @@ use Zend\Session\Container;
 
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
-
 class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 {
     /**
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
-     * @return Zend\Session\Container|mixed
+     * @return Zend\Session\Container
      */
     protected $cache = null;
 
@@ -66,6 +65,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return int $this->translation->language
      */
     protected $langTranslation = null;
+    protected $gdgg = null;
 
     /**
      * Used to detect actions without IDs. Inherited in all other classes
@@ -78,15 +78,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function __construct()
     {
         $this->view = new \Zend\View\Model\ViewModel();
-        $this->initTranslation();
         $this->initCache();
+        $this->initTranslation();
     }
 
     /**
      * Initialize any variables before controller actions
      *
      * @param \Zend\Mvc\MvcEvent $e
-     * @throws Exception\RuntimeException
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -101,12 +100,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * initialize any session variables in this method
-     *
-     * @return Zend\Session\Container
+     * @return void
      */
-    private function initCache()
+    protected function initCache()
     {
-        if (!$this->cache)
+        if(!$this->cache)
         {
             $this->cache = new Container("cache");
             $this->view->cache = $this->cache;
@@ -115,10 +113,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * initialize any view related stuff
-     *
-     * @return Zend\Session\Container
+     * @return void
      */
-    private function initViewVars()
+    protected function initViewVars()
     {
         $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
@@ -131,28 +128,31 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * initialize languages and language-related stuff like translations.
+     * @return  void
      */
-    private function initTranslation()
+    protected function initTranslation()
     {
-        $this->translation = new Container('translations');
-
-        if(!$this->translation->language)
+        if(!isset($this->translation->language))
         {
+            $this->translation = Functions::initTranslations(1, true);
             $this->translation->language = 1;
-            $this->translation = Functions::initTranslations($this->translation->language, true);
         }
         // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language !== 0 ? $this->translation->language : 1);
+        $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
     }
 
-    private function initMenus()
+    /**
+     * initialize languages and language-related stuff like translations.
+     * @return  void
+     */
+    protected function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, array("parent", "caption", "menulink", "footercolumn", "menutype", "id"), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+        $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
 
         foreach($menu as $submenu)
         {
-            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array("parent", "caption", "footercolumn", "menutype", "menulink"), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         $this->view->menus = $menu;
         $this->view->submenus = $submenus;
@@ -184,24 +184,21 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     protected function checkIdentity()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
-        if($auth->hasIdentity() && $this->cache->user instanceof \Admin\Model\User)
+        if($auth->hasIdentity())
         {
-            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
-                ($this->cache->role === 1 || $this->cache->role === 10) &&
-                ($this->cache->logged === true)
-              )
+            if(($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $auth->getIdentity()->logged === true)
             {
                 return $this->redirect()->toUrl("/");
             }
-            $this->clearUserData(); // something is wrong, clear all user data
+            $this->clearUserData($auth); // something is wrong, clear all user data
         }
     }
 
-    private function clearUserData()
+    private function clearUserData($auth)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
-        $authSession = new Container('ul');
+        $authSession = new Container('cache');
         $authSession->getManager()->getStorage()->clear();
         $auth->clearIdentity();
         unset($this->cache->user, $authSession);
@@ -221,7 +218,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $param = $this->params()->fromPost($paramName, 0);
         if(!$param)
         {
-            $param = $this->params()->fromRoute($paramName, 0);
+            $param = $this->params()->fromRoute($paramName, null);
+        }
+        if(!$param)
+        {
+            $param = $this->params()->fromQuery($paramName, null);
         }
         if(!$param)
         {

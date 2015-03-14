@@ -36,6 +36,7 @@
 namespace Application\Controller;
 
 use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\Storage\Session as SessionStorage;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
@@ -47,8 +48,8 @@ use Application\Form\LoginForm;
 use Custom\Plugins\Mailing;
 use Custom\Plugins\Functions;
 use Custom\Error\AuthorizationException;
-
-class LoginController extends \Application\Controller\IndexController
+use Application\Controller\IndexController;
+class LoginController extends IndexController
 {
     /**
      * User access
@@ -68,7 +69,7 @@ class LoginController extends \Application\Controller\IndexController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
-        $this->checkIdentity();
+        // $this->checkIdentity();
     }
 
     /**
@@ -84,10 +85,10 @@ class LoginController extends \Application\Controller\IndexController
      */
     private function getAuthAdapter(array $options = array(), $table = "user", $identity = "email", $credential = "password")
     {
+        require '/vendor/Custom/Plugins/Password.php';
         $credentialCallback = function ($passwordInDatabase, $passwordProvided)
         {
-            $bcrypt = new \Zend\Crypt\Password\Bcrypt(array('cost' => 13));
-            return $bcrypt->verify($passwordProvided, $passwordInDatabase);
+            return password_verify($passwordProvided, $passwordInDatabase);
         };
 
         $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
@@ -150,8 +151,8 @@ class LoginController extends \Application\Controller\IndexController
 
         $adapter = $this->getAuthAdapter($form->getData());
         $auth = new AuthenticationService();
-        $result = $auth->authenticate($adapter);
-        $role = self::ROLE_USER;
+        $auth->setAdapter($adapter);
+        $result = $auth->authenticate();
         if(!$result->isValid())
         {
             $this->cache->error = $this->translation->LOGGIN_ERROR;
@@ -159,6 +160,7 @@ class LoginController extends \Application\Controller\IndexController
         }
         else
         {
+            $role = self::ROLE_USER;
             $data = $adapter->getResultRowObject(null, 'password');
             $user = $this->getTable('user')->getUser($data->id);
             if ($user->getDeleted())
@@ -175,16 +177,14 @@ class LoginController extends \Application\Controller\IndexController
             $remote = new RemoteAddress();
             $user->setIp($remote->getIpAddress());
             $this->getTable('user')->saveUser($user);
-
+            $sessionStorage = new SessionStorage('loggedSession');
+            $auth->setStorage($sessionStorage);
             $data->role = (int) $role;
             $data->logged = true;
             $auth->getStorage()->write($data);
-            $this->cache->user = $user;
-            $this->cache->role = (int) $role;
-            $this->cache->logged = true;
-            $authSession = new Container('ul'); //user login
-            $authSession->setExpirationSeconds(7200); // 2hrs
-            return $this->redirect()->toUrl("/");
+            $authSession = new Container('Zend_Auth');
+            $authSession->setExpirationSeconds(7200);
+            $this->redirect()->toUrl("/");
         }
     }
 
@@ -196,7 +196,7 @@ class LoginController extends \Application\Controller\IndexController
             throw new \Exception($this->translation->TOKEN_MISTMATCH);
         }
 
-        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("token", "date"), array("token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"), "AND");
+        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("user", "token", "date"), array("token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"), "AND");
         if (count($tokenExist) !== 1)
         {
             $this->setErrorNoParam($this->translation->LINK_EXPIRED);
@@ -329,16 +329,9 @@ class LoginController extends \Application\Controller\IndexController
      */
     protected function logoutAction($redirectTo = null)
     {
-        $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
-        $this->cache = new Container("cache");
-        $this->translation = new Container("translations");
-        $authSession = new Container('ul');
-        $authSession->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
-        unset($this->cache->user, $authSession, $auth);
-        $this->cache = null;
         $this->translation = null;
         if (!$redirectTo)
         {

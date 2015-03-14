@@ -12,7 +12,7 @@ namespace {
     if (!defined('PASSWORD_BCRYPT')) {
         /**
          * PHPUnit Process isolation caches constants, but not function declarations.
-         * So we need to check if the constants are defined separately from 
+         * So we need to check if the constants are defined separately from
          * the functions to enable supporting process isolation in userland
          * code.
          */
@@ -107,12 +107,6 @@ namespace {
                         $buffer_valid = true;
                     }
                 }
-                if (!$buffer_valid && function_exists('openssl_random_pseudo_bytes')) {
-                    $buffer = openssl_random_pseudo_bytes($raw_salt_len);
-                    if ($buffer) {
-                        $buffer_valid = true;
-                    }
-                }
                 if (!$buffer_valid && @is_readable('/dev/urandom')) {
                     $f = fopen('/dev/urandom', 'r');
                     $read = PasswordCompat\binary\_strlen($buffer);
@@ -122,6 +116,12 @@ namespace {
                     }
                     fclose($f);
                     if ($read >= $raw_salt_len) {
+                        $buffer_valid = true;
+                    }
+                }
+                if (!$buffer_valid && function_exists('openssl_random_pseudo_bytes')) {
+                    $buffer = openssl_random_pseudo_bytes($raw_salt_len);
+                    if ($buffer) {
                         $buffer_valid = true;
                     }
                 }

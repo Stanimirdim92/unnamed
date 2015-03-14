@@ -7,7 +7,7 @@
         <meta charset="utf-8">
         <title><?=$this->headTitle()->renderTitle();?></title>
         <?=$this->headMeta();?>
-        
+
         <meta property="og:type" content="article">
         <meta property="og:url" content="<?=$view->baseURL?>">
         <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle();?>">
@@ -39,17 +39,34 @@
         <link rel="stylesheet" media="screen" href="/front/css/style.css">
     </head>
     <body>
-        <?php
-            foreach($view->menus as $key => $menu)
-            {   
-                $menu->setServiceManager(null);
-?>
-                <a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()));?>'><?=$menu->getCaption();?></a>
+            <nav>
+                <ul>
 <?php
-            }
+            foreach($view->menus as $key => $menu)
+            {
+?>
+                <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()));?>'><?=$menu->getCaption();?></a>
 
+<?php
+                if(isset($view->submenus[$menu->id]) and count($view->submenus[$menu->id])>0)
+                {
+?>
+                    <ul class="sub-menu">
+<?php
+                    foreach($view->submenus[$menu->id] as $sub)
+                    {
+?>
+                        <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $sub->getMenuLink()));?>'><?=$sub->getCaption();?></a></li>
+<?php
+                    }
+?>
+                    </ul>
+<?php
+                }
+                echo "</li>";
+            }
             echo $this->layout()->content;
-    
+
             if(!empty($view->cache->warning))
             {
                 if (is_array($view->cache->warning))
@@ -75,7 +92,7 @@
                 }
                 $view->cache->warning = null;
             }
-            
+
             if(!empty($view->cache->success))
             {
                 if (is_array($view->cache->success))

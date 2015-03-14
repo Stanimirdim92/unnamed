@@ -28,7 +28,7 @@ class LoginForm extends Form
             'placeholder' => '123456789',
         ));
 
-        $elements[8] = new Element\Csrf('s');
+        // $elements[8] = new Element\Csrf('s');
         $elements[10] = new Element\Submit("login");
         $elements[10]->setAttributes(array(
             'id'    => 'submitbutton',

@@ -114,7 +114,7 @@ class ContentForm extends Form
         if($options!=null and $options->type)
             $elements[5]->setValue($options->type);
 
-        $elements[6] = new Element\Text('date');
+        $elements[6] = new Element\DateTime('date');
         $elements[6]->setLabel('Date')
                         ->setAttribute('size', 20);
         if($options!=null and $options->date)
@@ -125,7 +125,7 @@ class ContentForm extends Form
         $elements[7] = new Element\Select('menu');
         $elements[7]->setLabel('menu');
         $valueOptions = array();
-        $valueOptions[0] = 'Select a menu';        
+        $valueOptions[0] = 'Select a menu';
 
         foreach ($menus as $menu)
         {
@@ -148,7 +148,7 @@ class ContentForm extends Form
         $elements[8] = new Element\Select('language');
         $elements[8]->setLabel('language');
         $valueOptions = array();
-        
+
         foreach($languages as $item)
         {
             $valueOptions[$item->id] = $item->toString();

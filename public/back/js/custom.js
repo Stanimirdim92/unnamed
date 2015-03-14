@@ -87,7 +87,10 @@ $(document).ready(function ($) {
                     var $val = $.parseJSON(value);
                     for (var property in $val) {
                         if ($val.hasOwnProperty(property)) {
-                            if ($val[property] !== null && $val[property] !== undefined && $val[property] !== '') {
+                            if ($val[property] === null || $val[property] === undefined || $val[property] === '') {
+                                $ul.append("<li class='table-cell'>&nbsp;</li>");
+                            }
+                            else {
                                 $ul.append("<li class='table-cell'>"+$val[property]+"</li>");
                             }
                         }

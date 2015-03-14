@@ -45,7 +45,12 @@ class Functions
      */
     private static $bcryptCost = 13;
 
-    /** 
+    /**
+     * @var null $translation
+     */
+    private static $translation = null;
+
+    /**
      * This method loads into translation all term translations from the database
      *
      * @param Int $language
@@ -54,37 +59,22 @@ class Functions
      */
     public static function initTranslations($language = 1, $reload = false)
     {
-        $total = self::createPlainQuery("SELECT COUNT(id) FROM `language` WHERE `active`='1'");
-
-        if($language < 1 || $language > $total)
+        static::$translation = new Container('translations');
+        if($reload)
         {
-            $language = 1;
-        }
-        
-        $translation = new Container('translations');
-        if(!isset($translation->initialized) || $reload)
-        {
-            $query = "SELECT `termtranslation`.`translation`, `term`.`name`
-                      FROM `term` 
-                      INNER JOIN `termtranslation`
-                      ON `term`.`id`=`termtranslation`.`term`
-                      WHERE `termtranslation`.`language`='".(int)$language."'
-                      ORDER BY `term`.`name` ASC";
-
-            $result = self::createPlainQuery($query);
+            $result = self::createPlainQuery("SELECT `termtranslation`.`translation`, `term`.`name` FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term` WHERE `termtranslation`.`language`='".(int)$language."' ORDER BY `term`.`name` ASC");
             if (count($result) > 0)
             {
                 foreach($result as $r)
                 {
                     if(!empty($r['name']))
                     {
-                        $translation->__set($r['name'], $r['translation']);
+                        static::$translation->__set($r['name'], $r['translation']);
                     }
                 }
-                $translation->initialized = true;
             }
         }
-        return $translation;
+        return static::$translation;
     }
 
     /**
@@ -99,7 +89,7 @@ class Functions
         if (empty($query))
         {
             $returnResults = false;
-            throw new \Exception(__METHOD__ . ' must not be emtpy');
+            throw new \Exception(__METHOD__ . ' must not be empty');
         }
 
         $local = include($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
@@ -108,7 +98,7 @@ class Functions
         $stmt->prepare($query);
         $result = $stmt->execute();
         $arr = array();
-        if($returnResults)
+        if($returnResults === true)
         {
             while($result->next())
             {
@@ -120,9 +110,10 @@ class Functions
 
     /**
      * @link https://github.com/ircmaxell/password_compat/
+     * @link http://blog.ircmaxell.com/2015/03/security-issue-combining-bcrypt-with.html
      * @see /vendor/Custom/Plugins/Password.php
      * @param null|string $password the user password in plain text
-     * @return array contains salt, and the encrypted password with that salt
+     * @return  the encrypted password with tha salt. Salt comes from password_hash
      * @todo add default php password_hash implementation
      */
     public static function createPassword($password = null)
@@ -137,7 +128,12 @@ class Functions
         {
             throw new \Exception("Password must be atleast 8 characters long");
         }
-        return password_hash($password, PASSWORD_BCRYPT, array("cost" => static::$bcryptCost));
+        $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => static::$bcryptCost));
+        if(!$pw)
+        {
+            throw new \Exception("Error while generating password");
+        }
+        return $pw;
     }
 
     /**
@@ -163,13 +159,7 @@ class Functions
     {
         if ($number === 48)
         {
-            $str = Rand::getBytes($number, true);
-            $token = base64_encode($str);
-            if (self::strLength($token) === 64)
-            {
-                return $token;
-            }
-            throw new \Exception("Error while generating a token");
+            return base64_encode(Rand::getBytes($number, true));
         }
         throw new \Exception("Error while generating a token");
     }
