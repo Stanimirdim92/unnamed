@@ -35,24 +35,30 @@
 
 namespace Application;
 
+use Zend\Mvc\ModuleRouteListener;
+// use Zend\Cache\StorageFactory;
+// use Zend\Session\SaveHandler\Cache;
+use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
+use Zend\Session\SessionManager;
 use Zend\ModuleManager\Feature;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\ModuleRouteListener;
+use Zend\EventManager\EventInterface;
 
 class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ServiceProviderInterface,
-                        Feature\ConfigProviderInterface
+                        Feature\ConfigProviderInterface,
+                        Feature\BootstrapListenerInterface
 {
-    /**
+/**
      * @param array $config Holds cookies params
      */
     public function initSession(array $config = array())
     {
-        $sessionConfig = new \Zend\Session\Config\SessionConfig();
+        $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config);
-        $sessionManager = new \Zend\Session\SessionManager($sessionConfig);
-        // $memCached = \Zend\Cache\StorageFactory::factory(array(
+        $sessionManager = new SessionManager($sessionConfig);
+        // $memCached = new StorageFactory::factory(array(
         //     'adapter' => array(
         //        'name'     =>'memcached',
         //         'lifetime' => 7200,
@@ -73,7 +79,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         //     ),
         // ));
 
-        // $saveHandler = new \Zend\Session\SaveHandler\Cache($memCached);
+        // $saveHandler = new Cache($memCached);
         // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
         $sessionManager->getValidatorChain()->attach('session.validate', array( new \Zend\Session\Validator\HttpUserAgent(), 'isValid'));
@@ -83,10 +89,9 @@ class Module implements Feature\AutoloaderProviderInterface,
 
     /**
      * make sure to log errors and redirect to error-layout
-     * @param MvcEvent $e
-     * @return Events
+     * @param \Zend\Mvc\MvcEvent $e
      */
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(EventInterface $e)
     {
         /**
          * Init sessions and cookies before everything else
@@ -108,7 +113,7 @@ class Module implements Feature\AutoloaderProviderInterface,
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
 
-        $em->attach(MvcEvent::EVENT_RENDER, array($this, 'setLayoutTitle'));
+        $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'setLayoutTitle'));
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
         {
             if (!$e->getParam("exception"))

@@ -46,19 +46,19 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
      * @return Zend\Session\Container|mixed
      */
-    public $cache = null;
+    protected $cache = null;
 
     /**
      * @var null $view creates instance to view model
      * @return Zend\View\Model\ViewModel
      */
-    public $view = null;
+    protected $view = null;
 
     /**
      * @var null $translation holds language data as well as all translations
      * @return Zend\Session\Container
      */
-    public $translation = null;
+    protected $translation = null;
 
     /**
      * DRY variable to hold the language. Easier to work with
@@ -66,13 +66,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @var null
      * @return int $this->translation->language
      */
-    public $langTranslation = null;
+    protected $langTranslation = null;
 
     /**
      * @var array $breadcrumbs returns an array with links with the current user position on the website
      * @return Array
      */
-    public $breadcrumbs = array();
+    protected $breadcrumbs = array();
 
     /**
      * Used to detect actions without IDs. Inherited in all other classes
@@ -125,7 +125,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize breadcrumbs
      * @return  array
      */
-    public function initBreadcrumbs()
+    private function initBreadcrumbs()
     {
         $this->view->breadcrumbs = $this->breadcrumbs;
     }
@@ -135,7 +135,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      *
      * @return Zend\Session\Container
      */
-    public function initCache()
+    private function initCache()
     {
         if (!$this->cache)
         {
@@ -147,7 +147,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * initialize any view related stuff
      */
-    public function initViewVars()
+    private function initViewVars()
     {
         $this->view->translation = $this->translation;
         $this->view->languages = $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name ASC");
@@ -158,7 +158,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * initialize the admin menus
      */
-    public function initMenus()
+    private function initMenus()
     {
         $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
         $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
@@ -168,7 +168,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * initialize languages and language-related stuff like translations.
      */
-    public function initTranslation()
+    private function initTranslation()
     {
         if(!isset($this->translation->language))
         {
@@ -183,7 +183,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
 
-    public function addBreadcrumb(array $breadcrumb = array())
+    protected function addBreadcrumb(array $breadcrumb = array())
     {
         $this->breadcrumbs[] = $breadcrumb;
     }
@@ -192,7 +192,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param String $name
      * @return Ambigous <object, multitype:>
      */
-    public function getTable($name = null)
+    protected function getTable($name = null)
     {
         if (!is_string($name) || !$name)
         {
@@ -203,22 +203,21 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * Is the user admin? Lets check that.
-     * 1. If url != /admin/login run this function
-     * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin.
+     * 1. Run this function and see if we are logged in as admin.
+     *    If all went fine show the admin area.
+     * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin. Just in case log every access to login controller
      * 3. On success run this function. If all went fine, access admin else clear identity and create log
      *
      * @throws AuthorizationException If wrong credentials or not in administrator table
+     * @todo create a bruteforce protection for failed loging attempts.
      * @return void
      */
-    public function initAdminIdentity()
+    private function initAdminIdentity()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
         if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
         {
-            if( ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
-                ($this->cache->role === 1 || $this->cache->role === 10) &&
-                ($this->cache->logged === true)
-              )
+            if($auth->getIdentity()->role === 10 && $this->cache->role === 10 && $this->cache->logged === true)
             {
                 $checkAdminExistence = $this->getTable("administrator")->fetchList(false, array(), array("user" => $auth->getIdentity()->id));
                 if (count($checkAdminExistence) === 1)
@@ -243,7 +242,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @return void
      * @throws AuthorizationException
      */
-    public function clearUserData()
+    private function clearUserData()
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
@@ -261,7 +260,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param null $default
      * @return mixed
      */
-    public function getParam($paramName = null, $default = null)
+    protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
         if(!$param)
@@ -283,7 +282,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @param null $message holds the generated error(s)
      * @return string|array
      */
-    public function setErrorNoParam($message = null)
+    protected function setErrorNoParam($message = null)
     {
         if(!empty($message))
         {
@@ -300,7 +299,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->setTerminal(true);
     }
 
-    public function setErrorCode($code = 404)
+    protected function setErrorCode($code = 404)
     {
         $this->getResponse()->setStatusCode($code);
         $this->view->setTemplate('layout/error-layout');

@@ -84,7 +84,7 @@ class Functions
      * @param Bool $returnResults specify if the function should return results
      * @return array
      */
-    public static function createPlainQuery($query = null, $returnResults = true)
+    protected static function createPlainQuery($query = null, $returnResults = true)
     {
         if (empty($query))
         {

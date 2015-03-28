@@ -35,7 +35,7 @@
 namespace Application\Controller;
 
 use Zend\Session\Container;
-
+use Zend\Authentication\AuthenticationService;
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
 class IndexController extends \Zend\Mvc\Controller\AbstractActionController
@@ -62,10 +62,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * DRY variable to hold the language. Easier to work with
      *
      * @var null
-     * @return int $this->translation->language
+     * @return int from $this->translation->language
      */
     protected $langTranslation = null;
-    protected $gdgg = null;
 
     /**
      * Used to detect actions without IDs. Inherited in all other classes
@@ -102,7 +101,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize any session variables in this method
      * @return void
      */
-    protected function initCache()
+    private function initCache()
     {
         if(!$this->cache)
         {
@@ -115,7 +114,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize any view related stuff
      * @return void
      */
-    protected function initViewVars()
+    private function initViewVars()
     {
         $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
@@ -130,7 +129,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize languages and language-related stuff like translations.
      * @return  void
      */
-    protected function initTranslation()
+    private function initTranslation()
     {
         if(!isset($this->translation->language))
         {
@@ -145,7 +144,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * initialize languages and language-related stuff like translations.
      * @return  void
      */
-    protected function initMenus()
+    private function initMenus()
     {
         $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
@@ -194,14 +193,12 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         }
     }
 
-    private function clearUserData($auth)
+    private function clearUserData(\Zend\Authentication\AuthenticationService $auth = null)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
-        $authSession = new Container('cache');
-        $authSession->getManager()->getStorage()->clear();
         $auth->clearIdentity();
-        unset($this->cache->user, $authSession);
+        unset($this->cache->user);
         $this->cache = null;
         throw new \Custom\Error\AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }

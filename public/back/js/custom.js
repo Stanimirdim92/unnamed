@@ -91,7 +91,7 @@ $(document).ready(function ($) {
                                 $ul.append("<li class='table-cell'>&nbsp;</li>");
                             }
                             else {
-                                $ul.append("<li class='table-cell'>"+$val[property]+"</li>");
+                                $ul.append("<li data-userId ='"+$val["_id"]+"' class='table-cell'>"+$val[property]+"</li>");
                             }
                         }
                     }

@@ -48,7 +48,7 @@
                 <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()));?>'><?=$menu->getCaption();?></a>
 
 <?php
-                if(isset($view->submenus[$menu->id]) and count($view->submenus[$menu->id])>0)
+                if(isset($view->submenus[$menu->id]) && count($view->submenus[$menu->id])>0)
                 {
 ?>
                     <ul class="sub-menu">

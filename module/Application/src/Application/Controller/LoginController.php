@@ -35,20 +35,21 @@
 
 namespace Application\Controller;
 
+use Application\Controller\IndexController;
+
 use Zend\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\Session as SessionStorage;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
+use Application\Form\LoginForm;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 use Application\Model\ResetPassword;
-use Application\Form\LoginForm;
 
 use Custom\Plugins\Mailing;
 use Custom\Plugins\Functions;
 use Custom\Error\AuthorizationException;
-use Application\Controller\IndexController;
+
 class LoginController extends IndexController
 {
     /**
@@ -69,7 +70,7 @@ class LoginController extends IndexController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
-        // $this->checkIdentity();
+        $this->checkIdentity();
     }
 
     /**
@@ -91,7 +92,7 @@ class LoginController extends IndexController
             return password_verify($passwordProvided, $passwordInDatabase);
         };
 
-        $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), $table, $identity, $credential, $credentialCallback);
+        $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), (string) $table, (string) $identity, (string) $credential, $credentialCallback);
         $authAdapter->setIdentity($options[$identity]);
         $authAdapter->setCredential($options[$credential]);
 
@@ -127,11 +128,13 @@ class LoginController extends IndexController
 
     public function processloginAction()
     {
+        // Check if we have a POST request
         if(!$this->getRequest()->isPost())
         {
             $this->logoutAction("/login");
         }
 
+        // Get our form and validate it
         $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
@@ -151,8 +154,8 @@ class LoginController extends IndexController
 
         $adapter = $this->getAuthAdapter($form->getData());
         $auth = new AuthenticationService();
-        $auth->setAdapter($adapter);
-        $result = $auth->authenticate();
+
+        $result = $auth->authenticate($adapter);
         if(!$result->isValid())
         {
             $this->cache->error = $this->translation->LOGGIN_ERROR;
@@ -161,8 +164,13 @@ class LoginController extends IndexController
         else
         {
             $role = self::ROLE_USER;
-            $data = $adapter->getResultRowObject(null, 'password');
+
+            /**
+             * Exclude rows
+             */
+            $data = $adapter->getResultRowObject(null, array('password', 'registered', 'lastLogin', 'birthDate', 'salt'));
             $user = $this->getTable('user')->getUser($data->id);
+
             if ($user->getDeleted())
             {
                 $this->cache->error = $this->translation->LOGGIN_ERROR;
@@ -172,19 +180,22 @@ class LoginController extends IndexController
             {
                 $role = self::ROLE_ADMIN;
             }
+
             $user->setServiceManager(null);
             $user->setLastLogin(date("Y-m-d H:i:s", time()));
             $remote = new RemoteAddress();
             $user->setIp($remote->getIpAddress());
             $this->getTable('user')->saveUser($user);
-            $sessionStorage = new SessionStorage('loggedSession');
-            $auth->setStorage($sessionStorage);
+
+            $auth->getStorage()->write($data);
             $data->role = (int) $role;
             $data->logged = true;
-            $auth->getStorage()->write($data);
-            $authSession = new Container('Zend_Auth');
-            $authSession->setExpirationSeconds(7200);
-            $this->redirect()->toUrl("/");
+            $this->cache->user = $data;
+            $this->cache->role = (int) $role;
+            $this->cache->logged = true;
+            $authSession = new Container('ul'); //user login
+            $authSession->setExpirationSeconds(7200); // 2hrs
+            return $this->redirect()->toUrl("/");
         }
     }
 
@@ -208,9 +219,11 @@ class LoginController extends IndexController
         $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
         $form->get("resetpw")->setValue($this->translation->RESET_PW);
 
-        // temporary create new view variable to hold the user id.
-        // After the password is reset the variable is destroyed.
-        // Hidden fields will work, but they are more easier to hack.
+        /**
+         * temporary create new view variable to hold the user id.
+         * After the password is reset the variable is destroyed.
+         * Hidden fields will work, but they are more easier to hack.
+         */
         $this->cache->resetpwUserId = $tokenExist->current()->user;
         $this->view->form = $form;
         return $this->view;
@@ -327,18 +340,21 @@ class LoginController extends IndexController
      * @param string $redirectTo
      * @return void
      */
-    protected function logoutAction($redirectTo = null)
+    protected function logoutAction($redirectTo = '')
     {
+        $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
+        $this->cache = new Container("cache");
+        $this->translation = new Container("translations");
+        $authSession = new Container('ul');
+        $authSession->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
-        $this->translation = null;
-        if (!$redirectTo)
+        if ($redirectTo == '')
         {
             $redirectTo = "/";
         }
         return $this->redirect()->toUrl($redirectTo);
     }
 }
-
 ?>

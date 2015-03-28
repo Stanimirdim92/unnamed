@@ -63,7 +63,7 @@ class Module implements Feature\AutoloaderProviderInterface,
                         Feature\ConfigProviderInterface
 {
     /**
-     * make sure to log errors and redirect to admin index
+     * make sure to log errors and redirect
      * @param \Zend\Mvc\MvcEvent $e
      */
     public function onBootstrap(MvcEvent $e)

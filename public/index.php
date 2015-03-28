@@ -34,6 +34,23 @@
  */
 
 /**
+ * Set default php.ini settings.
+ *
+ * Below lines includes security|error fixes
+ */
+ini_set('cgi.fix_pathinfo', 0);
+error_reporting(0);
+ini_set("display_errors", 0);
+ini_set("display_startup_errors", 0);
+ini_set("track_errors", 0);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1);
+if (ini_get('date.timezone') == '') {
+    date_default_timezone_set('UTC');
+}
+
+/**
  * Check PHP and MySQL versions
  */
 define("REQ_PHP_VER", "5.3.7");
@@ -43,6 +60,10 @@ if (version_compare(REQ_PHP_VER, PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
     die(sprintf('Your server is running PHP version %1$s but ZendPress %2$s requires at least %3$s.', PHP_VERSION, ZEND_PRESS_VER, REQ_PHP_VER));
 }
+
+/**
+ * Minimum required extensions
+ */
 if (!extension_loaded("PDO")        &&
     !extension_loaded("mysql")      &&
     !extension_loaded("mysqli")     &&
@@ -125,22 +146,6 @@ if(empty($_SERVER['PHP_SELF'])) {
     $_SERVER['PHP_SELF'] = $PHP_SELF = preg_replace( '/(\?.*)?$/', '', $_SERVER["REQUEST_URI"]);
 }
 
-/**
- * Set default php.ini settings.
- *
- * Below lines includes security|error fixes
- */
-ini_set('cgi.fix_pathinfo', 0);
-error_reporting(0);
-ini_set("display_errors", 0);
-ini_set("display_startup_errors", 0);
-ini_set("track_errors", 0);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 1);
-if (ini_get('date.timezone') == '') {
-    date_default_timezone_set('UTC');
-}
 
 /**
  * Display all errors when APPLICATION_ENV is development.
