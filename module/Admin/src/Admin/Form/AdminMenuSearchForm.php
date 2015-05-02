@@ -14,14 +14,13 @@ class AdminMenuSearchForm extends Form
                 ->setAttributes(array(
                     'size' => 40,
                     'class' => "admin-menu-search",
-                    'autocomplete' => "off"
+                    'autocomplete' => "off",
                 ));
         $elements[1] = new Element\Submit('submit');
         $elements[1]->setAttribute('id', 'searchbutton');
         $elements[1]->setLabel('');
-        foreach($elements as $e)
-        {
-          $this->add($e);
+        foreach ($elements as $e) {
+            $this->add($e);
         }
     }
 }

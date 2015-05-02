@@ -19,8 +19,7 @@ class TermCategoryForm extends Form
             'class'      => 'term-name',
             'placeholder' => 'Name',
         ));
-        if($options != null)
-        {
+        if ($options != null) {
             $elements[0]->setValue($options->name);
         }
 
@@ -29,14 +28,12 @@ class TermCategoryForm extends Form
             'id' => 'submitbutton',
             'class' => 'term-button',
         ));
-        if($options != null)
-        {
+        if ($options != null) {
             $elements[2] = new Element\Hidden('id');
             $elements[2]->setValue($options->id);
         }
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
-		}
+        }
     }
 }

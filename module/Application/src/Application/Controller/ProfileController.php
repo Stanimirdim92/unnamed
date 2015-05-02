@@ -1,7 +1,6 @@
 <?php
 namespace Application\Controller;
 
-use Application\Controller\IndexController;
 use Application\Form\UserSettingsForm;
 use Cusomt\Plugins\Functions;
 
@@ -14,8 +13,7 @@ class ProfileController extends IndexController
 
     public function settingsAction()
     {
-        if (!$this->cache->user instanceof \Admin\Model\User && !$this->cache->logged)
-        {
+        if (!$this->cache->user instanceof \Admin\Model\User && !$this->cache->logged) {
             return $this->redirect()->toUrl("/");
         }
 
@@ -31,12 +29,10 @@ class ProfileController extends IndexController
 
         $this->view->form = $form;
         $this->view->id = $user->id;
-        if($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 // $name = str_replace(" ", "_", $formData["name"]);
                 // $existingUser = $this->getTable("user")->fetchList(false, "name = '{$name}' AND id != '{$user->id}'");
@@ -44,16 +40,12 @@ class ProfileController extends IndexController
                 // (count($existingUser) > 0 ? $this->setErrorNoParam($this->translation->NAME_EXIST." <b>{$name}</b> ".$this->translation->ALREADY_EXIST) : "");
                 (count($existingEmail) > 0 ? $this->setErrorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
 
-                if(count($existingEmail) === 0 /*&& count($existingUser) == 0*/)
-                {
+                if (count($existingEmail) === 0 /*&& count($existingUser) == 0*/) {
                     $user->setName($formData["name"]);
                     $user->setSurname($formData['surname']);
-                    if (empty($formData['password']))
-                    {
+                    if (empty($formData['password'])) {
                         $user->setPassword($user->password);
-                    }
-                    else
-                    {
+                    } else {
                         $pw = Functions::createPassword($formData['password']);
                         $user->setPassword($pw);
                         $user->setSalt("");
@@ -65,14 +57,10 @@ class ProfileController extends IndexController
                     $this->view->setTerminal(true);
                 }
                 return $this->redirect()->toUrl("/");
-            }
-            else
-            {
+            } else {
                 $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error[] = $value;
                     }
                 }
@@ -83,4 +71,3 @@ class ProfileController extends IndexController
         return $this->view;
     }
 }
-?>

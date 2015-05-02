@@ -13,11 +13,10 @@ class AjaxSearchForm extends Form
                 ->setAttributes(array(
                     'size' => 40,
                     'class' => "search",
-                    'autocomplete' => "off"
+                    'autocomplete' => "off",
                 ));
-        foreach($elements as $e)
-        {
-          $this->add($e);
+        foreach ($elements as $e) {
+            $this->add($e);
         }
     }
 }

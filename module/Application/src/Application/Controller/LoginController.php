@@ -35,7 +35,6 @@
 
 namespace Application\Controller;
 
-use Application\Controller\IndexController;
 
 use Zend\Authentication\AuthenticationService;
 use Zend\Session\Container;
@@ -48,7 +47,7 @@ use Application\Model\ResetPassword;
 
 use Custom\Plugins\Mailing;
 use Custom\Plugins\Functions;
-use Custom\Error\AuthorizationException;
+require '/vendor/Custom/Plugins/Password.php';
 
 class LoginController extends IndexController
 {
@@ -86,9 +85,7 @@ class LoginController extends IndexController
      */
     private function getAuthAdapter(array $options = array(), $table = "user", $identity = "email", $credential = "password")
     {
-        require '/vendor/Custom/Plugins/Password.php';
-        $credentialCallback = function ($passwordInDatabase, $passwordProvided)
-        {
+        $credentialCallback = function ($passwordInDatabase, $passwordProvided) {
             return password_verify($passwordProvided, $passwordInDatabase);
         };
 
@@ -105,8 +102,7 @@ class LoginController extends IndexController
      */
     private function getAdapter()
     {
-        if(!$this->_adapter)
-        {
+        if (!$this->_adapter) {
             $this->_adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
         }
         return $this->_adapter;
@@ -129,55 +125,38 @@ class LoginController extends IndexController
     public function processloginAction()
     {
         // Check if we have a POST request
-        if(!$this->getRequest()->isPost())
-        {
-            $this->logoutAction("/login");
+        if (!$this->getRequest()->isPost()) {
+            return $this->logoutAction("/login");
         }
 
         // Get our form and validate it
         $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
-        if(!$form->isValid())
-        {
-            $error = array();
-            foreach($form->getMessages() as $msg)
-            {
-                foreach ($msg as $key => $value)
-                {
-                    $error[] = $value;
-                }
-            }
-            $this->setErrorNoParam($error);
-            return $this->redirect()->toUrl("/login");
+        if (!$form->isValid()) {
+            $this->formErrors($form->getMessages());
+            return $this->logoutAction("/login");
         }
 
         $adapter = $this->getAuthAdapter($form->getData());
         $auth = new AuthenticationService();
-
+        // TODO add setStorage
         $result = $auth->authenticate($adapter);
-        if(!$result->isValid())
-        {
+        if (!$result->isValid()) {
             $this->cache->error = $this->translation->LOGGIN_ERROR;
             return $this->redirect()->toUrl("/login");
-        }
-        else
-        {
+        } else {
             $role = self::ROLE_USER;
-
-            /**
-             * Exclude rows
-             */
-            $data = $adapter->getResultRowObject(null, array('password', 'registered', 'lastLogin', 'birthDate', 'salt'));
+            $includeRows = array('id', 'name', 'username', 'email', 'deleted', 'image', 'hideEmail', 'userClass', 'ban', 'admin', 'language', 'country');
+            $excludeRows = array('ip', 'password', 'registered', 'lastLogin', 'birthDate', 'salt');
+            $data = $adapter->getResultRowObject($includeRows, $excludeRows);
             $user = $this->getTable('user')->getUser($data->id);
 
-            if ($user->getDeleted())
-            {
+            if ($user->getDeleted()) {
                 $this->cache->error = $this->translation->LOGGIN_ERROR;
                 return $this->logoutAction("/login");
             }
-            if ($user->getAdmin())
-            {
+            if ($user->getAdmin() === 1) {
                 $role = self::ROLE_ADMIN;
             }
 
@@ -187,12 +166,9 @@ class LoginController extends IndexController
             $user->setIp($remote->getIpAddress());
             $this->getTable('user')->saveUser($user);
 
-            $auth->getStorage()->write($data);
             $data->role = (int) $role;
             $data->logged = true;
-            $this->cache->user = $data;
-            $this->cache->role = (int) $role;
-            $this->cache->logged = true;
+            $auth->getStorage()->write($data);
             $authSession = new Container('ul'); //user login
             $authSession->setExpirationSeconds(7200); // 2hrs
             return $this->redirect()->toUrl("/");
@@ -202,14 +178,12 @@ class LoginController extends IndexController
     public function newpasswordAction()
     {
         $token = (string) $this->getParam('id', null);
-        if (Functions::strLength($token) !== 64)
-        {
-            throw new \Exception($this->translation->TOKEN_MISTMATCH);
+        if (Functions::strLength($token) !== 64) {
+            throw new \Exception("SGFDG ");
         }
 
         $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("user", "token", "date"), array("token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"), "AND");
-        if (count($tokenExist) !== 1)
-        {
+        if (count($tokenExist) !== 1) {
             $this->setErrorNoParam($this->translation->LINK_EXPIRED);
             return $this->redirect()->toUrl("/login");
         }
@@ -233,18 +207,15 @@ class LoginController extends IndexController
     {
         $form = new NewPasswordForm(array('action' => '/login/newpasswordprocess','method' => 'post'));
 
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 $user = $this->getTable("user")->getUser($this->cache->resetpwUserId);
                 unset($this->cache->resetpwUserId);
                 $pw = Functions::createPassword($formData["password"]);
-                if (!empty($pw))
-                {
+                if (!empty($pw)) {
                     $user->setSalt("");
                     $user->setPassword($pw);
                     $user->setIp($remote->getIpAddress());
@@ -253,18 +224,8 @@ class LoginController extends IndexController
                     return $this->redirect()->toUrl("/login");
                 }
                 throw new Exception\RuntimeException($this->translation->PASSWORD_NOT_GENERATED);
-            }
-            else
-            {
-                $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
-                        $error[] = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+            } else {
+                $this->formErrors($form->getMessages());
                 return $this->redirect()->toUrl("/login");
             }
         }
@@ -276,19 +237,16 @@ class LoginController extends IndexController
         $form->get("resetpw")->setValue($this->translation->RESET_PW);
         $form->get("email")->setLabel($this->translation->EMAIL);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 $existingEmail = $this->getTable("User")->fetchList(false, "email = '".$formData['email']."'");
 
-                if(count($existingEmail) === 1)
-                {
+                if (count($existingEmail) === 1) {
                     $token = Functions::generateToken(48); // returns 64 characters long string
-                    $user = $this->getTable("User")->getUser($existingEmail->current()->id);
+                    $user = $this->getTable("User")->getUser($existingEmail->current()->getId());
                     unset($existingEmail);
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
@@ -300,8 +258,7 @@ class LoginController extends IndexController
 
                     $message = $this->translation->NEW_PW_TEXT." ".$_SERVER["SERVER_NAME"]."/login/newpassword/id/{$token}";
                     $result = Mailing::sendMail($formData['email'], $user->toString(),  $this->translation->NEW_PW_TITLE, $message, "noreply@".$_SERVER["SERVER_NAME"], $_SERVER["SERVER_NAME"]);
-                    if (!$result)
-                    {
+                    if (!$result) {
                         $this->cache->error = $this->translation->EMAIL_NOT_SENT;
                         return $this->redirect()->toUrl("/login/resetpassword");
                     }
@@ -309,24 +266,12 @@ class LoginController extends IndexController
                     $this->cache->success = $this->translation->PW_SENT." ".$formData['email'];
                     $this->view->setTerminal(true);
                     return $this->redirect()->toUrl("/");
-                }
-                else
-                {
+                } else {
                     $this->setErrorNoParam($this->translation->EMAIL." <b>".$formData["email"]."</b> ".$this->translation->NOT_FOUND);
                     return $this->redirect()->toUrl("/login/resetpassword");
                 }
-            }
-            else
-            {
-                $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
-                        $error[] = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+            } else {
+                $this->formErrors($form->getMessages());
                 return $this->redirect()->toUrl("/login");
             }
         }
@@ -340,7 +285,7 @@ class LoginController extends IndexController
      * @param string $redirectTo
      * @return void
      */
-    protected function logoutAction($redirectTo = '')
+    protected function logoutAction($redirectTo = null)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
@@ -350,11 +295,9 @@ class LoginController extends IndexController
         $authSession->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
-        if ($redirectTo == '')
-        {
+        if (!$redirectTo) {
             $redirectTo = "/";
         }
         return $this->redirect()->toUrl($redirectTo);
     }
 }
-?>

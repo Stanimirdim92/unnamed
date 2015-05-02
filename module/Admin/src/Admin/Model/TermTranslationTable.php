@@ -30,35 +30,39 @@ class TermTranslationTable
      */
     public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
     {
-        if($paginated)
-        {
+        if ($paginated) {
             $select = new Select("termTranslation");
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
             $paginatorAdapter = new DbSelect($select,$this->tableGateway->getAdapter(),$resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
-        }
-        else
-        {
-            $resultSet = $this->tableGateway->select(function(Select $select)  use ($where, $order, $limit, $offset)
-            {
-                if($where!=null)
+        } else {
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
+                if ($where!=null) {
                     $select->where($where);
-                if($order!=null)
+                }
+                if ($order!=null) {
                     $select->order($order);
-                if($limit!=null)
+                }
+                if ($limit!=null) {
                     $select->limit($limit);
-                if($offset!=null)
+                }
+                if ($offset!=null) {
                     $select->offset($offset);
+                }
             });
             $resultSet->buffer();
             return $resultSet;
@@ -77,17 +81,20 @@ class TermTranslationTable
      */
     public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->tableGateway->select(function(Select $select)  use ($join, $on, $where, $order, $limit, $offset)
-        {
+        $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
             $select->join($join, $on);
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
         });
         return $resultSet;
     }
@@ -97,8 +104,7 @@ class TermTranslationTable
         $id  = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
         $row = $rowset->current();
-        if (!$row)
-        {
+        if (!$row) {
             throw new \Exception();
         }
         return $row;
@@ -112,24 +118,18 @@ class TermTranslationTable
     public function saveTermTranslation(TermTranslation $termTranslation)
     {
         $data = array(
-    		'language' => (int) $termTranslation->language,
-    		'translation' => (string) $termTranslation->translation,
-    		'term' => (int) $termTranslation->term,
+            'language' => (int) $termTranslation->language,
+            'translation' => (string) $termTranslation->translation,
+            'term' => (int) $termTranslation->term,
         );
 
         $id = (int)$termTranslation->id;
-        if ($id == 0)
-        {
+        if ($id == 0) {
             $this->tableGateway->insert($data);
-        }
-        else
-        {
-            if ($this->getTermTranslation($id))
-            {
+        } else {
+            if ($this->getTermTranslation($id)) {
                 $this->tableGateway->update($data, array('id' => $id));
-            }
-            else
-            {
+            } else {
                 throw new \Exception();
             }
         }

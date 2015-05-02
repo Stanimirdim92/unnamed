@@ -1,4 +1,5 @@
 <?php
+
 namespace Custom\Plugins;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -28,7 +29,7 @@ class Mailing extends AbstractActionController
             'connection_class'  => 'login',
             'connection_config' => array(
                 'username' => 'psyxopat@gmail.com',
-                'password' => 'rompompom'
+                'password' => 'rompompom',
             ),
             'port' => '587',
         ));
@@ -46,17 +47,13 @@ class Mailing extends AbstractActionController
         $mail->setBody($body);
         $mail->getHeaders()->addHeaderLine("MIME-Version: 1.0");
         $mail->getHeaders()->addHeaderLine('Content-Type', 'text/html; charset=UTF-8');
-        try
-        {
+        try {
             $transport->setOptions($options);
             $transport->send($mail);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             echo "<pre>".print_r($e->getTraceAsString(), true)."</pre>";
             exit;
         }
         return true;
     }
 }
-?>

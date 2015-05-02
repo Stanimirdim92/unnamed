@@ -26,10 +26,8 @@ RewriteRule ^.*$ - [NC,L]
 # fits all solution.
 RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 RewriteRule ^(.*) - [E=BASE:%1]
-RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
-
 # CGI does not support apache_response_headers, but we need this header in order to do basic HTTP authtentication when running with CGI or FastCGI.
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteRule ^(.*)$ %{ENV:BASE}index.php [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L,NC]
 
 # Block all PHP easter eggs
 # Note that these features are disabled from PHP 5.5.0
@@ -838,7 +836,7 @@ FileETag None
 # http://cspisawesome.com/.
 
 <IfModule mod_headers.c>
-    Header set Content-Security-Policy "script-src 'self'; object-src 'self'"
+    Header set Content-Security-Policy "script-src 'self' https://www.google-analytics.com/analytics.js; object-src 'self'"
     # `mod_headers` cannot match based on the content-type, however,
     # the `Content-Security-Policy` response header should be send
     # only for HTML documents and not for the other resources.
@@ -897,6 +895,7 @@ FileETag None
 <IfModule mod_php5.c>
     # Block cookie access via js. This might be already set via php.ini
     php_value session.cookie_httponly on
+    php_value session.use_only_cookies on
     # 1. If your cart only allows you to add one item at a time, it is possible register_globals is on. This may work to disable it:
     php_flag register_globals off
     # 2. If your cart has magic quotes enabled, This may work to disable it:

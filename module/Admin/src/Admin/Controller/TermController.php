@@ -1,14 +1,11 @@
 <?php
 namespace Admin\Controller;
 
-use Zend\Session\Container;
 
-use Admin\Controller\IndexController;
 use Admin\Model\Term;
 use Admin\Form\TermForm;
 use Admin\Form\TermSearchForm;
 
-use Custom\Plugins\Functions;
 
 class TermController extends IndexController
 {
@@ -38,14 +35,13 @@ class TermController extends IndexController
     }
 
     /**
-    * This action shows the list of all (or filtered) Term objects
-    */
+     * This action shows the list of all (or filtered) Term objects
+     */
     public function indexAction()
     {
         $search = $this->getparam('search', null);
         $where = null;
-        if($search != null)
-        {
+        if ($search != null) {
             $where = "`name` LIKE '%{$search}%'";
         }
         $order = "name ASC";
@@ -61,8 +57,8 @@ class TermController extends IndexController
     }
 
     /**
-    * This action serves for adding a new object of type Term
-    */
+     * This action serves for adding a new object of type Term
+     */
     public function addAction()
     {
         $this->showForm("Add", null);
@@ -71,26 +67,22 @@ class TermController extends IndexController
     }
 
     /**
-    * This action presents a modify form for Term object with a given id
-    * Upon POST the form is processed and saved
-    */
+     * This action presents a modify form for Term object with a given id
+     * Upon POST the form is processed and saved
+     */
     public function modifyAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
-        try
-        {
+        try {
             $term = $this->getTable("term")->getTerm($id);
             $this->view->term = $term;
             $this->addBreadcrumb(array("reference"=>"/admin/term/modify/id/{$term->id}", "name"=>"Modify term &laquo;{$term->name}&raquo;"));
             $this->showForm("Modify", $term);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
@@ -105,8 +97,7 @@ class TermController extends IndexController
      */
     public function showForm($label = 'Add', $term = null)
     {
-        if($term == null)
-        {
+        if ($term == null) {
             $term = new Term();
         }
 
@@ -114,12 +105,10 @@ class TermController extends IndexController
         $form->get("submit")->setValue($label);
 
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($term->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 $formData["name"] = strtoupper($formData["name"]);
                 $term->exchangeArray($formData);
@@ -127,14 +116,10 @@ class TermController extends IndexController
                 $this->cache->success = "Term &laquo;".$term->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', array('controller' => 'term'));
-            }
-            else
-            {
+            } else {
                 $error = '';
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
@@ -145,22 +130,18 @@ class TermController extends IndexController
     }
 
     /**
-    * this action deletes a Term object with a provided id
-    */
+     * this action deletes a Term object with a provided id
+     */
     public function deleteAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }
-        try
-        {
+        try {
             $this->getTable("term")->deleteTerm($id);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'term'));
         }

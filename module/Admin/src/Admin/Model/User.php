@@ -14,9 +14,9 @@ class User implements InputFilterAwareInterface
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager; 
+    private $_serviceManager;
 
     /**
      * @param Int $_id
@@ -144,12 +144,10 @@ class User implements InputFilterAwareInterface
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
@@ -173,301 +171,295 @@ class User implements InputFilterAwareInterface
     
     
     /**
-    * Set name
-    * @param String $name 
-    */
+     * Set name
+     * @param String $name
+     */
     public function setName($name)
     {
         $this->_name = $name;
     }
 
     /**
-    * Get name
-    * @return String
-    */
+     * Get name
+     * @return String
+     */
     public function getName()
     {
         return $this->_name;
     }
      
     /**
-    * Set surname
-    * @param String $surname 
-    */
+     * Set surname
+     * @param String $surname
+     */
     public function setSurname($surname)
     {
         $this->_surname = $surname;
     }
 
     /**
-    * Get surname
-    * @return String
-    */
+     * Get surname
+     * @return String
+     */
     public function getSurname()
     {
         return $this->_surname;
     }
 
     /**
-    * Set password
-    * @param String $password 
-    */
+     * Set password
+     * @param String $password
+     */
     public function setPassword($password)
     {
         $this->_password = $password;
     }
 
     /**
-    * Get password
-    * @return String
-    */
+     * Get password
+     * @return String
+     */
     public function getPassword()
     {
         return $this->_password;
     }
      
     /**
-    * Set email
-    * @param String $email 
-    */
+     * Set email
+     * @param String $email
+     */
     public function setEmail($email)
     {
         $this->_email = $email;
     }
 
     /**
-    * Get email
-    * @return String
-    */
+     * Get email
+     * @return String
+     */
     public function getEmail()
     {
         return $this->_email;
     }
      
     /**
-    * Set BirthDate
-    * @param String $birthDate 
-    */
+     * Set BirthDate
+     * @param String $birthDate
+     */
     public function setBirthDate($birthDate)
     {
         $this->_birthDate = $birthDate;
     }
 
     /**
-    * Get birthDate
-    * @return String
-    */
+     * Get birthDate
+     * @return String
+     */
     public function getBirthDate()
     {
         return $this->_birthDate;
     }
      
     /**
-    * Set lastLogin
-    * @param String $lastLogin 
-    */
+     * Set lastLogin
+     * @param String $lastLogin
+     */
     public function setLastLogin($lastLogin)
     {
         $this->_lastLogin = $lastLogin;
     }
 
     /**
-    * Get lastLogin
-    * @return String
-    */
+     * Get lastLogin
+     * @return String
+     */
     public function getLastLogin()
     {
         return $this->_lastLogin;
     }
 
     /**
-    * Set deleted
-    * @param Boolean $deleted 
-    */
+     * Set deleted
+     * @param Boolean $deleted
+     */
     public function setDeleted($deleted)
     {
         $this->_deleted = $deleted;
     }
 
     /**
-    * Get deleted
-    * @return Boolean
-    */
+     * Get deleted
+     * @return Boolean
+     */
     public function getDeleted()
     {
         return $this->_deleted;
     }
      
     /**
-    * Set salt
-    * @param String $salt 
-    */
+     * Set salt
+     * @param String $salt
+     */
     public function setSalt($salt)
     {
         $this->_salt = $salt;
     }
 
     /**
-    * Get salt
-    * @return String
-    */
+     * Get salt
+     * @return String
+     */
     public function getSalt()
     {
         return $this->_salt;
     }
 
     /**
-    * Set image
-    * @param String $image 
-    */
+     * Set image
+     * @param String $image
+     */
     public function setImage($image)
     {
         $this->_image = $image;
     }
 
     /**
-    * Get image
-    * @return String
-    */
+     * Get image
+     * @return String
+     */
     public function getImage()
     {
         return $this->_image;
     }
 
     /**
-    * Set registered
-    * @param String $registered 
-    */
+     * Set registered
+     * @param String $registered
+     */
     public function setRegistered($registered)
     {
         $this->_registered = $registered;
     }
 
     /**
-    * Get registered
-    * @return String
-    */
+     * Get registered
+     * @return String
+     */
     public function getRegistered()
     {
         return $this->_registered;
     }
 
     /**
-    * Set hideEmail
-    * @param Boolean $hideEmail 
-    */
+     * Set hideEmail
+     * @param Boolean $hideEmail
+     */
     public function setHideEmail($hideEmail)
     {
         $this->_hideEmail = $hideEmail;
     }
 
     /**
-    * Get hideEmail
-    * @return Boolean
-    */
+     * Get hideEmail
+     * @return Boolean
+     */
     public function getHideEmail()
     {
         return $this->_hideEmail;
     }
 
     /**
-    * Set ip
-    * @param String $ip 
-    */
+     * Set ip
+     * @param String $ip
+     */
     public function setIp($ip)
     {
         $this->_ip = $ip;
     }
 
     /**
-    * Get ip
-    * @return String
-    */
+     * Get ip
+     * @return String
+     */
     public function getIp()
     {
         return $this->_ip;
     }
 
     /**
-    * Set language
-    * @param Int $language 
-    */
+     * Set language
+     * @param Int $language
+     */
     public function setLanguage($language)
     {
         $this->_language = $language;
     }
 
     /**
-    * Get language
-    * @return Int
-    */
+     * Get language
+     * @return Int
+     */
     public function getLanguage()
     {
         return $this->_language;
     }
 
     /**
-    * Set admin
-    * @param Boolean $admin 
-    */
+     * Set admin
+     * @param Boolean $admin
+     */
     public function setAdmin($admin)
     {
         $this->_admin = $admin;
     }
 
     /**
-    * Get admin
-    * @return Boolean
-    */
+     * Get admin
+     * @return Boolean
+     */
     public function getAdmin()
     {
         return $this->_admin;
     }
 
-     /**
-    * Set currency
-    * @param Int $currency 
-    */
+    /**
+     * Set currency
+     * @param Int $currency
+     */
     public function setCurrency($currency)
     {
         $this->_currency = $currency;
     }
 
     /**
-    * Get currency
-    * @return Int
-    */
+     * Get currency
+     * @return Int
+     */
     public function getCurrency()
     {
         return $this->_currency;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getLanguageObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('LanguageTable')->fetchList(false, "id={$this->language}");
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getAdministratorObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('AdministratorTable')->fetchList(false, "id={$this->admin}");
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -485,8 +477,7 @@ class User implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -504,13 +495,11 @@ class User implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-      	$skip = array("_serviceManager");
-      	$returnValue = array();
+        $skip = array("_serviceManager");
+        $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -522,7 +511,6 @@ class User implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -532,10 +520,8 @@ class User implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -556,8 +542,7 @@ class User implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',
@@ -741,22 +726,19 @@ class User implements InputFilterAwareInterface
         $sheet->setTitle("User's auto export info");
 
         $colLetters = array('A', 'B', 'C', 'D','E', 'F');
-        foreach ($colLetters as $colLetter)
-        {
+        foreach ($colLetters as $colLetter) {
             $objPHPExcel->getActiveSheet()->getColumnDimension($colLetter)->setWidth(25);
         }
         $cellTitles = array('ID', "Name", "Surname", "Email", "Last login", "Registered on");
         $cellCol = 0;
-        foreach ($cellTitles as $cellTitle)
-        {
+        foreach ($cellTitles as $cellTitle) {
             $sheet->setCellValueExplicitByColumnAndRow($cellCol++, 1, $cellTitle);
         }
 
         $col = 0;
         $row = 2;
         $users = $this->serviceManager->get("UserTable")->fetchList(false, "deleted = '0'", "id DESC");
-        foreach($users as $user)
-        {
+        foreach ($users as $user) {
             $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getId, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
             $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getName());
             $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getSurname());

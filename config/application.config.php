@@ -73,8 +73,7 @@ $cacheConfig = array(
 );
 
 // We want to activate the cache only in production environment
-if (getenv('APPLICATION_ENV') == 'development')
-{
+if (getenv('APPLICATION_ENV') == 'development') {
     $config = ArrayUtils::merge($config, $cacheConfig);
 }
 

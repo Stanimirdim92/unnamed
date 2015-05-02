@@ -34,7 +34,12 @@
 // Place any jQuery/helper plugins in here.
 $(document).ready(function ($) {
     'use strict';
-    /*
+
+    function fixSEOCaption (caption) {
+        return caption.toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
+    }
+
+    /**
      * Custom dialog window for delete button
      */
     $(".dialog_delete").on("click", function (e) {
@@ -50,22 +55,22 @@ $(document).ready(function ($) {
         $(".dialog_hide").fadeOut(650);
     });
 
+
     /*
      * replace: this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
      */
     if ($("#titleLink").val() !== undefined) {
-        $("#titleLink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
+        fixSEOCaption($("#titleLink").val($("#seo-caption").val()));
     }
     if ($("#menulink").val() !== undefined) {
-        $("#menulink").val($("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-"));
+        fixSEOCaption($("#menulink").val($("#seo-caption").val()));
     }
 
     $("#seo-caption").on("keyup select change", function () {
-        var $seolink = $("#seo-caption").val().toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
+        var $seolink = fixSEOCaption($("#seo-caption").val());
         if ($("#menulink").val() !== undefined) {
             $("#titleLink").val($seolink);
-        }
-        else {
+        } else {
             $("#menulink").val($seolink);
         }
     });
@@ -89,8 +94,7 @@ $(document).ready(function ($) {
                         if ($val.hasOwnProperty(property)) {
                             if ($val[property] === null || $val[property] === undefined || $val[property] === '') {
                                 $ul.append("<li class='table-cell'>&nbsp;</li>");
-                            }
-                            else {
+                            } else {
                                 $ul.append("<li data-userId ='"+$val["_id"]+"' class='table-cell'>"+$val[property]+"</li>");
                             }
                         }
@@ -102,8 +106,7 @@ $(document).ready(function ($) {
             });
             $("#results").show();
             $("#linked").hide();
-        }
-        else {
+        } else {
             $("#results").hide();
             $("#linked").show();
         }

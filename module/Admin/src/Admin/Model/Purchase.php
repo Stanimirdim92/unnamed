@@ -2,7 +2,6 @@
 namespace Admin\Model;
 
 use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceManager;
 
@@ -12,9 +11,9 @@ class Purchase
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager; 
+    private $_serviceManager;
 
     /**
      * @param Int $_id
@@ -95,12 +94,10 @@ class Purchase
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
@@ -124,190 +121,181 @@ class Purchase
     
     
     /**
-    * Set user
-    * @param String $user 
-    */
+     * Set user
+     * @param String $user
+     */
     public function setUser($user)
     {
         $this->_user = $user;
     }
 
     /**
-    * Get user
-    * @return String
-    */
+     * Get user
+     * @return String
+     */
     public function getUser()
     {
         return $this->_user;
     }
 
     /**
-    * Set packet
-    * @param Int $packet 
-    */
+     * Set packet
+     * @param Int $packet
+     */
     public function setPacket($packet)
     {
         $this->_packet = $packet;
     }
 
     /**
-    * Get packet
-    * @return Int
-    */
+     * Get packet
+     * @return Int
+     */
     public function getPacket()
     {
         return $this->_packet;
     }
 
     /**
-    * Set packetexpires
-    * @param string $packetexpires 
-    */
+     * Set packetexpires
+     * @param string $packetexpires
+     */
     public function setPacketExpireMonths($packetexpires)
     {
         $this->_packetexpires = $packetexpires;
     }
 
     /**
-    * Get packetexpires
-    * @return string
-    */
+     * Get packetexpires
+     * @return string
+     */
     public function getPacketExpireMonths()
     {
         return $this->_packetexpires;
     }
 
     /**
-    * Set purchasedate
-    * @param string $purchasedate 
-    */
+     * Set purchasedate
+     * @param string $purchasedate
+     */
     public function setPurchaseDate($purchasedate)
     {
         $this->_purchasedate = $purchasedate;
     }
 
     /**
-    * Get purchasedate
-    * @return string
-    */
+     * Get purchasedate
+     * @return string
+     */
     public function getPurchaseDate()
     {
         return $this->_purchasedate;
     }
 
     /**
-    * Set payed
-    * @param bool $payed 
-    */
+     * Set payed
+     * @param bool $payed
+     */
     public function setPayed($payed)
     {
         $this->_payed = $payed;
     }
 
     /**
-    * Get payed
-    * @return bool
-    */
+     * Get payed
+     * @return bool
+     */
     public function getPayed()
     {
         return $this->_payed;
     }
 
     /**
-    * Set active
-    * @param bool $active 
-    */
+     * Set active
+     * @param bool $active
+     */
     public function setActive($active)
     {
         $this->_active = $active;
     }
 
     /**
-    * Get active
-    * @return bool
-    */
+     * Get active
+     * @return bool
+     */
     public function getActive()
     {
         return $this->_active;
     }
 
     /**
-    * Set money
-    * @param int $money 
-    */
+     * Set money
+     * @param int $money
+     */
     public function setMoney($money)
     {
         $this->_money = $money;
     }
 
     /**
-    * Get money
-    * @return int
-    */
+     * Get money
+     * @return int
+     */
     public function getMoney()
     {
         return $this->_money;
     }
 
     /**
-    * Set currency
-    * @param int $currency 
-    */
+     * Set currency
+     * @param int $currency
+     */
     public function setCurrency($currency)
     {
         $this->_currency = $currency;
     }
 
     /**
-    * Get currency
-    * @return int
-    */
+     * Get currency
+     * @return int
+     */
     public function getCurrency()
     {
         return $this->_currency;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getUserObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('UserTable')->getUser($this->user);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getPacketObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('PacketTable')->getPacket($this->packet);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getCurrencyObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('CurrencyTable')->getCurrency($this->currency);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -325,8 +313,7 @@ class Purchase
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -344,13 +331,11 @@ class Purchase
      */
     public function __sleep()
     {
-      	$skip = array("_serviceManager");
-      	$returnValue = array();
+        $skip = array("_serviceManager");
+        $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -362,7 +347,6 @@ class Purchase
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -372,10 +356,8 @@ class Purchase
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -396,8 +378,7 @@ class Purchase
     
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',

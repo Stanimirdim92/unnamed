@@ -72,14 +72,13 @@ class NewPasswordForm extends Form
                     'name' => 'Identical',
                     'options' => array(
                         'token' => 'password',
-                        'message' => 'Passwords do not match'
+                        'message' => 'Passwords do not match',
                     ),
                 ),
             ),
         )));
         $this->setInputFilter($inputFilter);
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

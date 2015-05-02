@@ -40,7 +40,6 @@ use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\ServiceManager\ServiceManager;
 
 class LanguageTable
@@ -93,18 +92,14 @@ class LanguageTable
         $limit = (int) $limit;
         $offset = (int) $offset;
         $paginated = (bool) $paginated;
-        if($paginated === true)
-        {
+        if ($paginated === true) {
             $select = new Select("language");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Language(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
             return new Paginator($paginatorAdapter);
-        }
-        else
-        {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset)
-            {
+        } else {
+            $resultSet = $this->_tableGateway->select(function (Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset) {
                 $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
@@ -129,19 +124,13 @@ class LanguageTable
         $limit = (int) $limit;
         $offset = (int) $offset;
         $pagination = (bool) $pagination;
-        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER)))
-        {
+        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER))) {
             $joinType = self::JOIN_INNER;
         }
 
-        if ($pagination === true)
-        {
-
-        }
-        else
-        {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset)
-            {
+        if ($pagination === true) {
+        } else {
+            $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset) {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
                 $select->join($join, $on, array("id1"=>"id"), $joinType);
@@ -168,28 +157,29 @@ class LanguageTable
      */
     private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        if(is_array($columns) && !empty($columns))
+        if (is_array($columns) && !empty($columns)) {
             $select->columns($columns);
-        if(is_array($where) && !empty($where))
-        {
-            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL)))
-            {
+        }
+        if (is_array($where) && !empty($where)) {
+            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL))) {
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
-        }
-        else if ($where != null)
-        {
+        } elseif ($where != null) {
             $select->where($where);
         }
-        if($group != null)
+        if ($group != null) {
             $select->group($group);
-        if($order != null)
+        }
+        if ($order != null) {
             $select->order($order);
-        if($limit != null)
+        }
+        if ($limit != null) {
             $select->limit($limit);
-        if($offset != null)
+        }
+        if ($offset != null) {
             $select->offset($offset);
+        }
         return $select;
     }
 
@@ -201,8 +191,7 @@ class LanguageTable
     public function getLanguage($id = 0)
     {
         $rowset = $this->_tableGateway->select(array('id' => (int) $id));
-        if (!$rowset->current())
-        {
+        if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find language");
         }
         return $rowset->current();
@@ -215,8 +204,7 @@ class LanguageTable
      */
     public function deleteLanguage($id = 0)
     {
-        if (!$this->getLanguage($id))
-        {
+        if (!$this->getLanguage($id)) {
             throw new \RuntimeException("Couldn't delete language");
         }
         $this->_tableGateway->delete(array('id' => (int) $id));
@@ -230,16 +218,12 @@ class LanguageTable
         );
 
         $id = (int) $language->id;
-        if (!$id)
-        {
+        if (!$id) {
             $this->_tableGateway->insert($data);
             $language->id = $this->_tableGateway->lastInsertValue;
-        }
-        else
-        {
-            if (!$this->getLanguage($id))
-            {
-                 throw new \RuntimeException("Couldn't save language");
+        } else {
+            if (!$this->getLanguage($id)) {
+                throw new \RuntimeException("Couldn't save language");
             }
             $this->_tableGateway->update($data, array('id' => $id));
         }

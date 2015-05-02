@@ -1,7 +1,6 @@
 <?php
 namespace Admin\Controller;
 
-use Admin\Controller\IndexController;
 use Admin\Model\User;
 use Admin\Form\UserForm;
 use Admin\Form\UserSearchForm;
@@ -45,8 +44,7 @@ class UserController extends IndexController
     {
         $search = $this->getParam("search", null);
         $where = "deleted = '0'";
-        if($search!=null)
-        {
+        if ($search!=null) {
             $where = "(deleted = '0') AND (`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%')";
         }
         $order = "id DESC";
@@ -61,20 +59,16 @@ class UserController extends IndexController
     public function modifyAction()
     {
         $id = (int) $this->getParam("id", 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
-        try
-        {
+        try {
             $user = $this->getTable("user")->getUser($id);
             $this->view->user = $user;
             $this->addBreadcrumb(array("reference"=>"/admin/user/modify/id/{$user->id}", "name"=>"Modify user &laquo;".$user->toString()."&raquo;"));
             $this->showForm("Modify", $user);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
@@ -89,18 +83,18 @@ class UserController extends IndexController
      */
     public function showForm($label='', $user=null)
     {
-        if($user==null) throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
+        if ($user==null) {
+            throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
+        }
 
         $form = new UserForm($user, $this->getTable("language")->fetchList(false, "active = '1'", "name ASC"), $this->getTable("currency")->fetchList(false, "active = '1'", "name ASC"));
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
         $this->view->id = $user->id;
-        if($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 $name = str_replace(" ", "_", $formData["name"]);
                 $existingUser = $this->getTable("user")->fetchList(false, "name = '{$name}' AND id != '{$user->id}'");
@@ -108,8 +102,7 @@ class UserController extends IndexController
                 (sizeof($existingUser) > 0 ? $this->setErrorNoParam($this->session->USERNAME_EXIST." <b>{$name}</b> ".$this->session->ALREADY_EXIST) : "");
                 (sizeof($existingEmail) > 0 ? $this->setErrorNoParam($this->session->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->session->ALREADY_EXIST) : "");
 
-                if(sizeof($existingEmail) == 0 && sizeof($existingUser) == 0)
-                {
+                if (sizeof($existingEmail) == 0 && sizeof($existingUser) == 0) {
                     $user->setName($name);
                     $user->setSurname($formData['surname']);
                     $user->setEmail($formData['email']);
@@ -122,14 +115,10 @@ class UserController extends IndexController
                 $this->cache->success ="User &laquo;".$user->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', array('controller' => 'user'));
-            }
-            else
-            {
+            } else {
                 $error = '';
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
@@ -145,17 +134,13 @@ class UserController extends IndexController
     public function deleteAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
-        try
-        {
+        try {
             $this->getTable("user")->deleteUser($id);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
@@ -167,8 +152,7 @@ class UserController extends IndexController
     {
         $search = $this->getParam("search", null);
         $where = "deleted = '1'";
-        if($search!=null)
-        {
+        if ($search!=null) {
             $where = "(deleted = '1') AND (`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%')";
         }
         $order = "id DESC";
@@ -179,18 +163,14 @@ class UserController extends IndexController
     public function detailAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
-        try
-        {
+        try {
             $user = $this->getTable("user")->getUser($id);
             $this->view->user = $user;
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'user'));
         }
@@ -206,16 +186,13 @@ class UserController extends IndexController
     {
         $request = $this->getRequest();
         $search = $this->params()->fromQuery('usersearch');
-        if (isset($search))
-        {
-            if ($request->isXmlHttpRequest())
-            {
+        if (isset($search)) {
+            if ($request->isXmlHttpRequest()) {
                 $this->view->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%'";
                 $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
                 $json = array();
-                foreach ($results as $result)
-                {
+                foreach ($results as $result) {
                     $json[] = Json::encode($result);
                 }
                 return new JsonModel(array(
@@ -224,7 +201,7 @@ class UserController extends IndexController
                     'deleteuser' => "delete",
                     'modify' => "modify",
                     'details' => "details",
-                    'delete_text' => "Are you sure you would like to delete this user"
+                    'delete_text' => "Are you sure you would like to delete this user",
                 ));
             }
         }
@@ -239,8 +216,7 @@ class UserController extends IndexController
     protected function exportAction()
     {
         $filesPath = $_SERVER['DOCUMENT_ROOT']."/zend/public/userfiles/userExports/";
-        if (!file_exists($filesPath))
-        {
+        if (!file_exists($filesPath)) {
             mkdir($filesPath);
         }
         $users = $this->getTable("User")->getUser($this->cache->user->id);

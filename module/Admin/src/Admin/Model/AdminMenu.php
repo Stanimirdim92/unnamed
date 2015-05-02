@@ -14,7 +14,7 @@ class AdminMenu implements InputFilterAwareInterface
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
     private $_serviceManager;
 
@@ -95,12 +95,10 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
@@ -124,7 +122,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     /**
      * Set caption
-     * @param String $caption 
+     * @param String $caption
      */
     public function setCaption($caption)
     {
@@ -142,7 +140,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     /**
      * Set menuOrder
-     * @param int $menuOrder 
+     * @param int $menuOrder
      */
     public function setMenuOrder($menuOrder)
     {
@@ -160,7 +158,7 @@ class AdminMenu implements InputFilterAwareInterface
      
     /**
      * Set advanced
-     * @param Boolean $advanced 
+     * @param Boolean $advanced
      */
     public function setAdvanced($advanced)
     {
@@ -178,7 +176,7 @@ class AdminMenu implements InputFilterAwareInterface
      
     /**
      * Set controller
-     * @param String $controller 
+     * @param String $controller
      */
     public function setController($controller)
     {
@@ -196,7 +194,7 @@ class AdminMenu implements InputFilterAwareInterface
      
     /**
      * Set action
-     * @param String $action 
+     * @param String $action
      */
     public function setAction($action)
     {
@@ -214,7 +212,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     /**
      * Set class
-     * @param String $class 
+     * @param String $class
      */
     public function setClass($class)
     {
@@ -232,7 +230,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     /**
      * Set description
-     * @param string $description 
+     * @param string $description
      */
     public function setDescription($description)
     {
@@ -250,7 +248,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     /**
      * Set parent
-     * @param int $parent 
+     * @param int $parent
      */
     public function setParent($parent)
     {
@@ -271,12 +269,9 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getParentObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('AdminMenuTable')->getAdminMenu("{$this->parent}");
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -294,8 +289,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -316,10 +310,8 @@ class AdminMenu implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -340,10 +332,8 @@ class AdminMenu implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -365,8 +355,7 @@ class AdminMenu implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array('name' => 'id', 'required' => false, 'filters' => array(array('name' => 'Int'))));
 

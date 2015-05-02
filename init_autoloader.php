@@ -14,7 +14,7 @@
  * to be correctly configured, regardless of the installation method and keeps
  * the use of composer completely optional. This setup should work fine for
  * most users, however, feel free to configure autoloading however you'd like.
- */    
+ */
 // Composer autoloading
 if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
@@ -36,7 +36,7 @@ if (is_dir('vendor/zendframework/zendframework/library')) {
     $zf2Path = get_cfg_var('zf2_path');
 }
 
-if ($zf2Path) {
+if ($zf2Path !== false) {
     if (isset($loader)) {
         $loader->add('Zend', $zf2Path);
         $loader->add('ZendXml', $zf2Path);

@@ -48,7 +48,7 @@ class Menu implements InputFilterAwareInterface
     private $_inputFilter = null;
 
     /**
-     * @var null $_serviceManager ServiceManager 
+     * @var null $_serviceManager ServiceManager
      */
     private $_serviceManager = null;
 
@@ -170,87 +170,84 @@ class Menu implements InputFilterAwareInterface
     
     
     /**
-    * Set caption
-    * @param String $caption 
-    */
+     * Set caption
+     * @param String $caption
+     */
     public function setCaption($caption = null)
     {
         $this->_caption = $caption;
     }
 
     /**
-    * Get caption
-    * @return String
-    */
+     * Get caption
+     * @return String
+     */
     public function getCaption()
     {
         return $this->_caption;
     }
      
     /**
-    * Set menuOrder
-    * @param int $menuOrder 
-    */
+     * Set menuOrder
+     * @param int $menuOrder
+     */
     public function setMenuOrder($menuOrder = 1)
     {
         $this->_menuOrder = $menuOrder;
     }
 
     /**
-    * Get menuOrder
-    * @return int
-    */
+     * Get menuOrder
+     * @return int
+     */
     public function getMenuOrder()
     {
         return $this->_menuOrder;
     }
      
     /**
-    * Set Language
-    * @param int $ 
-    */
+     * Set Language
+     * @param int $
+     */
     public function setLanguage($language = 1)
     {
         $this->_language = $language;
     }
 
     /**
-    * Get language
-    * @return int
-    */
+     * Get language
+     * @return int
+     */
     public function getLanguage()
     {
         return $this->_language;
     }
  
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getLanguageObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('LanguageTable')->getLanguage($this->_language);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
     
     /**
-    * Set parent
-    * @param int $parent 
-    */
+     * Set parent
+     * @param int $parent
+     */
     public function setParent($parent = 0)
     {
         $this->_parent = $parent;
     }
 
     /**
-    * Get parent
-    * @return int
-    */
+     * Get parent
+     * @return int
+     */
     public function getParent()
     {
         return $this->_parent;
@@ -261,19 +258,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function getParentObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('MenuTable')->getMenu($this->_parent, $this->_language);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
     
     /**
      * Set keywords
-     * @param String $keywords 
+     * @param String $keywords
      */
     public function setKeywords($keywords = null)
     {
@@ -291,7 +285,7 @@ class Menu implements InputFilterAwareInterface
      
     /**
      * Set description
-     * @param null $description 
+     * @param null $description
      */
     public function setDescription($description = null)
     {
@@ -309,7 +303,7 @@ class Menu implements InputFilterAwareInterface
 
     /**
      * Set menutype
-     * @param Int $menutype 
+     * @param Int $menutype
      */
     public function setMenuType($menutype = 0)
     {
@@ -327,7 +321,7 @@ class Menu implements InputFilterAwareInterface
 
     /**
      * Set footercolumn
-     * @param Int $footercolumn 
+     * @param Int $footercolumn
      */
     public function setFooterColumn($footercolumn = 0)
     {
@@ -345,7 +339,7 @@ class Menu implements InputFilterAwareInterface
 
     /**
      * Set menulink
-     * @param null $menulink 
+     * @param null $menulink
      */
     public function setMenuLink($menulink = null)
     {
@@ -367,14 +361,15 @@ class Menu implements InputFilterAwareInterface
      */
     public function getMenuTypeAsName()
     {
-        if ($this->getMenuType() === 0)
+        if ($this->getMenuType() === 0) {
             return "Main menu";
-        else if ($this->getMenuType() === 1)
+        } elseif ($this->getMenuType() === 1) {
             return "Left menu";
-        else if ($this->getMenuType() === 3)
+        } elseif ($this->getMenuType() === 3) {
             return "Footer menu";
-        else
+        } else {
             return "Right menu";
+        }
     }
  
     /**
@@ -409,10 +404,8 @@ class Menu implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -424,7 +417,6 @@ class Menu implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -434,15 +426,12 @@ class Menu implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable)
-        {
+        if ($serializable) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -455,8 +444,7 @@ class Menu implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',
@@ -596,7 +584,7 @@ class Menu implements InputFilterAwareInterface
                     ),
                 ),
             ));
-             $inputFilter->add(array(
+            $inputFilter->add(array(
                 "name"=>"menulink",
                 "required" => false,
                 'filters' => array(
@@ -637,5 +625,3 @@ class Menu implements InputFilterAwareInterface
         return $this->_caption;
     }
 }
-
-?>

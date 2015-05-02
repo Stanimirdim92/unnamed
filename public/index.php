@@ -39,13 +39,13 @@
  * Below lines includes security|error fixes
  */
 ini_set('cgi.fix_pathinfo', 0);
+ini_set('register_globals', 0);
 error_reporting(0);
 ini_set("display_errors", 0);
 ini_set("display_startup_errors", 0);
 ini_set("track_errors", 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 1);
 if (ini_get('date.timezone') == '') {
     date_default_timezone_set('UTC');
 }
@@ -53,12 +53,13 @@ if (ini_get('date.timezone') == '') {
 /**
  * Check PHP and MySQL versions
  */
-define("REQ_PHP_VER", "5.3.7");
+define("MIN_PHP_VER", "5.3.7");
+define("REC_PHP_VER", "5.4");
 define("ZEND_PRESS_VER", "0.03");
 
-if (version_compare(REQ_PHP_VER, PHP_VERSION, '>' )) {
+if (version_compare(MIN_PHP_VER, PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version %1$s but ZendPress %2$s requires at least %3$s.', PHP_VERSION, ZEND_PRESS_VER, REQ_PHP_VER));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but ZendPress <b>%2$s</b> requires at least <b>%3$s</b>, but suggests you to us <b>%4$s or higher</b>.', PHP_VERSION, ZEND_PRESS_VER, MIN_PHP_VER, REC_PHP_VER));
 }
 
 /**
@@ -94,35 +95,36 @@ if (empty($_SERVER['REQUEST_URI']) ||
     /**
      * IIS Mod-Rewrite
      */
-    if(isset($_SERVER['HTTP_X_ORIGINAL_URL'])) {
+    if (isset($_SERVER['HTTP_X_ORIGINAL_URL'])) {
         $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'];
     }
     /**
      * IIS Isapi_Rewrite
      */
-    else if(isset($_SERVER['HTTP_X_REWRITE_URL'])) {
+    elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
         $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
-    }
-    else {
+    } else {
         /**
          * Use ORIG_PATH_INFO if there is no PATH_INFO
          */
-        if(!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO']))
+        if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO'])) {
             $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+        }
 
         /**
          * Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
          */
-        if(isset($_SERVER['PATH_INFO'])) {
-            if($_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME'])
+        if (isset($_SERVER['PATH_INFO'])) {
+            if ($_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME']) {
                 $_SERVER['REQUEST_URI'] = $_SERVER['PATH_INFO'];
-            else
+            } else {
                 $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
+            }
         }
         /**
          * Append the query string if it exists and isn't null
          */
-        if(!empty($_SERVER['QUERY_STRING'])) {
+        if (!empty($_SERVER['QUERY_STRING'])) {
             $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING'];
         }
     }
@@ -131,20 +133,22 @@ if (empty($_SERVER['REQUEST_URI']) ||
 /**
  * Fix for PHP as CGI hosts that set SCRIPT_FILENAME to something ending in php.cgi for all requests
  */
-if(isset($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], 'php.cgi') == strlen($_SERVER['SCRIPT_FILENAME']) - 7 )) {
+if (isset($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], 'php.cgi') == strlen($_SERVER['SCRIPT_FILENAME']) - 7 )) {
     $_SERVER['SCRIPT_FILENAME'] = $_SERVER['PATH_TRANSLATED'];
 }
 /**Fix for Dreamhost and other PHP as CGI hosts
  */
-if(strpos($_SERVER['SCRIPT_NAME'], 'php.cgi') !== false) {
+if (strpos($_SERVER['SCRIPT_NAME'], 'php.cgi') !== false) {
     unset($_SERVER['PATH_INFO']);
 }
 /**
  * Fix empty PHP_SELF
  */
-if(empty($_SERVER['PHP_SELF'])) {
+if (empty($_SERVER['PHP_SELF'])) {
     $_SERVER['PHP_SELF'] = $PHP_SELF = preg_replace( '/(\?.*)?$/', '', $_SERVER["REQUEST_URI"]);
 }
+
+
 
 
 /**
@@ -161,6 +165,13 @@ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER['APPLICATION_ENV'] === 'devel
     ini_set("display_errors", 1);
     ini_set("display_startup_errors", 1);
     ini_set("track_errors", 1);
+}
+
+/**
+ * Hack CGI https://github.com/sitrunlab/LearnZF2/pull/128#issuecomment-98054110
+ */
+if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+    $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
 }
 
 /**

@@ -40,7 +40,6 @@ use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Predicate\PredicateSet;
 use Zend\ServiceManager\ServiceManager;
 
 class ContentTable
@@ -93,18 +92,14 @@ class ContentTable
         $limit = (int) $limit;
         $offset = (int) $offset;
         $paginated = (bool) $paginated;
-        if($paginated === true)
-        {
+        if ($paginated === true) {
             $select = new Select("content");
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $this->_serviceManager));
             $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
             return new Paginator($paginatorAdapter);
-        }
-        else
-        {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset)
-            {
+        } else {
+            $resultSet = $this->_tableGateway->select(function (Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset) {
                 $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
@@ -129,19 +124,13 @@ class ContentTable
         $limit = (int) $limit;
         $offset = (int) $offset;
         $pagination = (bool) $pagination;
-        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER)))
-        {
+        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER))) {
             $joinType = self::JOIN_INNER;
         }
 
-        if ($pagination === true)
-        {
-
-        }
-        else
-        {
-            $resultSet = $this->_tableGateway->select(function(Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset)
-            {
+        if ($pagination === true) {
+        } else {
+            $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset) {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
                 $select->join($join, $on, array("id1"=>"id"), $joinType);
@@ -168,28 +157,29 @@ class ContentTable
      */
     private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        if(is_array($columns) && !empty($columns))
+        if (is_array($columns) && !empty($columns)) {
             $select->columns($columns);
-        if(is_array($where) && !empty($where))
-        {
-            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL)))
-            {
+        }
+        if (is_array($where) && !empty($where)) {
+            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL))) {
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
-        }
-        else if ($where != null)
-        {
+        } elseif ($where != null) {
             $select->where($where);
         }
-        if($group != null)
+        if ($group != null) {
             $select->group($group);
-        if($order != null)
+        }
+        if ($order != null) {
             $select->order($order);
-        if($limit != null)
+        }
+        if ($limit != null) {
             $select->limit($limit);
-        if($offset != null)
+        }
+        if ($offset != null) {
             $select->offset($offset);
+        }
         return $select;
     }
 
@@ -202,9 +192,8 @@ class ContentTable
     public function getContent($id = 0, $language = 1)
     {
         $rowset = $this->_tableGateway->select(array('id' => (int) $id, "language" => (int) $language));
-        if (!$rowset->current())
-        {
-           throw new \RuntimeException("Couldn't find content");
+        if (!$rowset->current()) {
+            throw new \RuntimeException("Couldn't find content");
         }
         return $rowset->current();
     }
@@ -219,8 +208,7 @@ class ContentTable
      */
     public function deleteContent($id = 0, $language = 1)
     {
-        if (!$this->getContent($id, $language))
-        {
+        if (!$this->getContent($id, $language)) {
             throw new \RuntimeException("Couldn't delete content");
         }
         $this->_tableGateway->delete(array('id' => (int) $id, "language" => (int) $language));
@@ -248,15 +236,11 @@ class ContentTable
         );
         $id = (int) $content->id;
         $language = (int) $content->language;
-        if (!$id)
-        {
+        if (!$id) {
             $this->_tableGateway->insert($data);
             $content->id = $this->_tableGateway->lastInsertValue;
-        }
-        else
-        {
-            if (!$this->getContent($id, $language))
-            {
+        } else {
+            if (!$this->getContent($id, $language)) {
                 throw new \RuntimeException("Couldn't save content");
             }
             $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
@@ -276,12 +260,11 @@ class ContentTable
     public function duplicate($id = 0, $language = 1)
     {
         $content = $this->getContent($id, $language);
-        if (!$content)
-        {
+        if (!$content) {
             throw new \RuntimeException("Couldn't clone content");
         }
         $clone = $content->getCopy();
         $this->saveContent($clone);
-		return $clone;
+        return $clone;
     }
 }

@@ -53,11 +53,14 @@ class MenuController extends \Application\Controller\IndexController
     public function menuAction()
     {
         $title = (string) $this->getParam("title");
-        if(empty($title)) $this->setErrorCode();
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
+        $title = $escaper->escapeHtml($title);
+        if (empty($title)) {
+            $this->setErrorCode();
+        }
 
         $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", "content.menu=menu.id", "inner", array("menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation), null, "menu.parent ASC, menu.menuOrder ASC");
         $this->setMetaTags($this->view->contents);
         return $this->view;
     }
 }
-?>

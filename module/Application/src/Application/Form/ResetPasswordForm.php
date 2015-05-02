@@ -3,6 +3,8 @@ namespace Application\Form;
 
 use Zend\Form\Form;
 use Zend\Form\Element;
+use Zend\Captcha;
+use Zend\Captcha\Image as CaptchaImage;
 
 class ResetPasswordForm extends Form
 {
@@ -18,6 +20,27 @@ class ResetPasswordForm extends Form
             'min'         => 5,
             'size'        => 30,
             'placeholder' => 'johnsmith@example.com',
+        ));
+
+        $captchaImage = new CaptchaImage(array(
+            'font'           => './data/fonts/arial.ttf',
+            'width'          => 180,
+            'height'         => 50,
+            'size'           => 30,
+            'fsize'          => 20,
+            'dotNoiseLevel'  => 10,
+            'lineNoiseLevel' => 2,
+            )
+        );
+
+        $captchaImage->setImgDir('./public/userfiles/captcha');
+        $captchaImage->setImgUrl('/userfiles/captcha');
+        $elements[4] = new Element\Captcha('captcha');
+        $elements[4]->setCaptcha($captchaImage);
+        $elements[4]->setAttributes(array(
+            'required'    => true,
+            'size'        => 30,
+            'class'       => 'captcha-input',
         ));
 
         $elements[8] = new Element\Csrf('s');
@@ -49,6 +72,7 @@ class ResetPasswordForm extends Form
                     'options' => array(
                         'encoding' => 'UTF-8',
                         'min'      => 5,
+                        'max'      => 255,
                     ),
                 ),
                 array('name' => 'NotEmpty'),
@@ -56,8 +80,7 @@ class ResetPasswordForm extends Form
         )));
         $this->setInputFilter($inputFilter);
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

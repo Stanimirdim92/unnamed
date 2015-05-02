@@ -35,19 +35,11 @@
 
 namespace Admin;
 
-use Admin\Model\Term;
-use Admin\Model\TermTable;
-use Admin\Model\TermCategory;
-use Admin\Model\TermCategoryTable;
-use Admin\Model\TermTranslation;
-use Admin\Model\TermTranslationTable;
-use Admin\Model\Language;
 use Admin\Model\LanguageTable;
 use Admin\Model\User;
 use Admin\Model\UserTable;
 use Admin\Model\AdminMenu;
 use Admin\Model\AdminMenuTable;
-use Admin\Model\Administrator;
 use Admin\Model\AdministratorTable;
 
 use Zend\Db\ResultSet\ResultSet;
@@ -72,39 +64,27 @@ class Module implements Feature\AutoloaderProviderInterface,
         $em = $app->getEventManager();
         $sm = $app->getServiceManager();
 
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm)
-        {
-            if (!$e->getParam("exception"))
-            {
-                return $this->errorResponse($e);
-            }
-            else
-            {
-                return $this->logError($sm->get('AdminErrorHandling'), $e->getParam("exception"), $e, $sm, "Guest");
-            }
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
+            return $this->logError($sm->get('AdminErrorHandling'), $e, $sm);
         });
     }
 
     /**
      * @param  AdminErrorHandling $service
-     * @param  Exception $exception
      * @param  MvcEvent $e
      * @param  ServiceManager $sm
+     * @param  $userRole int
      *
      * @return Error
      */
-    private function logError($service, $exception, $e, $sm, $userRole = null)
+    private function logError($service, $e, $sm, $userRole = "Guest")
     {
-        if($exception instanceof \Custom\Error\AuthorizationException)
-        {
+        if ($e->getParam("exception") instanceof \Custom\Error\AuthorizationException) {
             $cache = new \Zend\Session\Container("cache");
             $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
-            if ($cache->role == 1)
-            {
+            if ($cache->role == 1) {
                 $userRole = $cache->role;
-            }
-            else if ($cache->role == 10)
-            {
+            } elseif ($cache->role == 10) {
                 $userRole = $cache->role;
             }
             $message = " *** ADMIN LOG ***
@@ -121,22 +101,34 @@ class Module implements Feature\AutoloaderProviderInterface,
             Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
             Method used: " . $sm->get("Request")->getMethod() . "\n";
             $service->logAuthorisationError($message);
+        } elseif ($e->getParam("exception") != null) {
+            $service->logException($e->getParam("exception"));
+        } else {
+            return $this->errorResponse($e);
         }
-        else
-        {
-            $service->logException($exception);
-        }
-        $this->errorResponse($e);
+        return $this->errorResponse($e);
     }
 
     /**
+     * This function is used to simulate a fake redirect to errors page,
+     * where it will show a friendly error message to the user.
+     * The error message comes from the throwed exception.
+     * Also make sure that we always send a 404 response.
+     *
      * @param \Zend\Mvc\MvcEvent $e
+     * @return  MvcEvent
      */
     private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setTemplate('layout/error-layout');
+        $e->getViewModel()->setVariables(array(
+            'message' => '404 Not found',
+            'reason' => 'Error',
+            'exception' => ($e->getParam("exception") ? $e->getParam("exception")->getMessage(): ""),
+        ));
+        $e->getViewModel()->setTemplate('error/index.phtml');
         $e->stopPropagation();
+        return $e;
     }
 
     public function getConfig()
@@ -163,11 +155,10 @@ class Module implements Feature\AutoloaderProviderInterface,
     {
         return array(
             'factories' => array(
-                'Params' => function (ServiceLocatorInterface $helpers)
-                {
+                'Params' => function (ServiceLocatorInterface $helpers) {
                     $app = $helpers->getServiceLocator()->get('Application');
                     return new \Admin\View\Helper\Params($app->getRequest(), $app->getMvcEvent());
-                }
+                },
             ),
         );
     }
@@ -180,7 +171,7 @@ class Module implements Feature\AutoloaderProviderInterface,
             ),
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),
             ),
         );
@@ -192,23 +183,19 @@ class Module implements Feature\AutoloaderProviderInterface,
             'factories' => array(
                 'AdminErrorHandling' =>  'Admin\Factory\AdminErrorHandlingFactory',
 
-                'AdminMenuTable' => function ($sm)
-                {
+                'AdminMenuTable' => function ($sm) {
                     return new AdminMenuTable($sm);
                 },
-                'AdminMenuTableGateway' => function ($sm)
-                {
+                'AdminMenuTableGateway' => function ($sm) {
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new AdminMenu(null, $sm));
                     return new TableGateway('adminmenu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
 
-                'UserTable' => function ($sm)
-                {
+                'UserTable' => function ($sm) {
                     return new UserTable($sm);
                 },
-                'UserTableGateway' => function ($sm)
-                {
+                'UserTableGateway' => function ($sm) {
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new User(null, $sm));
                     return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);

@@ -51,5 +51,3 @@ class ContentTableFactory implements FactoryInterface
         return new ContentTable($sm, $tg);
     }
 }
-
-?>

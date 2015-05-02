@@ -38,6 +38,7 @@ use Zend\Session\Container;
 use Zend\Authentication\AuthenticationService;
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
+
 class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 {
     /**
@@ -89,6 +90,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
+
+        /**
+         * @see IndexController::checkIdentity
+         */
+        if ($this->checkIdentity(false)) {
+            $auth = new AuthenticationService();
+            $this->view->identity = $auth->getIdentity();
+        }
         $this->initMenus();
         $this->initViewVars();
     }
@@ -103,8 +112,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initCache()
     {
-        if(!$this->cache)
-        {
+        if (!$this->cache) {
             $this->cache = new Container("cache");
             $this->view->cache = $this->cache;
         }
@@ -131,8 +139,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initTranslation()
     {
-        if(!isset($this->translation->language))
-        {
+        if (!isset($this->translation->language)) {
             $this->translation = Functions::initTranslations(1, true);
             $this->translation->language = 1;
         }
@@ -149,8 +156,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
 
-        foreach($menu as $submenu)
-        {
+        foreach ($menu as $submenu) {
             $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         $this->view->menus = $menu;
@@ -167,8 +173,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || !$name)
-        {
+        if (!is_string($name) || !$name) {
             throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
@@ -180,26 +185,30 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @throws AuthorizationException
      * @return void
      */
-    protected function checkIdentity()
+    protected function checkIdentity($redirect = true)
     {
-        $auth = new \Zend\Authentication\AuthenticationService();
-        if($auth->hasIdentity())
-        {
-            if(($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) && $auth->getIdentity()->logged === true)
-            {
+        $auth = new AuthenticationService();
+        if ($auth->hasIdentity()) {
+            if (isset($auth->getIdentity()->role) &&
+              ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
+              isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
+                if (!$redirect) {
+                    return true;
+                }
                 return $this->redirect()->toUrl("/");
             }
             $this->clearUserData($auth); // something is wrong, clear all user data
         }
     }
 
-    private function clearUserData(\Zend\Authentication\AuthenticationService $auth = null)
+    private function clearUserData(AuthenticationService $auth = null)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
         $auth->clearIdentity();
         unset($this->cache->user);
         $this->cache = null;
+        $this->translation = null;
         throw new \Custom\Error\AuthorizationException($this->translation->ERROR_AUTHORIZATION);
     }
 
@@ -213,16 +222,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
-        if(!$param)
-        {
+        if (!$param) {
             $param = $this->params()->fromRoute($paramName, null);
         }
-        if(!$param)
-        {
+        if (!$param) {
             $param = $this->params()->fromQuery($paramName, null);
         }
-        if(!$param)
-        {
+        if (!$param) {
             return $default;
         }
         return trim($param);
@@ -234,19 +240,29 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function setErrorNoParam($message = null)
     {
-        if(!empty($message))
-        {
+        if (!empty($message)) {
             $this->cache->error = $message;
-        }
-        else if ($message === self::NO_ID)
-        {
+        } elseif ($message === self::NO_ID) {
             $this->cache->error = $this->translation->NO_ID_SET;
-        }
-        else
-        {
+        } else {
             $this->cache->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
+    }
+
+    /**
+     * @var array|null $formErrors
+     * @return array
+     */
+    protected function formErrors($formErrors = null)
+    {
+        $error = array();
+        foreach ($formErrors as $msg) {
+            foreach ($msg as $key => $text) {
+                $error[] = $text;
+            }
+        }
+        return $this->setErrorNoParam($error);
     }
 
     protected function setErrorCode($code = 404)
@@ -257,19 +273,20 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     }
 
     /**
-     * SEO
+     * This function will generate all meta tags needed for SEO optimisation.
      *
      * @param null $obj  returns Content object
      * @return  void
      */
-    protected function setMetaTags($obj = null)
+    protected function setMetaTags(\Admin\Model\Content $obj = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
-        if ($obj)
-        {
-            if ($obj->current()->getMenuObject() instanceof \Admin\Model\Menu)
-            {
+        if ($obj != null) {
+            /**
+             * If there is a menu attached to this content, get its SEO metadata
+             */
+            if ($obj->current()->getMenuObject() instanceof \Admin\Model\Menu) {
                 $description = $obj->current()->getMenuObject()->getDescription();
                 $keywords = $obj->current()->getMenuObject()->getKeywords();
             }
@@ -303,11 +320,17 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  * START OF ALL ACTION METHODS
  ****************************************************/
 
+    /**
+     * Init everything
+     */
     public function indexAction()
     {
         return $this->view;
     }
 
+    /**
+     * Simple contact form
+     */
     public function contactAction()
     {
         $form = new \Application\Form\ContactForm();
@@ -318,42 +341,25 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $form->get("message")->setLabel($this->translation->MESSAGE)->setAttribute("placeholder", $this->translation->ENTER_MESSAGE);
 
         $this->view->form = $form;
-        if($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 $to = "stanimirdim92@gmail.com"; // must be set from db
-                try
-                {
+                try {
                     $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
                     $this->cache->success = $this->translation->CONTACT_SUCCESS;
-                }
-                catch (\Exception $e)
-                {
+                } catch (\Exception $e) {
                     $this->cache->error = $this->translation->CONTACT_ERROR;
                     $this->setErrorNoParam($e->getMessage());
                 }
                 return $this->redirect()->toUrl("/contact");
-            }
-            else
-            {
-                $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
-                        $error[] = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+            } else {
+                $this->formErrors($form->getMessages());
                 return $this->redirect()->toUrl("/contact");
             }
         }
         return $this->view;
     }
 }
-
-?>

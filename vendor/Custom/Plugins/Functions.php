@@ -60,15 +60,12 @@ class Functions
     public static function initTranslations($language = 1, $reload = false)
     {
         static::$translation = new Container('translations');
-        if($reload)
-        {
+
+        if ($reload === true) {
             $result = self::createPlainQuery("SELECT `termtranslation`.`translation`, `term`.`name` FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term` WHERE `termtranslation`.`language`='".(int)$language."' ORDER BY `term`.`name` ASC");
-            if (count($result) > 0)
-            {
-                foreach($result as $r)
-                {
-                    if(!empty($r['name']))
-                    {
+            if (count($result) > 0) {
+                foreach ($result as $r) {
+                    if (!empty($r['name'])) {
                         static::$translation->__set($r['name'], $r['translation']);
                     }
                 }
@@ -82,26 +79,29 @@ class Functions
      *
      * @param String $query the plain query
      * @param Bool $returnResults specify if the function should return results
-     * @return array
+     * @throws Exception If database is not found or $query is empty
+     * @return array|ResultSet
      */
     protected static function createPlainQuery($query = null, $returnResults = true)
     {
-        if (empty($query))
-        {
+        if (empty($query)) {
             $returnResults = false;
             throw new \Exception(__METHOD__ . ' must not be empty');
         }
 
-        $local = include($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
+        if (!is_file($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
+            $returnResults = false;
+            throw new \Exception("Could not load database");
+        }
+
+        $local = require($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
         $db = new \Zend\Db\Adapter\Adapter($local['db']);
         $stmt = $db->createStatement();
         $stmt->prepare($query);
         $result = $stmt->execute();
         $arr = array();
-        if($returnResults === true)
-        {
-            while($result->next())
-            {
+        if ($returnResults === true) {
+            while ($result->next()) {
                 $arr[] = $result->current();
             }
         }
@@ -120,17 +120,16 @@ class Functions
     {
         require '/vendor/Custom/Plugins/Password.php';
 
-        if (empty($password))
-        {
+        if (empty($password)) {
             throw new \Exception("Password cannot be empty");
         }
-        if (self::strLength($password) < 8)
-        {
+        if (self::strLength($password) < 8) {
             throw new \Exception("Password must be atleast 8 characters long");
         }
+
         $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => static::$bcryptCost));
-        if(!$pw)
-        {
+
+        if (!$pw) {
             throw new \Exception("Error while generating password");
         }
         return $pw;
@@ -142,11 +141,7 @@ class Functions
      */
     public static function strLength($string = null)
     {
-        if (function_exists('mb_strlen'))
-        {
-            return mb_strlen($string, '8bit');
-        }
-        return strlen($string);
+        return mb_strlen($string, '8bit');
     }
 
     /**
@@ -155,13 +150,28 @@ class Functions
      * @param int $number is used to determinate how long should the token. Currently we pass 48 and the output should be 64
      * @return string
      */
-    public static function generateToken($number = null)
+    public static function generateToken($number = 0)
     {
-        if ($number === 48)
-        {
+        if ($number === 48) {
             return base64_encode(Rand::getBytes($number, true));
         }
         throw new \Exception("Error while generating a token");
     }
+
+    /**
+     * Detect SSL/TLS protocol. If true activate cookie_secure key
+     *
+     * @return bool
+     */
+    public static function isSSL()
+    {
+        if (isset($_SERVER['HTTPS'])) {
+            if ('on' == strtolower($_SERVER['HTTPS']) || '1' == $_SERVER['HTTPS']) {
+                return true;
+            }
+        } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
+            return true;
+        }
+        return false;
+    }
 }
-?>

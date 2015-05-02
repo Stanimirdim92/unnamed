@@ -14,9 +14,8 @@ class TermSearchForm extends Form
         $elements[1] = new Element\Submit('submit');
         $elements[1]->setAttribute('id', 'searchbutton');
         $elements[1]->setLabel('');
-        foreach($elements as $e)
-        {
-          $this->add($e);
+        foreach ($elements as $e) {
+            $this->add($e);
         }
     }
 }

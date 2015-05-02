@@ -21,7 +21,7 @@ return array(
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
                         'page'       => '[0-9]+',
-                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*'
+                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Application\Controller',
@@ -84,7 +84,7 @@ return array(
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
                         'page'       => '[0-9]+',
-                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*'
+                        'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Admin\Controller',
@@ -103,17 +103,43 @@ return array(
             ),
         ),
     ),
+    'service_manager' => array(
+        'abstract_factories' => array(
+        ),
+        'factories' => array(
+        ),
+    ),
+    'controllers' => array(
+        'factories' => array(
+            'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
+            'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
+        ),
+        'invokables' => array(
+            'Application\Controller\Index'        => 'Application\Controller\IndexController',
+            'Application\Controller\Login'        => 'Application\Controller\LoginController',
+            'Application\Controller\Registration' => 'Application\Controller\RegistrationController',
+            'Application\Controller\Profile'      => 'Application\Controller\ProfileController',
+            'Application\Controller\News'         => 'Application\Controller\NewsController',
+            'Application\Controller\Menu'         => 'Application\Controller\MenuController',
+        ),
+    ),
+    'view_helpers' => array(
+        'factories' => array(
+        ),
+    ),
     'view_manager' => array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
-        'not_found_template'       => 'layout/error-layout',
-        'exception_template'       => 'layout/error-layout',
+        'not_found_template'       => 'error/layout',
+        'exception_template'       => 'error/index',
         // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
         // 'default_template_suffix' => 'php',
         'template_map' => array(
             'application/layout'      => __DIR__ . '/../../Application/view/layout/layout.phtml',
-            'layout/error-layout'     => __DIR__ . '/../../Application/view/layout/error-layout.phtml',
+            'error/layout'            => __DIR__ . '/../../Application/view/error/layout.phtml',
+            'error/index'             => __DIR__ . '/../../Application/view/error/index.phtml',
+            'error/404'               => __DIR__ . '/../../Application/view/error/index.phtml',
         ),
         'template_path_stack' => array(
             'Application'     => __DIR__ . '/../../Application/view',

@@ -50,5 +50,3 @@ class AdminErrorHandlingFactory implements FactoryInterface
         return new ErrorHandlingService($log);
     }
 }
-
-?>

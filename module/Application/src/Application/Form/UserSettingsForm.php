@@ -17,8 +17,9 @@ class UserSettingsForm extends Form
             'size'        => 40,
         ));
 
-        if($options!=null and $options->name)
+        if ($options!=null and $options->name) {
             $elements[0]->setValue($options->name);
+        }
 
         $elements[1] = new Element\Text('surname');
         $elements[1]->setAttributes(array(
@@ -26,8 +27,9 @@ class UserSettingsForm extends Form
             'size'        => 40,
         ));
 
-        if($options!=null and $options->surname)
+        if ($options!=null and $options->surname) {
             $elements[1]->setValue($options->surname);
+        }
 
         $elements[2] = new Element\Password("password");
         $elements[2]->setAttributes(array(
@@ -43,8 +45,9 @@ class UserSettingsForm extends Form
             'placeholder' => 'johnsmith@example.com',
         ));
 
-        if($options!=null and $options->email)
+        if ($options!=null and $options->email) {
             $elements[4]->setValue($options->email);
+        }
 
         $elements[5] = new Element\Text('birthDate');
         $elements[5]->setAttributes(array(
@@ -52,25 +55,24 @@ class UserSettingsForm extends Form
             'size'        => 40,
             'placeholder' => 'YYYY-MM-DD',
         ));
-        if($options!=null and $options->birthDate)
+        if ($options!=null and $options->birthDate) {
             $elements[5]->setValue($options->birthDate);
-        else
+        } else {
             $elements[5]->setValue("YYYY-MM-DD");
+        }
 
         $elements[8] = new Element\Csrf('s');
         $elements[11] = new Element\Submit('submit');
         $elements[11]->setAttributea(array(
-            'id' => 'submitbutton'
+            'id' => 'submitbutton',
         ));
 
-        if($options!=null)
-        {
+        if ($options!=null) {
             $elements[12] = new Element\Hidden('id');
             $elements[12]->setValue($options->id);
         }
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

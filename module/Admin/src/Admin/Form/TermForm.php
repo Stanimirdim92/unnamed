@@ -20,8 +20,7 @@ class TermForm extends Form
             'class'      => 'term-name',
             'placeholder' => 'Name',
         ));
-        if($options != null)
-        {
+        if ($options != null) {
             $elements[0]->setValue($options->name);
         }
 
@@ -29,13 +28,11 @@ class TermForm extends Form
         $elements[1]->setLabel('TermCategory');
         $valueOptions = array();
 
-        foreach($termcategories as $item)
-        {
+        foreach ($termcategories as $item) {
             $valueOptions[$item->id] = $item->toString();
         }
         $elements[1]->setValueOptions($valueOptions);
-        if($options != null)
-        {
+        if ($options != null) {
             $elements[1]->setValue($options->termcategory);
         }
 
@@ -44,15 +41,13 @@ class TermForm extends Form
             'id' => 'submitbutton',
             'class' => 'term-button',
         ));
-        if($options != null)
-        {
+        if ($options != null) {
             $elements[3] = new Element\Hidden('id');
             $elements[3]->setValue($options->id);
         }
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
-		}
+        }
     }
 }

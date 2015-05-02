@@ -45,14 +45,11 @@ class NewsController extends \Application\Controller\IndexController
     public function newsAction()
     {
         $post = (string) $this->getParam("post", null);
-        if(!empty($post))
-        {
+        if (!empty($post)) {
             $new = $this->getTable("content")->fetchList(false, array("title", "text", "date", "preview"), array("type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->langTranslation), "AND", null, "date DESC");
             $this->view->new = $new->current();
             $this->setMetaTags($new);
-        }
-        else
-        {
+        } else {
             $news = $this->getTable("content")->fetchList(true, array("title", "titleLink", "text", "date", "preview"), array("type" => 1, "menu" => 0, "language" => $this->langTranslation), "AND", null, "date DESC");
             $news->setCurrentPageNumber((int)$this->params('page', 1));
             $news->setItemCountPerPage(10);
@@ -61,4 +58,3 @@ class NewsController extends \Application\Controller\IndexController
         return $this->view;
     }
 }
-?>

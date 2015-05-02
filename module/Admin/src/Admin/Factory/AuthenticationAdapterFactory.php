@@ -54,5 +54,3 @@ class AuthenticationAdapterFactory implements FactoryInterface
         return $authAdapter;
     }
 }
-
-?>

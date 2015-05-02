@@ -189,10 +189,8 @@ class Language implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -204,7 +202,6 @@ class Language implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-
     }
 
     /**
@@ -214,15 +211,12 @@ class Language implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable)
-        {
+        if ($serializable) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -235,8 +229,7 @@ class Language implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter)
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name' => 'id',

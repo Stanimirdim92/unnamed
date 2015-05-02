@@ -1,14 +1,10 @@
 <?php
 namespace Admin\Controller;
 
-use Zend\Session\Container;
 
-use Admin\Controller\IndexController;
 use Admin\Model\TermCategory;
 use Admin\Form\TermCategoryForm;
-use Admin\Form\TermCategorySearchForm;
 
-use Custom\Plugins\Functions;
 
 class TermCategoryController extends IndexController
 {
@@ -38,8 +34,8 @@ class TermCategoryController extends IndexController
     }
 
     /**
-    * This action shows the list of all (or filtered) TermCategory objects
-    */
+     * This action shows the list of all (or filtered) TermCategory objects
+     */
     public function indexAction()
     {
         $order = "name ASC";
@@ -51,8 +47,8 @@ class TermCategoryController extends IndexController
     }
 
     /**
-    * This action serves for adding a new object of type TermCategory
-    */
+     * This action serves for adding a new object of type TermCategory
+     */
     public function addAction()
     {
         $this->showForm("Add", null);
@@ -61,26 +57,22 @@ class TermCategoryController extends IndexController
     }
 
     /**
-    * This action presents a modify form for TermCategory object with a given id
-    * Upon POST the form is processed and saved
-    */
+     * This action presents a modify form for TermCategory object with a given id
+     * Upon POST the form is processed and saved
+     */
     public function modifyAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
-        try
-        {
+        try {
             $termcategory = $this->getTable("termcategory")->getTermCategory($id);
             $this->view->termcategory = $termcategory;
             $this->addBreadcrumb(array("reference"=>"/admin/termcategory/modify/id/{$termcategory->id}", "name"=>"Modify term ID &laquo;{$termcategory->id}&raquo;"));
             $this->showForm("Modify", $termcategory);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term category not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
@@ -95,8 +87,7 @@ class TermCategoryController extends IndexController
      */
     public function showForm($label = '', $termcategory = null)
     {
-        if($termcategory == null)
-        {
+        if ($termcategory == null) {
             $termcategory = new TermCategory();
         }
 
@@ -104,25 +95,19 @@ class TermCategoryController extends IndexController
         $form->get("submit")->setValue($label);
 
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($termcategory->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $termcategory->exchangeArray($form->getData());
                 $this->getTable("termcategory")->saveTermCategory($termcategory);
                 $this->cache->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
-            }
-            else
-            {
+            } else {
                 $error = '';
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
@@ -138,17 +123,13 @@ class TermCategoryController extends IndexController
     public function deleteAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }
-        try
-        {
+        try {
             $this->getTable("termcategory")->deleteTermCategory($id);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term category not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
         }

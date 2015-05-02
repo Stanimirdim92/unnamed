@@ -20,8 +20,9 @@ class UserForm extends Form
             'placeholder' => 'Name',
         ));
 
-        if($options!=null and $options->name)
+        if ($options!=null and $options->name) {
             $elements[0]->setValue($options->name);
+        }
 
         $elements[1] = new Element\Text('surname');
         $elements[1]->setLabel('Surname');
@@ -32,8 +33,9 @@ class UserForm extends Form
             'placeholder' => 'Surname',
         ));
 
-        if($options!=null and $options->surname)
+        if ($options!=null and $options->surname) {
             $elements[1]->setValue($options->surname);
+        }
 
         $elements[3] = new Element\Text('email');
         $elements[3]->setLabel('Email');
@@ -44,8 +46,9 @@ class UserForm extends Form
             'placeholder' => 'Email',
         ));
 
-        if($options!=null and $options->email)
+        if ($options!=null and $options->email) {
             $elements[3]->setValue($options->email);
+        }
 
         $elements[4] = new Element\Text('birthDate');
         $elements[4]->setLabel('Birthday');
@@ -55,10 +58,11 @@ class UserForm extends Form
             'class'      => 'datetimepicker',
             'placeholder' => 'YYYY-MM-DD',
         ));
-        if($options!=null and $options->birthDate)
+        if ($options!=null and $options->birthDate) {
             $elements[4]->setValue($options->birthDate);
-        else
+        } else {
             $elements[4]->setValue("0000-00-00");
+        }
 
         // $elements[6] = new Element\Checkbox('admin');
         // $elements[6]->setLabel('Admin');
@@ -67,47 +71,42 @@ class UserForm extends Form
 
         $elements[7] = new Element\Checkbox('deleted');
         $elements[7]->setLabel('Disabled');
-        if($options!=null and $options->deleted)
+        if ($options!=null and $options->deleted) {
             $elements[7]->setValue($options->deleted);
+        }
 
         $elements[8] = new Element\Select('language');
         $elements[8]->setLabel('Language');
         $valueOptions = array();
        
-        foreach($languages as $item)
-        {
+        foreach ($languages as $item) {
             $valueOptions[$item->id] = $item->toString();
         }
         $elements[8]->setValueOptions($valueOptions);
-        if($options!=null and $options->language)
-        {
+        if ($options!=null and $options->language) {
             $elements[8]->setValue($options->language);
         }
 
         $elements[9] = new Element\Select('currency');
         $elements[9]->setLabel('Currency');
         $valueOptions = array();
-        foreach($currency as $item)
-        {
+        foreach ($currency as $item) {
             $valueOptions[$item->id] = $item->toString();
         }
         $elements[9]->setValueOptions($valueOptions);
-        if($options!=null and $options->currency)
-        {
+        if ($options!=null and $options->currency) {
             $elements[9]->setValue($options->currency);
         }
 
         $elements[11] = new Element\Submit('submit');
         $elements[11]->setAttribute('id', 'submitbutton');
 
-        if($options!=null)
-        {
+        if ($options!=null) {
             $elements[12] = new Element\Hidden('id');
             $elements[12]->setValue($options->id);
         }
         
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
         $this->remove("language");

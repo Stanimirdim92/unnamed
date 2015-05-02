@@ -77,7 +77,7 @@ class ContactForm extends Form
         $this->elements[5]->setAttributes(array(
             'id'    => 'submitbutton',
         ));
-        
+
         $this->elements[8] = new Element\Csrf('s');
 
         $this->inputFilter = new \Zend\InputFilter\InputFilter();
@@ -144,25 +144,25 @@ class ContactForm extends Form
                 array('name' => 'NotEmpty'),
             ),
         )));
-        // $this->inputFilter->add($factory->createInput(array(
-        //     "name"=>"captcha",
-        //     'required' => true,
-        //     'filters' => array(
-        //         array('name' => 'StripTags'),
-        //         array('name' => 'StringTrim'),
-        //     ),
-        //     'validators' => array(
-        //         array(
-        //             'name' => 'StringLength',
-        //             'options' => array(
-        //                 'encoding' => 'UTF-8',
-        //                 'min' => 3,
-        //                 'max' => 30,
-        //             ),
-        //         ),
-        //         array('name' => 'NotEmpty'),
-        //     ),
-        // )));
+        $this->inputFilter->add($factory->createInput(array(
+            "name"=>"captcha",
+            'required' => true,
+            'filters' => array(
+                array('name' => 'StripTags'),
+                array('name' => 'StringTrim'),
+            ),
+            'validators' => array(
+                array(
+                    'name' => 'StringLength',
+                    'options' => array(
+                        'encoding' => 'UTF-8',
+                        'min' => 3,
+                        'max' => 30,
+                    ),
+                ),
+                array('name' => 'NotEmpty'),
+            ),
+        )));
         $this->inputFilter->add($factory->createInput(array(
             "name"=>"name",
             'required' => true,
@@ -183,8 +183,7 @@ class ContactForm extends Form
             ),
         )));
         $this->setInputFilter($this->inputFilter);
-        foreach($this->elements as $e)
-        {
+        foreach ($this->elements as $e) {
             $this->add($e);
         }
     }

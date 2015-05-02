@@ -170,193 +170,187 @@ class Content implements InputFilterAwareInterface
 
 
     /**
-    * Set Menu
-    * @param int $menu
-    */
+     * Set Menu
+     * @param int $menu
+     */
     public function setMenu($menu = 0)
     {
         $this->_menu = $menu;
     }
 
     /**
-    * Get menu
-    * @return int
-    */
+     * Get menu
+     * @return int
+     */
     public function getMenu()
     {
         return $this->_menu;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getMenuObject()
     {
-        try
-        {
+        try {
             return $this->_serviceManager->get('MenuTable')->getMenu($this->_menu, $this->_language);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
 
     /**
-    * Set title
-    * @param null $title
-    */
+     * Set title
+     * @param null $title
+     */
     public function setTitle($title = null)
     {
         $this->_title = $title;
     }
 
     /**
-    * Get title
-    * @return String
-    */
+     * Get title
+     * @return String
+     */
     public function getTitle()
     {
         return $this->_title;
     }
 
     /**
-    * Set titleLink
-    * @param null $titleLink
-    */
+     * Set titleLink
+     * @param null $titleLink
+     */
     public function setTitleLink($titleLink = null)
     {
         $this->_titleLink = $titleLink;
     }
 
     /**
-    * Get titleLink
-    * @return String
-    */
+     * Get titleLink
+     * @return String
+     */
     public function getTitleLink()
     {
         return $this->_titleLink;
     }
 
     /**
-    * Set preview
-    * @param String $preview
-    */
+     * Set preview
+     * @param String $preview
+     */
     public function setPreview($preview = null)
     {
         $this->_preview = $preview;
     }
 
     /**
-    * Get preview
-    * @return String
-    */
+     * Get preview
+     * @return String
+     */
     public function getPreview()
     {
         return $this->_preview;
     }
 
     /**
-    * Set text
-    * @param String $text
-    */
+     * Set text
+     * @param String $text
+     */
     public function setText($text = null)
     {
         $this->_text = $text;
     }
 
     /**
-    * Get text
-    * @return String
-    */
+     * Get text
+     * @return String
+     */
     public function getText()
     {
         return $this->_text;
     }
 
     /**
-    * Set order
-    * @param int $menuOrder
-    */
+     * Set order
+     * @param int $menuOrder
+     */
     public function setMenuOrder($menuOrder = 0)
     {
         $this->_menuOrder = $menuOrder;
     }
 
     /**
-    * Get menuOrder
-    * @return int
-    */
+     * Get menuOrder
+     * @return int
+     */
     public function getMenuOrder()
     {
         return $this->_menuOrder;
     }
 
     /**
-    * Set type
-    * @param int $type
-    */
+     * Set type
+     * @param int $type
+     */
     public function setType($type = 0)
     {
         $this->_type = $type;
     }
 
     /**
-    * Get type
-    * @return int
-    */
+     * Get type
+     * @return int
+     */
     public function getType()
     {
         return $this->_type;
     }
 
     /**
-    * Set date
-    * @param String $date
-    */
+     * Set date
+     * @param String $date
+     */
     public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->_date = $date;
     }
 
     /**
-    * Get date
-    * @return String
-    */
+     * Get date
+     * @return String
+     */
     public function getDate()
     {
         return $this->_date;
     }
 
     /**
-    * Set Language
-    * @param int $language
-    */
+     * Set Language
+     * @param int $language
+     */
     public function setLanguage($language = 1)
     {
         $this->_language = $language;
     }
 
     /**
-    * Get language
-    * @return int
-    */
+     * Get language
+     * @return int
+     */
     public function getLanguage()
     {
         return $this->_language;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getLanguageObject()
     {
-        try
-        {
+        try {
             return $this->_serviceManager->get('LanguageTable')->getLanguage($this->_language);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -393,10 +387,8 @@ class Content implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -408,7 +400,6 @@ class Content implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-
     }
 
     /**
@@ -418,15 +409,12 @@ class Content implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable)
-        {
+        if ($serializable) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -458,8 +446,7 @@ class Content implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter)
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',
@@ -478,7 +465,7 @@ class Content implements InputFilterAwareInterface
                             'min' => 0,
                             'max' => 3145728, //3mb
                             'useByteString' => true,
-                        )
+                        ),
                     ),
                     array(
                         'name' => 'Zend\Validator\File\Extension',
@@ -605,7 +592,7 @@ class Content implements InputFilterAwareInterface
                         'name' => 'date',
                         'options' => array(
                             'locale' => 'en',
-                            'format' => 'Y-m-d H:i:s'
+                            'format' => 'Y-m-d H:i:s',
                         ),
                     ),
                 ),
@@ -631,5 +618,4 @@ class Content implements InputFilterAwareInterface
     {
         return $this->_title;
     }
-
 }

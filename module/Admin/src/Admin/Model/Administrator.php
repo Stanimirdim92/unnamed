@@ -112,34 +112,31 @@ class Administrator implements InputFilterAwareInterface
     }
 
     /**
-    * Set User
-    * @param String $user
-    */
+     * Set User
+     * @param String $user
+     */
     public function setUser($user = 0)
     {
         $this->_user = $user;
     }
 
     /**
-    * Get user
-    * @return String
-    */
+     * Get user
+     * @return String
+     */
     public function getUser()
     {
         return $this->_user;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getUserObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('UserTable')->getUser($this->_user);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -176,10 +173,8 @@ class Administrator implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -191,7 +186,6 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-
     }
 
     /**
@@ -201,15 +195,12 @@ class Administrator implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable)
-        {
+        if ($serializable) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -222,8 +213,7 @@ class Administrator implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter)
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',

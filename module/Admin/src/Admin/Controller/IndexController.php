@@ -109,9 +109,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         /**
-         * Check admin status, before anything else
-         */
-        // $this->initAdminIdentity();
+ * Check admin status, before anything else
+ */
+        $this->initAdminIdentity();
         parent::onDispatch($e);
         $this->initViewVars();
         $this->initBreadcrumbs();
@@ -137,8 +137,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initCache()
     {
-        if (!$this->cache)
-        {
+        if (!$this->cache) {
             $this->cache = new Container("cache");
             $this->view->cache = $this->cache;
         }
@@ -170,8 +169,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initTranslation()
     {
-        if(!isset($this->translation->language))
-        {
+        if (!isset($this->translation->language)) {
             $this->translation = Functions::initTranslations(1, true);
             $this->translation->language = 1;
         }
@@ -194,8 +192,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || !$name)
-        {
+        if (!is_string($name) || !$name) {
             throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
@@ -215,13 +212,10 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     private function initAdminIdentity()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
-        if($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User)
-        {
-            if($auth->getIdentity()->role === 10 && $this->cache->role === 10 && $this->cache->logged === true)
-            {
+        if ($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User) {
+            if ($auth->getIdentity()->role === 10 && $this->cache->role === 10 && $this->cache->logged === true) {
                 $checkAdminExistence = $this->getTable("administrator")->fetchList(false, array(), array("user" => $auth->getIdentity()->id));
-                if (count($checkAdminExistence) === 1)
-                {
+                if (count($checkAdminExistence) === 1) {
                     return $this->redirect()->toUrl("/admin");
                 }
                 unset($checkAdminExistence);
@@ -263,19 +257,16 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     protected function getParam($paramName = null, $default = null)
     {
         $param = $this->params()->fromPost($paramName, 0);
-        if(!$param)
-        {
+        if (!$param) {
             $param = $this->params()->fromRoute($paramName, null);
         }
-        if(!$param)
-        {
+        if (!$param) {
             $param = $this->params()->fromQuery($paramName, null);
         }
-        if(!$param)
-        {
+        if (!$param) {
             return $default;
         }
-       return trim($param);
+        return trim($param);
     }
 
     /**
@@ -284,16 +275,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function setErrorNoParam($message = null)
     {
-        if(!empty($message))
-        {
+        if (!empty($message)) {
             $this->cache->error = $message;
-        }
-        else if ($message === self::NO_ID)
-        {
+        } elseif ($message === self::NO_ID) {
             $this->cache->error = $this->translation->NO_ID_SET;
-        }
-        else
-        {
+        } else {
             $this->cache->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
@@ -315,5 +301,3 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         return $this->view;
     }
 }
-
-?>

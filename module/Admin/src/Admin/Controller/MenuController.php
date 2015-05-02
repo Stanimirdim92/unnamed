@@ -68,8 +68,7 @@ class MenuController extends \Admin\Controller\IndexController
         $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         $submenus = array();
 
-        foreach($menu as $submenu)
-        {
+        foreach ($menu as $submenu) {
             $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => $submenu->id, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
         $this->view->menus = $menu;
@@ -140,7 +139,9 @@ class MenuController extends \Admin\Controller\IndexController
      */
     private function showForm($label = '', Menu $menu = null)
     {
-        if($menu == null) $menu = new Menu(array(), null);
+        if ($menu == null) {
+            $menu = new Menu(array(), null);
+        }
 
         $menu->setServiceManager(null);
         $form = new \Admin\Form\MenuForm($menu,
@@ -149,41 +150,32 @@ class MenuController extends \Admin\Controller\IndexController
         );
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($menu->getInputFilter());
             $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(),$this->getRequest()->getFiles()->toArray()));
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
                 // see if we have menu with the exact same caption.
-                if ($this->params("action") == 'add')
-                {
+                if ($this->params("action") == 'add') {
                     $existingMenu = $this->getTable('menu')->fetchList(false, array('menulink', 'menutype', 'language', 'parent'), array("parent" => 0, "language" => $this->langTranslation, "menutype" => $formData['menutype'], "menulink" => $formData['menulink']), "AND", null);
-                    if ($existingMenu->count() > 0)
-                    {
+                    if ($existingMenu->count() > 0) {
                         $this->cache->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
                 }
                 $menu->exchangeArray($formData);
-                if (empty($formData["parent"]))
-                {
+                if (empty($formData["parent"])) {
                     $menu->setParent(0);
                 }
                 $this->getTable("menu")->saveMenu($menu);
                 $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-            else
-            {
+            } else {
                 $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error[] = $value;
                     }
                 }

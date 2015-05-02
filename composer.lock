@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e6adb501b07376f47e49e1ab5ab5856d",
+    "hash": "442f0f63ea10966801f5367ffd08207e",
     "packages": [
         {
             "name": "zendframework/zend-developer-tools",
@@ -12,23 +12,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZendDeveloperTools.git",
-                "reference": "55432ef26445ce522cb2b146a0f0ea110d499f81"
+                "reference": "111b7bc6deee830d9db0016229f184aee92754aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZendDeveloperTools/zipball/55432ef26445ce522cb2b146a0f0ea110d499f81",
-                "reference": "55432ef26445ce522cb2b146a0f0ea110d499f81",
+                "url": "https://api.github.com/repos/zendframework/ZendDeveloperTools/zipball/111b7bc6deee830d9db0016229f184aee92754aa",
+                "reference": "111b7bc6deee830d9db0016229f184aee92754aa",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "zendframework/zend-debug": "2.*",
                 "zendframework/zend-eventmanager": "2.*",
+                "zendframework/zend-modulemanager": "2.*",
                 "zendframework/zend-mvc": "2.*",
                 "zendframework/zend-servicemanager": "2.*",
                 "zendframework/zend-stdlib": "2.*",
                 "zendframework/zend-version": "2.*",
                 "zendframework/zend-view": "2.*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4"
             },
             "suggest": {
                 "aist/aist-git-tools": "Show you informations about current GIT repository",
@@ -71,20 +75,20 @@
                 "module",
                 "zf2"
             ],
-            "time": "2015-02-18 12:23:54"
+            "time": "2015-04-06 03:50:15"
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.3.7",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a"
+                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
-                "reference": "a1aae5fdd27a422beb32c56ddf5a197654a0f94a",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/628b809fcadcd326f2074a9815e5b1fce57077ef",
+                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef",
                 "shasum": ""
             },
             "require": {
@@ -145,14 +149,13 @@
                 "zendframework/zend-xmlrpc": "self.version"
             },
             "require-dev": {
-                "doctrine/annotations": ">=1.0",
-                "fabpot/php-cs-fixer": "1.*",
-                "ircmaxell/random-lib": "dev-master",
-                "ircmaxell/security-lib": "dev-master",
-                "mikey179/vfsstream": "1.2.*",
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
-                "sebastianbergmann/phpcov": "1.1.0"
+                "doctrine/annotations": "~1.0",
+                "fabpot/php-cs-fixer": "~1.0",
+                "ircmaxell/random-lib": "~1.1",
+                "mikey179/vfsstream": "~1.2",
+                "phpunit/phpcov": "~2.0",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine Annotations >=1.0 for annotation features",
@@ -175,8 +178,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\": "library/"
+                "psr-4": {
+                    "Zend\\": "library/Zend/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -189,7 +192,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-03-12 16:55:53"
+            "time": "2015-03-31 15:39:14"
         },
         {
             "name": "zendframework/zendxml",
@@ -246,7 +249,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.7"
+        "php": ">=5.4"
     },
     "platform-dev": []
 }

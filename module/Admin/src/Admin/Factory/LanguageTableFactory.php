@@ -51,5 +51,3 @@ class LanguageTableFactory implements FactoryInterface
         return new LanguageTable($sm, $tg);
     }
 }
-
-?>

@@ -56,24 +56,23 @@ class AdministratorForm extends Form
             'size'        => 40,
             'class'      => 'administrator-user ajax-search',
             'placeholder' => 'User ID',
-            'autocomplete' => "off"
+            'autocomplete' => "off",
         ));
 
-        if($options!=null and $options->user)
+        if ($options!=null and $options->user) {
             $elements[5]->setValue($options->user);
+        }
 
         $elements[69] = new Element\Csrf('s');
         $elements[111] = new Element\Submit('submit');
         $elements[111]->setAttribute('id', 'submitbutton');
 
-        if($options!=null)
-        {
+        if ($options!=null) {
             $elements[112] = new Element\Hidden('id');
             $elements[112]->setValue($options->id);
         }
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

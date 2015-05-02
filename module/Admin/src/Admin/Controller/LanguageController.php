@@ -105,7 +105,6 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function deleteAction()
     {
-
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
         $this->cache->success = "Language was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
@@ -130,31 +129,27 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function showForm($label = '', Language $language = null)
     {
-        if($language == null) $language = new Language(array(), null);
+        if ($language == null) {
+            $language = new Language(array(), null);
+        }
 
         $language->setServiceManager(null);
         $form = new \Admin\Form\LanguageForm($language);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($language->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $language->exchangeArray($form->getData());
                 $this->getTable("language")->saveLanguage($language);
                 $this->cache->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-            else
-            {
+            } else {
                 $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error[] = $value;
                     }
                 }

@@ -44,28 +44,28 @@ class RegistrationForm extends Form
             'placeholder' => 'johnsmith@example.com',
         ));
 
-        // $captchaImage = new CaptchaImage(array(
-        //     'font'           => './data/fonts/arial.ttf',
-        //     'width'          => 180,
-        //     'height'         => 50,
-        //     'size'           => 30,
-        //     'fsize'          => 20,
-        //     'dotNoiseLevel'  => 10,
-        //     'lineNoiseLevel' => 2,
-        //     )
-        // );
+        $captchaImage = new CaptchaImage(array(
+            'font'           => './data/fonts/arial.ttf',
+            'width'          => 180,
+            'height'         => 50,
+            'size'           => 30,
+            'fsize'          => 20,
+            'dotNoiseLevel'  => 10,
+            'lineNoiseLevel' => 2,
+            )
+        );
 
-        // $captchaImage->setImgDir('./public/userfiles/captcha');
-        // $captchaImage->setImgUrl('/userfiles/captcha');
-        // $elements[4] = new Element\Captcha('captcha');
-        // $elements[4]->setCaptcha($captchaImage);
-        // $elements[4]->setAttributes(array(
-        //     'required'    => true,
-        //     'size'        => 30,
-        //     'class'       => 'captcha-input',
-        // ));
+        $captchaImage->setImgDir('./public/userfiles/captcha');
+        $captchaImage->setImgUrl('/userfiles/captcha');
+        $elements[4] = new Element\Captcha('captcha');
+        $elements[4]->setCaptcha($captchaImage);
+        $elements[4]->setAttributes(array(
+            'required'    => true,
+            'size'        => 30,
+            'class'       => 'captcha-input',
+        ));
 
-        // $elements[8] = new Element\Csrf('s');
+        $elements[8] = new Element\Csrf('s');
         $elements[20] = new Element\Submit("register");
         $elements[20]->setAttributes(array(
             'id'    => 'submitbutton',
@@ -154,15 +154,14 @@ class RegistrationForm extends Form
                     'name' => 'Identical',
                     'options' => array(
                         'token' => 'password',
-                        'message' => 'Passwords do not match'
+                        'message' => 'Passwords do not match',
                     ),
                 ),
             ),
         )));
         $this->setInputFilter($inputFilter);
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

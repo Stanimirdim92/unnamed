@@ -1,10 +1,8 @@
 <?php
 namespace Admin\Controller;
 
-use Admin\Controller\IndexController;
 use Admin\Model\Currency;
 use Admin\Form\CurrencyForm;
-use Admin\Form\CurrencySearchForm;
 
 class CurrencyController extends IndexController
 {
@@ -61,20 +59,16 @@ class CurrencyController extends IndexController
     public function modifyAction()
     {
         $id = $this->getParam("id", 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
-        try
-        {
+        try {
             $currency = $this->getTable("currency")->getCurrency($id);
             $this->view->currency = $currency;
             $this->addBreadcrumb(array("reference"=>"/admin/currency/modify/id/{$currency->id}", "name"=>"Modify currency &laquo;".$currency->toString()."&raquo;"));
             $this->showForm("Modify", $currency);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Currency not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
@@ -89,8 +83,7 @@ class CurrencyController extends IndexController
      */
     public function showForm($label = '', $currency = null)
     {
-        if($currency == null)
-        {
+        if ($currency == null) {
             $currency = new Currency();
         }
 
@@ -98,25 +91,19 @@ class CurrencyController extends IndexController
 
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost()) 
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($currency->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $currency->exchangeArray($form->getData());
                 $this->getTable("currency")->saveCurrency($currency);
                 $this->cache->success = $this->session->LANGUAGE."&nbsp;&laquo;".$currency->toString()."&raquo; ".$this->session->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
-            }
-            else
-            {
+            } else {
                 $error = '';
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
@@ -153,18 +140,14 @@ class CurrencyController extends IndexController
     public function detailAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }
-        try
-        {
+        try {
             $curr = $this->getTable("Currency")->getCurrency($id);
             $this->view->curr = $curr;
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Currency not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
         }

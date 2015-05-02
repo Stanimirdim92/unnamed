@@ -15,7 +15,7 @@ class Packet implements InputFilterAwareInterface
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
     private $_serviceManager;
 
@@ -92,12 +92,10 @@ class Packet implements InputFilterAwareInterface
      */
     public function __construct(array $options = null, ServiceManager $sm=null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm!=null)
-        {
+        if ($sm!=null) {
             $this->_serviceManager = $sm;
         }
     }
@@ -121,162 +119,162 @@ class Packet implements InputFilterAwareInterface
     
     
     /**
-    * Set DiskSpace
-    * @param string $diskspace
-    */
+     * Set DiskSpace
+     * @param string $diskspace
+     */
     public function setDiskSpace($diskspace)
     {
         $this->_diskspace = $diskspace;
     }
 
     /**
-    * Get diskspace
-    * @return int
-    */
+     * Get diskspace
+     * @return int
+     */
     public function getDiskSpace()
     {
         return $this->_diskspace;
     }
     
     /**
-    * Set bandwidth
-    * @param String $bandwidth 
-    */
+     * Set bandwidth
+     * @param String $bandwidth
+     */
     public function setBandWidth($bandwidth)
     {
         $this->_bandwidth = $bandwidth;
     }
 
     /**
-    * Get bandwidth
-    * @return String
-    */
+     * Get bandwidth
+     * @return String
+     */
     public function getBandWidth()
     {
         return $this->_bandwidth;
     }
      
     /**
-    * Set domains
-    * @param String $domains 
-    */
+     * Set domains
+     * @param String $domains
+     */
     public function setDomains($domains)
     {
         $this->_domains = $domains;
     }
 
     /**
-    * Get domains
-    * @return String
-    */
+     * Get domains
+     * @return String
+     */
     public function getDomains()
     {
         return $this->_domains;
     }
      
     /**
-    * Set dedictip
-    * @param int $dedictip 
-    */
+     * Set dedictip
+     * @param int $dedictip
+     */
     public function setDedictIp($dedictip)
     {
         $this->_dedictip = $dedictip;
     }
 
     /**
-    * Get dedictip
-    * @return int
-    */
+     * Get dedictip
+     * @return int
+     */
     public function getDedictIp()
     {
         return $this->_dedictip;
     }
      
     /**
-    * Set domainreg
-    * @param String $domainreg 
-    */
+     * Set domainreg
+     * @param String $domainreg
+     */
     public function setDomainReg($domainreg)
     {
         $this->_domainreg = $domainreg;
     }
 
     /**
-    * Get domainreg
-    * @return String
-    */
+     * Get domainreg
+     * @return String
+     */
     public function getDomainReg()
     {
         return $this->_domainreg;
     }
      
     /**
-    * Set support
-    * @param string $support 
-    */
+     * Set support
+     * @param string $support
+     */
     public function setSupport($support)
     {
         $this->_support = $support;
     }
 
     /**
-    * Get support
-    * @return string
-    */
+     * Get support
+     * @return string
+     */
     public function getSupport()
     {
         return $this->_support;
     }
 
     /**
-    * Set webeditor
-    * @param string $webeditor 
-    */
+     * Set webeditor
+     * @param string $webeditor
+     */
     public function setWebEditor($webeditor)
     {
         $this->_webeditor = $webeditor;
     }
 
     /**
-    * Get webeditor
-    * @return string
-    */
+     * Get webeditor
+     * @return string
+     */
     public function getWebEditor()
     {
         return $this->_webeditor;
     }
 
     /**
-    * Set price
-    * @param string $price 
-    */
+     * Set price
+     * @param string $price
+     */
     public function setPrice($price)
     {
         $this->_price = $price;
     }
 
     /**
-    * Get price
-    * @return string
-    */
+     * Get price
+     * @return string
+     */
     public function getPrice()
     {
         return $this->_price;
     }
      
     /**
-    * Set type
-    * @param int $type 
-    */
+     * Set type
+     * @param int $type
+     */
     public function setType($type)
     {
         $this->_type = $type;
     }
 
     /**
-    * Get type
-    * @return int
-    */
+     * Get type
+     * @return int
+     */
     public function getType()
     {
         return $this->_type;
@@ -284,101 +282,102 @@ class Packet implements InputFilterAwareInterface
 
     public function getTypeByName()
     {
-        if($this->_type == 0)
+        if ($this->_type == 0) {
             return "Basic packet";
-        else if($this->_type == 1)
+        } elseif ($this->_type == 1) {
             return "Normal packet";
-        else if($this->_type == 2)
+        } elseif ($this->_type == 2) {
             return "Optima packet";
-        else
+        } else {
             return "Expert packet";
+        }
     }
 
     /**
-    * Set text
-    * @param int $text 
-    */
+     * Set text
+     * @param int $text
+     */
     public function setText($text)
     {
         $this->_text = $text;
     }
 
     /**
-    * Get text
-    * @return int
-    */
+     * Get text
+     * @return int
+     */
     public function getText()
     {
         return $this->_text;
     }
 
     /**
-    * Set discount
-    * @param int $discount 
-    */
+     * Set discount
+     * @param int $discount
+     */
     public function setDiscount($discount)
     {
         $this->_discount = $discount;
     }
 
     /**
-    * Get discount
-    * @return int
-    */
+     * Get discount
+     * @return int
+     */
     public function getDiscount()
     {
         return $this->_discount;
     }
 
     /**
-    * Set language
-    * @param int $language 
-    */
+     * Set language
+     * @param int $language
+     */
     public function setLanguage($language)
     {
         $this->_language = $language;
     }
 
     /**
-    * Get language
-    * @return int
-    */
+     * Get language
+     * @return int
+     */
     public function getLanguage()
     {
         return $this->_language;
     }
 
     /**
-    * Set dollar
-    * @param int $dollar 
-    */
+     * Set dollar
+     * @param int $dollar
+     */
     public function setDollar($dollar)
     {
         $this->_dollar = $dollar;
     }
 
     /**
-    * Get dollar
-    * @return int
-    */
+     * Get dollar
+     * @return int
+     */
     public function getDollar()
     {
         return $this->_dollar;
     }
 
     /**
-    * Set euro
-    * @param int $euro 
-    */
+     * Set euro
+     * @param int $euro
+     */
     public function setEuro($euro)
     {
         $this->_euro = $euro;
     }
 
     /**
-    * Get euro
-    * @return int
-    */
+     * Get euro
+     * @return int
+     */
     public function getEuro()
     {
         return $this->_euro;
@@ -397,8 +396,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -419,10 +417,8 @@ class Packet implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -434,7 +430,6 @@ class Packet implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-        
     }
 
     /**
@@ -444,10 +439,8 @@ class Packet implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -468,8 +461,7 @@ class Packet implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name'     => 'id',
@@ -650,5 +642,4 @@ class Packet implements InputFilterAwareInterface
     {
         return $this->getTypeByName();
     }
-
 }

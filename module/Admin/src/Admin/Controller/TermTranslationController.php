@@ -1,7 +1,6 @@
 <?php
 namespace Admin\Controller;
 
-use Admin\Controller\IndexController;
 use Admin\Model\TermTranslation;
 use Admin\Model\Term;
 use Admin\Form\TermTranslationForm;
@@ -42,8 +41,8 @@ class TermTranslationController extends IndexController
     }
 
     /**
-    * This action serves for adding a new object of type Term
-    */
+     * This action serves for adding a new object of type Term
+     */
     public function addAction()
     {
         $this->showForm("Add", null);
@@ -58,20 +57,16 @@ class TermTranslationController extends IndexController
     public function modifyAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
-        try
-        {
+        try {
             $termcategory = $this->getTable("termcategory")->getTermCategory($id);
             $this->view->termcategory = $termcategory;
             $this->addBreadcrumb(array("reference" => "/admin/termtranslation/modify/id/{$termcategory->id}","name" => "Modify term translation &laquo;{$termcategory->name}&raquo;"));
             $this->showForm("Modify", $termcategory);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term translation not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
@@ -86,42 +81,33 @@ class TermTranslationController extends IndexController
      */
     public function showForm($label = '', $termtranslation = null)
     {
-        if($termtranslation == null)
-        {
+        if ($termtranslation == null) {
             $termtranslation = new TermTranslation();
         }
 
         $termTranslations = array();
         $categoryId = (int) $this->getParam("id", 0);
         $terms = $this->getTable("term")->fetchList(false, "termcategory='{$categoryId}'");
-        foreach($this->getTable("termtranslation")->fetchJoin("term", "term.id=termtranslation.term", "language='{$this->session->language}' AND termcategory='{$categoryId}'") as $t)
-        {
+        foreach ($this->getTable("termtranslation")->fetchJoin("term", "term.id=termtranslation.term", "language='{$this->session->language}' AND termcategory='{$categoryId}'") as $t) {
             $termTranslations[$t->term] = $t;
         }
         $form = new TermTranslationForm($termtranslation, $terms, $termTranslations);
         $form->get("submit")->setValue($label);
 
         $this->view->form = $form;
-        if($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             // $form->setInputFilter($termtranslation->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $this->getRequest()->getPost()->toArray();
                 $keys = array_keys($formData);
-                for($i = 0; $i < sizeof($keys) - 2; $i++)
-                {
-                    if(strstr($keys[$i], "translation")!==false)
-                    {
+                for ($i = 0; $i < sizeof($keys) - 2; $i++) {
+                    if (strstr($keys[$i], "translation")!==false) {
                         $termId = substr($keys[$i], 11);
                         $existing = $this->getTable("termtranslation")->fetchList(false, "term='{$termId}' AND language='{$this->session->language}'");
-                        if(sizeof($existing) != 0)
-                        {
+                        if (sizeof($existing) != 0) {
                             $model = $existing->current();
-                        }
-                        else
-                        {
+                        } else {
                             $model = new TermTranslation();
                         }
                         $model->setLanguage($this->session->language);
@@ -134,14 +120,10 @@ class TermTranslationController extends IndexController
                 $this->cache->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
-            }
-            else
-            {
+            } else {
                 $error = '';
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
@@ -155,17 +137,13 @@ class TermTranslationController extends IndexController
     public function deleteAction()
     {
         $id = (int) $this->getParam('id', 0);
-        if(!$id)
-        {
+        if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
-        try
-        {
+        try {
             $this->getTable("termtranslation")->deleteTermTranslation($id);
-        }
-        catch(\Exception $ex)
-        {
+        } catch (\Exception $ex) {
             $this->setErrorNoParam("Term translation not found");
             return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
         }
@@ -188,77 +166,58 @@ class TermTranslationController extends IndexController
         // cache the existing categories to check later
         $categories = $this->getTable("termcategory")->fetchList(false, null, "id ASC");
         $existingCategories = array();
-        if(sizeof($categories) == 0)
-        {
+        if (sizeof($categories) == 0) {
             $category = new TermCategory();
             $category->name = "all terms";
             $category->save();
             $existingCategories[] = $category->id;
-        }
-        else
-        {
-            foreach($categories as $c)
-            {
+        } else {
+            foreach ($categories as $c) {
                 $existingCategories[] = $c->id;
             }
         }
-        if($this->getRequest()->isPost())
-        {
-            if($_FILES["excel"]["size"] > 0)
-            {
+        if ($this->getRequest()->isPost()) {
+            if ($_FILES["excel"]["size"] > 0) {
                 $fileName = $_FILES["excel"]["tmp_name"];
                 $objPHPExcel = \PHPExcel_IOFactory::load($fileName);
                 $numberOfSheets = $objPHPExcel->getSheetCount();
-                for($i = 0; $i < $numberOfSheets; $i ++)
-                {
+                for ($i = 0; $i < $numberOfSheets; $i ++) {
                     $sheet = $objPHPExcel->getSheet($i);
                     $language = $sheet->getCellByColumnAndRow(1, 1)->getCalculatedValue();
-                    if(is_numeric($language) and $language > 0)
-                    {
+                    if (is_numeric($language) and $language > 0) {
                         $row = 4;
                         $termLabel = strtoupper($sheet->getCellByColumnAndRow(2, $row)->getCalculatedValue());
-                        while ($termLabel != "")
-                        {
+                        while ($termLabel != "") {
                             // find the term in the DB
                             $term = null;
                             $terms = $this->getTable("term")->fetchList(false, "name='{$termLabel}'");
-                            if(sizeof($terms) == 0)
-                            {
+                            if (sizeof($terms) == 0) {
                                 // add the term
                                 $categoryId = $sheet->getCellByColumnAndRow(0, $row)->getCalculatedValue();
                                 // make sure category exists if not simply pick the first existing category
-                                if(!in_array($categoryId, $existingCategories)) 
-                                {
+                                if (!in_array($categoryId, $existingCategories)) {
                                     $categoryId = $existingCategories[0];
                                 }
                                 $term = new Term();
                                 $term->setName($termLabel);
                                 $term->setTermCategory($categoryId);
                                 $term = $this->getTable("term")->saveTerm($term);
-                            }
-                            else if(sizeof($terms) == 1)
-                            {
+                            } elseif (sizeof($terms) == 1) {
                                 $term = $terms->current();
-                            }
-                            else
-                            {
+                            } else {
                                 $error = $this->session->TERM . $terms->current()->name . "term translation contains duplicates <br>" . $error;
                                 $term = $terms->current();
                                 $terms->next();
-                                foreach($terms as $t)
-                                {
+                                foreach ($terms as $t) {
                                     $this->getTable("term")->deleteTerm($t->id);
                                 }
                             }
                             // so far we are sure the term exists now we add the translation
                             // first of all try to fetch the translation
                             $translations = $this->getTable("termtranslation")->fetchList(false, "term='{$term->id}' AND language='{$language}'");
-                            if(sizeof($translations) > 0)
-                            {
+                            if (sizeof($translations) > 0) {
                                 $translation = $translations->current();
-                            }
-                            else
-                            {
+                            } else {
                                 $translation = new TermTranslation();
                             }
                             $translation->term = $term->id;
@@ -273,10 +232,11 @@ class TermTranslationController extends IndexController
                 }
             }
         }
-        if($error != "")
+        if ($error != "") {
             $this->cache->warning = $error;
-        else
+        } else {
             $this->cache->success = "Export was successfull";
+        }
         $this->view->setTerminal(true);
         return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
     }
@@ -296,10 +256,8 @@ class TermTranslationController extends IndexController
             ->setDescription("Excel Autoexport");
         $languages = $this->getTable("language")->fetchList();
         $i = 0;
-        foreach($languages as $l)
-        {
-            if($i > 0)
-            {
+        foreach ($languages as $l) {
+            if ($i > 0) {
                 $objPHPExcel->createSheet();
                 $objPHPExcel->setActiveSheetIndex($i);
             }
@@ -316,18 +274,15 @@ class TermTranslationController extends IndexController
             $sheet->setCellValueExplicitByColumnAndRow(2, 3, "term definition (do not change)");
             $sheet->setCellValueExplicitByColumnAndRow(3, 3, "term translation");
             $row = 4;
-            foreach($categories as $c)
-            {
+            foreach ($categories as $c) {
                 $terms = $this->getTable("term")->fetchList(false, "termcategory='{$c->id}'", "name ASC");
-                foreach($terms as $t)
-                {
+                foreach ($terms as $t) {
                     $sheet->setCellValueExplicitByColumnAndRow(0, $row, $c->id, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
                     $sheet->setCellValueExplicitByColumnAndRow(1, $row, $c->name);
                     // $sheet->setCellValueExplicitByColumnAndRow(2, $row, $t->getId());
                     $sheet->setCellValueExplicitByColumnAndRow(2, $row, $t->name);
                     $trs = $this->getTable("termtranslation")->fetchList(false, "term='{$t->id}' AND language='{$l->id}'");
-                    if(sizeof($trs) > 0)
-                    {
+                    if (sizeof($trs) > 0) {
                         $sheet->setCellValueExplicitByColumnAndRow(3, $row, $trs->current()->translation);
                     }
                     $row ++;

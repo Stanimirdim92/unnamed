@@ -51,5 +51,3 @@ class MenuTableFactory implements FactoryInterface
         return new MenuTable($sm, $tg);
     }
 }
-
-?>

@@ -1,7 +1,6 @@
 <?php
 namespace Admin\Model;
 
-use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
@@ -30,35 +29,39 @@ class PacketTable
      */
     public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
     {
-        if($paginated)
-        {
+        if ($paginated) {
             $select = new Select("packet");
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Packet(null, $this->_serviceManager));
             $paginatorAdapter = new DbSelect($select,$this->_tableGateway->getAdapter(),$resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
-        }
-        else
-        {
-            $resultSet = $this->_tableGateway->select(function(Select $select)  use ($where, $order, $limit, $offset)
-            {
-                if($where!=null)
+        } else {
+            $resultSet = $this->_tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
+                if ($where!=null) {
                     $select->where($where);
-                if($order!=null)
+                }
+                if ($order!=null) {
                     $select->order($order);
-                if($limit!=null)
+                }
+                if ($limit!=null) {
                     $select->limit($limit);
-                if($offset!=null)
+                }
+                if ($offset!=null) {
                     $select->offset($offset);
+                }
             });
             $resultSet->buffer();
             return $resultSet;
@@ -77,19 +80,22 @@ class PacketTable
      */
     public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->_tableGateway->select(function(Select $select)  use ($join, $on, $where, $order, $limit, $offset)
-        {
+        $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
             //when joining rename all columns from the joined table in order to avoid name clash
             //this means when both tables have a column id the second table will have id renamed to id1
             $select->join($join, $on, array("id1"=>"id"));
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
         });
         return $resultSet;
     }
@@ -102,8 +108,7 @@ class PacketTable
         $id  = (int) $id;
         $rowset = $this->_tableGateway->select(array('id' => $id));
         $row = $rowset->current();
-        if (!$row) 
-        {
+        if (!$row) {
             throw new \Exception();
         }
         return $row;
@@ -133,18 +138,12 @@ class PacketTable
             'euro' => (float) $packet->euro,
         );
         $id = (int)$packet->id;
-        if ($id == 0) 
-        {
+        if ($id == 0) {
             $this->_tableGateway->insert($data);
-        }
-        else 
-        {
-            if ($this->getPacket($id)) 
-            {
+        } else {
+            if ($this->getPacket($id)) {
                 $this->_tableGateway->update($data, array('id' => $id));
-            }
-            else 
-            {
+            } else {
                 throw new \Exception();
             }
         }
@@ -156,6 +155,6 @@ class PacketTable
         $packet = $this->getPacket($id);
         $clone = $packet->getCopy();
         $this->savePacket($clone);
-		return $clone;
+        return $clone;
     }
 }

@@ -58,27 +58,27 @@ class LanguageForm extends Form
             'class'      => 'language-name',
             'placeholder' => 'Name',
         ));
-        if($options!=null and $options->name)
+        if ($options!=null and $options->name) {
             $elements[0]->setValue($options->name);
+        }
 
         $elements[1] = new Element\Checkbox('active');
         $elements[1]->setLabel('Active');
-        if($options!=null and $options->active)
+        if ($options!=null and $options->active) {
             $elements[1]->setValue($options->active);
+        }
 
         $elements[2] = new Element\Submit('submit');
         $elements[2]->setAttribute('id', 'submitbutton');
 
         $elements[69] = new Element\Csrf('s');
 
-        if($options!=null)
-        {
+        if ($options!=null) {
             $elements[3] = new Element\Hidden('id');
             $elements[3]->setValue($options->id);
         }
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

@@ -11,14 +11,13 @@ class TermTranslationForm extends Form
         $elements = array();
 
         $i = 0;
-        foreach($terms as $a)
-        {
-            if(isset($termTranslations[$a->id]))
+        foreach ($terms as $a) {
+            if (isset($termTranslations[$a->id])) {
                 $translation = $termTranslations[$a->id]->translation;
-            else
+            } else {
                 $translation = '';
-            if(strrpos(strtolower($a->name), '_text') > 0)
-            {
+            }
+            if (strrpos(strtolower($a->name), '_text') > 0) {
                 $elements[$i] = new Element\Textarea('translation' . $a->id);
                 $elements[$i]->setLabel($a->name . ": ");
                 $elements[$i]->setAttributes(array(
@@ -27,9 +26,7 @@ class TermTranslationForm extends Form
                     'class'      => 'termtranslation-name',
                     'placeholder' => 'Term translation',
                 ));
-            }
-            else
-            {
+            } else {
                 $elements[$i] = new Element\Text('translation' . $a->id);
                 $elements[$i]->setLabel($a->name . ": ");
                 $elements[0]->setAttributes(array(
@@ -44,11 +41,11 @@ class TermTranslationForm extends Form
         $elements[$i++]->setAttribute('id', 'submitbutton')->setAttributes(array(
             'id' => 'submitbutton',
             'class' => 'termtranslation-button',
-        ));;
+        ));
+        ;
         $elements[$i] = new Element\Hidden('id');
         $elements[$i]->setValue($options->id);
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

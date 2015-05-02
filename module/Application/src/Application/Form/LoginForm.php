@@ -82,8 +82,7 @@ class LoginForm extends Form
         )));
         $this->setInputFilter($inputFilter);
 
-        foreach($elements as $e)
-        {
+        foreach ($elements as $e) {
             $this->add($e);
         }
     }

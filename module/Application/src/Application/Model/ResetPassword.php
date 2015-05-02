@@ -43,9 +43,9 @@ class ResetPassword
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager = null; 
+    private $_serviceManager = null;
 
     /**
      * @param Int $_id
@@ -126,88 +126,85 @@ class ResetPassword
     }
 
     /**
-    * Set token
-    * @param String $token 
-    */
+     * Set token
+     * @param String $token
+     */
     public function setToken($token = null)
     {
         $this->_token = $token;
     }
 
     /**
-    * Get token
-    * @return String
-    */
+     * Get token
+     * @return String
+     */
     public function getToken()
     {
         return $this->_token;
     }
 
     /**
-    * Set ip
-    * @param String $ip 
-    */
+     * Set ip
+     * @param String $ip
+     */
     public function setIp($ip = null)
     {
         $this->_ip = $ip;
     }
 
     /**
-    * Get ip
-    * @return String
-    */
+     * Get ip
+     * @return String
+     */
     public function getIp()
     {
         return $this->_ip;
     }
 
     /**
-    * Set date
-    * @param Int $date 
-    */
+     * Set date
+     * @param Int $date
+     */
     public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->_date = $date;
     }
 
     /**
-    * Get date
-    * @return Int
-    */
+     * Get date
+     * @return Int
+     */
     public function getDate()
     {
         return $this->_date;
     }
 
     /**
-    * Set user
-    * @param Int $user 
-    */
+     * Set user
+     * @param Int $user
+     */
     public function setUser($user = null)
     {
         $this->_user = $user;
     }
 
     /**
-    * Get user
-    * @return Int
-    */
+     * Get user
+     * @return Int
+     */
     public function getUser()
     {
         return $this->_user;
     }
 
     /**
-    * Get the related object from the DB
-    */
+     * Get the related object from the DB
+     */
     public function getUserObject()
     {
-        try
-        {
+        try {
             return $this->serviceManager->get('UserTable')->getUser($this->_user);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -225,8 +222,7 @@ class ResetPassword
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -244,13 +240,11 @@ class ResetPassword
      */
     public function __sleep()
     {
-      	$skip = array("_serviceManager");
-      	$returnValue = array();
+        $skip = array("_serviceManager");
+        $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -262,7 +256,6 @@ class ResetPassword
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -272,15 +265,12 @@ class ResetPassword
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key => $value)
-        {
-            if (!in_array($key, $skip))
-            {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable)
-        {
+        if ($serializable) {
             return serialize($returnValue);
         }
         return $returnValue;

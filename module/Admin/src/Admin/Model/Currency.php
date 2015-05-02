@@ -15,9 +15,9 @@ class Currency implements InputFilterAwareInterface
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager 
+     * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager; 
+    private $_serviceManager;
 
     /**
      * @param Int $_id
@@ -57,12 +57,10 @@ class Currency implements InputFilterAwareInterface
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
@@ -87,7 +85,7 @@ class Currency implements InputFilterAwareInterface
     
     /**
      * Set name
-     * @param String $name 
+     * @param String $name
      */
     public function setName($name)
     {
@@ -105,7 +103,7 @@ class Currency implements InputFilterAwareInterface
      
     /**
      * Set active
-     * @param Boolean $active 
+     * @param Boolean $active
      */
     public function setActive($active)
     {
@@ -123,7 +121,7 @@ class Currency implements InputFilterAwareInterface
 
     /**
      * Set symbol
-     * @param String $symbol 
+     * @param String $symbol
      */
     public function setSymbol($symbol)
     {
@@ -153,8 +151,7 @@ class Currency implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -172,13 +169,11 @@ class Currency implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-      	$skip = array("_serviceManager");
-      	$returnValue = array();
+        $skip = array("_serviceManager");
+        $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -199,10 +194,8 @@ class Currency implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -224,8 +217,7 @@ class Currency implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) 
-        {
+        if (!$this->_inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array('name' => 'id', 'required' => false, 'filters' => array(array('name' => 'Int'))));
 
@@ -235,7 +227,7 @@ class Currency implements InputFilterAwareInterface
                 "filters"=> array(array('name' => 'StringTrim')),));
             $inputFilter->add(array(
                 "name"=>"active",
-                "required" => false, 'filters' => array(array('name' => 'Int'))));
+                "required" => false, 'filters' => array(array('name' => 'Int')), ));
             $inputFilter->add(array(
                 "name"=>"symbol",
                 "required" => true,));

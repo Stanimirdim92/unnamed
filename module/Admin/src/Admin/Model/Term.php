@@ -7,15 +7,15 @@ use Zend\InputFilter\InputFilterInterface;
 
 class Term implements InputFilterAwareInterface
 {
-  	private $_inputFilter;
+    private $_inputFilter;
     
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access
      *
      * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager; 
-	
+    private $_serviceManager;
+    
     /**
      * @param Int $_id
      * @return int
@@ -46,58 +46,56 @@ class Term implements InputFilterAwareInterface
         $this->_termcategory = (isset($data['termcategory'])) ? $data['termcategory'] : null;
     }
 
-	/**
+    /**
      * constructor
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
-	
-	/**
-	* Set name
-	* @param String $name 
-	*/
-	public function setName($name)
-	{
-		$this->_name = (String) $name;
-	}
+    
+    /**
+     * Set name
+     * @param String $name
+     */
+    public function setName($name)
+    {
+        $this->_name = (String) $name;
+    }
 
-	/**
-	* Get name
-	* @return null|String
-	*/
-	public function getName()
-	{
-		return $this->_name;
-	}
+    /**
+     * Get name
+     * @return null|String
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
      
-	/**
-	* Set TermCategory
-	* @param int $termcategory
-	*/
-	public function setTermCategory($termcategory)
-	{
-		$this->_termcategory = (int) $termcategory;
-	}
+    /**
+     * Set TermCategory
+     * @param int $termcategory
+     */
+    public function setTermCategory($termcategory)
+    {
+        $this->_termcategory = (int) $termcategory;
+    }
 
-	/**
-	* Get termcategory
-	* @return null|int
-	*/
-	public function getTermCategory()
-	{
-		return $this->_termcategory;
-	}
+    /**
+     * Get termcategory
+     * @return null|int
+     */
+    public function getTermCategory()
+    {
+        return $this->_termcategory;
+    }
  
-	/**
+    /**
      * magic getter
      */
     public function __get($property)
@@ -110,8 +108,7 @@ class Term implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -132,10 +129,8 @@ class Term implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -147,7 +142,6 @@ class Term implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -157,10 +151,8 @@ class Term implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -181,20 +173,19 @@ class Term implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->inputFilter) 
-        {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name' => 'id',
-                'required' => false, 
+                'required' => false,
                 'filters' => array(
-                    array('name' => 'Int')
+                    array('name' => 'Int'),
                 ),
             ));
 
-			$inputFilter->add(array(
-				"name"=>"name",
-                'required' => true, 
+            $inputFilter->add(array(
+                "name"=>"name",
+                'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
@@ -209,9 +200,9 @@ class Term implements InputFilterAwareInterface
                     array('name' => 'NotEmpty'),
                 ),
             ));
-			$inputFilter->add(array(
-				"name"=>"termcategory",
-                'required' => true, 
+            $inputFilter->add(array(
+                "name"=>"termcategory",
+                'required' => true,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
@@ -242,6 +233,6 @@ class Term implements InputFilterAwareInterface
      */
     public function toString()
     {
-		return $this->_name;
+        return $this->_name;
     }
 }

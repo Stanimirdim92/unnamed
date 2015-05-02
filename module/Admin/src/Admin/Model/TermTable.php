@@ -30,35 +30,39 @@ class TermTable
      */
     public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
     {
-        if($paginated)
-        {
+        if ($paginated) {
             $select = new Select("term");
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Term());
             $paginatorAdapter = new DbSelect($select,$this->tableGateway->getAdapter(),$resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
-        }
-        else
-        {
-            $resultSet = $this->tableGateway->select(function(Select $select)  use ($where, $order, $limit, $offset)
-            {
-                if($where!=null)
+        } else {
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
+                if ($where!=null) {
                     $select->where($where);
-                if($order!=null)
+                }
+                if ($order!=null) {
                     $select->order($order);
-                if($limit!=null)
+                }
+                if ($limit!=null) {
                     $select->limit($limit);
-                if($offset!=null)
+                }
+                if ($offset!=null) {
                     $select->offset($offset);
+                }
             });
             $resultSet->buffer();
             return $resultSet;
@@ -77,17 +81,20 @@ class TermTable
      */
     public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->tableGateway->select(function(Select $select)  use ($join, $on, $where, $order, $limit, $offset)
-        {
+        $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
             $select->join($join, $on);
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
         });
         return $resultSet;
     }
@@ -97,8 +104,7 @@ class TermTable
         $id  = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
         $row = $rowset->current();
-        if (!$row)
-        {
+        if (!$row) {
             throw new \Exception();
         }
         return $row;
@@ -112,24 +118,18 @@ class TermTable
     public function saveTerm(Term $term)
     {
         $data = array(
-    		'name' => (string) $term->name,
-    		'termcategory' => (int) $term->termcategory,
+            'name' => (string) $term->name,
+            'termcategory' => (int) $term->termcategory,
         );
         
         $id = (int)$term->id;
-        if ($id == 0)
-        {
+        if ($id == 0) {
             $this->tableGateway->insert($data);
             $term->id = $this->tableGateway->lastInsertValue;
-        }
-        else
-        {
-            if ($this->getTerm($id))
-            {
+        } else {
+            if ($this->getTerm($id)) {
                 $this->tableGateway->update($data, array('id' => $id));
-            }
-            else
-            {
+            } else {
                 throw new \Exception();
             }
         }

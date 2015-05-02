@@ -13,7 +13,7 @@ class TermTranslation implements InputFilterAwareInterface
      *
      * @var $_serviceManager ServiceManager
      */
-    private $_serviceManager; 
+    private $_serviceManager;
   
     /**
      * @param Int $_id
@@ -50,7 +50,6 @@ class TermTranslation implements InputFilterAwareInterface
         $this->_language = (isset($data['language'])) ? $data['language'] : null;
         $this->_translation = (isset($data['translation'])) ? $data['translation'] : null;
         $this->_term = (isset($data['term'])) ? $data['term'] : null;
-
     }
 
     /**
@@ -58,56 +57,54 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __construct(array $options = null, ServiceManager $sm = null)
     {
-        if (is_array($options) && $options instanceof Traversable)
-        {
+        if (is_array($options) && $options instanceof Traversable) {
             $this->exchangeArray($options);
         }
-        if($sm != null)
-        {
+        if ($sm != null) {
             $this->_serviceManager = $sm;
         }
     }
 
     /**
-    * Set Language
-    * @param int $ 
-    */
+     * Set Language
+     * @param int $
+     */
     public function setLanguage($language)
     {
         $this->_language = (int) $language;
     }
 
     /**
-    * Get language
-    * @return null|int
-    */
+     * Get language
+     * @return null|int
+     */
     public function getLanguage()
     {
         return $this->_language;
     }
      
     /**
-    * Set translation
-    * @param String $translation 
-    */
+     * Set translation
+     * @param String $translation
+     */
     public function setTranslation($translation)
     {
         $this->_translation = (String) $translation;
     }
 
     /**
-    * Get translation
-    * @return null|String
-    */
+     * Get translation
+     * @return null|String
+     */
     public function getTranslation()
     {
         return $this->_translation;
     }
      
     /**
-    * Set Term
-    * @param int $ 
-    */
+     * Set Term
+     * @param int $
+     */
     public function setTerm($term)
     {
         $this->_term = (int) $term;
@@ -119,9 +116,9 @@ class TermTranslation implements InputFilterAwareInterface
     }
 
     /**
-    * Get term
-    * @return null|int
-    */
+     * Get term
+     * @return null|int
+     */
     public function getTerm()
     {
         return $this->_term;
@@ -140,8 +137,7 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property))
-        {
+        if (property_exists($this, '_'. $property)) {
             $this->{'_'. $property} = $value;
         }
     }
@@ -162,10 +158,8 @@ class TermTranslation implements InputFilterAwareInterface
         $skip = array("_serviceManager");
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -177,7 +171,6 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __wakeup()
     {
-        
     }
     
     /**
@@ -187,10 +180,8 @@ class TermTranslation implements InputFilterAwareInterface
     {
         $returnValue = array();
         $data = get_class_vars(get_class($this));
-        foreach($data as $key=>$value)
-        {
-            if (!in_array($key,$skip))
-            {
+        foreach ($data as $key=>$value) {
+            if (!in_array($key,$skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -211,28 +202,27 @@ class TermTranslation implements InputFilterAwareInterface
     
     public function getInputFilter()
     {
-        if (!$this->inputFilter) 
-        {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
             $inputFilter->add(array(
                 'name' => 'id',
-                'required' => false, 
+                'required' => false,
                 'filters' => array(
-                    array('name' => 'Int')
+                    array('name' => 'Int'),
                 ),
             ));
 
             $inputFilter->add(array(
                 'name' => 'language',
-                'required' => false, 
+                'required' => false,
                 'filters' => array(
-                    array('name' => 'Int')
+                    array('name' => 'Int'),
                 ),
             ));
 
-           $inputFilter->add(array(
+            $inputFilter->add(array(
                 "name"=>"translation",
-                'required' => false, 
+                'required' => false,
                 'filters' => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),
@@ -248,11 +238,11 @@ class TermTranslation implements InputFilterAwareInterface
                 ),
             ));
 
-           $inputFilter->add(array(
+            $inputFilter->add(array(
                 'name' => 'term',
-                'required' => false, 
+                'required' => false,
                 'filters' => array(
-                    array('name' => 'Int')
+                    array('name' => 'Int'),
                 ),
             ));
             $this->inputFilter = $inputFilter;

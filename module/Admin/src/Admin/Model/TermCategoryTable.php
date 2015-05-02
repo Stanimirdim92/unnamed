@@ -30,35 +30,39 @@ class TermCategoryTable
      */
     public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
     {
-        if($paginated)
-        {
+        if ($paginated) {
             $select = new Select("termcategory");
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
             $paginatorAdapter = new DbSelect($select,$this->tableGateway->getAdapter(),$resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
-        }
-        else
-        {
-            $resultSet = $this->tableGateway->select(function(Select $select)  use ($where, $order, $limit, $offset)
-            {
-                if($where!=null)
+        } else {
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
+                if ($where!=null) {
                     $select->where($where);
-                if($order!=null)
+                }
+                if ($order!=null) {
                     $select->order($order);
-                if($limit!=null)
+                }
+                if ($limit!=null) {
                     $select->limit($limit);
-                if($offset!=null)
+                }
+                if ($offset!=null) {
                     $select->offset($offset);
+                }
             });
             $resultSet->buffer();
             return $resultSet;
@@ -71,7 +75,7 @@ class TermCategoryTable
      */
     public function getList($where, $order, $limit, $offset)
     {
-      	return $this->fetchList($where, $order, $limit, $offset);
+        return $this->fetchList($where, $order, $limit, $offset);
     }
 
     /**
@@ -86,17 +90,20 @@ class TermCategoryTable
      */
     public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->tableGateway->select(function(Select $select)  use ($join, $on, $where, $order, $limit, $offset)
-        {
+        $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
             $select->join($join, $on);
-            if($where!=null)
+            if ($where!=null) {
                 $select->where($where);
-            if($order!=null)
+            }
+            if ($order!=null) {
                 $select->order($order);
-            if($limit!=null)
+            }
+            if ($limit!=null) {
                 $select->limit($limit);
-            if($offset!=null)
+            }
+            if ($offset!=null) {
                 $select->offset($offset);
+            }
         });
         return $resultSet;
     }
@@ -106,8 +113,7 @@ class TermCategoryTable
         $id  = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
         $row = $rowset->current();
-        if (!$row) 
-        {
+        if (!$row) {
             throw new \Exception();
         }
         return $row;
@@ -121,23 +127,17 @@ class TermCategoryTable
     public function saveTermCategory(TermCategory $termcategory)
     {
         $data = array(
-		'name' => (string) $termcategory->name,
+        'name' => (string) $termcategory->name,
 
         );
         $id = (int)$termcategory->id;
-        if ($id == 0) 
-        {
+        if ($id == 0) {
             $this->tableGateway->insert($data);
             $termcategory->id = $this->tableGateway->lastInsertValue;
-        }
-        else 
-        {
-            if ($this->getTermCategory($id)) 
-            {
+        } else {
+            if ($this->getTermCategory($id)) {
                 $this->tableGateway->update($data, array('id' => $id));
-            }
-            else 
-            {
+            } else {
                 throw new \Exception();
             }
         }

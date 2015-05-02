@@ -113,23 +113,21 @@ class AdministratorController extends \Admin\Controller\IndexController
     protected function searchAction()
     {
         $search = $this->getParam('ajaxsearch');
-        if (isset($search) && $this->getRequest()->isXmlHttpRequest())
-        {
+        if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
             $this->view->setTerminal(true);
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
             $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
             $json = array();
-            foreach ($results as $result)
-            {
+            foreach ($results as $result) {
                 $json[] = Json::encode($result);
             }
             return new JsonModel(array(
-                'ajaxsearch' => $json
+                'ajaxsearch' => $json,
             ));
         }
     }
 
-   /**
+    /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label
@@ -137,31 +135,27 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     private function showForm($label='Add administrator', Administrator $administrator = null)
     {
-        if($administrator==null) $administrator = new Administrator(array(), null);
+        if ($administrator==null) {
+            $administrator = new Administrator(array(), null);
+        }
         $form = new \Admin\Form\AdministratorForm($administrator);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($administrator->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
 
                 $user = $this->getTable("user")->getUser($formData['user']);
                 // valid user id
-                if (count($user) == 1)
-                {
+                if (count($user) == 1) {
                     $adminExist = $this->getTable("administrator")->getAdministrator($user->id);
-                    if (count($adminExist) != 0)
-                    {
+                    if (count($adminExist) != 0) {
                         $this->cache->error = $user->toString()." is already administrator";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-                    }
-                    else
-                    {
+                    } else {
                         $user->setAdmin(1);
                         $administrator->exchangeArray($formData);
                         $this->getTable("user")->saveUser($user);
@@ -170,20 +164,14 @@ class AdministratorController extends \Admin\Controller\IndexController
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
-                }
-                else
-                {
+                } else {
                     $this->setErrorNoParam(IndexController::NO_ID);
                     return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                 }
-            }
-            else
-            {
+            } else {
                 $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }

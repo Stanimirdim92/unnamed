@@ -51,5 +51,3 @@ class AdministratorTableFactory implements FactoryInterface
         return new AdministratorTable($sm, $tg);
     }
 }
-
-?>

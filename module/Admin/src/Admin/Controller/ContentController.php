@@ -66,27 +66,22 @@ class ContentController extends \Admin\Controller\IndexController
     public function indexAction()
     {
         $type = (int) $this->getParam("type", 0);
-        if ($type === 1)
-        {
+        if ($type === 1) {
             // fetch all contents that have value content.menu=0 and type=1
             $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", null, null, "id ASC");
             $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null,  "content.date DESC");
         }
-        if ($type === 0)
-        {
+        if ($type === 0) {
             // fetch all contents that have value content.menu=0 and type=0
             $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", null, null, "id ASC");
             $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
         $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
-        if (count($contentsWithoutMenu) > 0)
-        {
+        if (count($contentsWithoutMenu) > 0) {
             $menuReport = array();
-            foreach ($contentsWithoutMenu as $cwm)
-            {
-                if (!$cwm->getMenuObject())
-                {
+            foreach ($contentsWithoutMenu as $cwm) {
+                if (!$cwm->getMenuObject()) {
                     $menuReport[] = $cwm;
                 }
             }
@@ -158,23 +153,21 @@ class ContentController extends \Admin\Controller\IndexController
      */
     private function showForm($label = 'Add', Content $content = null)
     {
-        if($content==null) $content = new Content(array(), null);
+        if ($content==null) {
+            $content = new Content(array(), null);
+        }
 
         $orderMenus = $menus = $submenus = array();
         $menus = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
-        foreach($menus as $m)
-        {
+        foreach ($menus as $m) {
             $m->setServiceManager(null);
             $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => $m->getId(), "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
         }
-        foreach($menus as $menu)
-        {
+        foreach ($menus as $menu) {
             $menu->setServiceManager(null);
             $orderMenus[] = $menu;
-            if(isset($submenus[$menu->id]) && count($submenus[$menu->id]) > 0)
-            {
-                foreach($submenus[$menu->id] as $sub)
-                {
+            if (isset($submenus[$menu->id]) && count($submenus[$menu->id]) > 0) {
+                foreach ($submenus[$menu->id] as $sub) {
                     $orderMenus[] = $sub;
                 }
             }
@@ -182,17 +175,13 @@ class ContentController extends \Admin\Controller\IndexController
         $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "id ASC"));
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
-        if ($this->getRequest()->isPost())
-        {
+        if ($this->getRequest()->isPost()) {
             $form->setInputFilter($content->getInputFilter());
             $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(),$this->getRequest()->getFiles()->toArray()));
-            if ($form->isValid())
-            {
+            if ($form->isValid()) {
                 $formData = $form->getData();
-                if(isset($formData['removepreview']) && $formData['removepreview'] && $content != null)
-                {
-                    if (!is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview()))
-                    {
+                if (isset($formData['removepreview']) && $formData['removepreview'] && $content != null) {
+                    if (!is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview())) {
                         $this->cache->error = "Image doesn't exist in that directory";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
@@ -200,60 +189,45 @@ class ContentController extends \Admin\Controller\IndexController
                     unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->getPreview());
                     $content->setPreview("");
                 }
-                if($formData['preview']['name'] != null)
-                {
+                if ($formData['preview']['name'] != null) {
                     $adapter = new \Zend\File\Transfer\Adapter\Http();
                     $adapter->setDestination($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/');
-                    if($adapter->isValid('preview'))
-                    {
+                    if ($adapter->isValid('preview')) {
                         // remove the old image from the directory if exists
-                        if($content->preview != null && is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview()))
-                        {
+                        if ($content->preview != null && is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview())) {
                             unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview());
                         }
                         $param = $this->params()->fromFiles('preview');
                         $adapter->receive($param['name']);
                         $formData['preview'] = $param['name'];
-                    }
-                    else
-                    {
+                    } else {
                         $error = array();
-                        foreach ($adapter->getMessages() as $key => $value)
-                        {
+                        foreach ($adapter->getMessages() as $key => $value) {
                             $error[] = $value;
                         }
                         $this->setErrorNoParam($error);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
                     }
-                }
-                else
-                {
+                } else {
                     $formData['preview'] = $content->getPreview();
                 }
                 $content->exchangeArray($formData);
 
                 // db table menu is empty, but we are still able to post contents.
                 // if so, simply show those types of contents at the bottom of the table from the index page
-                if (!$formData["menu"])
-                {
+                if (!$formData["menu"]) {
                     $content->setMenu(0);
-                }
-                else
-                {
+                } else {
                     $content->setMenu($formData['menu']);
                 }
                 $this->getTable("content")->saveContent($content);
                 $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
-            }
-            else
-            {
+            } else {
                 $error = array();
-                foreach($form->getMessages() as $msg)
-                {
-                    foreach ($msg as $key => $value)
-                    {
+                foreach ($form->getMessages() as $msg) {
+                    foreach ($msg as $key => $value) {
                         $error[] = $value;
                     }
                 }
