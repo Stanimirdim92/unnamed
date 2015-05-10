@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b33e358b6440dddb03a08e8ef75832da",
+    "hash": "dbb51c7daf5b70191a58caf9534a8a9c",
     "packages": [
         {
             "name": "bjyoungblood/bjy-profiler",
@@ -53,6 +53,44 @@
                 "zf2"
             ],
             "time": "2014-09-04 01:22:02"
+        },
+        {
+            "name": "evandotpro/edp-module-layouts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EvanDotPro/EdpModuleLayouts.git",
+                "reference": "1e8947ae68fe126e651fe781aa84aae5632c3023"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EvanDotPro/EdpModuleLayouts/zipball/1e8947ae68fe126e651fe781aa84aae5632c3023",
+                "reference": "1e8947ae68fe126e651fe781aa84aae5632c3023",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Evan Coury",
+                    "email": "me@evancoury.com",
+                    "homepage": "http://blog.evan.pro/"
+                }
+            ],
+            "description": "EdpModuleLayouts is very simple ZF2 module for making module-specific layouts insanely easy.",
+            "homepage": "https://github.com/EvanDotPro/EdpModuleLayouts",
+            "keywords": [
+                "zf2"
+            ],
+            "time": "2013-08-20 01:14:42"
         },
         {
             "name": "zendframework/zend-developer-tools",
@@ -290,7 +328,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "zendframework/zend-developer-tools": 20,
-        "bjyoungblood/bjy-profiler": 20
+        "bjyoungblood/bjy-profiler": 20,
+        "evandotpro/edp-module-layouts": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
