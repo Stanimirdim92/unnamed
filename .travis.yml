@@ -1,0 +1,45 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7
+  - hhvm
+
+install:
+  - sudo apt-get install parallel
+  - sudo apt-get install nodejs npm
+  - npm install -g bower
+  - /home/travis/.phpenv/versions/$TRAVIS_PHP_VERSION/bin/composer self-update
+  - composer install --prefer-source
+  - bower install
+
+before_script:
+  - mkdir -p build/coverage
+  - mkdir -p build/logs
+  - mysql -e 'create database IF NOT EXISTS xj;' -uroot
+  - mysql -u root xj < data/sql/xj.sql
+  - cp config/autoload/local.php.dist config/autoload/local.php
+  - php -S localhost:8000 -t public/ &
+  - vendor/bin/phantomjs --webdriver=4444 && PID=$! &
+  - sleep 1
+
+script:
+  - ls -d module/* | parallel --gnu --keep-order 'echo "Running {} CS checks"; ./vendor/bin/php-cs-fixer fix {} -v --dry-run --config-file=.php_cs;' || exit 1
+  - ls -d module/*/test/PHPUnit | parallel --gnu --keep-order 'echo "Running {} tests"; ./vendor/bin/phpunit -c {}/phpunit.xml;' || exit 1
+  - cd module && for i in $(ls -d *); do ./../vendor/bin/codecept --config=${i%%/}/test/Codeception/codeception.yml run acceptance; done
+  - cd ..
+
+after_script:
+  - php vendor/bin/phpcov merge --clover build/logs/clover.xml build/coverage/
+  - php vendor/bin/coveralls -v --exclude-no-stmt
+
+notifications:
+  email: true
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: 7
+    - php: hhvm
