@@ -39,7 +39,6 @@ if (is_dir('vendor/zendframework/zendframework/library')) {
 if ($zf2Path !== false) {
     if (isset($loader)) {
         $loader->add('Zend', $zf2Path);
-        $loader->add('ZendXml', $zf2Path);
     } else {
         include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
         Zend\Loader\AutoloaderFactory::factory(array(
