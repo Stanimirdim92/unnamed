@@ -1,36 +1,17 @@
 filter:
-    excluded_paths:
-        - 'vendor/*'
-checks:
-    php: true
-coding_style:
-    php:
-        spaces:
-            general:
-                linefeed_character: newline
-            around_operators:
-                equality: false
-                concatenation: false
-        braces:
-            classes_functions:
-                class: undefined
-                function: undefined
-                closure: undefined
-            if:
-                opening: undefined
-            for:
-                opening: undefined
-            while:
-                opening: undefined
-            do_while:
-                opening: undefined
-            switch:
-                opening: undefined
-            try:
-                opening: undefined
-        upper_lower_casing:
-            keywords:
-                general: undefined
-            constants:
-                true_false_null: undefined
-build: true
+    excluded_paths: [vendor/*, tests/*]
+before_commands:
+    - 'composer install --dev --prefer-source'
+tools:
+    external_code_coverage: true
+    php_mess_detector: true
+    php_code_sniffer: true
+    sensiolabs_security_checker: true
+    php_code_coverage: true
+    php_pdepend: true
+    php_loc:
+        enabled: true
+        excluded_dirs: [vendor, tests]
+    php_cpd:
+        enabled: true
+        excluded_dirs: [vendor, tests]
