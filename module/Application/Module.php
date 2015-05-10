@@ -110,6 +110,7 @@ class Module implements
         $em = $e->getApplication()->getEventManager();
         $sm = $e->getApplication()->getServiceManager();
 
+        $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'setModuleLayouts']);
         $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
             return $this->logError($sm->get('ApplicationErrorHandling'), $e, $sm);
@@ -185,6 +186,18 @@ class Module implements
         $headTitleHelper->append('ZendPress'); // must be set from db
         $headTitleHelper->setSeparator(' - ');
         $headTitleHelper->append($action);
+    }
+
+    /**
+     * Handle different layouts for each module
+     */
+    public function setModuleLayouts(MvcEvent $e)
+    {
+        $moduleNamespace = substr(get_class($e->getTarget()), 0, strpos(get_class($e->getTarget()), '\\'));
+        $config = $e->getApplication()->getServiceManager()->get('Config');
+        if (isset($config['module_layouts'][$moduleNamespace])) {
+            $e->getTarget()->layout($config['module_layouts'][$moduleNamespace]);
+        }
     }
 
     /**

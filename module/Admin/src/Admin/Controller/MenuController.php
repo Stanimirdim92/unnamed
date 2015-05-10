@@ -64,6 +64,7 @@ class MenuController extends \Admin\Controller\IndexController
      * This action shows the list of all (or filtered) Menu objects
      */
     public function indexAction()
+    {
         $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent",], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
         if (count($menu) > 0) {
             $submenus = $menus = [];

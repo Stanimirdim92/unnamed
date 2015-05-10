@@ -315,24 +315,26 @@ class IndexController extends AbstractActionController
     /**
      * This function will generate all meta tags needed for SEO optimisation.
      *
-     * @param  Pdo\Result|Content $obj
+     * @param  Pdo\Result|Content $content
      * @return void
      */
-    protected function setMetaTags($obj = null)
+    protected function setMetaTags($content = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
-        if (!empty($obj)) {
+        if (!empty($content)) {
             /**
              * If there is a menu attached to this content, get its SEO metadata
              */
-            if ($obj->current()->getMenuObject() instanceof \Admin\Model\Menu) {
-                $description = $obj->current()->getMenuObject()->getDescription();
-                $keywords = $obj->current()->getMenuObject()->getKeywords();
+            if ($content->current()->getMenu() > 0) {
+                $isMenuObject = $content->current()->getMenuObject();
+                $description = $isMenuObject->getDescription();
+                $keywords = $isMenuObject->getKeywords();
             }
-            $text = $obj->current()->getText();
-            $preview = $obj->current()->getPreview();
-            $title = $obj->current()->getTitle();
+
+            $text = $content->current()->getText();
+            $preview = $content->current()->getPreview();
+            $title = $content->current()->getTitle();
         }
 
         // must be set from db

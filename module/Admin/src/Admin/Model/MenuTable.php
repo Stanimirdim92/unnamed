@@ -194,7 +194,7 @@ class MenuTable
         if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find menu");
         }
-        return $rowset;
+        return $rowset->current();
     }
 
     /**

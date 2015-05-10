@@ -12,8 +12,7 @@
         "php": ">=5.4",
         "zendframework/zendframework": "2.4.*",
         "zendframework/zend-developer-tools": "dev-master",
-        "bjyoungblood/bjy-profiler": "dev-master",
-        "evandotpro/edp-module-layouts": "dev-master"
+        "bjyoungblood/bjy-profiler": "dev-master"
     },
     "suggest": {
         "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
