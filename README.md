@@ -1,3 +1,5 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/b/StanimirDim92/zend-boilerplate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/b/StanimirDim92/zend-boilerplate/?branch=master)
+
 # README #
 
 This README would normally document whatever steps are necessary to get your application up and running.
