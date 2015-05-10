@@ -44,14 +44,16 @@ class NewsController extends \Application\Controller\IndexController
 
     public function newsAction()
     {
-        $post = (string) $this->getParam("post", null);
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
+        $post = (string) $escaper->escapeUrl($this->getParam("post"));
+
         if (!empty($post)) {
-            $new = $this->getTable("content")->fetchList(false, array("title", "text", "date", "preview"), array("type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->langTranslation), "AND", null, "date DESC");
+            $new = $this->getTable("content")->fetchList(false, ["title", "text", "date", "preview"], ["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->langTranslation], "AND", null, "date DESC");
             $this->view->new = $new->current();
             $this->setMetaTags($new);
         } else {
-            $news = $this->getTable("content")->fetchList(true, array("title", "titleLink", "text", "date", "preview"), array("type" => 1, "menu" => 0, "language" => $this->langTranslation), "AND", null, "date DESC");
-            $news->setCurrentPageNumber((int)$this->params('page', 1));
+            $news = $this->getTable("content")->fetchList(true, ["title", "titleLink", "text", "date", "preview"], ["type" => 1, "menu" => 0, "language" => $this->langTranslation], "AND", null, "date DESC");
+            $news->setCurrentPageNumber((int)$this->getParam('page', 1));
             $news->setItemCountPerPage(10);
             $this->view->news = $news;
         }

@@ -58,7 +58,7 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/administrator", "name"=>"Administrators"));
+        $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>"Administrators"]);
         parent::onDispatch($e);
     }
 
@@ -68,7 +68,7 @@ class AdministratorController extends \Admin\Controller\IndexController
     public function indexAction()
     {
         $paginator = $this->getTable("administrator")->fetchList(true);
-        $paginator->setCurrentPageNumber((int)$this->params("page",1));
+        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
         $paginator->setItemCountPerPage(15);
         $this->view->paginator = $paginator;
         return $this->view;
@@ -80,7 +80,7 @@ class AdministratorController extends \Admin\Controller\IndexController
     public function addAction()
     {
         $this->showForm("Add administrator", null);
-        $this->addBreadcrumb(array("reference"=>"/admin/administrator/add", "name"=>"Add new administrator"));
+        $this->addBreadcrumb(["reference"=>"/admin/administrator/add", "name"=>"Add new administrator"]);
         return $this->view;
     }
 
@@ -92,7 +92,7 @@ class AdministratorController extends \Admin\Controller\IndexController
     {
         $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0));
         $this->view->administrator = $administrator;
-        $this->addBreadcrumb(array("reference"=>"/admin/administrator/modify/id/{$administrator->user}", "name"=>"Modify administrator"));
+        $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/id/{$administrator->user}", "name"=>"Modify administrator"]);
         $this->showForm("Modify administrator", $administrator);
         return $this->view;
     }
@@ -107,7 +107,7 @@ class AdministratorController extends \Admin\Controller\IndexController
         $this->getTable("user")->saveUser($user);
         $this->getTable("administrator")->deleteAdministrator($this->getParam('id', 0));
         $this->cache->success = "Administrator was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
     protected function searchAction()
@@ -117,13 +117,13 @@ class AdministratorController extends \Admin\Controller\IndexController
             $this->view->setTerminal(true);
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
             $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
-            $json = array();
+            $json = [];
             foreach ($results as $result) {
                 $json[] = Json::encode($result);
             }
-            return new JsonModel(array(
+            return new JsonModel([
                 'ajaxsearch' => $json,
-            ));
+            ]);
         }
     }
 
@@ -136,7 +136,7 @@ class AdministratorController extends \Admin\Controller\IndexController
     private function showForm($label='Add administrator', Administrator $administrator = null)
     {
         if ($administrator==null) {
-            $administrator = new Administrator(array(), null);
+            $administrator = new Administrator([], null);
         }
         $form = new \Admin\Form\AdministratorForm($administrator);
         $form->get("submit")->setValue($label);
@@ -154,7 +154,7 @@ class AdministratorController extends \Admin\Controller\IndexController
                     if (count($adminExist) != 0) {
                         $this->cache->error = $user->toString()." is already administrator";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     } else {
                         $user->setAdmin(1);
                         $administrator->exchangeArray($formData);
@@ -162,21 +162,21 @@ class AdministratorController extends \Admin\Controller\IndexController
                         $this->getTable("administrator")->saveAdministrator($administrator);
                         $this->cache->success = "Administrator was successfully saved";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     }
                 } else {
                     $this->setErrorNoParam(IndexController::NO_ID);
-                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                 }
             } else {
-                $error = array();
+                $error = [];
                 foreach ($form->getMessages() as $msg) {
                     foreach ($msg as $key => $value) {
                         $error = $value;
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             }
         }
     }

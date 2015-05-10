@@ -43,100 +43,100 @@ use Zend\ServiceManager\ServiceManager;
 class Menu implements InputFilterAwareInterface
 {
     /**
-     * @var null $_inputFilter inputFilter
+     * @var null $inputFilter inputFilter
      */
-    private $_inputFilter = null;
+    private $inputFilter = null;
 
     /**
-     * @var null $_serviceManager ServiceManager
+     * @var null $serviceManager ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_id = 0;
+    private $id = 0;
 
     /**
-     * @var null $_caption
+     * @var null $caption
      * @return string
      */
-    private $_caption = null;
+    private $caption = null;
 
     /**
-     * @var Int $_menuOrder
+     * @var Int $menuOrder
      * @return int
      */
-    private $_menuOrder = 0;
+    private $menuOrder = 0;
 
     /**
-     * @var null $_language
+     * @var null $language
      * @return int
      */
-    private $_language = 1;
+    private $language = 1;
 
     /**
-     * @var Int $_parent
+     * @var Int $parent
      * @return int
      */
-    private $_parent = 0;
+    private $parent = 0;
 
     /**
-     * @var null $_keywords
+     * @var null $keywords
      * @return string
      */
-    private $_keywords = null;
+    private $keywords = null;
 
     /**
-     * @var null $_description
+     * @var null $description
      * @return string
      */
-    private $_description = null;
+    private $description = null;
 
     /**
-     * @var Int $_menutype
+     * @var Int $menutype
      * @return int
      */
-    private $_menutype = 0;
+    private $menutype = 0;
 
     /**
-     * @var Int $_footercolumn
+     * @var Int $footercolumn
      * @return int
      */
-    private $_footercolumn = 0;
+    private $footercolumn = 0;
 
     /**
-     * @var null $_id
+     * @var null $id
      * @return string
      */
-    private $_menulink = null;
-    
+    private $menulink = null;
+
     /**
      * @param null $sm ServiceManager
      * @return ServiceManager|null
      */
     public function setServiceManager(ServiceManager $sm = null)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data = array())
+    public function exchangeArray(array $data = [])
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : $this->_id;
-        $this->_caption = (isset($data['caption'])) ? $data['caption'] : $this->_caption;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->_menuOrder;
-        $this->_language = (isset($data['language'])) ? $data['language'] : $this->_language;
-        $this->_parent = (isset($data['parent'])) ? $data['parent'] : $this->_parent;
-        $this->_keywords = (isset($data['keywords'])) ? $data['keywords'] : $this->_keywords;
-        $this->_description = (isset($data['description'])) ? $data['description'] : $this->_description;
-        $this->_menutype = (isset($data['menutype'])) ? $data['menutype'] : $this->_menutype;
-        $this->_footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->_footercolumn;
-        $this->_menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->_menulink;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->id;
+        $this->caption = (isset($data['caption'])) ? $data['caption'] : $this->caption;
+        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->menuOrder;
+        $this->language = (isset($data['language'])) ? $data['language'] : $this->language;
+        $this->parent = (isset($data['parent'])) ? $data['parent'] : $this->parent;
+        $this->keywords = (isset($data['keywords'])) ? $data['keywords'] : $this->keywords;
+        $this->description = (isset($data['description'])) ? $data['description'] : $this->description;
+        $this->menutype = (isset($data['menutype'])) ? $data['menutype'] : $this->menutype;
+        $this->footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->footercolumn;
+        $this->menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->menulink;
     }
 
     /**
@@ -145,37 +145,37 @@ class Menu implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = array(), ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceManager $sm = null)
     {
         $this->exchangeArray($options);
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId($id = 0)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
-    
-    
+
+
     /**
      * Set caption
      * @param String $caption
      */
     public function setCaption($caption = null)
     {
-        $this->_caption = $caption;
+        $this->caption = $caption;
     }
 
     /**
@@ -184,16 +184,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function getCaption()
     {
-        return $this->_caption;
+        return $this->caption;
     }
-     
+
     /**
      * Set menuOrder
      * @param int $menuOrder
      */
     public function setMenuOrder($menuOrder = 1)
     {
-        $this->_menuOrder = $menuOrder;
+        $this->menuOrder = $menuOrder;
     }
 
     /**
@@ -202,16 +202,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function getMenuOrder()
     {
-        return $this->_menuOrder;
+        return $this->menuOrder;
     }
-     
+
     /**
      * Set Language
      * @param int $
      */
     public function setLanguage($language = 1)
     {
-        $this->_language = $language;
+        $this->language = $language;
     }
 
     /**
@@ -220,28 +220,28 @@ class Menu implements InputFilterAwareInterface
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
- 
+
     /**
      * Get the related object from the DB
      */
     public function getLanguageObject()
     {
         try {
-            return $this->serviceManager->get('LanguageTable')->getLanguage($this->_language);
+            return $this->serviceManager->get('LanguageTable')->getLanguage($this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-    
+
     /**
      * Set parent
      * @param int $parent
      */
     public function setParent($parent = 0)
     {
-        $this->_parent = $parent;
+        $this->parent = $parent;
     }
 
     /**
@@ -250,28 +250,28 @@ class Menu implements InputFilterAwareInterface
      */
     public function getParent()
     {
-        return $this->_parent;
+        return $this->parent;
     }
- 
+
     /**
      * Get the related object from the DB
      */
     public function getParentObject()
     {
         try {
-            return $this->serviceManager->get('MenuTable')->getMenu($this->_parent, $this->_language);
+            return $this->serviceManager->get('MenuTable')->getMenu($this->parent, $this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
-    
+
     /**
      * Set keywords
      * @param String $keywords
      */
     public function setKeywords($keywords = null)
     {
-        $this->_keywords = $keywords;
+        $this->keywords = $keywords;
     }
 
     /**
@@ -280,16 +280,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function getKeywords()
     {
-        return $this->_keywords;
+        return $this->keywords;
     }
-     
+
     /**
      * Set description
      * @param null $description
      */
     public function setDescription($description = null)
     {
-        $this->_description = $description;
+        $this->description = $description;
     }
 
     /**
@@ -298,7 +298,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function getDescription()
     {
-        return $this->_description;
+        return $this->description;
     }
 
     /**
@@ -307,7 +307,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function setMenuType($menutype = 0)
     {
-        $this->_menutype = $menutype;
+        $this->menutype = $menutype;
     }
 
     /**
@@ -316,7 +316,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function getMenuType()
     {
-        return $this->_menutype;
+        return $this->menutype;
     }
 
     /**
@@ -325,7 +325,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function setFooterColumn($footercolumn = 0)
     {
-        $this->_footercolumn = $footercolumn;
+        $this->footercolumn = $footercolumn;
     }
 
     /**
@@ -334,7 +334,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function getFooterColumn()
     {
-        return $this->_footercolumn;
+        return $this->footercolumn;
     }
 
     /**
@@ -343,7 +343,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function setMenuLink($menulink = null)
     {
-        $this->_menulink = $menulink;
+        $this->menulink = $menulink;
     }
 
     /**
@@ -352,7 +352,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function getMenuLink()
     {
-        return $this->_menulink;
+        return $this->menulink;
     }
 
     /**
@@ -371,13 +371,13 @@ class Menu implements InputFilterAwareInterface
             return "Right menu";
         }
     }
- 
+
     /**
      * magic getter
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -385,7 +385,7 @@ class Menu implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        (property_exists($this, '_'. $property) ? $this->{'_'. $property} = $value : null);
+        (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -393,16 +393,16 @@ class Menu implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
@@ -411,193 +411,193 @@ class Menu implements InputFilterAwareInterface
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip = array(), $serializable = false)
+    public function getProperties(array $skip = [], $serializable = false)
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable) {
+        if ((bool) $serializable === true) {
             return serialize($returnValue);
         }
         return $returnValue;
     }
-    
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"caption",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
                         'name'    => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 200,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"menuOrder",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"language",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"parent",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"keywords",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name'    => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 0,
                             'max' => 200,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"description",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name'    => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 0,
                             'max' => 150,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"menutype",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
+                        ],
+                    ],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"footercolumn",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"menulink",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StringToLower'),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
-    
+
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -605,23 +605,23 @@ class Menu implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setCaption($this->_caption);
-        $clone->setMenuOrder($this->_menuOrder);
-        $clone->setLanguage($this->_language);
-        $clone->setParent($this->_parent);
-        $clone->setKeywords($this->_keywords);
-        $clone->setDescription($this->_description);
-        $clone->setMenuType($this->_menutype);
-        $clone->setFooterColumn($this->_footercolumn);
-        $clone->setMenuLink($this->_menulink);
+        $clone->setCaption($this->caption);
+        $clone->setMenuOrder($this->menuOrder);
+        $clone->setLanguage($this->language);
+        $clone->setParent($this->parent);
+        $clone->setKeywords($this->keywords);
+        $clone->setDescription($this->description);
+        $clone->setMenuType($this->menutype);
+        $clone->setFooterColumn($this->footercolumn);
+        $clone->setMenuLink($this->menulink);
         return $clone;
     }
-    
+
     /**
      * toString method
      */
     public function toString()
     {
-        return $this->_caption;
+        return $this->caption;
     }
 }

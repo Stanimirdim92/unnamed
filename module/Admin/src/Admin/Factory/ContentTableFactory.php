@@ -46,7 +46,7 @@ class ContentTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $sm));
+        $resultSetPrototype->setArrayObjectPrototype(new Content([], $sm));
         $tg = new TableGateway('content', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
         return new ContentTable($sm, $tg);
     }

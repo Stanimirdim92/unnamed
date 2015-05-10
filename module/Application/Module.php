@@ -39,9 +39,9 @@ use Zend\Mvc\ModuleRouteListener;
 // use Zend\Cache\StorageFactory;
 // use Zend\Session\SaveHandler\Cache;
 use Zend\Session\Config\SessionConfig;
-use Zend\Session\Container;
 use Zend\Session\SessionManager;
 use Zend\ModuleManager\Feature;
+use Zend\Session\Container;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
 use Custom\Plugins\Functions;
@@ -54,7 +54,7 @@ class Module implements
     /**
      * @param array $config Holds cookies params
      */
-    public function initSession(array $config = array())
+    public function initSession(array $config = [])
     {
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions($config);
@@ -83,8 +83,8 @@ class Module implements
         // $saveHandler = new Cache($memCached);
         // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
-        $sessionManager->getValidatorChain()->attach('session.validate', array( new \Zend\Session\Validator\HttpUserAgent(), 'isValid'));
-        $sessionManager->getValidatorChain()->attach('session.validate', array( new \Zend\Session\Validator\RemoteAddr(), 'isValid'));
+        $sessionManager->getValidatorChain()->attach('session.validate', [ new \Zend\Session\Validator\HttpUserAgent(), 'isValid']);
+        $sessionManager->getValidatorChain()->attach('session.validate', [ new \Zend\Session\Validator\RemoteAddr(), 'isValid']);
         return Container::setDefaultManager($sessionManager);
     }
 
@@ -96,7 +96,7 @@ class Module implements
         /**
          * Init sessions and cookies before everything else
          */
-        $this->initSession(array(
+        $this->initSession([
             'cookie_lifetime'     => 7200, //2hrs
             'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
             'use_cookies'         => true,
@@ -105,12 +105,12 @@ class Module implements
             'cookie_secure'       => Functions::isSSL(),
             'cookie_httponly'     => true,
             'name'                => '__zpc', // zend press cookie
-        ));
+        ]);
 
         $em = $e->getApplication()->getEventManager();
         $sm = $e->getApplication()->getServiceManager();
 
-        $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'));
+        $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
             return $this->logError($sm->get('ApplicationErrorHandling'), $e, $sm);
         });
@@ -143,7 +143,7 @@ class Module implements
      * This function is used to simulate a fake redirect to errors page,
      * where it will show a friendly error message to the user.
      * The error message comes from the throwed exception.
-     * Also make sure that we always send a 404 response.
+     * Also make sure that we almost always send a 404 response.
      *
      * @param Zend\Mvc\MvcEvent $e
      * @return  MvcEvent
@@ -151,17 +151,19 @@ class Module implements
     private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setVariables(array(
+        $e->getViewModel()->setVariables([
             'message' => '404 Not found',
             'reason' => 'Error',
             'exception' => ($e->getParam("exception") ? $e->getParam("exception")->getMessage(): ""),
-        ));
+        ]);
         $e->getViewModel()->setTemplate('error/index.phtml');
         $e->stopPropagation();
         return $e;
     }
 
     /**
+     * Handle layout titles onDispatch
+     *
      * @param Zend\Mvc\MvcEvent $e
      */
     public function onDispatch(MvcEvent $e)
@@ -195,15 +197,15 @@ class Module implements
 
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\ClassMapAutoloader' => array(
+        return [
+            'Zend\Loader\ClassMapAutoloader' => [
                 __DIR__ . '/autoload_classmap.php',
-            ),
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+            ],
+            'Zend\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

@@ -72,7 +72,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @var array $breadcrumbs returns an array with links with the current user position on the website
      * @return Array
      */
-    protected $breadcrumbs = array();
+    protected $breadcrumbs = [];
 
     /**
      * Used to detect actions without IDs. Inherited in all other classes
@@ -97,7 +97,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view = new \Zend\View\Model\ViewModel();
         $this->initCache();
         $this->initTranslation();
-        $this->breadcrumbs[] = array("reference" => "/admin", "name" => "Home");
+        $this->breadcrumbs[] = ["reference" => "/admin", "name" => "Home"];
     }
 
     /**
@@ -111,7 +111,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         /**
  * Check admin status, before anything else
  */
-        $this->initAdminIdentity();
+        // $this->initAdminIdentity();
         parent::onDispatch($e);
         $this->initViewVars();
         $this->initBreadcrumbs();
@@ -149,7 +149,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     private function initViewVars()
     {
         $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name ASC");
+        $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
         $this->view->controller = $this->getParam('__CONTROLLER__');
         $this->view->action = $this->getParam('action');
     }
@@ -181,7 +181,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
 
-    protected function addBreadcrumb(array $breadcrumb = array())
+    protected function addBreadcrumb(array $breadcrumb = [])
     {
         $this->breadcrumbs[] = $breadcrumb;
     }
@@ -214,7 +214,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $auth = new \Zend\Authentication\AuthenticationService();
         if ($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User) {
             if ($auth->getIdentity()->role === 10 && $this->cache->role === 10 && $this->cache->logged === true) {
-                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, array(), array("user" => $auth->getIdentity()->id));
+                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
                 if (count($checkAdminExistence) === 1) {
                     return $this->redirect()->toUrl("/admin");
                 }
@@ -285,10 +285,29 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         $this->view->setTerminal(true);
     }
 
+    /**
+     * @var array|null $formErrors
+     * @return array
+     */
+    protected function formErrors($formErrors = null)
+    {
+        $error = [];
+        foreach ($formErrors as $msg) {
+            foreach ($msg as $key => $text) {
+                $error[] = $text;
+            }
+        }
+        return $this->setErrorNoParam($error);
+    }
+
+    /**
+     * @param  int $code error code
+     * @return  ViewModel
+     */
     protected function setErrorCode($code = 404)
     {
         $this->getResponse()->setStatusCode($code);
-        $this->view->setTemplate('layout/error-layout');
+        $this->view->setTemplate('error/index.phtml');
         return $this->view;
     }
 

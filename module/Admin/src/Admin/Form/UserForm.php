@@ -6,19 +6,19 @@ use Zend\Form\Element;
 
 class UserForm extends Form
 {
-    public function __construct($options = null, $languages = array(), $currency = array())
+    public function __construct($options = null, $languages = [], $currency = [])
     {
         parent::__construct("user");
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('name');
         $elements[0]->setLabel('Name');
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   => false,
             'size'        => 40,
             'class'      => 'user-name',
             'placeholder' => 'Name',
-        ));
+        ]);
 
         if ($options!=null and $options->name) {
             $elements[0]->setValue($options->name);
@@ -26,12 +26,12 @@ class UserForm extends Form
 
         $elements[1] = new Element\Text('surname');
         $elements[1]->setLabel('Surname');
-        $elements[1]->setAttributes(array(
+        $elements[1]->setAttributes([
             'required'   => false,
             'size'        => 40,
             'class'      => 'user-surname',
             'placeholder' => 'Surname',
-        ));
+        ]);
 
         if ($options!=null and $options->surname) {
             $elements[1]->setValue($options->surname);
@@ -39,12 +39,12 @@ class UserForm extends Form
 
         $elements[3] = new Element\Text('email');
         $elements[3]->setLabel('Email');
-        $elements[3]->setAttributes(array(
+        $elements[3]->setAttributes([
             'required'   => true,
             'size'        => 40,
             'class'      => 'user-email',
             'placeholder' => 'Email',
-        ));
+        ]);
 
         if ($options!=null and $options->email) {
             $elements[3]->setValue($options->email);
@@ -52,12 +52,12 @@ class UserForm extends Form
 
         $elements[4] = new Element\Text('birthDate');
         $elements[4]->setLabel('Birthday');
-        $elements[4]->setAttributes(array(
+        $elements[4]->setAttributes([
             'required'   => false,
             'size'        => 40,
             'class'      => 'datetimepicker',
             'placeholder' => 'YYYY-MM-DD',
-        ));
+        ]);
         if ($options!=null and $options->birthDate) {
             $elements[4]->setValue($options->birthDate);
         } else {
@@ -77,7 +77,7 @@ class UserForm extends Form
 
         $elements[8] = new Element\Select('language');
         $elements[8]->setLabel('Language');
-        $valueOptions = array();
+        $valueOptions = [];
        
         foreach ($languages as $item) {
             $valueOptions[$item->id] = $item->toString();
@@ -89,7 +89,7 @@ class UserForm extends Form
 
         $elements[9] = new Element\Select('currency');
         $elements[9]->setLabel('Currency');
-        $valueOptions = array();
+        $valueOptions = [];
         foreach ($currency as $item) {
             $valueOptions[$item->id] = $item->toString();
         }

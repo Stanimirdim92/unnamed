@@ -38,8 +38,10 @@ use Zend\Session\Container;
 use Zend\Authentication\AuthenticationService;
 use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
 
-class IndexController extends \Zend\Mvc\Controller\AbstractActionController
+class IndexController extends AbstractActionController
 {
     /**
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
@@ -70,14 +72,14 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     /**
      * Used to detect actions without IDs. Inherited in all other classes
      */
-    const NO_ID = 'Not found';
+    const NO_ID = 'ID not found';
 
     /**
      * constructor
      */
     public function __construct()
     {
-        $this->view = new \Zend\View\Model\ViewModel();
+        $this->view = new ViewModel();
         $this->initCache();
         $this->initTranslation();
     }
@@ -86,6 +88,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * Initialize any variables before controller actions
      *
      * @param \Zend\Mvc\MvcEvent $e
+     * @method  IndexController::checkIdentity(bool $redirect, string $url)
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -100,6 +103,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         }
         $this->initMenus();
         $this->initViewVars();
+        return $this->view;
     }
 
 /****************************************************
@@ -112,10 +116,9 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initCache()
     {
-        if (!$this->cache) {
-            $this->cache = new Container("cache");
-            $this->view->cache = $this->cache;
-        }
+        $this->cache = new Container("cache");
+        $this->view->cache = $this->cache;
+        return $this->view;
     }
 
     /**
@@ -124,13 +127,15 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initViewVars()
     {
-        $lang = $this->getTable("Language")->getLanguage($this->langTranslation);
         $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "name ASC");
-        $this->view->langName = $lang->getName();
-        $this->view->controller = $this->getParam('__CONTROLLER__');
-        $this->view->action = $this->getParam('action');
         $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
+
+        if (!isset($this->translation->languageObject)) {
+            $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
+            $this->view->langName = $this->translation->languageObject->getName();
+        }
+        $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
+        return $this->view;
     }
 
     /**
@@ -139,28 +144,51 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initTranslation()
     {
+        $this->translation = new Container("translations");
+
+        /**
+         * Load English as default language.
+         * Maybe make this possible to change via backend?
+         */
         if (!isset($this->translation->language)) {
             $this->translation = Functions::initTranslations(1, true);
             $this->translation->language = 1;
         }
+
         // keeping it simple and DRY
         $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
+        return $this->view;
     }
 
     /**
-     * initialize languages and language-related stuff like translations.
-     * @return  void
+     * Initialize menus and their submenus. 1 query to rule them all!
+     *
+     * First get all menus.
+     * Second, itterate over each object and determinate if it's a submenu or not
+     * Third devided each object based on it's type and prepare it for the view itteration
+     *
+     * @todo  make it dinamcly multilevel
+     * @return void
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, array(), array("parent" => 0, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
-        $submenus = array();
-
-        foreach ($menu as $submenu) {
-            $submenus[$submenu->id] = $this->getTable("Menu")->fetchList(false, array(), array("parent" => (int) $submenu->id, "menutype" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent",], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
+        if (count($menu) > 0) {
+            $submenus = $menus = [];
+            foreach ($menu as $submenu) {
+                if ($submenu->getParent() > 0) {
+                    /**
+                     * This needs to have a second empty array in order th menu to work
+                     */
+                    $submenus[$submenu->getParent()][] = $submenu;
+                } else {
+                    $menus[$submenu->getId()] = $submenu;
+                }
+            }
+            $this->view->menus = $menus;
+            $this->view->submenus = $submenus;
         }
-        $this->view->menus = $menu;
-        $this->view->submenus = $submenus;
+        return $this->view;
     }
 
 /****************************************************
@@ -169,11 +197,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
 
     /**
      * @param null $name
-     * @return Ambigous <object, multitype:>
+     * @return Object
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || !$name) {
+        if (!is_string($name) || empty($name)) {
             throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
@@ -185,22 +213,28 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @throws AuthorizationException
      * @return void
      */
-    protected function checkIdentity($redirect = true)
+    protected function checkIdentity($redirect = true, $url = "/")
     {
         $auth = new AuthenticationService();
         if ($auth->hasIdentity()) {
             if (isset($auth->getIdentity()->role) &&
-              ($auth->getIdentity()->role === 1 || $auth->getIdentity()->role === 10) &&
-              isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
-                if (!$redirect) {
+              ((int) $auth->getIdentity()->role === 1 || (int) $auth->getIdentity()->role === 10) &&
+              isset($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
+                /**
+                 * If everything went fine, just return true and let the user access the desired area or make a redirect
+                 */
+                if ((bool) $redirect === false) {
                     return true;
                 }
-                return $this->redirect()->toUrl("/");
+                return $this->redirect()->toUrl($url);
             }
             $this->clearUserData($auth); // something is wrong, clear all user data
         }
     }
 
+    /**
+     * @param AuthenticationService $auth
+     */
     private function clearUserData(AuthenticationService $auth = null)
     {
         $this->cache->getManager()->getStorage()->clear();
@@ -221,6 +255,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function getParam($paramName = null, $default = null)
     {
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
         $param = $this->params()->fromPost($paramName, 0);
         if (!$param) {
             $param = $this->params()->fromRoute($paramName, null);
@@ -231,6 +266,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
         if (!$param) {
             return $default;
         }
+        $param = $escaper->escapeHtml($param);
         return trim($param);
     }
 
@@ -256,33 +292,37 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function formErrors($formErrors = null)
     {
-        $error = array();
+        $error = [];
         foreach ($formErrors as $msg) {
-            foreach ($msg as $key => $text) {
+            foreach ($msg as $text) {
                 $error[] = $text;
             }
         }
         return $this->setErrorNoParam($error);
     }
 
+    /**
+     * @param  int $code error code
+     * @return  ViewModel
+     */
     protected function setErrorCode($code = 404)
     {
         $this->getResponse()->setStatusCode($code);
-        $this->view->setTemplate('layout/error-layout');
+        $this->view->setTemplate('error/index.phtml');
         return $this->view;
     }
 
     /**
      * This function will generate all meta tags needed for SEO optimisation.
      *
-     * @param null $obj  returns Content object
-     * @return  void
+     * @param  Pdo\Result|Content $obj
+     * @return void
      */
-    protected function setMetaTags(\Admin\Model\Content $obj = null)
+    protected function setMetaTags($obj = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
-        if ($obj != null) {
+        if (!empty($obj)) {
             /**
              * If there is a menu attached to this content, get its SEO metadata
              */
@@ -326,6 +366,26 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function indexAction()
     {
         return $this->view;
+    }
+
+    /**
+     * Select new language and reload all text
+     */
+    public function languageAction()
+    {
+        $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->getParam("id"));
+        $this->view->langName = $this->translation->languageObject->getName();
+
+        /**
+         * This will reload the translations every time this method is called
+         */
+        $this->translation = Functions::initTranslations($this->translation->languageObject->getId(), true);
+        $this->langTranslation = $this->translation->language = $this->translation->languageObject->getId();
+
+        /**
+         * TODO: redirect to the same url where the user was
+         */
+        return $this->redirect()->toUrl("/");
     }
 
     /**

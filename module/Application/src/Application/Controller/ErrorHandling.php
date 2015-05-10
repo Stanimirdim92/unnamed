@@ -42,18 +42,18 @@ class ErrorHandling
     /**
      * Default destination
      *
-     * @var string $_destination
+     * @var string $destination
      */
-    private $_destination = './data/logs/';
+    private $destination = './data/logs/';
 
     /**
-     * @var null $_logger;
+     * @var null $logger;
      */
-    private $_logger = null;
+    private $logger = null;
 
     public function __construct($logger = null)
     {
-        $this->_logger = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -64,8 +64,8 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if ($destination != null) {
-            $this->_destination = $destination;
+        if (!$destination) {
+            $this->destination = $destination;
         }
     }
 
@@ -83,11 +83,14 @@ class ErrorHandling
         $log .=  PHP_EOL."Code: ".$e->getCode();
         $log .=  PHP_EOL."File: ".$e->getFile();
         $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
-        $this->_logger->err($log);
+        $this->logger->err($log);
     }
 
     /**
-     * @param null $errorMsg
+     * @param MvcEvent $e
+     * @param ServiceManager $sm
+     * @param Container $cache
+     * @param string $userRole
      */
     public function logAuthorisationError($e, $sm, $cache, $userRole)
     {
@@ -114,7 +117,7 @@ class ErrorHandling
         Method used: " . $sm->get("Request")->getMethod() . "\n";
 
         $log = new \Zend\Log\Logger();
-        $writer = new \Zend\Log\Writer\Stream($this->_destination . date('F') . '.txt');
+        $writer = new \Zend\Log\Writer\Stream($this->destination . date('F') . '.txt');
         $log->addWriter($writer);
         $log->info($errorMsg);
         return $log;

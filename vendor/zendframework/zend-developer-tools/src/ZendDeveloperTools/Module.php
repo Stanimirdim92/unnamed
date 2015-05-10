@@ -16,7 +16,6 @@ use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ViewHelperProviderInterface;
 use BjyProfiler\Db\Adapter\ProfilingAdapter;
 
@@ -24,7 +23,6 @@ class Module implements
     InitProviderInterface,
     ConfigProviderInterface,
     ServiceProviderInterface,
-    AutoloaderProviderInterface,
     BootstrapListenerInterface,
     ViewHelperProviderInterface
 {
@@ -118,23 +116,9 @@ class Module implements
     /**
      * @inheritdoc
      */
-    public function getAutoloaderConfig()
-    {
-        return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getConfig()
     {
-        return include __DIR__ . '/config/module.config.php';
+        return include __DIR__ . '/../../config/module.config.php';
     }
 
     public function getViewHelperConfig()
@@ -216,7 +200,8 @@ class Module implements
                             $p = true;
                             $db->setProfiler($adapter->getProfiler());
                         }
-                    } elseif (!$p && $sm->has('Zend\Db\Adapter\ProfilingAdapter')) {
+                    }
+                    if (!$p && $sm->has('Zend\Db\Adapter\ProfilingAdapter')) {
                         $adapter = $sm->get('Zend\Db\Adapter\ProfilingAdapter');
                         if ($adapter instanceof ProfilingAdapter) {
                             $db->setProfiler($adapter->getProfiler());

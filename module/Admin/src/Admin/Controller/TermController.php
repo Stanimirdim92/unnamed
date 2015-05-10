@@ -30,7 +30,7 @@ class TermController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/term", "name"=>"Terms"));
+        $this->addBreadcrumb(["reference"=>"/admin/term", "name"=>"Terms"]);
         parent::onDispatch($e);
     }
 
@@ -46,7 +46,7 @@ class TermController extends IndexController
         }
         $order = "name ASC";
         $paginator = $this->getTable("term")->fetchList(true, $where, $order);
-        $paginator->setCurrentPageNumber((int)$this->params("page",1));
+        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
         $paginator->setItemCountPerPage(50);
         $this->view->paginator = $paginator;
         $form = new TermSearchForm();
@@ -62,7 +62,7 @@ class TermController extends IndexController
     public function addAction()
     {
         $this->showForm("Add", null);
-        $this->addBreadcrumb(array("reference"=>"/admin/term/add", "name"=>"Add new term"));
+        $this->addBreadcrumb(["reference"=>"/admin/term/add", "name"=>"Add new term"]);
         return $this->view;
     }
 
@@ -75,16 +75,16 @@ class TermController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
         try {
             $term = $this->getTable("term")->getTerm($id);
             $this->view->term = $term;
-            $this->addBreadcrumb(array("reference"=>"/admin/term/modify/id/{$term->id}", "name"=>"Modify term &laquo;{$term->name}&raquo;"));
+            $this->addBreadcrumb(["reference"=>"/admin/term/modify/id/{$term->id}", "name"=>"Modify term &laquo;{$term->name}&raquo;"]);
             $this->showForm("Modify", $term);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
         return $this->view;
     }
@@ -115,7 +115,7 @@ class TermController extends IndexController
                 $this->getTable("term")->saveTerm($term);
                 $this->cache->success = "Term &laquo;".$term->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'term']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -124,7 +124,7 @@ class TermController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'term']);
             }
         }
     }
@@ -137,16 +137,16 @@ class TermController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
         try {
             $this->getTable("term")->deleteTerm($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
         $this->cache->success = "Term was successfully saved";
-        return $this->redirect()->toRoute('admin', array('controller' => 'term'));
+        return $this->redirect()->toRoute('admin', ['controller' => 'term']);
     }
 
     public function cloneAction()

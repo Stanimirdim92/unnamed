@@ -58,7 +58,7 @@ class ProfileController extends IndexController
                 }
                 return $this->redirect()->toUrl("/");
             } else {
-                $error = array();
+                $error = [];
                 foreach ($form->getMessages() as $msg) {
                     foreach ($msg as $key => $value) {
                         $error[] = $value;

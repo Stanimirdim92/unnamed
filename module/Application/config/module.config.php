@@ -1,133 +1,118 @@
 <?php
-return array(
-    'router' => array(
-        'routes' => array(
-            'home' => array(
+return [
+    'router' => [
+        'routes' => [
+            'home' => [
                 'type' => 'Literal',
-                'options' => array(
+                'options' => [
                     'route'    => '[/]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Application\Controller\Index',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'application' => array(
+                    ],
+                ],
+            ],
+            'application' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/[:controller[/][:action[/id/:id][/page/:page][/search/:search]]]',
-                    'constraints' => array(
+                    'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
                         'page'       => '[0-9]+',
                         'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes'  => array(
-                    'default'   => array(
-                        'type'    => 'Wildcard',
-                        'options' => array(
-                        ),
-                    ),
-                ),
-            ),
-            'contact'     => array(
+                    ],
+                ],
+            ],
+            'contact'     => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '/contact',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Application\Controller\Index',
                         'action'     => 'contact',
-                    ),
-                ),
-            ),
-            'news' => array(
+                    ],
+                ],
+            ],
+            'news' => [
                 'type' => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/news[/][post/:post][/page/:page]',
-                    'constraints' => array(
+                    'constraints' => [
                         'post' => '[a-zA-Z][a-zA-Z0-9_-]+',
                         'page' => '[0-9]+',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller' => 'Application\Controller\News',
                         'action'     => 'news',
-                    ),
-                ),
-            ),
-            'menu' => array(
+                    ],
+                ],
+            ],
+            'menu' => [
                 'type' => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/menu[/][:title]',
-                    'constraints' => array(
+                    'constraints' => [
                         'title' => '[a-zA-Z][a-zA-Z0-9_-]+',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller' => 'Application\Controller\Menu',
                         'action'     => 'menu',
-                    ),
-                ),
-            ),
-            'admin' => array(
+                    ],
+                ],
+            ],
+            'admin' => [
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/admin[/][:controller[/][:action[/id/:id][/page/:page][/search/:search]]]',
-                    'constraints' => array(
+                    'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
                         'page'       => '[0-9]+',
                         'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         '__NAMESPACE__' => 'Admin\Controller',
                         'controller' => 'Index',
                         'action'     => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
-                        'type'    => 'Wildcard',
-                        'options' => array(
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'service_manager' => array(
-        'abstract_factories' => array(
-        ),
-        'factories' => array(
-        ),
-    ),
-    'controllers' => array(
-        'factories' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'service_manager' => [
+        'abstract_factories' => [
+        ],
+        'factories' => [
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
             'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
+            'Params'                   => 'Application\Factory\ParamsFactory',
             'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
-        ),
-        'invokables' => array(
+        ],
+        'invokables' => [
             'Application\Controller\Index'        => 'Application\Controller\IndexController',
             'Application\Controller\Login'        => 'Application\Controller\LoginController',
             'Application\Controller\Registration' => 'Application\Controller\RegistrationController',
             'Application\Controller\Profile'      => 'Application\Controller\ProfileController',
             'Application\Controller\News'         => 'Application\Controller\NewsController',
             'Application\Controller\Menu'         => 'Application\Controller\MenuController',
-        ),
-    ),
-    'view_helpers' => array(
-        'factories' => array(
-        ),
-    ),
-    'view_manager' => array(
+        ],
+    ],
+    'view_helpers' => [
+        'factories' => [
+        ],
+    ],
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
@@ -135,22 +120,22 @@ return array(
         'exception_template'       => 'error/index',
         // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
         // 'default_template_suffix' => 'php',
-        'template_map' => array(
+        'template_map' => [
             'application/layout'      => __DIR__ . '/../../Application/view/layout/layout.phtml',
             'error/layout'            => __DIR__ . '/../../Application/view/error/layout.phtml',
             'error/index'             => __DIR__ . '/../../Application/view/error/index.phtml',
             'error/404'               => __DIR__ . '/../../Application/view/error/index.phtml',
-        ),
-        'template_path_stack' => array(
+        ],
+        'template_path_stack' => [
             'Application'     => __DIR__ . '/../../Application/view',
             'Admin'           => __DIR__ . '/../../Admin/view',
-        ),
-        'strategies' => array(
+        ],
+        'strategies' => [
             'ViewJsonStrategy',
-        ),
-    ),
-    'module_layouts' => array(
+        ],
+    ],
+    'module_layouts' => [
         'Application' => 'layout/layout',
         'Admin'       => 'layout/admin',
-    ),
-);
+    ],
+];

@@ -42,17 +42,17 @@ class ResetPasswordTable
     /**
      * @var TableGateway
      */
-    private $_tableGateway = null;
+    private $tableGateway = null;
 
     /**
      * @var ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
-        $this->_serviceManager = $sm;
-        $this->_tableGateway = $tg;
+        $this->serviceManager = $sm;
+        $this->tableGateway = $tg;
     }
 
     /**
@@ -63,7 +63,7 @@ class ResetPasswordTable
      */
     public function getResetPassword($id = 0, $user = 0)
     {
-        $rowset = $this->_tableGateway->select(array('id' => (int) $id, 'user' => (int) $user));
+        $rowset = $this->tableGateway->select(['id' => (int) $id, 'user' => (int) $user]);
         if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find password");
         }
@@ -79,22 +79,22 @@ class ResetPasswordTable
      */
     public function saveResetPassword(ResetPassword $resetpw = null)
     {
-        $data = array(
+        $data = [
             'ip'    => (string) $resetpw->ip,
             'user'  => (int) $resetpw->user,
             'date'  => (string) $resetpw->date,
             'token' => (string) $resetpw->token,
-        );
+        ];
         $id = (int) $resetpw->id;
         $user = (int) $resetpw->user;
         if (!$id) {
-            $this->_tableGateway->insert($data);
-            $resetpw->id = $this->_tableGateway->lastInsertValue;
+            $this->tableGateway->insert($data);
+            $resetpw->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getResetPassword($id, $user)) {
                 throw new \RuntimeException("Oops error.");
             }
-            $this->_tableGateway->update($data, array('id' => (int) $id, 'user' => (int) $user));
+            $this->tableGateway->update($data, ['id' => (int) $id, 'user' => (int) $user]);
         }
         unset($id, $user, $data);
         return $resetpw;

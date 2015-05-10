@@ -32,7 +32,7 @@ $view = $children[0];
             ?>
             </ul>
         </div>
-        <?php
+<?php
             echo $this->layout()->content;
 
             if(!empty($view->cache->warning))
@@ -41,22 +41,22 @@ $view = $children[0];
                 {
                     foreach ($view->cache->warning as $value)
                     {
-        ?>
+?>
                   <div class="alert alert-warning">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-warning"></i> <?=$value?>
                   </div>
-        <?php
+<?php
                     }
                 }
                 else
                 {
-        ?>
+?>
                   <div class="alert alert-warning">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-warning"></i> <?=$view->cache->warning?>
                   </div>
-        <?php
+<?php
                 }
                 $view->cache->warning = null;
             }
@@ -67,22 +67,22 @@ $view = $children[0];
                 {
                     foreach ($view->cache->success as $value)
                     {
-        ?>
+?>
                   <div class="alert alert-success">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-check"></i> <?=$value?>
                   </div>
-        <?php
+<?php
                     }
                 }
                 else
                 {
-        ?>
+?>
                   <div class="alert alert-success">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-check"></i> <?=$view->cache->success?>
                   </div>
-        <?php
+<?php
                 }
                 $view->cache->success = null;
             }
@@ -93,27 +93,27 @@ $view = $children[0];
                 {
                     foreach ($view->cache->error as $value)
                     {
-        ?>
+?>
                   <div class="alert alert-danger">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-times"></i> <?=$value?>
                   </div>
-        <?php
+<?php
                     }
                 }
                 else
                 {
-        ?>
+?>
                   <div class="alert alert-danger">
                     <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                     <i class="fa-fw fa fa-times"></i> <?=$view->cache->error?>
                   </div>
-        <?php
+<?php
                 }
                 $view->cache->error = null;
             }
-        ?>
-        <script src="/front/js/jquery.min.js"></script>
-        <script defer src="/back/js/custom.js"></script>
+?>
+        <script async src="/front/js/jquery.min.js"></script>
+        <script async defer src="/back/js/custom.js"></script>
     </body>
 </html>

@@ -35,16 +35,14 @@
 
 namespace Custom\Plugins;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\Session\Container;
 use Zend\Math\Rand;
+use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Stdlib\Hydrator\ObjectProperty;
 
 class Functions
 {
-    /**
-     * @var string $bcryptCost
-     */
-    private static $bcryptCost = 13;
-
     /**
      * @var null $translation
      */
@@ -61,8 +59,8 @@ class Functions
     {
         static::$translation = new Container('translations');
 
-        if ($reload === true) {
-            $result = self::createPlainQuery("SELECT `termtranslation`.`translation`, `term`.`name` FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term` WHERE `termtranslation`.`language`='".(int)$language."' ORDER BY `term`.`name` ASC");
+        if ((bool) $reload === true) {
+            $result = self::createPlainQuery("SELECT `termtranslation`.`translation`, `term`.`name` FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term` WHERE `termtranslation`.`language` = '".(int)$language."' ORDER BY `term`.`name` ASC");
             if (count($result) > 0) {
                 foreach ($result as $r) {
                     if (!empty($r['name'])) {
@@ -77,35 +75,35 @@ class Functions
     /**
      * Create plain mysql queries.
      *
-     * @param String $query the plain query
-     * @param Bool $returnResults specify if the function should return results
-     * @throws Exception If database is not found or $query is empty
-     * @return array|ResultSet
+     * @param String $sql the plain query
+     * @throws Exception If database is not found or $sql is empty
+     * @return array|HydratingResultSet|null
      */
-    protected static function createPlainQuery($query = null, $returnResults = true)
+    public static function createPlainQuery($sql = null)
     {
-        if (empty($query)) {
-            $returnResults = false;
+        $dir = dirname(dirname(dirname(__DIR__)));
+
+        if (!is_file($dir.'/config/autoload/local.php')) {
+            throw new \Exception("Could not load database settings");
+        }
+
+        if (empty($sql)) {
             throw new \Exception(__METHOD__ . ' must not be empty');
         }
 
-        if (!is_file($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php')) {
-            $returnResults = false;
-            throw new \Exception("Could not load database");
-        }
-
-        $local = require($_SERVER['DOCUMENT_ROOT'].'/../config/autoload/local.php');
-        $db = new \Zend\Db\Adapter\Adapter($local['db']);
-        $stmt = $db->createStatement();
-        $stmt->prepare($query);
+        $local = require($dir.'/config/autoload/local.php');
+        $db = new Adapter($local['db']);
+        $stmt = $db->createStatement((string) $sql);
+        $stmt->prepare();
         $result = $stmt->execute();
-        $arr = array();
-        if ($returnResults === true) {
-            while ($result->next()) {
-                $arr[] = $result->current();
-            }
+        if ($result instanceof \Zend\Db\Adapter\Driver\Pdo\Result && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet(new ObjectProperty(), new \stdClass());
+            $resultSet->initialize($result);
+            $resultSet->buffer();
+
+            return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet->toArray() : null);
         }
-        return $arr;
+        return null;
     }
 
     /**
@@ -127,7 +125,7 @@ class Functions
             throw new \Exception("Password must be atleast 8 characters long");
         }
 
-        $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => static::$bcryptCost));
+        $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => 13));
 
         if (!$pw) {
             throw new \Exception("Error while generating password");

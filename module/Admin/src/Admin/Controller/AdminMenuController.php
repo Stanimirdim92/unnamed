@@ -29,7 +29,7 @@ class AdminMenuController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/adminmenu", "name"=>"Admin Menus"));
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>"Admin Menus"]);
         parent::onDispatch($e);
     }
 
@@ -47,9 +47,9 @@ class AdminMenuController extends IndexController
         $order = "advanced ASC, menuOrder ASC";
         $menus = $this->getTable("adminmenu")->fetchList(false, $where, $order);
         $this->view->menus = $menus;
-        $submenus = array();
+        $submenus = [];
         foreach ($menus as $m) {
-            $submenus[$m->id] = $this->getTable("adminmenu")->fetchList(false,"parent='{$m->id}'", $order);
+            $submenus[$m->id] = $this->getTable("adminmenu")->fetchList(false, "parent='{$m->id}'", $order);
         }
         $this->view->submenus = $submenus;
         $form = new AdminMenuSearchForm();
@@ -65,7 +65,7 @@ class AdminMenuController extends IndexController
     public function addAction()
     {
         $this->showForm('Add', null);
-        $this->addBreadcrumb(array("reference"=>"/admin/adminmenu/add", "name"=>"Add new admin menu"));
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/add", "name"=>"Add new admin menu"]);
         return $this->view;
     }
 
@@ -78,16 +78,16 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         try {
             $adminMenu = $this->getTable("adminmenu")->getAdminMenu($id);
             $this->view->adminMenu = $adminMenu;
-            $this->addBreadcrumb(array("reference"=>"/admin/adminmenu/modify/id/{$adminMenu->id}", "name"=>"Modify admin menu &laquo;".$adminMenu->toString()."&raquo;"));
+            $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/id/{$adminMenu->id}", "name"=>"Modify admin menu &laquo;".$adminMenu->toString()."&raquo;"]);
             $this->showForm("Modify", $adminMenu);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         return $this->view;
     }
@@ -116,7 +116,7 @@ class AdminMenuController extends IndexController
                 $this->getTable("adminmenu")->saveAdminMenu($adminMenu);
                 $this->cache->success = "Admin menu &laquo;".$adminMenu->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -125,7 +125,7 @@ class AdminMenuController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             }
         }
     }
@@ -138,16 +138,16 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         try {
             $this->getTable("adminmenu")->deleteAdminMenu($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         $this->cache->success = "Admin menu was successfully deleted";
-        return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
     }
 
     public function detailAction()
@@ -155,16 +155,16 @@ class AdminMenuController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         try {
             $adminmenu = $this->getTable("adminmenu")->getAdminMenu($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'adminmenu'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
         $this->view->adminmenu = $adminmenu;
-        $this->addBreadcrumb(array("reference"=>"/admin/adminmenu/detail/id/{$adminmenu->id}", "name"=> "Admin menu &laquo;". $adminmenu->toString()."&raquo; details"));
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/id/{$adminmenu->id}", "name"=> "Admin menu &laquo;". $adminmenu->toString()."&raquo; details"]);
 
         return $this->view;
     }

@@ -64,7 +64,7 @@ class LoginController extends IndexController
     /**
      * @var Zend\Db\Adapter\Adapter
      */
-    private $_adapter = null;
+    private $adapter = null;
 
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -76,22 +76,19 @@ class LoginController extends IndexController
      * Get database and check if supplied username and password matches.
      *
      * @param array $options
-     * @param string $table
-     * @param string $identity
-     * @param string $credential
      * @var Zend\Crypt\Password\Bcrypt
      * @var Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter
      * @return DbTable|Adapter
      */
-    private function getAuthAdapter(array $options = array(), $table = "user", $identity = "email", $credential = "password")
+    private function getAuthAdapter(array $options = [])
     {
         $credentialCallback = function ($passwordInDatabase, $passwordProvided) {
             return password_verify($passwordProvided, $passwordInDatabase);
         };
 
-        $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), (string) $table, (string) $identity, (string) $credential, $credentialCallback);
-        $authAdapter->setIdentity($options[$identity]);
-        $authAdapter->setCredential($options[$credential]);
+        $authAdapter = new \Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter($this->getAdapter(), "user", "email", "password", $credentialCallback);
+        $authAdapter->setIdentity($options["email"]);
+        $authAdapter->setCredential($options["password"]);
 
         return $authAdapter;
     }
@@ -102,10 +99,10 @@ class LoginController extends IndexController
      */
     private function getAdapter()
     {
-        if (!$this->_adapter) {
-            $this->_adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+        if (!$this->adapter) {
+            $this->adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
         }
-        return $this->_adapter;
+        return $this->adapter;
     }
 
     /**
@@ -114,7 +111,7 @@ class LoginController extends IndexController
      */
     public function indexAction()
     {
-        $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
+        $form = new LoginForm(['action' => '/login/processlogin', 'method' => 'post']);
         $form->get("login")->setValue($this->translation->LOGIN);
         $form->get("email")->setLabel($this->translation->EMAIL);
         $form->get("password")->setLabel($this->translation->PASSWORD);
@@ -130,7 +127,7 @@ class LoginController extends IndexController
         }
 
         // Get our form and validate it
-        $form = new LoginForm(array('action' => '/login/processlogin','method' => 'post'));
+        $form = new LoginForm(['action' => '/login/processlogin', 'method' => 'post']);
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
         if (!$form->isValid()) {
@@ -147,8 +144,8 @@ class LoginController extends IndexController
             return $this->redirect()->toUrl("/login");
         } else {
             $role = self::ROLE_USER;
-            $includeRows = array('id', 'name', 'username', 'email', 'deleted', 'image', 'hideEmail', 'userClass', 'ban', 'admin', 'language', 'country');
-            $excludeRows = array('ip', 'password', 'registered', 'lastLogin', 'birthDate', 'salt');
+            $includeRows = ['id', 'name', 'username', 'email', 'deleted', 'image', 'hideEmail', 'userClass', 'ban', 'admin', 'language', 'country'];
+            $excludeRows = ['ip', 'password', 'registered', 'lastLogin', 'birthDate', 'salt'];
             $data = $adapter->getResultRowObject($includeRows, $excludeRows);
             $user = $this->getTable('user')->getUser($data->id);
 
@@ -179,10 +176,10 @@ class LoginController extends IndexController
     {
         $token = (string) $this->getParam('id', null);
         if (Functions::strLength($token) !== 64) {
-            throw new \Exception("SGFDG ");
+            throw new \Exception("Wrong string");
         }
 
-        $tokenExist = $this->getTable("resetpassword")->fetchList(false, array("user", "token", "date"), array("token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"), "AND");
+        $tokenExist = $this->getTable("resetpassword")->fetchList(false, ["user", "token", "date"], ["token" => $token, "date" => ">= DATE_SUB(NOW(), INTERVAL 24 HOUR)"], "AND");
         if (count($tokenExist) !== 1) {
             $this->setErrorNoParam($this->translation->LINK_EXPIRED);
             return $this->redirect()->toUrl("/login");
@@ -205,7 +202,7 @@ class LoginController extends IndexController
 
     public function newpasswordprocessAction()
     {
-        $form = new NewPasswordForm(array('action' => '/login/newpasswordprocess','method' => 'post'));
+        $form = new NewPasswordForm(['action' => '/login/newpasswordprocess', 'method' => 'post']);
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
@@ -233,7 +230,7 @@ class LoginController extends IndexController
 
     public function resetpasswordAction()
     {
-        $form = new ResetPasswordForm(array('action' => '/login/resetpassword','method' => 'post'));
+        $form = new ResetPasswordForm(['action' => '/login/resetpassword', 'method' => 'post']);
         $form->get("resetpw")->setValue($this->translation->RESET_PW);
         $form->get("email")->setLabel($this->translation->EMAIL);
         $this->view->form = $form;

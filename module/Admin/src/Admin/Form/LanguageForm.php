@@ -48,16 +48,16 @@ class LanguageForm extends Form
     public function __construct(\Admin\Model\Language $options = null)
     {
         parent::__construct("language");
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('name');
         $elements[0]->setLabel('Name');
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   => true,
             'size'        => 40,
             'class'      => 'language-name',
             'placeholder' => 'Name',
-        ));
+        ]);
         if ($options!=null and $options->name) {
             $elements[0]->setValue($options->name);
         }

@@ -9,47 +9,47 @@ use Zend\ServiceManager\ServiceManager;
 
 class Currency implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    private $inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
+    private $serviceManager;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id;
+    private $id;
 
     /**
-     * @param String $_name
+     * @param String $name
      * @return string
      */
-    private $_name;
+    private $name;
 
     /**
-     * @param Int $_active
+     * @param Int $active
      * @return int
      */
-    private $_active;
+    private $active;
 
-    private $_symbol;
-    
+    private $symbol;
+
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_name = (isset($data['name'])) ? $data['name'] : null;
-        $this->_active = (isset($data['active'])) ? $data['active'] : null;
-        $this->_symbol = (isset($data['symbol'])) ? $data['symbol'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->name = (isset($data['name'])) ? $data['name'] : null;
+        $this->active = (isset($data['active'])) ? $data['active'] : null;
+        $this->symbol = (isset($data['symbol'])) ? $data['symbol'] : null;
     }
 
     /**
@@ -61,35 +61,35 @@ class Currency implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId(int $id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
-    
-    
+
+
     /**
      * Set name
      * @param String $name
      */
     public function setName($name)
     {
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -98,16 +98,16 @@ class Currency implements InputFilterAwareInterface
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
-     
+
     /**
      * Set active
      * @param Boolean $active
      */
     public function setActive($active)
     {
-        $this->_active = $active;
+        $this->active = $active;
     }
 
     /**
@@ -116,7 +116,7 @@ class Currency implements InputFilterAwareInterface
      */
     public function getActive()
     {
-        return $this->_active;
+        return $this->active;
     }
 
     /**
@@ -125,7 +125,7 @@ class Currency implements InputFilterAwareInterface
      */
     public function setSymbol($symbol)
     {
-        $this->_symbol = $symbol;
+        $this->symbol = $symbol;
     }
 
     /**
@@ -134,16 +134,16 @@ class Currency implements InputFilterAwareInterface
      */
     public function getSymbol()
     {
-        return $this->_symbol;
+        return $this->symbol;
     }
- 
+
 
     /**
      * magic getter
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -151,8 +151,8 @@ class Currency implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -161,41 +161,41 @@ class Currency implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -209,33 +209,33 @@ class Currency implements InputFilterAwareInterface
     {
         return \Zend\Json\Json::encode($this->getProperties());
     }
-    
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array('name' => 'id', 'required' => false, 'filters' => array(array('name' => 'Int'))));
+            $inputFilter->add(['name' => 'id', 'required' => false, 'filters' => [['name' => 'Int']]]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"name",
                 "required" => false,
-                "filters"=> array(array('name' => 'StringTrim')),));
-            $inputFilter->add(array(
+                "filters"=> [['name' => 'StringTrim']], ]);
+            $inputFilter->add([
                 "name"=>"active",
-                "required" => false, 'filters' => array(array('name' => 'Int')), ));
-            $inputFilter->add(array(
+                "required" => false, 'filters' => [['name' => 'Int']], ]);
+            $inputFilter->add([
                 "name"=>"symbol",
-                "required" => true,));
-            $this->_inputFilter = $inputFilter;
+                "required" => true, ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
-    
+
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -243,9 +243,9 @@ class Currency implements InputFilterAwareInterface
     public function getCopy()
     {
         $copy = new self();
-        $copy->setName($this->_name);
-        $copy->setActive($this->_active);
-        $copy->setSymbol($this->_symbol);
+        $copy->setName($this->name);
+        $copy->setActive($this->active);
+        $copy->setSymbol($this->symbol);
         return $copy;
     }
 

@@ -46,7 +46,7 @@ class AdministratorTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Administrator(array(), $sm));
+        $resultSetPrototype->setArrayObjectPrototype(new Administrator([], $sm));
         $tg = new TableGateway('administrator', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
         return new AdministratorTable($sm, $tg);
     }

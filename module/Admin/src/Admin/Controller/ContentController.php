@@ -56,7 +56,7 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/content", "name"=>"Contents"));
+        $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>"Contents"]);
         parent::onDispatch($e);
     }
 
@@ -68,18 +68,18 @@ class ContentController extends \Admin\Controller\IndexController
         $type = (int) $this->getParam("type", 0);
         if ($type === 1) {
             // fetch all contents that have value content.menu=0 and type=1
-            $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='1' AND language='".$this->langTranslation."'", null, null, "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchList(false, array(), "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null,  "content.date DESC");
+            $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, ["menu", "type", "language"], "menu='0' AND type='1' AND language='".$this->langTranslation."'", null, null, "id ASC");
+            $this->view->contents = $this->getTable("content")->fetchList(false, [], "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null,  "content.date DESC");
         }
         if ($type === 0) {
             // fetch all contents that have value content.menu=0 and type=0
-            $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, array("menu", "type", "language"), "menu='0' AND type='0' AND language='".$this->langTranslation."'", null, null, "id ASC");
+            $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, ["menu", "type", "language"], "menu='0' AND type='0' AND language='".$this->langTranslation."'", null, null, "id ASC");
             $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
-        $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, array("menu", "language"), "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
+        $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, ["menu", "language"], "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
         if (count($contentsWithoutMenu) > 0) {
-            $menuReport = array();
+            $menuReport = [];
             foreach ($contentsWithoutMenu as $cwm) {
                 if (!$cwm->getMenuObject()) {
                     $menuReport[] = $cwm;
@@ -96,7 +96,7 @@ class ContentController extends \Admin\Controller\IndexController
     public function addAction()
     {
         $this->showForm('Add', null);
-        $this->addBreadcrumb(array("reference"=>"/admin/content/add", "name"=>"Add a new content"));
+        $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>"Add a new content"]);
         return $this->view;
     }
 
@@ -108,7 +108,7 @@ class ContentController extends \Admin\Controller\IndexController
     {
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
         $this->view->content = $content;
-        $this->addBreadcrumb(array("reference"=>"/admin/content/modify/id/{$content->id}", "name"=>"Modify content &laquo;".$content->toString()."&raquo;"));
+        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->id}", "name"=>"Modify content &laquo;".$content->toString()."&raquo;"]);
         $this->showForm('Modify', $content);
         return $this->view;
     }
@@ -120,7 +120,7 @@ class ContentController extends \Admin\Controller\IndexController
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
         $this->cache->success = "Content was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
     /**
@@ -130,7 +130,7 @@ class ContentController extends \Admin\Controller\IndexController
     {
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
         $this->view->content = $content;
-        $this->addBreadcrumb(array("reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->toString()."&raquo; details"));
+        $this->addBreadcrumb(["reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->toString()."&raquo; details"]);
         return $this->view;
     }
 
@@ -154,14 +154,14 @@ class ContentController extends \Admin\Controller\IndexController
     private function showForm($label = 'Add', Content $content = null)
     {
         if ($content==null) {
-            $content = new Content(array(), null);
+            $content = new Content([], null);
         }
 
-        $orderMenus = $menus = $submenus = array();
-        $menus = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => 0, "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+        $orderMenus = $menus = $submenus = [];
+        $menus = $this->getTable("Menu")->fetchList(false, ["parent", "language", "id", "caption"], ["parent" => 0, "language" => $this->langTranslation], "AND", null, "menuOrder ASC");
         foreach ($menus as $m) {
             $m->setServiceManager(null);
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, array("parent", "language", "id", "caption"), array("parent" => $m->getId(), "language" => $this->langTranslation), "AND", null, "menuOrder ASC");
+            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, ["parent", "language", "id", "caption"], ["parent" => $m->getId(), "language" => $this->langTranslation], "AND", null, "menuOrder ASC");
         }
         foreach ($menus as $menu) {
             $menu->setServiceManager(null);
@@ -172,19 +172,19 @@ class ContentController extends \Admin\Controller\IndexController
                 }
             }
         }
-        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("Language")->fetchList(false, array(), array("active" => 1), "AND", null, "id ASC"));
+        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC"));
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($content->getInputFilter());
-            $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(),$this->getRequest()->getFiles()->toArray()));
+            $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(), $this->getRequest()->getFiles()->toArray()));
             if ($form->isValid()) {
                 $formData = $form->getData();
                 if (isset($formData['removepreview']) && $formData['removepreview'] && $content != null) {
                     if (!is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview())) {
                         $this->cache->error = "Image doesn't exist in that directory";
                         $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     }
                     unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->getPreview());
                     $content->setPreview("");
@@ -201,12 +201,12 @@ class ContentController extends \Admin\Controller\IndexController
                         $adapter->receive($param['name']);
                         $formData['preview'] = $param['name'];
                     } else {
-                        $error = array();
+                        $error = [];
                         foreach ($adapter->getMessages() as $key => $value) {
                             $error[] = $value;
                         }
                         $this->setErrorNoParam($error);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     }
                 } else {
                     $formData['preview'] = $content->getPreview();
@@ -223,16 +223,10 @@ class ContentController extends \Admin\Controller\IndexController
                 $this->getTable("content")->saveContent($content);
                 $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             } else {
-                $error = array();
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error[] = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                $this->formErrors($form->getMessages());
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             }
         }
     }

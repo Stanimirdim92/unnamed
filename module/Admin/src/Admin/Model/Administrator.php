@@ -42,26 +42,26 @@ use Zend\ServiceManager\ServiceManager;
 class Administrator implements InputFilterAwareInterface
 {
     /**
-     * @var null $_inputFilter inputFilter
+     * @var null $inputFilter inputFilter
      */
-    private $_inputFilter = null;
+    private $inputFilter = null;
 
     /**
-     * @var null $_serviceManager ServiceManager
+     * @var null $serviceManager ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_id = 0;
+    private $id = 0;
 
     /**
-     * @param Int $_user
+     * @param Int $user
      * @return Int
      */
-    private $_user;
+    private $user;
 
     /**
      * @param null $sm ServiceManager
@@ -69,17 +69,17 @@ class Administrator implements InputFilterAwareInterface
      */
     public function setServiceManager(ServiceManager $sm = null)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data = array())
+    public function exchangeArray(array $data = [])
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : $this->_id;
-        $this->_user = (isset($data['user'])) ? $data['user'] : $this->_user;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->id;
+        $this->user = (isset($data['user'])) ? $data['user'] : $this->user;
     }
 
     /**
@@ -88,10 +88,10 @@ class Administrator implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = array(), ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceManager $sm = null)
     {
         $this->exchangeArray($options);
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
@@ -99,7 +99,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
 
     /**
@@ -108,7 +108,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function setId($id = 0)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
 
     /**
@@ -117,7 +117,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function setUser($user = 0)
     {
-        $this->_user = $user;
+        $this->user = $user;
     }
 
     /**
@@ -126,7 +126,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function getUser()
     {
-        return $this->_user;
+        return $this->user;
     }
 
     /**
@@ -135,7 +135,7 @@ class Administrator implements InputFilterAwareInterface
     public function getUserObject()
     {
         try {
-            return $this->serviceManager->get('UserTable')->getUser($this->_user);
+            return $this->serviceManager->get('UserTable')->getUser($this->user);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -146,7 +146,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -154,7 +154,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        (property_exists($this, '_'. $property) ? $this->{'_'. $property} = $value : null);
+        (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -162,7 +162,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
@@ -170,8 +170,8 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
@@ -191,16 +191,16 @@ class Administrator implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip = array(), $serializable = false)
+    public function getProperties(array $skip = [], $serializable = false)
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable) {
+        if ((bool) $serializable === true) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -213,33 +213,33 @@ class Administrator implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"user",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                        ],
+                    ],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
 
     /**
@@ -249,7 +249,7 @@ class Administrator implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setUser($this->_user);
+        $clone->setUser($this->user);
         return $clone;
     }
 }

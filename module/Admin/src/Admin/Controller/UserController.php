@@ -33,7 +33,7 @@ class UserController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/user", "name"=>"Users"));
+        $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>"Users"]);
         parent::onDispatch($e);
     }
 
@@ -61,16 +61,16 @@ class UserController extends IndexController
         $id = (int) $this->getParam("id", 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
         try {
             $user = $this->getTable("user")->getUser($id);
             $this->view->user = $user;
-            $this->addBreadcrumb(array("reference"=>"/admin/user/modify/id/{$user->id}", "name"=>"Modify user &laquo;".$user->toString()."&raquo;"));
+            $this->addBreadcrumb(["reference"=>"/admin/user/modify/id/{$user->id}", "name"=>"Modify user &laquo;".$user->toString()."&raquo;"]);
             $this->showForm("Modify", $user);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
         return $this->view;
     }
@@ -114,7 +114,7 @@ class UserController extends IndexController
                 }
                 $this->cache->success ="User &laquo;".$user->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -123,7 +123,7 @@ class UserController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             }
         }
     }
@@ -136,16 +136,16 @@ class UserController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
         try {
             $this->getTable("user")->deleteUser($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
         $this->cache->success = "User was successfully deleted";
-        return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
     }
 
     public function disabledAction()
@@ -165,16 +165,16 @@ class UserController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
         try {
             $user = $this->getTable("user")->getUser($id);
             $this->view->user = $user;
         } catch (\Exception $ex) {
             $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'user'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
-        $this->addBreadcrumb(array("reference"=>"/admin/user/detail/id/{$user->id}", "name"=>"User &laquo;". $user->toString()."&raquo; details"));
+        $this->addBreadcrumb(["reference"=>"/admin/user/detail/id/{$user->id}", "name"=>"User &laquo;". $user->toString()."&raquo; details"]);
         return $this->view;
     }
 
@@ -191,18 +191,18 @@ class UserController extends IndexController
                 $this->view->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%'";
                 $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
-                $json = array();
+                $json = [];
                 foreach ($results as $result) {
                     $json[] = Json::encode($result);
                 }
-                return new JsonModel(array(
+                return new JsonModel([
                     'usersearch' => $json,
                     'cancel' => "Cancel",
                     'deleteuser' => "delete",
                     'modify' => "modify",
                     'details' => "details",
                     'delete_text' => "Are you sure you would like to delete this user",
-                ));
+                ]);
             }
         }
     }
@@ -243,7 +243,7 @@ class UserController extends IndexController
     private function customPages($isPagination = true, $where = null, $order = null, $itemPerPage = 50, $search)
     {
         $paginator = $this->getTable("user")->fetchList($isPagination, $where, $order);
-        $paginator->setCurrentPageNumber((int)$this->params("page",1));
+        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
         $paginator->setItemCountPerPage(50);
         $this->view->paginator = $paginator;
         $form = new UserSearchForm();

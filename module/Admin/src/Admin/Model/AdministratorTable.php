@@ -47,12 +47,12 @@ class AdministratorTable
     /**
      * @var TableGateway
      */
-    private $_tableGateway = null;
+    private $tableGateway = null;
 
     /**
      * @var ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
      * Define SQL consts to do earlier validation - taken from Zend\Db\Sql\Select.php
@@ -71,8 +71,8 @@ class AdministratorTable
      */
     public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
-        $this->_serviceManager = $sm;
-        $this->_tableGateway = $tg;
+        $this->serviceManager = $sm;
+        $this->tableGateway = $tg;
     }
 
     /**
@@ -87,7 +87,7 @@ class AdministratorTable
      * @param  null $offset    OFFSET condition
      * @return ResultSet|Paginator
      */
-    public function fetchList($paginated = false, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         $limit = (int) $limit;
         $offset = (int) $offset;
@@ -95,12 +95,12 @@ class AdministratorTable
         if ($paginated === true) {
             $select = new Select("administrator");
             $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new Administrator(array(), $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
+            $resultSetPrototype->setArrayObjectPrototype(new Administrator([], $this->serviceManager));
+            $paginatorAdapter = new DbSelect($this->prepareQuery($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->tableGateway->getAdapter(), $resultSetPrototype);
             return new Paginator($paginatorAdapter);
         } else {
-            $resultSet = $this->_tableGateway->select(function (Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset) {
-                $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset) {
+                $this->prepareQuery($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
             return ($resultSet->valid() ? $resultSet : null);
@@ -124,17 +124,17 @@ class AdministratorTable
         $limit = (int) $limit;
         $offset = (int) $offset;
         $pagination = (bool) $pagination;
-        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER))) {
+        if (!in_array($joinType, [self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER])) {
             $joinType = self::JOIN_INNER;
         }
 
         if ($pagination === true) {
         } else {
-            $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset) {
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset) {
                 //when joining rename all columns from the joined table in order to avoid name clash
                 //this means when both tables have a column id the second table will have id renamed to id1
-                $select->join($join, $on, array("id1"=>"id"), $joinType);
-                $this->queryColumns($select, array(), $where, self::PRE_NULL, $group, $order, $limit, $offset);
+                $select->join($join, $on, ["id1"=>"id"], $joinType);
+                $this->prepareQuery($select, [], $where, self::PRE_NULL, $group, $order, $limit, $offset);
             });
             $resultSet->buffer();
             return ($resultSet->valid() ? $resultSet : false);
@@ -155,13 +155,13 @@ class AdministratorTable
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery(Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if (is_array($columns) && !empty($columns)) {
             $select->columns($columns);
         }
         if (is_array($where) && !empty($where)) {
-            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL))) {
+            if (!in_array($predicate, [self::PRE_AND, self::PRE_OR, self::PRE_NULL])) {
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
@@ -190,7 +190,7 @@ class AdministratorTable
      */
     public function getAdministrator($id = 0)
     {
-        $rowset = $this->_tableGateway->select(array('user' => (int) $id));
+        $rowset = $this->tableGateway->select(['user' => (int) $id]);
         if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find administrator");
         }
@@ -209,23 +209,23 @@ class AdministratorTable
         if (!$this->getAdministrator($id)) {
             throw new \RuntimeException("Couldn't delete administrator");
         }
-        $this->_tableGateway->delete(array('user' => (int) $id));
+        $this->tableGateway->delete(['user' => (int) $id]);
     }
 
     public function saveAdministrator(Administrator $administrator = null)
     {
-        $data = array(
+        $data = [
             'user' => (int) $administrator->user,
-        );
+        ];
         $id = (int)$administrator->id;
         if (!$id) {
-            $this->_tableGateway->insert($data);
-            $administrator->id = $this->_tableGateway->lastInsertValue;
+            $this->tableGateway->insert($data);
+            $administrator->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getAdministrator($id)) {
                 throw new \RuntimeException("Couldn't save administrator");
             }
-            $this->_tableGateway->update($data, array('user' => $id));
+            $this->tableGateway->update($data, ['user' => $id]);
         }
         unset($id, $data);
         return $administrator;

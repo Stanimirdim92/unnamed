@@ -47,17 +47,17 @@ class AdministratorForm extends Form
     public function __construct(\Admin\Model\Administrator $options = null)
     {
         parent::__construct("administrator");
-        $elements = array();
+        $elements = [];
 
         $elements[5] = new Element\Text('user');
         $elements[5]->setLabel('User ID');
-        $elements[5]->setAttributes(array(
+        $elements[5]->setAttributes([
             'required'   => true,
             'size'        => 40,
             'class'      => 'administrator-user ajax-search',
             'placeholder' => 'User ID',
             'autocomplete' => "off",
-        ));
+        ]);
 
         if ($options!=null and $options->user) {
             $elements[5]->setValue($options->user);

@@ -7,7 +7,6 @@
         <meta charset="utf-8">
         <title><?=$this->headTitle()->renderTitle();?></title>
         <?=$this->headMeta()?>
-
         <meta property="og:type" content="article">
         <meta property="og:url" content="<?=$view->baseURL?>">
         <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle()?>">
@@ -39,23 +38,23 @@
         <link rel="stylesheet" media="screen" href="/front/css/style.css">
     </head>
     <body>
-            <nav>
-                <ul>
+         <nav id="nav">
+            <ul>
                 <li><a href="&sol;"><?=$view->translation->HOME?></a></li>
 <?php
-            foreach($view->menus as $key => $menu)
-            {
+        if(!empty($view->menus)) {
+            foreach($view->menus as $key => $menu) {
+                $menu->setServiceManager(null);
 ?>
                 <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()))?>'><?=$menu->getCaption();?></a>
 
 <?php
-                if(isset($view->submenus[$menu->id]) && count($view->submenus[$menu->id])>0)
-                {
+                if(!empty($view->submenus[$key])) {
 ?>
                     <ul class="sub-menu">
 <?php
-                    foreach($view->submenus[$menu->id] as $sub)
-                    {
+                    foreach($view->submenus[$key] as $sub) {
+                        $sub->setServiceManager(null);
 ?>
                         <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $sub->getMenuLink()));?>'><?=$sub->getCaption();?></a></li>
 <?php
@@ -66,89 +65,77 @@
                 }
                 echo "</li>";
             }
+        }
             echo "<li><a itemprop='url' href='&sol;login'>{$view->translation->LOGIN}</a></li>";
-            echo $this->layout()->content;
+        echo "</ul>";
+        echo "</nav>";
 
-            if(!empty($view->cache->warning))
-            {
-                if (is_array($view->cache->warning))
-                {
-                    foreach ($view->cache->warning as $warning)
-                    {
+            if(!empty($view->cache->warning)) {
+                if (is_array($view->cache->warning)) {
+                    foreach ($view->cache->warning as $warning) {
 ?>
-                  <div class="alert alert-warning">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-warning"></i> <?=$warning;?>
-                  </div>
+                        <div class="alert alert-warning">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-warning"></i> <?=$warning;?>
+                        </div>
 <?php
                     }
-                }
-                else
-                {
+                } else {
 ?>
-                  <div class="alert alert-warning">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-warning"></i> <?=$view->cache->warning;?>
-                  </div>
+                        <div class="alert alert-warning">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-warning"></i> <?=$view->cache->warning;?>
+                        </div>
 <?php
                 }
                 $view->cache->warning = null;
             }
 
-            if(!empty($view->cache->success))
-            {
-                if (is_array($view->cache->success))
-                {
-                    foreach ($view->cache->success as $success)
-                    {
+            if(!empty($view->cache->success)) {
+                if (is_array($view->cache->success)) {
+                    foreach ($view->cache->success as $success) {
 ?>
-                  <div class="alert alert-success">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$success;?>
-                  </div>
+                        <div class="alert alert-success">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-check"></i> <?=$success;?>
+                        </div>
 <?php
                     }
-                }
-                else
-                {
+                } else {
 ?>
-                  <div class="alert alert-success">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$view->cache->success;?>
-                  </div>
+                        <div class="alert alert-success">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-check"></i> <?=$view->cache->success;?>
+                        </div>
 <?php
                 }
                 $view->cache->success = null;
             }
 
-            if(!empty($view->cache->error))
-            {
-                if (is_array($view->cache->error))
-                {
-                    foreach ($view->cache->error as $error)
-                    {
+            if(!empty($view->cache->error)) {
+                if (is_array($view->cache->error)) {
+                    foreach ($view->cache->error as $error) {
 ?>
-                  <div class="alert alert-danger">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$error;?>
-                  </div>
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-times"></i> <?=$error;?>
+                        </div>
 <?php
                     }
-                }
-                else
-                {
+                } else {
 ?>
-                  <div class="alert alert-danger">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$view->cache->error;?>
-                  </div>
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            <i class="fa-fw fa fa-times"></i> <?=$view->cache->error;?>
+                        </div>
 <?php
                 }
                 $view->cache->error = null;
             }
+            echo $this->layout()->content;
 ?>
         <!-- Load jQuery async, but defer all other scripts -->
         <script async src="/front/js/jquery.min.js"></script>
-        <script defer src="/front/js/custom.js"></script>
+        <script async defer src="/front/js/custom.js"></script>
     </body>
 </html>

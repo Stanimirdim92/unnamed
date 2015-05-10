@@ -9,25 +9,25 @@ class TermCategoryForm extends Form
     {
         parent::__construct("termCategory");
 
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('name');
         $elements[0]->setLabel("Name");
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   => true,
             'size'        => 40,
             'class'      => 'term-name',
             'placeholder' => 'Name',
-        ));
+        ]);
         if ($options != null) {
             $elements[0]->setValue($options->name);
         }
 
         $elements[1] = new Element\Submit('submit');
-        $elements[1]->setAttributes(array(
+        $elements[1]->setAttributes([
             'id' => 'submitbutton',
             'class' => 'term-button',
-        ));
+        ]);
         if ($options != null) {
             $elements[2] = new Element\Hidden('id');
             $elements[2]->setValue($options->id);

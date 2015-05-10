@@ -46,7 +46,7 @@ class LanguageTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Language(array(), $sm));
+        $resultSetPrototype->setArrayObjectPrototype(new Language([], $sm));
         $tg = new TableGateway('language', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
         return new LanguageTable($sm, $tg);
     }

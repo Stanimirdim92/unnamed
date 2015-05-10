@@ -1,12 +1,10 @@
 <?php
-if (count($this->contents) > 0)
-{
+if (count($this->contents) > 0) {
     $c = $this->contents->current();
     echo "<h2 itemscope itemprop='name'>{$c->getTitle()}</h2>";
 
-    if($c->getPreview() != null)
-    {
- ?>
+    if($c->getPreview() != null) {
+?>
         <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
             <a itemprop="url" href="/userfiles/preview/<?=$c->getPreview();?>" id="news_image" title="<?=$c->getTitle();?>">
                 <img itemprop="image" src="/userfiles/preview/<?=$c->getPreview();?>" title="<?=$c->getTitle();?>" alt="<?=$c->getTitle();?>" />
@@ -14,16 +12,8 @@ if (count($this->contents) > 0)
         </figure>
 <?php
     }
-
     echo "<p itemscope itemprop='text' class='post-text'>{$c->getText()}</p>";
-    echo "<br>";
-    if ($c->getMenuObject()->getParent() != null)
-    {
-        echo "<p><a itemprop='url' class='main-menu' href='".$this->url('menu', array('title' => $c->getMenuObject()->getParentObject()->getMenuLink()))."'>{$c->getMenuObject()->getParentObject()->getCaption()}</a></p>";
-    }
-}
-else
-{
+} else {
     echo "<h3 class='c no-content'>{$this->translation->NO_CONTENT}</h3>";
 }
 ?>

@@ -8,86 +8,86 @@ use Zend\ServiceManager\ServiceManager;
 
 class AdminMenu implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    private $inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
+    private $serviceManager;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id;
+    private $id;
 
     /**
-     * @param String $_caption
+     * @param String $caption
      * @return string
      */
-    private $_caption;
+    private $caption;
 
     /**
-     * @param Int $_menuOrder
+     * @param Int $menuOrder
      * @return int
      */
-    private $_menuOrder;
+    private $menuOrder;
 
     /**
-     * @param Int $_advanced
+     * @param Int $advanced
      * @return int
      */
-    private $_advanced;
+    private $advanced;
 
     /**
-     * @param String $_controller
+     * @param String $controller
      * @return string
      */
-    private $_controller;
+    private $controller;
 
     /**
-     * @param String $_action
+     * @param String $action
      * @return string
      */
-    private $_action;
+    private $action;
 
     /**
-     * @param String $_class
+     * @param String $class
      * @return string
      */
-    private $_class;
+    private $class;
 
     /**
-     * @param String $_description
+     * @param String $description
      * @return string
      */
-    private $_description;
+    private $description;
 
     /**
-     * @param Int $_parent
+     * @param Int $parent
      * @return int
      */
-    private $_parent;
-    
+    private $parent;
+
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_caption = (isset($data['caption'])) ? $data['caption'] : null;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : null;
-        $this->_advanced = (isset($data['advanced'])) ? $data['advanced'] : null;
-        $this->_controller = (isset($data['controller'])) ? $data['controller'] : null;
-        $this->_action = (isset($data['action'])) ? $data['action'] : null;
-        $this->_class = (isset($data['class'])) ? $data['class'] : null;
-        $this->_description = (isset($data['description'])) ? $data['description'] : null;
-        $this->_parent = (isset($data['parent'])) ? $data['parent'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->caption = (isset($data['caption'])) ? $data['caption'] : null;
+        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : null;
+        $this->advanced = (isset($data['advanced'])) ? $data['advanced'] : null;
+        $this->controller = (isset($data['controller'])) ? $data['controller'] : null;
+        $this->action = (isset($data['action'])) ? $data['action'] : null;
+        $this->class = (isset($data['class'])) ? $data['class'] : null;
+        $this->description = (isset($data['description'])) ? $data['description'] : null;
+        $this->parent = (isset($data['parent'])) ? $data['parent'] : null;
     }
 
     /**
@@ -99,25 +99,25 @@ class AdminMenu implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId(int $id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
 
     /**
@@ -126,7 +126,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function setCaption($caption)
     {
-        $this->_caption = $caption;
+        $this->caption = $caption;
     }
 
     /**
@@ -135,7 +135,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getCaption()
     {
-        return $this->_caption;
+        return $this->caption;
     }
 
     /**
@@ -144,7 +144,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function setMenuOrder($menuOrder)
     {
-        $this->_menuOrder = $menuOrder;
+        $this->menuOrder = $menuOrder;
     }
 
     /**
@@ -153,16 +153,16 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getMenuOrder()
     {
-        return $this->_menuOrder;
+        return $this->menuOrder;
     }
-     
+
     /**
      * Set advanced
      * @param Boolean $advanced
      */
     public function setAdvanced($advanced)
     {
-        $this->_advanced = $advanced;
+        $this->advanced = $advanced;
     }
 
     /**
@@ -171,16 +171,16 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getAdvanced()
     {
-        return $this->_advanced;
+        return $this->advanced;
     }
-     
+
     /**
      * Set controller
      * @param String $controller
      */
     public function setController($controller)
     {
-        $this->_controller = $controller;
+        $this->controller = $controller;
     }
 
     /**
@@ -189,16 +189,16 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getController()
     {
-        return $this->_controller;
+        return $this->controller;
     }
-     
+
     /**
      * Set action
      * @param String $action
      */
     public function setAction($action)
     {
-        $this->_action = $action;
+        $this->action = $action;
     }
 
     /**
@@ -207,7 +207,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getAction()
     {
-        return $this->_action;
+        return $this->action;
     }
 
     /**
@@ -216,7 +216,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function setClass($class)
     {
-        $this->_class = $class;
+        $this->class = $class;
     }
 
     /**
@@ -225,7 +225,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getClass()
     {
-        return $this->_class;
+        return $this->class;
     }
 
     /**
@@ -234,7 +234,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function setDescription($description)
     {
-        $this->_description = $description;
+        $this->description = $description;
     }
 
     /**
@@ -243,7 +243,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getDescription()
     {
-        return $this->_description;
+        return $this->description;
     }
 
     /**
@@ -252,7 +252,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function setParent($parent)
     {
-        $this->_parent = $parent;
+        $this->parent = $parent;
     }
 
     /**
@@ -261,9 +261,9 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function getParent()
     {
-        return $this->_parent;
+        return $this->parent;
     }
- 
+
     /**
      * Get the related object from the DB
      */
@@ -281,7 +281,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -289,8 +289,8 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -299,7 +299,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
 
     /**
@@ -307,11 +307,11 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -328,12 +328,12 @@ class AdminMenu implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -355,41 +355,41 @@ class AdminMenu implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array('name' => 'id', 'required' => false, 'filters' => array(array('name' => 'Int'))));
+            $inputFilter->add(['name' => 'id', 'required' => false, 'filters' => [['name' => 'Int']]]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"caption",
                 "required" => true,
-                "filters"=> array(array('name' => 'StringTrim')),));
-            $inputFilter->add(array(
+                "filters"=> [['name' => 'StringTrim']], ]);
+            $inputFilter->add([
                 "name"=>"menuOrder",
-                "required" => false,));
-            $inputFilter->add(array(
+                "required" => false, ]);
+            $inputFilter->add([
                 "name"=>"advanced",
-                "required" => false,));
-            $inputFilter->add(array(
+                "required" => false, ]);
+            $inputFilter->add([
                 "name"=>"controller",
                 "required" => true,
-                "filters"=> array(array('name' => 'StringTrim')),));
-            $inputFilter->add(array(
+                "filters"=> [['name' => 'StringTrim']], ]);
+            $inputFilter->add([
                 "name"=>"action",
                 "required" => false,
-                "filters"=> array(array('name' => 'StringTrim')),));
-            $inputFilter->add(array(
+                "filters"=> [['name' => 'StringTrim']], ]);
+            $inputFilter->add([
                 "name"=>"class",
                 "required" => false,
-                "filters"=> array(array('name' => 'StringTrim')),));
-            $inputFilter->add(array(
+                "filters"=> [['name' => 'StringTrim']], ]);
+            $inputFilter->add([
                 "name"=>"description",
-                "required" => false,));
-            $inputFilter->add(array(
+                "required" => false, ]);
+            $inputFilter->add([
                 "name"=>"parent",
-                "required" => false,));
-            $this->_inputFilter = $inputFilter;
+                "required" => false, ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
 
     /**
@@ -399,14 +399,14 @@ class AdminMenu implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setCaption($this->_caption);
-        $clone->setMenuOrder($this->_menuOrder);
-        $clone->setAdvanced($this->_advanced);
-        $clone->setController($this->_controller);
-        $clone->setAction($this->_action);
-        $clone->setClass($this->_class);
-        $clone->setDescription($this->_description);
-        $clone->setParent($this->_parent);
+        $clone->setCaption($this->caption);
+        $clone->setMenuOrder($this->menuOrder);
+        $clone->setAdvanced($this->advanced);
+        $clone->setController($this->controller);
+        $clone->setAction($this->action);
+        $clone->setClass($this->class);
+        $clone->setDescription($this->description);
+        $clone->setParent($this->parent);
         return $clone;
     }
 
@@ -415,6 +415,6 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function toString()
     {
-        return $this->_caption;
+        return $this->caption;
     }
 }

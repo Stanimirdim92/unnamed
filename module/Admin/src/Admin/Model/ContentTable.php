@@ -38,7 +38,6 @@ namespace Admin\Model;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Select;
-use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\ServiceManager;
 
@@ -47,23 +46,19 @@ class ContentTable
     /**
      * @var TableGateway
      */
-    private $_tableGateway = null;
+    private $tableGateway = null;
 
     /**
      * @var ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
-     * Define SQL consts to do earlier validation - taken from Zend\Db\Sql\Select.php
+     * Preducate contstants
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
     const PRE_NULL = null;
-    const JOIN_INNER = 'inner';
-    const JOIN_OUTER = 'outer';
-    const JOIN_LEFT = 'left';
-    const JOIN_RIGHT = 'right';
 
     /**
      * @param ServiceManager|null $sm
@@ -71,8 +66,8 @@ class ContentTable
      */
     public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
     {
-        $this->_serviceManager = $sm;
-        $this->_tableGateway = $tg;
+        $this->serviceManager = $sm;
+        $this->tableGateway = $tg;
     }
 
     /**
@@ -85,59 +80,52 @@ class ContentTable
      * @param  null $order     ORDER condition
      * @param  null $limit     LIMIT condition
      * @param  null $offset    OFFSET condition
-     * @return ResultSet|Paginator
+     * @return ResultSet|Paginator|null
      */
-    public function fetchList($paginated = false, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        $limit = (int) $limit;
-        $offset = (int) $offset;
-        $paginated = (bool) $paginated;
-        if ($paginated === true) {
-            $select = new Select("content");
-            $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new Content(array(), $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset), $this->_tableGateway->getAdapter(), $resultSetPrototype);
+        if ((bool) $paginated === true) {
+            $paginatorAdapter = new DbSelect($this->prepareQuery(new Select("menu"), $columns, $where, $predicate, $group, $order, $limit, $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
             return new Paginator($paginatorAdapter);
         } else {
-            $resultSet = $this->_tableGateway->select(function (Select $select) use ($columns, $where, $predicate, $group, $order, $limit, $offset) {
-                $this->queryColumns($select, $columns, $where, $predicate, $group, $order, $limit, $offset);
-            });
+            $select = $this->prepareQuery(new Select("content"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
+            $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
-            return ($resultSet->valid() ? $resultSet : null);
+            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
+                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            }
         }
     }
 
     /**
-     * Fetch all records from the DB by joining them
+     * @param bool $pagination
+     * @param string $join
+     * @param array $tbl1OneCols - content table
+     * @param array $tbl2OneCols - the joined table
+     * @param string $on
+     * @param string $joinType
+     * @param null $where
+     * @param null $group
+     * @param null $order
+     * @param null $limit
+     * @param null $offset
      *
-     * @param string $join    table name
-     * @param string $on      table colums
-     * @param null $where     WHERE condition
-     * @param null $group     GROUP condition
-     * @param null $order     ORDER condition
-     * @param null $limit     LIMIT condition
-     * @param null $offset    OFFSET condition
-     * @return ResultSet
+     * @return ResultSet|Paginator|null
      */
-    public function fetchJoin($pagination = false, $join = '', $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
     {
-        $limit = (int) $limit;
-        $offset = (int) $offset;
-        $pagination = (bool) $pagination;
-        if (!in_array($joinType, array(self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER))) {
-            $joinType = self::JOIN_INNER;
-        }
-
-        if ($pagination === true) {
+        $select = new Select("content");
+        $select->join($join, $on, $tbl2OneCols, $joinType);
+        if ((bool) $pagination === true) {
+            $paginatorAdapter = new DbSelect($this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
+            return new Paginator($paginatorAdapter);
         } else {
-            $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $joinType, $where, $group, $order, $limit, $offset) {
-                //when joining rename all columns from the joined table in order to avoid name clash
-                //this means when both tables have a column id the second table will have id renamed to id1
-                $select->join($join, $on, array("id1"=>"id"), $joinType);
-                $this->queryColumns($select, array(), $where, self::PRE_NULL, $group, $order, $limit, $offset);
-            });
+            $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
+            $resultSet = $this->tableGateway->selectWith($result);
             $resultSet->buffer();
-            return ($resultSet->valid() ? $resultSet : null);
+            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
+                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            }
         }
     }
 
@@ -145,7 +133,7 @@ class ContentTable
      * Prepare all statements before quering the database
      *
      * @param  Select $select
-     * @param  array  $columns
+     * @param  array $columns
      * @param  null $where
      * @param  null $group
      * @param  null $predicate
@@ -155,13 +143,13 @@ class ContentTable
      *
      * @return Select
      */
-    private function queryColumns(Select $select, array $columns = array(), $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery(Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if (is_array($columns) && !empty($columns)) {
             $select->columns($columns);
         }
         if (is_array($where) && !empty($where)) {
-            if (!in_array($predicate, array(self::PRE_AND, self::PRE_OR, self::PRE_NULL))) {
+            if (!in_array($predicate, [self::PRE_AND, self::PRE_OR, self::PRE_NULL])) {
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
@@ -191,11 +179,12 @@ class ContentTable
      */
     public function getContent($id = 0, $language = 1)
     {
-        $rowset = $this->_tableGateway->select(array('id' => (int) $id, "language" => (int) $language));
+        $rowset = $this->tableGateway->select(['id' => (int) $id, "language" => (int) $language]);
+        $rowset->buffer();
         if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find content");
         }
-        return $rowset->current();
+        return $rowset;
     }
 
     /**
@@ -211,7 +200,7 @@ class ContentTable
         if (!$this->getContent($id, $language)) {
             throw new \RuntimeException("Couldn't delete content");
         }
-        $this->_tableGateway->delete(array('id' => (int) $id, "language" => (int) $language));
+        $this->tableGateway->delete(['id' => (int) $id, "language" => (int) $language]);
     }
 
     /**
@@ -223,7 +212,7 @@ class ContentTable
      */
     public function saveContent(Content $content = null)
     {
-        $data = array(
+        $data = [
             'menu'      => (int) $content->menu,
             'title'     => (string) $content->title,
             'preview'   => (string) $content->preview,
@@ -233,17 +222,17 @@ class ContentTable
             'date'      => (string) $content->date,
             'language'  => (int) $content->language,
             'titleLink' => (string) $content->titleLink,
-        );
+        ];
         $id = (int) $content->id;
         $language = (int) $content->language;
         if (!$id) {
-            $this->_tableGateway->insert($data);
-            $content->id = $this->_tableGateway->lastInsertValue;
+            $this->tableGateway->insert($data);
+            $content->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getContent($id, $language)) {
                 throw new \RuntimeException("Couldn't save content");
             }
-            $this->_tableGateway->update($data, array('id' => $id, 'language' => $language));
+            $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
         }
         unset($id, $language, $data);
         return $content;

@@ -1,8 +1,8 @@
 @charset "UTF-8";
-/**   
+/**
  *   Author: Stanimir Dimitrov
  *   Contact: stanimirdim92@gmail.com
- *   Website: 
+ *   Website:
  *   License: MIT License
  *   Coded in CSS3
  *   Theme Name:
@@ -17,26 +17,12 @@
  */
 /* VARIABLES */
 
-$font-stack: "Helvetica", "Helvetica Neue", Helvetica, sans-serif, Arial;
-
-/* MIXINS */
-@mixin box-sizing($size) {
-    -webkit-box-sizing: $size;
-    -moz-box-sizing: $size;
-    box-sizing: $size;
-}
-
-/* Base reset style rules for each website */
-
-/* Newest box-sizing best practice from 15th July. Same effect, easier to work with */
-html {
-   @include box-sizing(border-box);
-}
-
-*, 
-*:before, 
+*,
+*:before,
 *:after {
-   @include box-sizing(inherit);
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
 }
 
 /*
@@ -81,7 +67,7 @@ html {
  * 3. Make sure that the html is 100% width and height.
  */
 
-html{
+html {
     -ms-text-size-adjust: 100%; /* 2 */
     -webkit-text-size-adjust: 100%; /* 2 */
     -moz-text-size-adjust: 100%; /* 2 */
@@ -89,9 +75,12 @@ html{
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font: .813em/1.4 $font-stack; /* 1 */
-    width: 100%; /* 3 */
-    height: 100%; /* 3 */
+    font: .813em/1.4 "Helvetica", "Helvetica Neue", Helvetica, sans-serif, Arial; /* 1 */
+    min-width: 100%; /* 3 */
+    min-height: 100%; /* 3 */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /**
@@ -267,7 +256,7 @@ strong {
  * Address inconsistent and variable font size in all browsers.
  */
 
-.smalltext, 
+.smalltext,
 small {
     font-size: 60%;
     color: #695f5f;
@@ -308,9 +297,9 @@ svg:not(:root) {
 hr {
     height: 0;
     border-width: 1px 0 1px;
-    clear: both;  
+    clear: both;
     margin: 1.25em 0 1.1875em;
-    border-top-color: #000000;  
+    border-top-color: #000000;
     border-bottom-color: #414141;
 }
 
@@ -346,7 +335,7 @@ img,
 object,
 embed {
   max-width: 100%;
-  height: auto; 
+  height: auto;
 }
 
 p {
@@ -610,7 +599,7 @@ textarea:focus {
     visibility: hidden;
 }
 
-/* 
+/*
  * Avoid inline css style="text-align: left/right/center".
  */
 
@@ -627,7 +616,7 @@ textarea:focus {
 }
 
 /* ==============================================
-Classes and IDs for all devices and resolutions. 
+Classes and IDs for all devices and resolutions.
 
 All manually written styles should go from here on
 
@@ -670,7 +659,153 @@ ul {
 }
 /* Navigation */
 #nav {
+    width: 100%;
+}
+#nav  ul {
+    background: #eee;
+    border-bottom: 1px solid #DBDBDB;
+}
+#nav  ul > li {
+    display: inline-block;
+      padding: 7px;
+}
+#nav  ul  li  a {
+  padding: 10px;
+}
+#nav  ul  li  a:hover {
+  background: #fff;
+}
+#nav  ul  li  ul {
+  position: absolute;
+  background: #eee;
+  min-width: 150px;
+  display: none;
+}
+#nav  ul  li:hover  ul  {
+    display: block;
+}
+#nav .sub-menu  li {
 
+}
+#nav  ul  li  ul  li  a:hover {
+    background: #fff;
+}
+#nav  ul  li  ul  li  a {
+  padding: 10px;
+  display: block;
+  border-bottom: 1px solid #Ccc;
+}
+.dialog_hide li {
+    float: right;
+    list-style: none;
+    margin: 0 10px;
+}
+
+.dialog_hide p {
+    border-bottom: 1px solid rgb(211, 211, 211);
+    padding: 10px;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),to(rgb(255, 255, 255)));
+    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+}
+
+.dialog_hide ul {
+    top: 29%;
+    position: relative;
+}
+
+.btn-duplicate {
+    color: #fff;
+    background-color: rgb(3, 83, 169) !important;
+    border-color: rgb(2, 76, 156)
+}
+
+.btn-archive {
+    color: #fff;
+    background-color: rgb(224, 117, 1) !important;
+    border-color: rgb(202, 121, 0);
+}
+
+.btn-unarchive {
+    color: #fff;
+    background-color: rgb(3, 162, 169) !important;
+    border-color: rgb(6, 130, 141);
+}
+
+.btn-sendmail {
+    color: #fff;
+    background-color: rgb(23, 169, 3) !important;
+    border-color: rgb(26, 144, 3);
+}
+.blue {
+    color: #fff;
+  background-color: #337ab7 !important;
+  border-color: #2e6da4 !important;
+}
+
+
+.orange {
+    color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.red {
+    color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+
+.red:hover {
+    color: #fff !important;
+    background-color: #81021f;
+    border-color: #540114
+}
+
+/* !Important is used an all properies , because in deadobjects deleteall action this css class .jarviswidget>div breaks the window... */
+.dialog_hide {
+    width: 355px !important;
+    height: 160px !important;
+    border: 1px solid rgb(209, 209, 209) !important;
+    z-index: 100 !important;
+    left: 50% !important;
+    top: 50% !important;
+    padding: 0 !important;
+    -webkit-transform: translate(-50%, -50%) !important;
+    -moz-transform: translate(-50%, -50%) !important;
+    -ms-transform: translate(-50%, -50%) !important;
+    -o-transform: translate(-50%, -50%) !important;
+    transform: translate(-50%, -50%) !important;
+    position: fixed !important;
+    border-radius: 5px !important;
+    background: #eee !important;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),
+        to(rgb(255, 255, 255))) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,
+        rgb(255, 255, 255)) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,
+        rgb(255, 255, 255)) !important;
+    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,
+        rgb(255, 255, 255)) !important;
+    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,
+        rgb(255, 255, 255)) !important;
+}
+.green {
+    color: #fff;
+    background-color: #78BA60 !important;
+    border-color: rgb(26, 144, 3);
+}
+.delete {
+    background-color: #a90329;
+    color: #fff;
+    border-color: #900323;
+}
+.delete:hover {
+    color: #fff !important;
+    background-color: #81021f;
+    border-color: #540114
 }
 /* Left content */
 #aside-menu-left {
@@ -719,7 +854,7 @@ Begin Media Queries for different devices
 
     }
 /*************************************
-    Styles for each main element 
+    Styles for each main element
 **************************************/
     /* Wrapper for main, left, right content */
     .content-wrapper {
@@ -752,7 +887,7 @@ Begin Media Queries for different devices
 @media screen and (min-width: 20.000em) and (max-width: 30.000em) {
     /* Wrapper for main, left, right content */
     #content-wrapper {
-        
+
     }
     /* Header */
     #header {
@@ -775,7 +910,7 @@ Begin Media Queries for different devices
 
     }
 /*************************************
-    Styles for each main element 
+    Styles for each main element
 **************************************/
     /* Wrapper for main, left, right content */
     .content-wrapper {
@@ -813,29 +948,29 @@ Begin Media Queries for different devices
         visibility: visible;
     }
     /* The code bellow is for responsive data tables */
-    table, thead, tbody, th, td, tr { 
-        display: block; 
+    table, thead, tbody, th, td, tr {
+        display: block;
     }
     /* this way instead of display: block; to avoid accesibility problems */
-    thead tr { 
+    thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
-    tr { 
+    tr {
         border: 1px solid #ccc;
         margin-top: 20px;
     }
     td {
         border-bottom: 1px solid #ccc;
-        padding: 10px; 
+        padding: 10px;
     }
 }
 /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide.  480px - 640px */
 @media screen and (min-width: 30.000em) and (max-width: 40.000em) {
     /* Wrapper for main, left, right content */
     #content-wrapper {
-        
+
     }
     /* Header */
     #header {
@@ -858,7 +993,7 @@ Begin Media Queries for different devices
 
     }
 /*************************************
-    Styles for each main element 
+    Styles for each main element
 **************************************/
     /* Wrapper for main, left, right content */
     .content-wrapper {
@@ -887,11 +1022,11 @@ Begin Media Queries for different devices
     }
 }
 
-/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones  640px - 1024 */ 
+/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones  640px - 1024 */
 @media screen and (min-width: 40.000em) and (max-width: 64.000em) {
     /* Wrapper for main, left, right content */
     #content-wrapper {
-        
+
     }
     /* Header */
     #header {
@@ -914,7 +1049,7 @@ Begin Media Queries for different devices
 
     }
 /*************************************
-    Styles for each main element 
+    Styles for each main element
 **************************************/
     /* Wrapper for main, left, right content */
     .content-wrapper {
@@ -950,11 +1085,11 @@ Begin Media Queries for different devices
         color: black !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
-        text-shadow: none !important; 
+        text-shadow: none !important;
     }
 
     a:visited {
-        text-decoration: underline; 
+        text-decoration: underline;
     }
 
     a[href]::after {
@@ -969,7 +1104,7 @@ Begin Media Queries for different devices
     a[href^="javascript:"]::after,
     a[href^="#"]::after,
     a[href^=""]::after {
-        content: ""; 
+        content: "";
     }
 
     pre,
@@ -1004,6 +1139,6 @@ Begin Media Queries for different devices
 
     h2,
     h3 {
-        page-break-after: avoid; 
+        page-break-after: avoid;
     }
 }

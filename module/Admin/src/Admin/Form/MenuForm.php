@@ -47,19 +47,19 @@ class MenuForm extends Form
      * @param array              $languages     ResultSet arrayobject
      * @param array              $parents       ResultSet arrayobject
      */
-    public function __construct(\Admin\Model\Menu $options = null,  $languages = array(), $parents = array())
+    public function __construct(\Admin\Model\Menu $options = null,  $languages = [], $parents = [])
     {
         parent::__construct("menu");
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('caption');
         $elements[0]->setLabel('Caption');
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   => true,
             'id'         => "seo-caption",
             'size'        => 40,
             'placeholder' => 'Caption',
-        ));
+        ]);
 
         if ($options!=null and $options->caption) {
             $elements[0]->setValue($options->caption);
@@ -67,7 +67,7 @@ class MenuForm extends Form
 
         $elements[1] = new Element\Select('menuOrder');
         $elements[1]->setLabel('Menu order');
-        $valueOptions = array();
+        $valueOptions = [];
         for ($i = 1; $i<40; $i++) {
             $valueOptions[$i] = $i;
         }
@@ -80,30 +80,30 @@ class MenuForm extends Form
 
         $elements[2] = new Element\Text('keywords');
         $elements[2]->setLabel('Keywords');
-        $elements[2]->setAttributes(array(
+        $elements[2]->setAttributes([
             'required'   => false,
             'size'        => 40,
             'placeholder' => 'Keywords (max 15 words) seperate by commas',
-        ));
+        ]);
         if ($options!=null and $options->keywords) {
             $elements[2]->setValue($options->keywords);
         }
 
         $elements[3] = new Element\Text('description');
         $elements[3]->setLabel('Description');
-        $elements[3]->setAttributes(array(
+        $elements[3]->setAttributes([
             'required'   => false,
             'size'        => 40,
             'placeholder' => 'Description (max 150 characters)',
-        ));
+        ]);
         if ($options!=null and $options->description) {
             $elements[3]->setValue($options->description);
         }
 
         $elements[4] = new Element\Select('language');
         $elements[4]->setLabel('language');
-        $valueOptions = array();
-        
+        $valueOptions = [];
+
         foreach ($languages as $item) {
             $valueOptions[$item->id] = $item->toString();
         }
@@ -114,11 +114,15 @@ class MenuForm extends Form
 
         $elements[5] = new Element\Select('parent');
         $elements[5]->setLabel('parent');
-        $valueOptions = array();
+        $valueOptions = [];
 
         $valueOptions[0] = 'Select parent menu';
         foreach ($parents as $item) {
-            $valueOptions[$item->id] = $item->toString();
+            if ($item->parent != 0) {
+                $valueOptions[$item->id] = "--".$item->toString();
+            } else {
+                $valueOptions[$item->id] = $item->toString();
+            }
         }
         $elements[5]->setValueOptions($valueOptions);
         if ($options!=null and $options->parent) {
@@ -127,7 +131,7 @@ class MenuForm extends Form
 
         $elements[6] = new Element\Select('menutype');
         $elements[6]->setLabel('Choose menu type');
-        $valueOptions = array();
+        $valueOptions = [];
         $valueOptions[0] = "Main menu";
         $valueOptions[1] = "Left menu";
         $valueOptions[2] = "Right menu";
@@ -139,7 +143,7 @@ class MenuForm extends Form
 
         $elements[7] = new Element\Select('footercolumn');
         $elements[7]->setLabel('Choose footer column');
-        $valueOptions = array();
+        $valueOptions = [];
         $valueOptions[1] = "Column one";
         $valueOptions[2] = "Column two";
         $valueOptions[3] = "Column three";

@@ -46,7 +46,7 @@ class TermTranslationTable
             }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
-            $paginatorAdapter = new DbSelect($select,$this->tableGateway->getAdapter(),$resultSetPrototype);
+            $paginatorAdapter = new DbSelect($select, $this->tableGateway->getAdapter(), $resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
         } else {
@@ -102,7 +102,7 @@ class TermTranslationTable
     public function getTermTranslation($id)
     {
         $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id' => $id));
+        $rowset = $this->tableGateway->select(['id' => $id]);
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception();
@@ -112,23 +112,23 @@ class TermTranslationTable
 
     public function deleteTermTranslation($id)
     {
-        $this->tableGateway->delete(array('id' => (int) $id));
+        $this->tableGateway->delete(['id' => (int) $id]);
     }
 
     public function saveTermTranslation(TermTranslation $termTranslation)
     {
-        $data = array(
+        $data = [
             'language' => (int) $termTranslation->language,
             'translation' => (string) $termTranslation->translation,
             'term' => (int) $termTranslation->term,
-        );
+        ];
 
         $id = (int)$termTranslation->id;
         if ($id == 0) {
             $this->tableGateway->insert($data);
         } else {
             if ($this->getTermTranslation($id)) {
-                $this->tableGateway->update($data, array('id' => $id));
+                $this->tableGateway->update($data, ['id' => $id]);
             } else {
                 throw new \Exception();
             }

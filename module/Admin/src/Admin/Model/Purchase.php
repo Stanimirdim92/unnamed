@@ -11,82 +11,82 @@ class Purchase
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
+    private $serviceManager;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id;
+    private $id;
 
-    
+
 
     /**
-     * @param Int $_packet
+     * @param Int $packet
      * @return int
      */
-    private $_packet;
+    private $packet;
 
     /**
-     * @param Date $_packetexpires
+     * @param Date $packetexpires
      * @return string
      */
-    private $_packetexpires;
+    private $packetexpires;
 
     /**
-     * @param Int $_user
+     * @param Int $user
      * @return int
      */
-    private $_user;
+    private $user;
 
     /**
-     * @param Int $_purchasedate
+     * @param Int $purchasedate
      * @return int
      */
-    private $_purchasedate;
+    private $purchasedate;
 
     /**
-     * @param Bool $_payed
+     * @param Bool $payed
      * @return int
      */
-    private $_payed;
+    private $payed;
 
     /**
-     * @param Bool $_active
+     * @param Bool $active
      * @return int
      */
-    private $_active;
+    private $active;
 
     /**
-     * @param Int $_money
+     * @param Int $money
      * @return int
      */
-    private $_money;
+    private $money;
 
     /**
-     * @param Int $_money
+     * @param Int $money
      * @return int
      */
-    private $_currency;
+    private $currency;
 
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_purchasedate = (isset($data['purchasedate'])) ? $data['purchasedate'] : null;
-        $this->_user = (isset($data['user'])) ? $data['user'] : null;
-        $this->_packet = (isset($data['packet'])) ? $data['packet'] : null;
-        $this->_packetexpires = (isset($data['packetexpires'])) ? $data['packetexpires'] : null;
-        $this->_payed = (isset($data['payed'])) ? $data['payed'] : null;
-        $this->_active = (isset($data['active'])) ? $data['active'] : null;
-        $this->_money = (isset($data['money'])) ? $data['money'] : null;
-        $this->_currency = (isset($data['currency'])) ? $data['currency'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->purchasedate = (isset($data['purchasedate'])) ? $data['purchasedate'] : null;
+        $this->user = (isset($data['user'])) ? $data['user'] : null;
+        $this->packet = (isset($data['packet'])) ? $data['packet'] : null;
+        $this->packetexpires = (isset($data['packetexpires'])) ? $data['packetexpires'] : null;
+        $this->payed = (isset($data['payed'])) ? $data['payed'] : null;
+        $this->active = (isset($data['active'])) ? $data['active'] : null;
+        $this->money = (isset($data['money'])) ? $data['money'] : null;
+        $this->currency = (isset($data['currency'])) ? $data['currency'] : null;
     }
 
     /**
@@ -98,35 +98,35 @@ class Purchase
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId(int $id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
-    
-    
+
+
     /**
      * Set user
      * @param String $user
      */
     public function setUser($user)
     {
-        $this->_user = $user;
+        $this->user = $user;
     }
 
     /**
@@ -135,7 +135,7 @@ class Purchase
      */
     public function getUser()
     {
-        return $this->_user;
+        return $this->user;
     }
 
     /**
@@ -144,7 +144,7 @@ class Purchase
      */
     public function setPacket($packet)
     {
-        $this->_packet = $packet;
+        $this->packet = $packet;
     }
 
     /**
@@ -153,7 +153,7 @@ class Purchase
      */
     public function getPacket()
     {
-        return $this->_packet;
+        return $this->packet;
     }
 
     /**
@@ -162,7 +162,7 @@ class Purchase
      */
     public function setPacketExpireMonths($packetexpires)
     {
-        $this->_packetexpires = $packetexpires;
+        $this->packetexpires = $packetexpires;
     }
 
     /**
@@ -171,7 +171,7 @@ class Purchase
      */
     public function getPacketExpireMonths()
     {
-        return $this->_packetexpires;
+        return $this->packetexpires;
     }
 
     /**
@@ -180,7 +180,7 @@ class Purchase
      */
     public function setPurchaseDate($purchasedate)
     {
-        $this->_purchasedate = $purchasedate;
+        $this->purchasedate = $purchasedate;
     }
 
     /**
@@ -189,7 +189,7 @@ class Purchase
      */
     public function getPurchaseDate()
     {
-        return $this->_purchasedate;
+        return $this->purchasedate;
     }
 
     /**
@@ -198,7 +198,7 @@ class Purchase
      */
     public function setPayed($payed)
     {
-        $this->_payed = $payed;
+        $this->payed = $payed;
     }
 
     /**
@@ -207,7 +207,7 @@ class Purchase
      */
     public function getPayed()
     {
-        return $this->_payed;
+        return $this->payed;
     }
 
     /**
@@ -216,7 +216,7 @@ class Purchase
      */
     public function setActive($active)
     {
-        $this->_active = $active;
+        $this->active = $active;
     }
 
     /**
@@ -225,7 +225,7 @@ class Purchase
      */
     public function getActive()
     {
-        return $this->_active;
+        return $this->active;
     }
 
     /**
@@ -234,7 +234,7 @@ class Purchase
      */
     public function setMoney($money)
     {
-        $this->_money = $money;
+        $this->money = $money;
     }
 
     /**
@@ -243,7 +243,7 @@ class Purchase
      */
     public function getMoney()
     {
-        return $this->_money;
+        return $this->money;
     }
 
     /**
@@ -252,7 +252,7 @@ class Purchase
      */
     public function setCurrency($currency)
     {
-        $this->_currency = $currency;
+        $this->currency = $currency;
     }
 
     /**
@@ -261,7 +261,7 @@ class Purchase
      */
     public function getCurrency()
     {
-        return $this->_currency;
+        return $this->currency;
     }
 
     /**
@@ -305,7 +305,7 @@ class Purchase
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -313,8 +313,8 @@ class Purchase
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -323,41 +323,41 @@ class Purchase
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -375,103 +375,103 @@ class Purchase
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"user",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"purchasedate",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"packet",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"packetexpires",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"payed",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Boolean'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Boolean'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"active",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Boolean'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Boolean'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"money",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Float'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Float'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"currency",
                 "required" => true,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
 }

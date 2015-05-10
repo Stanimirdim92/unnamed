@@ -8,135 +8,135 @@ use Zend\ServiceManager\ServiceManager;
 
 class User implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    private $inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
+    private $serviceManager;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id;
+    private $id;
 
     /**
-     * @param String $_name
+     * @param String $name
      * @return string
      */
-    private $_name;
+    private $name;
 
     /**
-     * @param String $_surname
+     * @param String $surname
      * @return string
      */
-    private $_surname;
+    private $surname;
 
     /**
-     * @param Binary $_password
+     * @param Binary $password
      * @return string
      */
-    private $_password;
+    private $password;
 
     /**
-     * @param String $_email
+     * @param String $email
      * @return string
      */
-    private $_email;
+    private $email;
 
     /**
-     * @param Date $_birthDate
+     * @param Date $birthDate
      * @return string
      */
-    private $_birthDate;
+    private $birthDate;
 
     /**
-     * @param Datetime $_lastLogin
+     * @param Datetime $lastLogin
      * @return string
      */
-    private $_lastLogin;
+    private $lastLogin;
 
     /**
-     * @param Int $_deleted
+     * @param Int $deleted
      * @return boolean
      */
-    private $_deleted;
+    private $deleted;
 
     /**
-     * @param String $_salt
+     * @param String $salt
      * @return string
      */
-    private $_salt;
+    private $salt;
 
     /**
-     * @param String $_image
+     * @param String $image
      * @return string
      */
-    private $_image;
+    private $image;
 
     /**
-     * @param Date $_registered
+     * @param Date $registered
      * @return string
      */
-    private $_registered;
+    private $registered;
 
     /**
-     * @param Int $_hideEmail
+     * @param Int $hideEmail
      * @return boolean
      */
-    private $_hideEmail;
+    private $hideEmail;
 
     /**
-     * @param String $_ip
+     * @param String $ip
      * @return string
      */
-    private $_ip;
+    private $ip;
 
     /**
-     * @param Int $_admin
+     * @param Int $admin
      * @return int
      */
-    private $_admin;
+    private $admin;
 
     /**
-     * @param Int $_language
+     * @param Int $language
      * @return int
      */
-    private $_language;
+    private $language;
 
     /**
-     * @param Int $_currency
+     * @param Int $currency
      * @return int
      */
-    private $_currency;
+    private $currency;
 
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_name = (isset($data['name'])) ? $data['name'] : null;
-        $this->_surname = (isset($data['surname'])) ? $data['surname'] : null;
-        $this->_password = (isset($data['password'])) ? $data['password'] : null;
-        $this->_email = (isset($data['email'])) ? $data['email'] : null;
-        $this->_birthDate = (isset($data['birthDate'])) ? $data['birthDate'] : null;
-        $this->_lastLogin = (isset($data['lastLogin'])) ? $data['lastLogin'] : null;
-        $this->_deleted = (isset($data['deleted'])) ? $data['deleted'] : null;
-        $this->_salt = (isset($data['salt'])) ? $data['salt'] : null;
-        $this->_image = (isset($data['image'])) ? $data['image'] : null;
-        $this->_registered = (isset($data['registered'])) ? $data['registered'] : null;
-        $this->_hideEmail = (isset($data['hideEmail'])) ? $data['hideEmail'] : null;
-        $this->_ip = (isset($data['ip'])) ? $data['ip'] : null;
-        $this->_admin = (isset($data['admin'])) ? $data['admin'] : null;
-        $this->_language = (isset($data['language'])) ? $data['language'] : null;
-        // $this->_currency = (isset($data['currency'])) ? $data['currency'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->name = (isset($data['name'])) ? $data['name'] : null;
+        $this->surname = (isset($data['surname'])) ? $data['surname'] : null;
+        $this->password = (isset($data['password'])) ? $data['password'] : null;
+        $this->email = (isset($data['email'])) ? $data['email'] : null;
+        $this->birthDate = (isset($data['birthDate'])) ? $data['birthDate'] : null;
+        $this->lastLogin = (isset($data['lastLogin'])) ? $data['lastLogin'] : null;
+        $this->deleted = (isset($data['deleted'])) ? $data['deleted'] : null;
+        $this->salt = (isset($data['salt'])) ? $data['salt'] : null;
+        $this->image = (isset($data['image'])) ? $data['image'] : null;
+        $this->registered = (isset($data['registered'])) ? $data['registered'] : null;
+        $this->hideEmail = (isset($data['hideEmail'])) ? $data['hideEmail'] : null;
+        $this->ip = (isset($data['ip'])) ? $data['ip'] : null;
+        $this->admin = (isset($data['admin'])) ? $data['admin'] : null;
+        $this->language = (isset($data['language'])) ? $data['language'] : null;
+        // $this->currency = (isset($data['currency'])) ? $data['currency'] : null;
     }
 
     /**
@@ -148,35 +148,35 @@ class User implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId(int $id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
-    
-    
+
+
     /**
      * Set name
      * @param String $name
      */
     public function setName($name)
     {
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -185,16 +185,16 @@ class User implements InputFilterAwareInterface
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
-     
+
     /**
      * Set surname
      * @param String $surname
      */
     public function setSurname($surname)
     {
-        $this->_surname = $surname;
+        $this->surname = $surname;
     }
 
     /**
@@ -203,7 +203,7 @@ class User implements InputFilterAwareInterface
      */
     public function getSurname()
     {
-        return $this->_surname;
+        return $this->surname;
     }
 
     /**
@@ -212,7 +212,7 @@ class User implements InputFilterAwareInterface
      */
     public function setPassword($password)
     {
-        $this->_password = $password;
+        $this->password = $password;
     }
 
     /**
@@ -221,16 +221,16 @@ class User implements InputFilterAwareInterface
      */
     public function getPassword()
     {
-        return $this->_password;
+        return $this->password;
     }
-     
+
     /**
      * Set email
      * @param String $email
      */
     public function setEmail($email)
     {
-        $this->_email = $email;
+        $this->email = $email;
     }
 
     /**
@@ -239,16 +239,16 @@ class User implements InputFilterAwareInterface
      */
     public function getEmail()
     {
-        return $this->_email;
+        return $this->email;
     }
-     
+
     /**
      * Set BirthDate
      * @param String $birthDate
      */
     public function setBirthDate($birthDate)
     {
-        $this->_birthDate = $birthDate;
+        $this->birthDate = $birthDate;
     }
 
     /**
@@ -257,16 +257,16 @@ class User implements InputFilterAwareInterface
      */
     public function getBirthDate()
     {
-        return $this->_birthDate;
+        return $this->birthDate;
     }
-     
+
     /**
      * Set lastLogin
      * @param String $lastLogin
      */
     public function setLastLogin($lastLogin)
     {
-        $this->_lastLogin = $lastLogin;
+        $this->lastLogin = $lastLogin;
     }
 
     /**
@@ -275,7 +275,7 @@ class User implements InputFilterAwareInterface
      */
     public function getLastLogin()
     {
-        return $this->_lastLogin;
+        return $this->lastLogin;
     }
 
     /**
@@ -284,7 +284,7 @@ class User implements InputFilterAwareInterface
      */
     public function setDeleted($deleted)
     {
-        $this->_deleted = $deleted;
+        $this->deleted = $deleted;
     }
 
     /**
@@ -293,16 +293,16 @@ class User implements InputFilterAwareInterface
      */
     public function getDeleted()
     {
-        return $this->_deleted;
+        return $this->deleted;
     }
-     
+
     /**
      * Set salt
      * @param String $salt
      */
     public function setSalt($salt)
     {
-        $this->_salt = $salt;
+        $this->salt = $salt;
     }
 
     /**
@@ -311,7 +311,7 @@ class User implements InputFilterAwareInterface
      */
     public function getSalt()
     {
-        return $this->_salt;
+        return $this->salt;
     }
 
     /**
@@ -320,7 +320,7 @@ class User implements InputFilterAwareInterface
      */
     public function setImage($image)
     {
-        $this->_image = $image;
+        $this->image = $image;
     }
 
     /**
@@ -329,7 +329,7 @@ class User implements InputFilterAwareInterface
      */
     public function getImage()
     {
-        return $this->_image;
+        return $this->image;
     }
 
     /**
@@ -338,7 +338,7 @@ class User implements InputFilterAwareInterface
      */
     public function setRegistered($registered)
     {
-        $this->_registered = $registered;
+        $this->registered = $registered;
     }
 
     /**
@@ -347,7 +347,7 @@ class User implements InputFilterAwareInterface
      */
     public function getRegistered()
     {
-        return $this->_registered;
+        return $this->registered;
     }
 
     /**
@@ -356,7 +356,7 @@ class User implements InputFilterAwareInterface
      */
     public function setHideEmail($hideEmail)
     {
-        $this->_hideEmail = $hideEmail;
+        $this->hideEmail = $hideEmail;
     }
 
     /**
@@ -365,7 +365,7 @@ class User implements InputFilterAwareInterface
      */
     public function getHideEmail()
     {
-        return $this->_hideEmail;
+        return $this->hideEmail;
     }
 
     /**
@@ -374,7 +374,7 @@ class User implements InputFilterAwareInterface
      */
     public function setIp($ip)
     {
-        $this->_ip = $ip;
+        $this->ip = $ip;
     }
 
     /**
@@ -383,7 +383,7 @@ class User implements InputFilterAwareInterface
      */
     public function getIp()
     {
-        return $this->_ip;
+        return $this->ip;
     }
 
     /**
@@ -392,7 +392,7 @@ class User implements InputFilterAwareInterface
      */
     public function setLanguage($language)
     {
-        $this->_language = $language;
+        $this->language = $language;
     }
 
     /**
@@ -401,7 +401,7 @@ class User implements InputFilterAwareInterface
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
 
     /**
@@ -410,7 +410,7 @@ class User implements InputFilterAwareInterface
      */
     public function setAdmin($admin)
     {
-        $this->_admin = $admin;
+        $this->admin = $admin;
     }
 
     /**
@@ -419,7 +419,7 @@ class User implements InputFilterAwareInterface
      */
     public function getAdmin()
     {
-        return $this->_admin;
+        return $this->admin;
     }
 
     /**
@@ -428,7 +428,7 @@ class User implements InputFilterAwareInterface
      */
     public function setCurrency($currency)
     {
-        $this->_currency = $currency;
+        $this->currency = $currency;
     }
 
     /**
@@ -437,7 +437,7 @@ class User implements InputFilterAwareInterface
      */
     public function getCurrency()
     {
-        return $this->_currency;
+        return $this->currency;
     }
 
     /**
@@ -469,7 +469,7 @@ class User implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -477,8 +477,8 @@ class User implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -487,41 +487,41 @@ class User implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -534,149 +534,149 @@ class User implements InputFilterAwareInterface
     {
         return \Zend\Json\Json::encode($this->getProperties());
     }
-    
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"name",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"surname",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"password",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 3,
                             'max' => 20,
-                        ),
-                    ),
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"email",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                "validators" => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                "validators" => [
+                    [
                         'name' => 'EmailAddress',
-                        'options' => array(
-                            'messages' => array('emailAddressInvalidFormat' => "Email address doesn't appear to be valid."),
-                        ),
-                    ),
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                        'options' => [
+                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"birthDate",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"lastLogin",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"deleted",
                 "required" => false,
-            ));
-            $inputFilter->add(array(
+            ]);
+            $inputFilter->add([
                 "name"=>"salt",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"image",
                 "required" => false,
-            ));
-            $inputFilter->add(array(
+            ]);
+            $inputFilter->add([
                 "name"=>"registered",
                 "required" => false,
-            ));
-            $inputFilter->add(array(
+            ]);
+            $inputFilter->add([
                 "name"=>"hideEmail",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"ip",
                 "required" => false,
-            ));
-            $inputFilter->add(array(
+            ]);
+            $inputFilter->add([
                 "name"=>"admin",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"language",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"currency",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
-    
+
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -684,21 +684,21 @@ class User implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setName($this->_name);
-        $clone->setSurname($this->_surname);
-        $clone->setPassword($this->_password);
-        $clone->setEmail($this->_email);
-        $clone->setBirthDate($this->_birthDate);
-        $clone->setLastLogin($this->_lastLogin);
-        $clone->setDeleted($this->_deleted);
-        $clone->setSalt($this->_salt);
-        $clone->setImage($this->_image);
-        $clone->setRegistered($this->_registered);
-        $clone->setHideEmail($this->_hideEmail);
-        $clone->setIp($this->_ip);
-        $clone->setAdmin($this->_admin);
-        $clone->setLanguage($this->_language);
-        $clone->setCurrency($this->_currency);
+        $clone->setName($this->name);
+        $clone->setSurname($this->surname);
+        $clone->setPassword($this->password);
+        $clone->setEmail($this->email);
+        $clone->setBirthDate($this->birthDate);
+        $clone->setLastLogin($this->lastLogin);
+        $clone->setDeleted($this->deleted);
+        $clone->setSalt($this->salt);
+        $clone->setImage($this->image);
+        $clone->setRegistered($this->registered);
+        $clone->setHideEmail($this->hideEmail);
+        $clone->setIp($this->ip);
+        $clone->setAdmin($this->admin);
+        $clone->setLanguage($this->language);
+        $clone->setCurrency($this->currency);
         return $clone;
     }
 
@@ -707,13 +707,13 @@ class User implements InputFilterAwareInterface
      */
     public function toString()
     {
-        return $this->_name." ".$this->_surname;
+        return $this->name." ".$this->surname;
     }
 
     public function export($path="/userfiles/userExports")
     {
         require_once($_SERVER["DOCUMENT_ROOT"]."/zend/vendor/CodePlex/PHPExcel.php");
-        $filename = md5($this->id." ".rand(10000,2000000)).".xlsx";
+        $filename = md5($this->id." ".rand(10000, 2000000)).".xlsx";
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getProperties()->setCreator("SEO optimizer Excel Export Plugin")
         ->setTitle("Office 2007 XLS Export Document")
@@ -725,11 +725,11 @@ class User implements InputFilterAwareInterface
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle("User's auto export info");
 
-        $colLetters = array('A', 'B', 'C', 'D','E', 'F');
+        $colLetters = ['A', 'B', 'C', 'D','E', 'F'];
         foreach ($colLetters as $colLetter) {
             $objPHPExcel->getActiveSheet()->getColumnDimension($colLetter)->setWidth(25);
         }
-        $cellTitles = array('ID', "Name", "Surname", "Email", "Last login", "Registered on");
+        $cellTitles = ['ID', "Name", "Surname", "Email", "Last login", "Registered on"];
         $cellCol = 0;
         foreach ($cellTitles as $cellTitle) {
             $sheet->setCellValueExplicitByColumnAndRow($cellCol++, 1, $cellTitle);

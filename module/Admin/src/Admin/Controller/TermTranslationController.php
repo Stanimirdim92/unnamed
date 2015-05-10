@@ -28,7 +28,7 @@ class TermTranslationController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference" => "/admin/termtranslation","name" => "Term translations"));
+        $this->addBreadcrumb(["reference" => "/admin/termtranslation", "name" => "Term translations"]);
         parent::onDispatch($e);
     }
 
@@ -46,7 +46,7 @@ class TermTranslationController extends IndexController
     public function addAction()
     {
         $this->showForm("Add", null);
-        $this->addBreadcrumb(array("reference" => "/admin/termtranslation/add","name" => "Add new termtranslation"));
+        $this->addBreadcrumb(["reference" => "/admin/termtranslation/add", "name" => "Add new termtranslation"]);
         return $this->view;
     }
 
@@ -59,16 +59,16 @@ class TermTranslationController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
         }
         try {
             $termcategory = $this->getTable("termcategory")->getTermCategory($id);
             $this->view->termcategory = $termcategory;
-            $this->addBreadcrumb(array("reference" => "/admin/termtranslation/modify/id/{$termcategory->id}","name" => "Modify term translation &laquo;{$termcategory->name}&raquo;"));
+            $this->addBreadcrumb(["reference" => "/admin/termtranslation/modify/id/{$termcategory->id}", "name" => "Modify term translation &laquo;{$termcategory->name}&raquo;"]);
             $this->showForm("Modify", $termcategory);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term translation not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
         }
         return $this->view;
     }
@@ -85,7 +85,7 @@ class TermTranslationController extends IndexController
             $termtranslation = new TermTranslation();
         }
 
-        $termTranslations = array();
+        $termTranslations = [];
         $categoryId = (int) $this->getParam("id", 0);
         $terms = $this->getTable("term")->fetchList(false, "termcategory='{$categoryId}'");
         foreach ($this->getTable("termtranslation")->fetchJoin("term", "term.id=termtranslation.term", "language='{$this->session->language}' AND termcategory='{$categoryId}'") as $t) {
@@ -119,7 +119,7 @@ class TermTranslationController extends IndexController
 
                 $this->cache->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -128,7 +128,7 @@ class TermTranslationController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
             }
         }
     }
@@ -139,16 +139,16 @@ class TermTranslationController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
         }
         try {
             $this->getTable("termtranslation")->deleteTermTranslation($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term translation not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
         }
         $this->cache->success = "Term translation was successfully deleted";
-        $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+        $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
     }
 
     // this is a new import that works in a much straightforward way
@@ -165,7 +165,7 @@ class TermTranslationController extends IndexController
         // if no categories exist create one
         // cache the existing categories to check later
         $categories = $this->getTable("termcategory")->fetchList(false, null, "id ASC");
-        $existingCategories = array();
+        $existingCategories = [];
         if (sizeof($categories) == 0) {
             $category = new TermCategory();
             $category->name = "all terms";
@@ -177,8 +177,8 @@ class TermTranslationController extends IndexController
             }
         }
         if ($this->getRequest()->isPost()) {
-            if ($_FILES["excel"]["size"] > 0) {
-                $fileName = $_FILES["excel"]["tmp_name"];
+            if ($FILES["excel"]["size"] > 0) {
+                $fileName = $FILES["excel"]["tmp_name"];
                 $objPHPExcel = \PHPExcel_IOFactory::load($fileName);
                 $numberOfSheets = $objPHPExcel->getSheetCount();
                 for ($i = 0; $i < $numberOfSheets; $i ++) {
@@ -238,7 +238,7 @@ class TermTranslationController extends IndexController
             $this->cache->success = "Export was successfull";
         }
         $this->view->setTerminal(true);
-        return $this->redirect()->toRoute('admin', array('controller' => 'termtranslation'));
+        return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
     }
 
     public function exportAction()

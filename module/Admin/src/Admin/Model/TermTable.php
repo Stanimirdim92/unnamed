@@ -46,7 +46,7 @@ class TermTable
             }
             $resultSetPrototype = new ResultSet();
             $resultSetPrototype->setArrayObjectPrototype(new Term());
-            $paginatorAdapter = new DbSelect($select,$this->tableGateway->getAdapter(),$resultSetPrototype);
+            $paginatorAdapter = new DbSelect($select, $this->tableGateway->getAdapter(), $resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
         } else {
@@ -102,7 +102,7 @@ class TermTable
     public function getTerm($id)
     {
         $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id' => $id));
+        $rowset = $this->tableGateway->select(['id' => $id]);
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception();
@@ -112,15 +112,15 @@ class TermTable
 
     public function deleteTerm($id)
     {
-        $this->tableGateway->delete(array('id' => (int) $id));
+        $this->tableGateway->delete(['id' => (int) $id]);
     }
 
     public function saveTerm(Term $term)
     {
-        $data = array(
+        $data = [
             'name' => (string) $term->name,
             'termcategory' => (int) $term->termcategory,
-        );
+        ];
         
         $id = (int)$term->id;
         if ($id == 0) {
@@ -128,7 +128,7 @@ class TermTable
             $term->id = $this->tableGateway->lastInsertValue;
         } else {
             if ($this->getTerm($id)) {
-                $this->tableGateway->update($data, array('id' => $id));
+                $this->tableGateway->update($data, ['id' => $id]);
             } else {
                 throw new \Exception();
             }

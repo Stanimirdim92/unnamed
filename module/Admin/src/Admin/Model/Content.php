@@ -43,74 +43,74 @@ use Zend\ServiceManager\ServiceManager;
 class Content implements InputFilterAwareInterface
 {
     /**
-     * @var null $_inputFilter inputFilter
+     * @var null $inputFilter inputFilter
      */
-    private $_inputFilter = null;
+    private $inputFilter = null;
 
     /**
-     * @var null $_serviceManager ServiceManager
+     * @var null $serviceManager ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_id = 0;
+    private $id = 0;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_menu = 0;
+    private $menu = 0;
 
     /**
-     * @var null $_title
+     * @var null $title
      * @return string
      */
-    private $_title = null;
+    private $title = null;
 
     /**
-     * @var null $_preview
+     * @var null $preview
      * @return string
      */
-    private $_preview = null;
+    private $preview = null;
 
     /**
-     * @var null $_text
+     * @var null $text
      * @return string
      */
-    private $_text = null;
+    private $text = null;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_menuOrder = 0;
+    private $menuOrder = 0;
 
     /**
-     * @var Int $_id
+     * @var Int $id
      * @return int
      */
-    private $_type = 0;
+    private $type = 0;
 
     /**
-     * @var null $_date
+     * @var null $date
      * @return string
      */
-    private $_date = "0000-00-00 00:00:00";
+    private $date = "0000-00-00 00:00:00";
 
     /**
-     * @var Int $_language
+     * @var Int $language
      * @return int
      */
-    private $_language = 1;
+    private $language = 1;
 
     /**
-     * @var null $_titleLink
+     * @var null $titleLink
      * @return string
      */
-    private $_titleLink = null;
+    private $titleLink = null;
 
     /**
      * @param null $sm ServiceManager
@@ -118,25 +118,25 @@ class Content implements InputFilterAwareInterface
      */
     public function setServiceManager(ServiceManager $sm = null)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data = array())
+    public function exchangeArray(array $data = [])
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : $this->_id;
-        $this->_menu = (isset($data['menu'])) ? $data['menu'] : $this->_menu;
-        $this->_title = (isset($data['title'])) ? $data['title'] : $this->_title;
-        $this->_preview = (isset($data['preview'])) ? $data['preview'] : $this->_preview;
-        $this->_text = (isset($data['text'])) ? $data['text'] : $this->_text;
-        $this->_menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->_menuOrder;
-        $this->_type = (isset($data['type'])) ? $data['type'] : $this->_type;
-        $this->_date = (isset($data['date'])) ? $data['date'] : $this->_date;
-        $this->_language = (isset($data['language'])) ? $data['language'] : $this->_language;
-        $this->_titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->_titleLink;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->id;
+        $this->menu = (isset($data['menu'])) ? $data['menu'] : $this->menu;
+        $this->title = (isset($data['title'])) ? $data['title'] : $this->title;
+        $this->preview = (isset($data['preview'])) ? $data['preview'] : $this->preview;
+        $this->text = (isset($data['text'])) ? $data['text'] : $this->text;
+        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->menuOrder;
+        $this->type = (isset($data['type'])) ? $data['type'] : $this->type;
+        $this->date = (isset($data['date'])) ? $data['date'] : $this->date;
+        $this->language = (isset($data['language'])) ? $data['language'] : $this->language;
+        $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->titleLink;
     }
 
     /**
@@ -145,10 +145,10 @@ class Content implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = array(), ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceManager $sm = null)
     {
         $this->exchangeArray($options);
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
@@ -156,7 +156,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
 
     /**
@@ -165,7 +165,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setId($id = 0)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
 
 
@@ -175,7 +175,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setMenu($menu = 0)
     {
-        $this->_menu = $menu;
+        $this->menu = $menu;
     }
 
     /**
@@ -184,7 +184,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getMenu()
     {
-        return $this->_menu;
+        return $this->menu;
     }
 
     /**
@@ -193,7 +193,7 @@ class Content implements InputFilterAwareInterface
     public function getMenuObject()
     {
         try {
-            return $this->_serviceManager->get('MenuTable')->getMenu($this->_menu, $this->_language);
+            return $this->serviceManager->get('MenuTable')->getMenu($this->menu, $this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -205,7 +205,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setTitle($title = null)
     {
-        $this->_title = $title;
+        $this->title = $title;
     }
 
     /**
@@ -214,7 +214,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getTitle()
     {
-        return $this->_title;
+        return $this->title;
     }
 
     /**
@@ -223,7 +223,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setTitleLink($titleLink = null)
     {
-        $this->_titleLink = $titleLink;
+        $this->titleLink = $titleLink;
     }
 
     /**
@@ -232,7 +232,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getTitleLink()
     {
-        return $this->_titleLink;
+        return $this->titleLink;
     }
 
     /**
@@ -241,7 +241,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setPreview($preview = null)
     {
-        $this->_preview = $preview;
+        $this->preview = $preview;
     }
 
     /**
@@ -250,7 +250,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getPreview()
     {
-        return $this->_preview;
+        return $this->preview;
     }
 
     /**
@@ -259,7 +259,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setText($text = null)
     {
-        $this->_text = $text;
+        $this->text = $text;
     }
 
     /**
@@ -268,7 +268,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getText()
     {
-        return $this->_text;
+        return $this->text;
     }
 
     /**
@@ -277,7 +277,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setMenuOrder($menuOrder = 0)
     {
-        $this->_menuOrder = $menuOrder;
+        $this->menuOrder = $menuOrder;
     }
 
     /**
@@ -286,7 +286,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getMenuOrder()
     {
-        return $this->_menuOrder;
+        return $this->menuOrder;
     }
 
     /**
@@ -295,7 +295,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setType($type = 0)
     {
-        $this->_type = $type;
+        $this->type = $type;
     }
 
     /**
@@ -304,7 +304,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     /**
@@ -313,7 +313,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setDate($date = "0000-00-00 00:00:00")
     {
-        $this->_date = $date;
+        $this->date = $date;
     }
 
     /**
@@ -322,7 +322,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getDate()
     {
-        return $this->_date;
+        return $this->date;
     }
 
     /**
@@ -331,7 +331,7 @@ class Content implements InputFilterAwareInterface
      */
     public function setLanguage($language = 1)
     {
-        $this->_language = $language;
+        $this->language = $language;
     }
 
     /**
@@ -340,7 +340,7 @@ class Content implements InputFilterAwareInterface
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
 
     /**
@@ -349,7 +349,7 @@ class Content implements InputFilterAwareInterface
     public function getLanguageObject()
     {
         try {
-            return $this->_serviceManager->get('LanguageTable')->getLanguage($this->_language);
+            return $this->serviceManager->get('LanguageTable')->getLanguage($this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -360,7 +360,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -368,7 +368,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        (property_exists($this, '_'. $property) ? $this->{'_'. $property} = $value : null);
+        (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -376,7 +376,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
@@ -384,11 +384,11 @@ class Content implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
@@ -405,16 +405,16 @@ class Content implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip = array(), $serializable = false)
+    public function getProperties(array $skip = [], $serializable = false)
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable) {
+        if ((bool) $serializable === true) {
             return serialize($returnValue);
         }
         return $returnValue;
@@ -427,15 +427,15 @@ class Content implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setMenu($this->_menu);
-        $clone->setTitle($this->_title);
-        $clone->setPreview($this->_preview);
-        $clone->setText($this->_text);
-        $clone->setMenuOrder($this->_menuOrder);
-        $clone->setType($this->_type);
-        $clone->setDate($this->_date);
-        $clone->setLanguage($this->_language);
-        $clone->setTitleLink($this->_titleLink);
+        $clone->setMenu($this->menu);
+        $clone->setTitle($this->title);
+        $clone->setPreview($this->preview);
+        $clone->setText($this->text);
+        $clone->setMenuOrder($this->menuOrder);
+        $clone->setType($this->type);
+        $clone->setDate($this->date);
+        $clone->setLanguage($this->language);
+        $clone->setTitleLink($this->titleLink);
         return $clone;
     }
 
@@ -446,169 +446,169 @@ class Content implements InputFilterAwareInterface
 
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"preview",
                 "required" => false,
-                'validators' => array(
-                    array(
+                'validators' => [
+                    [
                         'name' => 'Zend\Validator\File\Size',
-                        'options' => array(
+                        'options' => [
                             'min' => 0,
                             'max' => 3145728, //3mb
                             'useByteString' => true,
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'name' => 'Zend\Validator\File\Extension',
-                        'options' => array(
-                            'extension' => array(
+                        'options' => [
+                            'extension' => [
                                 'jpg',
                                 'gif',
                                 'png',
                                 'jpeg',
                                 'bmp',
                                 'webp',
-                            ),
+                            ],
                             'case' => true,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"title",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
                         'name'    => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
                             'max' => 200,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"text",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
                         'name'    => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 1,
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"menuOrder",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"language",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"menu",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"type",
                 "required" => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array(
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'Regex',
-                        'options' => array(
+                        'options' => [
                             'pattern' => '/^[0-1]+$/',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"date",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'date',
-                        'options' => array(
+                        'options' => [
                             'locale' => 'en',
                             'format' => 'Y-m-d H:i:s',
-                        ),
-                    ),
-                ),
-            ));
-            $inputFilter->add(array(
+                        ],
+                    ],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"titleLink",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                    array('name' => 'StringToLower'),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
 
     /**
@@ -616,6 +616,6 @@ class Content implements InputFilterAwareInterface
      */
     public function toString()
     {
-        return $this->_title;
+        return $this->title;
     }
 }

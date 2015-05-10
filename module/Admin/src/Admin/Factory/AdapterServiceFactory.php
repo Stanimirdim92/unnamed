@@ -41,16 +41,34 @@ use Zend\Db\Adapter\Adapter;
 class AdapterServiceFactory implements FactoryInterface
 {
 
-  protected $configKey;
+    /**
+     * @var array|\Zend\Config\Config $config
+     */
+    private $config = [];
 
-    public function __construct($key)
+    /**
+     * @param array|\Zend\Config\Config $config
+     */
+    public function __construct(array $config = [])
     {
-        $this->configKey = $key;
+        $this->config = $config = [];
     }
 
+    /**
+     * @param \Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+     */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('Config');
-        return new Adapter($config[$this->configKey]);
+        if (empty($this->config)) {
+            $this->config = $serviceLocator->get('Config');
+        }
+
+        if (APP_ENV === 'development') {
+            $adapter = new \BjyProfiler\Db\Adapter\ProfilingAdapter($this->config["db"]);
+            $adapter->setProfiler(new \BjyProfiler\Db\Profiler\Profiler);
+            $adapter->injectProfilingStatementPrototype();
+            return $adapter;
+        }
+        return new Adapter($this->config["db"]);
     }
 }

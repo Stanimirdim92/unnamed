@@ -46,19 +46,19 @@ class ContentForm extends Form
      * @param array                     $menus     ResultSet arrayobject
      * @param array                     $languages ResultSet arrayobject
      */
-    public function __construct(\Admin\Model\Content $options = null, array $menus = array(), $languages = array())
+    public function __construct(\Admin\Model\Content $options = null, array $menus = [], $languages = [])
     {
         parent::__construct("content");
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('title');
         $elements[0]->setLabel('Title');
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   => true,
             'size'        => 40,
             'id'         => "seo-caption",
             'placeholder' => 'Title',
-        ));
+        ]);
 
         if ($options!=null and $options->title) {
             $elements[0]->setValue($options->title);
@@ -93,7 +93,7 @@ class ContentForm extends Form
 
         $elements[4] = new Element\Select('menuOrder');
         $elements[4]->setLabel('Menu order');
-        $valueOptions = array();
+        $valueOptions = [];
         for ($i = 1; $i<40; $i++) {
             $valueOptions[$i] = $i;
         }
@@ -106,7 +106,7 @@ class ContentForm extends Form
 
         $elements[5] = new Element\Select('type');
         $elements[5]->setLabel('type');
-        $valueOptions = array();
+        $valueOptions = [];
         $valueOptions[0] = "menu";
         $valueOptions[1] = "news";
         $elements[5]->setValueOptions($valueOptions);
@@ -125,7 +125,7 @@ class ContentForm extends Form
 
         $elements[7] = new Element\Select('menu');
         $elements[7]->setLabel('menu');
-        $valueOptions = array();
+        $valueOptions = [];
         $valueOptions[0] = 'Select a menu';
 
         foreach ($menus as $menu) {
@@ -143,7 +143,7 @@ class ContentForm extends Form
 
         $elements[8] = new Element\Select('language');
         $elements[8]->setLabel('language');
-        $valueOptions = array();
+        $valueOptions = [];
 
         foreach ($languages as $item) {
             $valueOptions[$item->id] = $item->toString();

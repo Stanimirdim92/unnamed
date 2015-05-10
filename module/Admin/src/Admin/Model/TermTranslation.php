@@ -7,49 +7,49 @@ use Zend\InputFilter\InputFilterInterface;
 
 class TermTranslation implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    private $inputFilter;
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
-  
-    /**
-     * @param Int $_id
-     * @return int
-     */
-    private $_id;
+    private $serviceManager;
 
     /**
-     * @param Int $_language
+     * @param Int $id
      * @return int
      */
-    private $_language;
+    private $id;
 
     /**
-     * @param String $_translation
+     * @param Int $language
+     * @return int
+     */
+    private $language;
+
+    /**
+     * @param String $translation
      * @return string
      */
-    private $_translation;
+    private $translation;
 
     /**
-     * @param Int $_term
+     * @param Int $term
      * @return int
      */
-    private $_term;
+    private $term;
 
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_language = (isset($data['language'])) ? $data['language'] : null;
-        $this->_translation = (isset($data['translation'])) ? $data['translation'] : null;
-        $this->_term = (isset($data['term'])) ? $data['term'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->language = (isset($data['language'])) ? $data['language'] : null;
+        $this->translation = (isset($data['translation'])) ? $data['translation'] : null;
+        $this->term = (isset($data['term'])) ? $data['term'] : null;
     }
 
     /**
@@ -61,7 +61,7 @@ class TermTranslation implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
 
@@ -71,7 +71,7 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function setLanguage($language)
     {
-        $this->_language = (int) $language;
+        $this->language = (int) $language;
     }
 
     /**
@@ -80,16 +80,16 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
-     
+
     /**
      * Set translation
      * @param String $translation
      */
     public function setTranslation($translation)
     {
-        $this->_translation = (String) $translation;
+        $this->translation = (String) $translation;
     }
 
     /**
@@ -98,21 +98,21 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function getTranslation()
     {
-        return $this->_translation;
+        return $this->translation;
     }
-     
+
     /**
      * Set Term
      * @param int $
      */
     public function setTerm($term)
     {
-        $this->_term = (int) $term;
+        $this->term = (int) $term;
     }
 
     public function getLanguageObject()
     {
-        return $this->_serviceManager->get("LanguageTable")->getLanguage($this->language);
+        return $this->serviceManager->get("LanguageTable")->getLanguage($this->language);
     }
 
     /**
@@ -121,15 +121,15 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function getTerm()
     {
-        return $this->_term;
+        return $this->term;
     }
- 
+
     /**
      * magic getter
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -137,8 +137,8 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -147,41 +147,41 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -194,57 +194,57 @@ class TermTranslation implements InputFilterAwareInterface
     {
         return \Zend\Json\Json::encode($this->getProperties());
     }
-    
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name' => 'id',
                 'required' => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name' => 'language',
                 'required' => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"translation",
                 'required' => false,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
-                        ),
-                    ),
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name' => 'term',
                 'required' => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
             $this->inputFilter = $inputFilter;
         }
         return $this->inputFilter;
@@ -257,9 +257,9 @@ class TermTranslation implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setLanguage($this->_language);
-        $clone->setTranslation($this->_translation);
-        $clone->setTerm($this->_term);
+        $clone->setLanguage($this->language);
+        $clone->setTranslation($this->translation);
+        $clone->setTerm($this->term);
         return $clone;
     }
 

@@ -9,82 +9,82 @@ use Zend\ServiceManager\ServiceManager;
 
 class Packet implements InputFilterAwareInterface
 {
-    private $_inputFilter;
+    private $inputFilter;
 
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
+    private $serviceManager;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id;
+    private $id;
 
 
-    private $_diskspace;
+    private $diskspace;
 
 
-    private $_bandwidth;
+    private $bandwidth;
 
 
-    private $_domains;
+    private $domains;
 
 
-    private $_dedictip;
+    private $dedictip;
 
 
-    private $_domainreg;
+    private $domainreg;
 
 
-    private $_support;
+    private $support;
 
 
-    private $_webeditor;
+    private $webeditor;
 
-    private $_price;
-    
-
-    private $_type;
-    
-
-    private $_text;
-    
-
-    private $_discount;
+    private $price;
 
 
-    private $_language;
-    private $_dollar;
-    private $_euro;
-    
-    
+    private $type;
+
+
+    private $text;
+
+
+    private $discount;
+
+
+    private $language;
+    private $dollar;
+    private $euro;
+
+
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_diskspace = (isset($data['diskspace'])) ? $data['diskspace'] : null;
-        $this->_bandwidth = (isset($data['bandwidth'])) ? $data['bandwidth'] : null;
-        $this->_domains = (isset($data['domains'])) ? $data['domains'] : null;
-        $this->_dedictip = (isset($data['dedictip'])) ? $data['dedictip'] : null;
-        $this->_domainreg = (isset($data['domainreg'])) ? $data['domainreg'] : null;
-        $this->_support = (isset($data['support'])) ? $data['support'] : null;
-        $this->_webeditor = (isset($data['webeditor'])) ? $data['webeditor'] : null;
-        $this->_price = (isset($data['price'])) ? $data['price'] : null;
-        $this->_type = (isset($data['type'])) ? $data['type'] : null;
-        $this->_text = (isset($data['text'])) ? $data['text'] : null;
-        $this->_discount = (isset($data['discount'])) ? $data['discount'] : null;
-        $this->_language = (isset($data['language'])) ? $data['language'] : null;
-        $this->_dollar = (isset($data['dollar'])) ? $data['dollar'] : null;
-        $this->_euro = (isset($data['euro'])) ? $data['euro'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->diskspace = (isset($data['diskspace'])) ? $data['diskspace'] : null;
+        $this->bandwidth = (isset($data['bandwidth'])) ? $data['bandwidth'] : null;
+        $this->domains = (isset($data['domains'])) ? $data['domains'] : null;
+        $this->dedictip = (isset($data['dedictip'])) ? $data['dedictip'] : null;
+        $this->domainreg = (isset($data['domainreg'])) ? $data['domainreg'] : null;
+        $this->support = (isset($data['support'])) ? $data['support'] : null;
+        $this->webeditor = (isset($data['webeditor'])) ? $data['webeditor'] : null;
+        $this->price = (isset($data['price'])) ? $data['price'] : null;
+        $this->type = (isset($data['type'])) ? $data['type'] : null;
+        $this->text = (isset($data['text'])) ? $data['text'] : null;
+        $this->discount = (isset($data['discount'])) ? $data['discount'] : null;
+        $this->language = (isset($data['language'])) ? $data['language'] : null;
+        $this->dollar = (isset($data['dollar'])) ? $data['dollar'] : null;
+        $this->euro = (isset($data['euro'])) ? $data['euro'] : null;
     }
 
     /**
@@ -96,35 +96,35 @@ class Packet implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm!=null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId(int $id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
-    
-    
+
+
     /**
      * Set DiskSpace
      * @param string $diskspace
      */
     public function setDiskSpace($diskspace)
     {
-        $this->_diskspace = $diskspace;
+        $this->diskspace = $diskspace;
     }
 
     /**
@@ -133,16 +133,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDiskSpace()
     {
-        return $this->_diskspace;
+        return $this->diskspace;
     }
-    
+
     /**
      * Set bandwidth
      * @param String $bandwidth
      */
     public function setBandWidth($bandwidth)
     {
-        $this->_bandwidth = $bandwidth;
+        $this->bandwidth = $bandwidth;
     }
 
     /**
@@ -151,16 +151,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getBandWidth()
     {
-        return $this->_bandwidth;
+        return $this->bandwidth;
     }
-     
+
     /**
      * Set domains
      * @param String $domains
      */
     public function setDomains($domains)
     {
-        $this->_domains = $domains;
+        $this->domains = $domains;
     }
 
     /**
@@ -169,16 +169,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDomains()
     {
-        return $this->_domains;
+        return $this->domains;
     }
-     
+
     /**
      * Set dedictip
      * @param int $dedictip
      */
     public function setDedictIp($dedictip)
     {
-        $this->_dedictip = $dedictip;
+        $this->dedictip = $dedictip;
     }
 
     /**
@@ -187,16 +187,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDedictIp()
     {
-        return $this->_dedictip;
+        return $this->dedictip;
     }
-     
+
     /**
      * Set domainreg
      * @param String $domainreg
      */
     public function setDomainReg($domainreg)
     {
-        $this->_domainreg = $domainreg;
+        $this->domainreg = $domainreg;
     }
 
     /**
@@ -205,16 +205,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDomainReg()
     {
-        return $this->_domainreg;
+        return $this->domainreg;
     }
-     
+
     /**
      * Set support
      * @param string $support
      */
     public function setSupport($support)
     {
-        $this->_support = $support;
+        $this->support = $support;
     }
 
     /**
@@ -223,7 +223,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getSupport()
     {
-        return $this->_support;
+        return $this->support;
     }
 
     /**
@@ -232,7 +232,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setWebEditor($webeditor)
     {
-        $this->_webeditor = $webeditor;
+        $this->webeditor = $webeditor;
     }
 
     /**
@@ -241,7 +241,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getWebEditor()
     {
-        return $this->_webeditor;
+        return $this->webeditor;
     }
 
     /**
@@ -250,7 +250,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setPrice($price)
     {
-        $this->_price = $price;
+        $this->price = $price;
     }
 
     /**
@@ -259,16 +259,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getPrice()
     {
-        return $this->_price;
+        return $this->price;
     }
-     
+
     /**
      * Set type
      * @param int $type
      */
     public function setType($type)
     {
-        $this->_type = $type;
+        $this->type = $type;
     }
 
     /**
@@ -277,16 +277,16 @@ class Packet implements InputFilterAwareInterface
      */
     public function getType()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     public function getTypeByName()
     {
-        if ($this->_type == 0) {
+        if ($this->type == 0) {
             return "Basic packet";
-        } elseif ($this->_type == 1) {
+        } elseif ($this->type == 1) {
             return "Normal packet";
-        } elseif ($this->_type == 2) {
+        } elseif ($this->type == 2) {
             return "Optima packet";
         } else {
             return "Expert packet";
@@ -299,7 +299,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setText($text)
     {
-        $this->_text = $text;
+        $this->text = $text;
     }
 
     /**
@@ -308,7 +308,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getText()
     {
-        return $this->_text;
+        return $this->text;
     }
 
     /**
@@ -317,7 +317,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setDiscount($discount)
     {
-        $this->_discount = $discount;
+        $this->discount = $discount;
     }
 
     /**
@@ -326,7 +326,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDiscount()
     {
-        return $this->_discount;
+        return $this->discount;
     }
 
     /**
@@ -335,7 +335,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setLanguage($language)
     {
-        $this->_language = $language;
+        $this->language = $language;
     }
 
     /**
@@ -344,7 +344,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->language;
     }
 
     /**
@@ -353,7 +353,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setDollar($dollar)
     {
-        $this->_dollar = $dollar;
+        $this->dollar = $dollar;
     }
 
     /**
@@ -362,7 +362,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getDollar()
     {
-        return $this->_dollar;
+        return $this->dollar;
     }
 
     /**
@@ -371,7 +371,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function setEuro($euro)
     {
-        $this->_euro = $euro;
+        $this->euro = $euro;
     }
 
     /**
@@ -380,7 +380,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function getEuro()
     {
-        return $this->_euro;
+        return $this->euro;
     }
 
     /**
@@ -388,7 +388,7 @@ class Packet implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -396,8 +396,8 @@ class Packet implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -406,25 +406,25 @@ class Packet implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
@@ -435,12 +435,12 @@ class Packet implements InputFilterAwareInterface
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -453,164 +453,164 @@ class Packet implements InputFilterAwareInterface
     {
         return \Zend\Json\Json::encode($this->getProperties());
     }
-    
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
     }
-    
+
     public function getInputFilter()
     {
-        if (!$this->_inputFilter) {
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name'     => 'id',
                 'required' => false,
-                'filters'  => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"diskspace",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"bandwidth",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"domains",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"dedictip",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"domainreg",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"support",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"webeditor",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"price",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                    array('name' => 'Float'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    ['name' => 'Float'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"type",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-                'validators' => array(
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"text",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"discount",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"language",
                 "required" => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"dollar",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Float'),
-                ),
-            ));
-            $inputFilter->add(array(
+                'filters' => [
+                    ['name' => 'Float'],
+                ],
+            ]);
+            $inputFilter->add([
                 "name"=>"euro",
                 "required" => true,
-                'filters' => array(
-                    array('name' => 'Float'),
-                ),
-            ));
-            $this->_inputFilter = $inputFilter;
+                'filters' => [
+                    ['name' => 'Float'],
+                ],
+            ]);
+            $this->inputFilter = $inputFilter;
         }
-        return $this->_inputFilter;
+        return $this->inputFilter;
     }
-    
+
     /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
@@ -618,20 +618,20 @@ class Packet implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setDiskSpace($this->_diskspace);
-        $clone->setBandWidth($this->_bandwidth);
-        $clone->setDomains($this->_domains);
-        $clone->setDedictIp($this->_dedictip);
-        $clone->setDomainReg($this->_domainreg);
-        $clone->setSupport($this->_support);
-        $clone->setWebEditor($this->_webeditor);
-        $clone->setPrice($this->_price);
-        $clone->setType($this->_type);
-        $clone->setText($this->_text);
-        $clone->setDiscount($this->_discount);
-        $clone->setLanguage($this->_language);
-        $clone->setDollar($this->_dollar);
-        $clone->setEuro($this->_euro);
+        $clone->setDiskSpace($this->diskspace);
+        $clone->setBandWidth($this->bandwidth);
+        $clone->setDomains($this->domains);
+        $clone->setDedictIp($this->dedictip);
+        $clone->setDomainReg($this->domainreg);
+        $clone->setSupport($this->support);
+        $clone->setWebEditor($this->webeditor);
+        $clone->setPrice($this->price);
+        $clone->setType($this->type);
+        $clone->setText($this->text);
+        $clone->setDiscount($this->discount);
+        $clone->setLanguage($this->language);
+        $clone->setDollar($this->dollar);
+        $clone->setEuro($this->euro);
         return $clone;
     }
 

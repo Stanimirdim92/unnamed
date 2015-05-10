@@ -7,7 +7,7 @@ class TermSearchForm extends Form
     public function __construct($options = null)
     {
         parent::__construct("termsearch");
-        $elements = array();
+        $elements = [];
         $elements[0] = new Element\Text('search');
         $elements[0]->setLabel('Search for term')
                 ->setAttribute('size', 40);

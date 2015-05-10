@@ -24,38 +24,41 @@
           </THEAD>
           <TBODY>
 <?php
-/* @var $item Admin\Model\Menu */
-foreach($this->menus as $item)
+/* @var $menu Admin\Model\Menu */
+if (!empty($this->menus)) {
+foreach($this->menus as $key => $menu)
 {
+    $menu->setServiceManager(null);
 ?>
 <TR>
-    <TD class='admin'><?=$item->getCaption()?></TD>
-    <TD class='admin'><?=$item->getMenuOrder()?></TD>
-    <TD class='admin'><?=$item->getKeywords()?></TD>
-    <TD class='admin'><?=$item->getDescription()?></TD>
+    <TD class='admin'><?=$menu->getCaption()?></TD>
+    <TD class='admin'><?=$menu->getMenuOrder()?></TD>
+    <TD class='admin'><?=$menu->getKeywords()?></TD>
+    <TD class='admin'><?=$menu->getDescription()?></TD>
     <TD class='admin c'>
-      <a title='Menu details' href='/admin/menu/detail/id/<?=$item->getId()?>' class='btn btn-default btn-sm blue'><i class='fa fa-icon-fix fa-info'></i></a>
+      <a title='Menu details' href='/admin/menu/detail/id/<?=$menu->getId()?>' class='btn btn-default btn-sm blue'><i class='fa fa-icon-fix fa-info'></i></a>
     </TD>
-    <TD class='admin'><?=$item->getMenuTypeAsName()?></TD>
+    <TD class='admin'><?=$menu->getMenuTypeAsName()?></TD>
     <TD class='admin c'>
-    <a title='Modify menu object' href='/admin/menu/modify/id/<?=$item->getId()?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+    <a title='Modify menu object' href='/admin/menu/modify/id/<?=$menu->getId()?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
     </TD>
     <TD class='admin c'>
-    <a id='delete_<?=$item->getId()?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-    <div style='display: none' id='delete_delete_<?=$item->getId()?>' class='dialog_hide'>
+    <a id='delete_<?=$menu->getId()?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
+    <div style='display: none' id='delete_delete_<?=$menu->getId()?>' class='dialog_hide'>
         <p>Are you sure you would like to delete this menu?</p>
         <ul>
-          <li><a class='btn btn-danger' href='/admin/menu/delete/id/<?=$item->getId()?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
+          <li><a class='btn btn-danger' href='/admin/menu/delete/id/<?=$menu->getId()?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
           <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
         </ul>
     </div>
     </TD>
     </TR>
 <?php
-    if(isset($this->submenus[$item->getId()]))
+    if(!empty($this->submenus[$key]))
     {
-        foreach($this->submenus[$item->getId()] as $sub)
+        foreach($this->submenus[$key] as $sub)
         {
+            $sub->setServiceManager(null);
 ?>
             <TR>
                 <TD class='admin'><?=$sub->getCaption()?></TD>
@@ -83,6 +86,7 @@ foreach($this->menus as $item)
 <?php
         }
     }
+}
 }
 ?>
           </TBODY>

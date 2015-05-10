@@ -35,23 +35,25 @@
 
 namespace Admin\Controller;
 
+use Zend\Http\PhpEnvironment\RemoteAddress;
+
 class ErrorHandling
 {
     /**
      * Default destination
      *
-     * @var string $_destination
+     * @var string $destination
      */
-    private $_destination = './data/logs/';
+    private $destination = './data/logs/';
 
     /**
-     * @var null $_logger;
+     * @var null $logger;
      */
-    private $_logger = null;
+    private $logger = null;
 
     public function __construct($logger = null)
     {
-        $this->_logger = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -62,13 +64,13 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if ($destination != null) {
-            $this->_destination = $destination;
+        if (!$destination) {
+            $this->destination = $destination;
         }
     }
 
     /**
-     * @var null $e Exception
+     * @param null $e Exception
      */
     public function logException($e = null)
     {
@@ -81,16 +83,41 @@ class ErrorHandling
         $log .=  PHP_EOL."Code: ".$e->getCode();
         $log .=  PHP_EOL."File: ".$e->getFile();
         $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
-        $this->_logger->err($log);
+        $this->logger->err($log);
     }
 
     /**
-     * @var null $errorMsg
+     * @param MvcEvent $e
+     * @param ServiceManager $sm
+     * @param Container $cache
+     * @param string $userRole
      */
-    public function logAuthorisationError($errorMsg = null)
+    public function logAuthorisationError($e, $sm, $cache, $userRole)
     {
+        $remote = new RemoteAddress();
+
+        if ($cache->role == 1) {
+            $userRole = $cache->role;
+        } elseif ($cache->role == 10) {
+            $userRole = $cache->role;
+        }
+
+        $errorMsg = " *** ADMIN LOG ***
+        Controller: " . $e->getRouteMatch()->getParam('controller') . ",
+        Controller action: " . $e->getRouteMatch()->getParam('action') . ",
+        User role: " . $userRole. ",
+        User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+        Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+        IP: " . $remote->getIpAddress() . ",
+        Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
+        Date: " . date("Y-m-d H:i:s", time()) . ",
+        Full URL: ".$sm->get("Request")->getRequestUri().",
+        User port: ".$_SERVER["REMOTE_PORT"].",
+        Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+        Method used: " . $sm->get("Request")->getMethod() . "\n";
+
         $log = new \Zend\Log\Logger();
-        $writer = new \Zend\Log\Writer\Stream($this->_destination . date('F') . '.txt');
+        $writer = new \Zend\Log\Writer\Stream($this->destination . date('F') . '.txt');
         $log->addWriter($writer);
         $log->info($errorMsg);
         return $log;

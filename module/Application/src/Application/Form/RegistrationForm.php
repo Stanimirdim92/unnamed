@@ -1,50 +1,85 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category   Application\Login
+ * @package    ZendPress
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Application\Form;
 
 use Zend\Form\Form;
 use Zend\Form\Element;
 use Zend\Captcha;
 use Zend\Captcha\Image as CaptchaImage;
+
 class RegistrationForm extends Form
 {
     public function __construct()
     {
         parent::__construct('registration');
 
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text("name");
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'    => true,
             'min'         => 3,
             'max'         => 20,
             'size'        => 30,
-        ));
+        ]);
 
         $elements[1] = new Element\Password("password");
-        $elements[1]->setAttributes(array(
+        $elements[1]->setAttributes([
             'required'    => true,
             'size'        => 30,
             'min'         => 8,
             'placeholder' => '123456789',
-        ));
+        ]);
 
         $elements[2] = new Element\Password("repeatpw");
-        $elements[2]->setAttributes(array(
+        $elements[2]->setAttributes([
             'required'    => true,
             'size'        => 30,
             'placeholder' => '123456789',
-        ));
+        ]);
 
         $elements[3] = new Element\Email("email");
-        $elements[3]->setAttributes(array(
+        $elements[3]->setAttributes([
             'required'    => true,
             'size'        => 30,
             'min'         => 3,
             'placeholder' => 'johnsmith@example.com',
-        ));
+        ]);
 
-        $captchaImage = new CaptchaImage(array(
+        $captchaImage = new CaptchaImage([
             'font'           => './data/fonts/arial.ttf',
             'width'          => 180,
             'height'         => 50,
@@ -52,113 +87,113 @@ class RegistrationForm extends Form
             'fsize'          => 20,
             'dotNoiseLevel'  => 10,
             'lineNoiseLevel' => 2,
-            )
+            ]
         );
 
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
         $elements[4] = new Element\Captcha('captcha');
         $elements[4]->setCaptcha($captchaImage);
-        $elements[4]->setAttributes(array(
+        $elements[4]->setAttributes([
             'required'    => true,
             'size'        => 30,
             'class'       => 'captcha-input',
-        ));
+        ]);
 
         $elements[8] = new Element\Csrf('s');
         $elements[20] = new Element\Submit("register");
-        $elements[20]->setAttributes(array(
+        $elements[20]->setAttributes([
             'id'    => 'submitbutton',
-        ));
+        ]);
 
         $inputFilter = new \Zend\InputFilter\InputFilter();
         $factory = new \Zend\InputFilter\Factory();
-        $inputFilter->add($factory->createInput(array(
+        $inputFilter->add($factory->createInput([
             "name"=>"email",
             'required' => true,
-            'filters' => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            "validators" => array(
-                array(
+            'filters' => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
+            "validators" => [
+                [
                     'name' => 'EmailAddress',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
-                        'messages' => array('emailAddressInvalidFormat' => "Email address doesn't appear to be valid."),
-                    ),
-                ),
-                array(
+                        'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                    ],
+                ],
+                [
                     'name'    => 'StringLength',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
                         'min'      => 5,
-                    ),
-                ),
-                array('name' => 'NotEmpty'),
-            ),
-        )));
-        $inputFilter->add($factory->createInput(array(
+                    ],
+                ],
+                ['name' => 'NotEmpty'],
+            ],
+        ]));
+        $inputFilter->add($factory->createInput([
             "name"=>"name",
             'required' => true,
-            'filters' => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
+            'filters' => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
+            'validators' => [
+                [
                     'name' => 'StringLength',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
                         'min' => 3,
-                    ),
-                ),
-                array('name' => 'NotEmpty'),
-            ),
-        )));
-        $inputFilter->add($factory->createInput(array(
+                    ],
+                ],
+                ['name' => 'NotEmpty'],
+            ],
+        ]));
+        $inputFilter->add($factory->createInput([
             "name"=>"password",
             'required' => true,
-            'filters' => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
+            'filters' => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
+            'validators' => [
+                [
                     'name' => 'StringLength',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
                         'min' => 8,
-                    ),
-                ),
-                array('name' => 'NotEmpty'),
-            ),
-        )));
-        $inputFilter->add($factory->createInput(array(
+                    ],
+                ],
+                ['name' => 'NotEmpty'],
+            ],
+        ]));
+        $inputFilter->add($factory->createInput([
             'name' => 'repeatpw',
             'required' => true,
-            'filters' => array(
-                array('name' => 'StripTags'),
-                array('name' => 'StringTrim'),
-            ),
-            'validators' => array(
-                array(
+            'filters' => [
+                ['name' => 'StripTags'],
+                ['name' => 'StringTrim'],
+            ],
+            'validators' => [
+                [
                     'name' => 'StringLength',
-                    'options' => array(
+                    'options' => [
                         'encoding' => 'UTF-8',
                         'min' => 8,
-                    ),
-                ),
-                array('name' => 'NotEmpty'),
-                array(
+                    ],
+                ],
+                ['name' => 'NotEmpty'],
+                [
                     'name' => 'Identical',
-                    'options' => array(
+                    'options' => [
                         'token' => 'password',
                         'message' => 'Passwords do not match',
-                    ),
-                ),
-            ),
-        )));
+                    ],
+                ],
+            ],
+        ]));
         $this->setInputFilter($inputFilter);
 
         foreach ($elements as $e) {

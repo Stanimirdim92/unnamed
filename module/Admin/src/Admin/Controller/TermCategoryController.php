@@ -29,7 +29,7 @@ class TermCategoryController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/termcategory", "name"=>"Term categories"));
+        $this->addBreadcrumb(["reference"=>"/admin/termcategory", "name"=>"Term categories"]);
         parent::onDispatch($e);
     }
 
@@ -40,7 +40,7 @@ class TermCategoryController extends IndexController
     {
         $order = "name ASC";
         $paginator = $this->getTable("termcategory")->fetchList(true, null, $order);
-        $paginator->setCurrentPageNumber((int)$this->params("page",1));
+        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
         $paginator->setItemCountPerPage(50);
         $this->view->paginator = $paginator;
         return $this->view;
@@ -52,7 +52,7 @@ class TermCategoryController extends IndexController
     public function addAction()
     {
         $this->showForm("Add", null);
-        $this->addBreadcrumb(array("reference"=>"/admin/termcategory/add", "name"=>"Add new term category"));
+        $this->addBreadcrumb(["reference"=>"/admin/termcategory/add", "name"=>"Add new term category"]);
         return $this->view;
     }
 
@@ -65,16 +65,16 @@ class TermCategoryController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
         try {
             $termcategory = $this->getTable("termcategory")->getTermCategory($id);
             $this->view->termcategory = $termcategory;
-            $this->addBreadcrumb(array("reference"=>"/admin/termcategory/modify/id/{$termcategory->id}", "name"=>"Modify term ID &laquo;{$termcategory->id}&raquo;"));
+            $this->addBreadcrumb(["reference"=>"/admin/termcategory/modify/id/{$termcategory->id}", "name"=>"Modify term ID &laquo;{$termcategory->id}&raquo;"]);
             $this->showForm("Modify", $termcategory);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term category not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
         return $this->view;
     }
@@ -103,7 +103,7 @@ class TermCategoryController extends IndexController
                 $this->getTable("termcategory")->saveTermCategory($termcategory);
                 $this->cache->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -112,7 +112,7 @@ class TermCategoryController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
             }
         }
     }
@@ -125,16 +125,16 @@ class TermCategoryController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
         try {
             $this->getTable("termcategory")->deleteTermCategory($id);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Term category not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
         $this->cache->success = "Term category was successfully deleted";
-        return $this->redirect()->toRoute('admin', array('controller' => 'termcategory'));
+        return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
     }
 
     public function cloneAction()

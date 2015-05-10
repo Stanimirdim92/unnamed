@@ -1,9 +1,8 @@
 <?php
-return array(
-    'service_manager' => array(
-        'factories' => array(
-            'Zend\Db\Adapter\Adapter'
-                => 'Zend\Db\Adapter\AdapterServiceFactory',
-        ),
-    ),
-);
+return [
+    'service_manager' => [
+        'factories' => [
+            'Zend\Db\Adapter\Adapter' => '\Admin\Factory\AdapterServiceFactory',
+        ],
+    ],
+];

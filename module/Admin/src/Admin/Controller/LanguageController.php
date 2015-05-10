@@ -61,7 +61,7 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/language", "name"=>"Languages"));
+        $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>"Languages"]);
         parent::onDispatch($e);
     }
 
@@ -70,8 +70,8 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function indexAction()
     {
-        $paginator = $this->getTable("language")->fetchList(true, array(), array(), null, null, "name ASC");
-        $paginator->setCurrentPageNumber((int)$this->params("page",1));
+        $paginator = $this->getTable("language")->fetchList(true, [], [], null, null, "name ASC");
+        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
         $paginator->setItemCountPerPage(50);
         $this->view->paginator = $paginator;
         return $this->view;
@@ -83,7 +83,7 @@ class LanguageController extends \Admin\Controller\IndexController
     public function addAction()
     {
         $this->showForm("Add language", null);
-        $this->addBreadcrumb(array("reference"=>"/admin/language/add", "name"=>"Add new language"));
+        $this->addBreadcrumb(["reference"=>"/admin/language/add", "name"=>"Add new language"]);
         return $this->view;
     }
 
@@ -95,7 +95,7 @@ class LanguageController extends \Admin\Controller\IndexController
     {
         $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
         $this->view->language = $language;
-        $this->addBreadcrumb(array("reference"=>"/admin/language/modify/id/{$language->id}", "name"=>"Modify language &laquo;".$language->toString()."&raquo;"));
+        $this->addBreadcrumb(["reference"=>"/admin/language/modify/id/{$language->id}", "name"=>"Modify language &laquo;".$language->toString()."&raquo;"]);
         $this->showForm("Modify language", $language);
         return $this->view;
     }
@@ -107,7 +107,7 @@ class LanguageController extends \Admin\Controller\IndexController
     {
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
         $this->cache->success = "Language was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
     /**
@@ -117,7 +117,7 @@ class LanguageController extends \Admin\Controller\IndexController
     {
         $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
         $this->view->lang = $lang;
-        $this->addBreadcrumb(array("reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"));
+        $this->addBreadcrumb(["reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"]);
         return $this->view;
     }
 
@@ -130,7 +130,7 @@ class LanguageController extends \Admin\Controller\IndexController
     public function showForm($label = '', Language $language = null)
     {
         if ($language == null) {
-            $language = new Language(array(), null);
+            $language = new Language([], null);
         }
 
         $language->setServiceManager(null);
@@ -145,16 +145,16 @@ class LanguageController extends \Admin\Controller\IndexController
                 $this->getTable("language")->saveLanguage($language);
                 $this->cache->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             } else {
-                $error = array();
+                $error = [];
                 foreach ($form->getMessages() as $msg) {
                     foreach ($msg as $key => $value) {
                         $error[] = $value;
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, array('controller' => self::CONTROLLER_NAME));
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             }
         }
     }

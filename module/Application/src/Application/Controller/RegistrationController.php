@@ -37,7 +37,7 @@ namespace Application\Controller;
 use Application\Form\RegistrationForm;
 use Custom\Plugins\Functions;
 
-class RegistrationController extends \Application\Controller\IndexController
+class RegistrationController extends IndexController
 {
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -51,12 +51,14 @@ class RegistrationController extends \Application\Controller\IndexController
             return $this->redirect()->toUrl("/registration");
         }
 
-        $form = new RegistrationForm(array('action' => '/registration/processregistration','method' => 'post'));
+        $form = new RegistrationForm(['action' => '/registration/processregistration', 'method' => 'post']);
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
 
         if ($form->isValid()) {
             $formData = $form->getData();
+            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
+
             $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
             (count($existingEmail) > 0 ? $this->setErrorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
 
@@ -65,7 +67,6 @@ class RegistrationController extends \Application\Controller\IndexController
             $registerUser->setPassword(Functions::createPassword($formData["password"]));
             $registerUser->setSalt(""); // remove me
             $registerUser->setRegistered(date("Y-m-d H:i:s", time()));
-            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
             $registerUser->setIp($remote->getIpAddress());
             $registerUser->setEmail($formData['email']);
             $registerUser->setLanguage($this->translation->language);
@@ -80,7 +81,7 @@ class RegistrationController extends \Application\Controller\IndexController
 
     public function indexAction()
     {
-        $form = new RegistrationForm(array('action' => '/registration/processregistration','method' => 'post'));
+        $form = new RegistrationForm(['action' => '/registration/processregistration', 'method' => 'post']);
         $form->get("name")->setLabel($this->translation->NAME)->setAttribute("placeholder", $this->translation->NAME);
         $form->get("email")->setLabel($this->translation->EMAIL);
         $form->get("password")->setLabel($this->translation->PASSWORD);

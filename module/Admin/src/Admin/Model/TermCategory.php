@@ -7,36 +7,36 @@ use Zend\InputFilter\InputFilterInterface;
 
 class TermCategory implements InputFilterAwareInterface
 {
-    private $_inputFilter;
-    
+    private $inputFilter;
+
     /**
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager;
-    
-    /**
-     * @param Int $_id
-     * @return int
-     */
-    private $_id;
+    private $serviceManager;
 
     /**
-     * @param String $_name
+     * @param Int $id
+     * @return int
+     */
+    private $id;
+
+    /**
+     * @param String $name
      * @return string
      */
-    private $_name;
+    private $name;
 
     public function setServiceManager($sm)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     public function exchangeArray($data)
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : null;
-        $this->_name = (isset($data['name'])) ? $data['name'] : null;
+        $this->id = (isset($data['id'])) ? $data['id'] : null;
+        $this->name = (isset($data['name'])) ? $data['name'] : null;
     }
 
     /**
@@ -48,7 +48,7 @@ class TermCategory implements InputFilterAwareInterface
             $this->exchangeArray($options);
         }
         if ($sm != null) {
-            $this->_serviceManager = $sm;
+            $this->serviceManager = $sm;
         }
     }
 
@@ -58,7 +58,7 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function setName($name)
     {
-        $this->_name = (String) $name;
+        $this->name = (String) $name;
     }
 
     /**
@@ -67,7 +67,7 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -75,7 +75,7 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -83,8 +83,8 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -93,41 +93,41 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property));
+        return (property_exists($this, $property));
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties($skip=array("_serviceManager"))
+    public function getProperties($skip=["serviceManager"])
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[$key]=$this->$key;
             }
         }
@@ -150,31 +150,31 @@ class TermCategory implements InputFilterAwareInterface
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add(array(
+            $inputFilter->add([
                 'name' => 'id',
                 'required' => false,
-                'filters' => array(
-                    array('name' => 'Int'),
-                ),
-            ));
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ]);
 
-            $inputFilter->add(array(
+            $inputFilter->add([
                 "name"=>"name",
                 'required' => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
                         'name' => 'StringLength',
-                        'options' => array(
+                        'options' => [
                             'encoding' => 'UTF-8',
-                        ),
-                    ),
-                    array('name' => 'NotEmpty'),
-                ),
-            ));
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ]);
             $this->inputFilter = $inputFilter;
         }
         return $this->inputFilter;
@@ -187,7 +187,7 @@ class TermCategory implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setName($this->_name);
+        $clone->setName($this->name);
         return $clone;
     }
 
@@ -196,6 +196,6 @@ class TermCategory implements InputFilterAwareInterface
      */
     public function toString()
     {
-        return $this->_name;
+        return $this->name;
     }
 }

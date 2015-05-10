@@ -35,34 +35,37 @@
 
 namespace Admin;
 
-use Admin\Model\LanguageTable;
+use Admin\Model\Term;
+use Admin\Model\TermTable;
+use Admin\Model\TermCategory;
+use Admin\Model\TermCategoryTable;
+use Admin\Model\TermTranslation;
+use Admin\Model\TermTranslationTable;
 use Admin\Model\User;
 use Admin\Model\UserTable;
 use Admin\Model\AdminMenu;
 use Admin\Model\AdminMenuTable;
-use Admin\Model\AdministratorTable;
 
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-
 use Zend\ModuleManager\Feature;
+use Zend\Session\Container;
 use Zend\Mvc\MvcEvent;
+use Zend\EventManager\EventInterface;
 
-class Module implements Feature\AutoloaderProviderInterface,
-                        Feature\ServiceProviderInterface,
-                        Feature\ConfigProviderInterface
+class Module implements
+    Feature\AutoloaderProviderInterface,
+    Feature\ConfigProviderInterface,
+    Feature\BootstrapListenerInterface
 {
     /**
-     * make sure to log errors and redirect
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param EventInterface $e
      */
-    public function onBootstrap(MvcEvent $e)
+    public function onBootstrap(EventInterface $e)
     {
-        $app = $e->getTarget();
-        $em = $app->getEventManager();
-        $sm = $app->getServiceManager();
+        $em = $e->getApplication()->getEventManager();
+        $sm = $e->getApplication()->getServiceManager();
 
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
             return $this->logError($sm->get('AdminErrorHandling'), $e, $sm);
@@ -71,36 +74,16 @@ class Module implements Feature\AutoloaderProviderInterface,
 
     /**
      * @param  AdminErrorHandling $service
-     * @param  MvcEvent $e
+     * @param  Zend\Mvc\MvcEvent $e
      * @param  ServiceManager $sm
      * @param  $userRole int
      *
-     * @return Error
+     * @return void
      */
     private function logError($service, $e, $sm, $userRole = "Guest")
     {
         if ($e->getParam("exception") instanceof \Custom\Error\AuthorizationException) {
-            $cache = new \Zend\Session\Container("cache");
-            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
-            if ($cache->role == 1) {
-                $userRole = $cache->role;
-            } elseif ($cache->role == 10) {
-                $userRole = $cache->role;
-            }
-            $message = " *** ADMIN LOG ***
-            Controller: " . $e->getRouteMatch()->getParam('controller') . ",
-            Controller action: " . $e->getRouteMatch()->getParam('action') . ",
-            User role: " . $userRole. ",
-            User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-            Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-            IP: " . $remote->getIpAddress() . ",
-            Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
-            Date: " . date("Y-m-d H:i:s", time()) . ",
-            Full URL: ".$sm->get("Request")->getRequestUri().",
-            User port: ".$_SERVER["REMOTE_PORT"].",
-            Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-            Method used: " . $sm->get("Request")->getMethod() . "\n";
-            $service->logAuthorisationError($message);
+            $service->logAuthorisationError($e, $sm, new Container("cache"), $userRole);
         } elseif ($e->getParam("exception") != null) {
             $service->logException($e->getParam("exception"));
         } else {
@@ -121,11 +104,11 @@ class Module implements Feature\AutoloaderProviderInterface,
     private function errorResponse(MvcEvent $e)
     {
         $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setVariables(array(
+        $e->getViewModel()->setVariables([
             'message' => '404 Not found',
             'reason' => 'Error',
             'exception' => ($e->getParam("exception") ? $e->getParam("exception")->getMessage(): ""),
-        ));
+        ]);
         $e->getViewModel()->setTemplate('error/index.phtml');
         $e->stopPropagation();
         return $e;
@@ -133,56 +116,27 @@ class Module implements Feature\AutoloaderProviderInterface,
 
     public function getConfig()
     {
-        $config = include __DIR__ . '/config/module.config.php';
-        $config['controllers'] = array(
-            'invokables' => array(
-                'Admin\Controller\Index'            => 'Admin\Controller\IndexController',
-                'Admin\Controller\AdminMenu'        => 'Admin\Controller\AdminMenuController',
-                'Admin\Controller\Term'             => 'Admin\Controller\TermController',
-                'Admin\Controller\TermCategory'     => 'Admin\Controller\TermCategoryController',
-                'Admin\Controller\TermTranslation'  => 'Admin\Controller\TermTranslationController',
-                'Admin\Controller\User'             => 'Admin\Controller\UserController',
-                'Admin\Controller\Administrator'    => 'Admin\Controller\AdministratorController',
-                'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
-                'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
-                'Admin\Controller\Content'          => 'Admin\Controller\ContentController',
-            ),
-        );
-        return $config;
-    }
-
-    public function getViewHelperConfig()
-    {
-        return array(
-            'factories' => array(
-                'Params' => function (ServiceLocatorInterface $helpers) {
-                    $app = $helpers->getServiceLocator()->get('Application');
-                    return new \Admin\View\Helper\Params($app->getRequest(), $app->getMvcEvent());
-                },
-            ),
-        );
+        return include __DIR__ . '/config/module.config.php';
     }
 
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\ClassMapAutoloader' => array(
+        return [
+            'Zend\Loader\ClassMapAutoloader' => [
                 __DIR__ . '/autoload_classmap.php',
-            ),
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+            ],
+            'Zend\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function getServiceConfig()
     {
-        return array(
-            'factories' => array(
-                'AdminErrorHandling' =>  'Admin\Factory\AdminErrorHandlingFactory',
-
+        return [
+            'factories' => [
                 'AdminMenuTable' => function ($sm) {
                     return new AdminMenuTable($sm);
                 },
@@ -191,7 +145,38 @@ class Module implements Feature\AutoloaderProviderInterface,
                     $resultSetPrototype->setArrayObjectPrototype(new AdminMenu(null, $sm));
                     return new TableGateway('adminmenu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
+                'TermTable' => function ($sm) {
+                    $table = new TermTable($sm);
+                    return $table;
+                },
+                'TermTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Term());
+                    return new TableGateway('term', $dbAdapter, null, $resultSetPrototype);
+                },
 
+                'TermCategoryTable' => function ($sm) {
+                    $table = new TermCategoryTable($sm);
+                    return $table;
+                },
+                'TermCategoryTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
+                    return new TableGateway('termcategory', $dbAdapter, null, $resultSetPrototype);
+                },
+
+                'TermTranslationTable' => function ($sm) {
+                    $table = new TermTranslationTable($sm);
+                    return $table;
+                },
+                'TermTranslationTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
+                    return new TableGateway('termtranslation', $dbAdapter, null, $resultSetPrototype);
+                },
                 'UserTable' => function ($sm) {
                     return new UserTable($sm);
                 },
@@ -200,13 +185,12 @@ class Module implements Feature\AutoloaderProviderInterface,
                     $resultSetPrototype->setArrayObjectPrototype(new User(null, $sm));
                     return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
-
-
+                'AdminErrorHandling' =>  'Admin\Factory\AdminErrorHandlingFactory',
                 'AdministratorTable' => 'Admin\Factory\AdministratorTableFactory',
                 'ContentTable' => 'Admin\Factory\ContentTableFactory',
                 'LanguageTable' => 'Admin\Factory\LanguageTableFactory',
                 'MenuTable'    => 'Admin\Factory\MenuTableFactory',
-            ),
-        );
+            ],
+        ];
     }
 }

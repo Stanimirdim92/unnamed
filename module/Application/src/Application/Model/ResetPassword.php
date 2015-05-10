@@ -43,39 +43,39 @@ class ResetPassword
      * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
      * Please, note that this is not the best way, but it does the job.
      *
-     * @var $_serviceManager ServiceManager
+     * @var $serviceManager ServiceManager
      */
-    private $_serviceManager = null;
+    private $serviceManager = null;
 
     /**
-     * @param Int $_id
+     * @param Int $id
      * @return int
      */
-    private $_id = 0;
+    private $id = 0;
 
     /**
-     * @param string $_password
+     * @param string $password
      * @return string
      */
-    private $_token = null;
+    private $token = null;
 
     /**
-     * @param string $_ip
+     * @param string $ip
      * @return string
      */
-    private $_ip = null;
+    private $ip = null;
 
     /**
-     * @param string $_date
+     * @param string $date
      * @return string
      */
-    private $_date = "0000-00-00 00:00:00";
+    private $date = "0000-00-00 00:00:00";
 
     /**
-     * @param int $_user
+     * @param int $user
      * @return int
      */
-    private $_user = 0;
+    private $user = 0;
 
     /**
      * @param null $sm
@@ -83,46 +83,46 @@ class ResetPassword
      */
     public function setServiceManager(ServiceManager $sm = null)
     {
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
 
     /**
      * @var array $data
      * @return mixed
      */
-    public function exchangeArray(array $data = array())
+    public function exchangeArray(array $data = [])
     {
-        $this->_id = (isset($data['id'])) ? $data['id'] : 0;
-        $this->_ip = (isset($data['ip'])) ? $data['ip'] : null;
-        $this->_date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
-        $this->_token = (isset($data['token'])) ? $data['token'] : null;
-        $this->_user = (isset($data['user'])) ? $data['user'] : 0;
+        $this->id = (isset($data['id'])) ? $data['id'] : 0;
+        $this->ip = (isset($data['ip'])) ? $data['ip'] : null;
+        $this->date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
+        $this->token = (isset($data['token'])) ? $data['token'] : null;
+        $this->user = (isset($data['user'])) ? $data['user'] : 0;
     }
 
     /**
      * constructor
      */
-    public function __construct(array $options = array(), ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceManager $sm = null)
     {
         $this->exchangeArray($options);
-        $this->_serviceManager = $sm;
+        $this->serviceManager = $sm;
     }
-    
+
     /**
      * Get id
      */
     public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
-    
+
     /**
      * Set id
      * @param int
      */
     public function setId($id = 0)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
 
     /**
@@ -131,7 +131,7 @@ class ResetPassword
      */
     public function setToken($token = null)
     {
-        $this->_token = $token;
+        $this->token = $token;
     }
 
     /**
@@ -140,7 +140,7 @@ class ResetPassword
      */
     public function getToken()
     {
-        return $this->_token;
+        return $this->token;
     }
 
     /**
@@ -149,7 +149,7 @@ class ResetPassword
      */
     public function setIp($ip = null)
     {
-        $this->_ip = $ip;
+        $this->ip = $ip;
     }
 
     /**
@@ -158,7 +158,7 @@ class ResetPassword
      */
     public function getIp()
     {
-        return $this->_ip;
+        return $this->ip;
     }
 
     /**
@@ -167,7 +167,7 @@ class ResetPassword
      */
     public function setDate($date = "0000-00-00 00:00:00")
     {
-        $this->_date = $date;
+        $this->date = $date;
     }
 
     /**
@@ -176,7 +176,7 @@ class ResetPassword
      */
     public function getDate()
     {
-        return $this->_date;
+        return $this->date;
     }
 
     /**
@@ -185,7 +185,7 @@ class ResetPassword
      */
     public function setUser($user = null)
     {
-        $this->_user = $user;
+        $this->user = $user;
     }
 
     /**
@@ -194,7 +194,7 @@ class ResetPassword
      */
     public function getUser()
     {
-        return $this->_user;
+        return $this->user;
     }
 
     /**
@@ -203,7 +203,7 @@ class ResetPassword
     public function getUserObject()
     {
         try {
-            return $this->serviceManager->get('UserTable')->getUser($this->_user);
+            return $this->serviceManager->get('UserTable')->getUser($this->user);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -214,7 +214,7 @@ class ResetPassword
      */
     public function __get($property)
     {
-        return (property_exists($this, '_'. $property) ? $this->{'_'. $property} : null);
+        return (property_exists($this, $property) ? $this->{$property} : null);
     }
 
     /**
@@ -222,8 +222,8 @@ class ResetPassword
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, '_'. $property)) {
-            $this->{'_'. $property} = $value;
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 
@@ -232,45 +232,45 @@ class ResetPassword
      */
     public function __isset($property)
     {
-        return (property_exists($this, '_'. $property) ? isset($this->{'_'. $property}) : null);
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
-    
+
     /**
      * magic serializer
      */
     public function __sleep()
     {
-        $skip = array("_serviceManager");
-        $returnValue = array();
+        $skip = ["serviceManager"];
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key=>$value) {
-            if (!in_array($key,$skip)) {
+            if (!in_array($key, $skip)) {
                 $returnValue[] = $key;
             }
         }
         return $returnValue;
     }
-    
+
     /**
      * magic unserializer (ideally we should recreate the connection to service manager)
      */
     public function __wakeup()
     {
     }
-    
+
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip = array("_serviceManager"), $serializable = false)
+    public function getProperties(array $skip = ["serviceManager"], $serializable = false)
     {
-        $returnValue = array();
+        $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
                 $returnValue[$key] = $this->$key;
             }
         }
-        if ($serializable) {
+        if ((bool) $serializable === true) {
             return serialize($returnValue);
         }
         return $returnValue;

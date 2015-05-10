@@ -6,30 +6,30 @@ use Zend\Form\Element;
 
 class PurchaseForm extends Form
 {
-    public function __construct($options = null, $currency = array())
+    public function __construct($options = null, $currency = [])
     {
         parent::__construct('purchase');
 
-        $elements = array();
+        $elements = [];
 
         $elements[0] = new Element\Text('user');
         $elements[0]->setLabel('User ID');
-        $elements[0]->setAttributes(array(
+        $elements[0]->setAttributes([
             'required'   =>  true,
             'size'        => 40,
             'placeholder' => 'User ID',
-        ));
+        ]);
         if ($options!=null and $options->user) {
             $elements[0]->setValue($options->user);
         }
 
         $elements[1] = new Element\Text('purchasedate');
         $elements[1]->setLabel('Purchase date');
-        $elements[1]->setAttributes(array(
+        $elements[1]->setAttributes([
             'required'   =>  true,
             'size'        => 40,
             'placeholder' => 'Purchase date - YYYY-MM-DD',
-        ));
+        ]);
         if ($options!=null and $options->purchasedate) {
             $elements[1]->setValue($options->purchasedate);
         } else {
@@ -38,22 +38,22 @@ class PurchaseForm extends Form
 
         $elements[2] = new Element\Text('packet');
         $elements[2]->setLabel('Packet ID');
-        $elements[2]->setAttributes(array(
+        $elements[2]->setAttributes([
             'required'   =>  true,
             'size'        => 40,
             'placeholder' => 'Packet ID',
-        ));
+        ]);
         if ($options!=null and $options->packet) {
             $elements[2]->setValue($options->packet);
         }
 
         $elements[3] = new Element\Text('packetexpires');
         $elements[3]->setLabel('Purchase months');
-        $elements[3]->setAttributes(array(
+        $elements[3]->setAttributes([
             'required'   =>  true,
             'size'        => 40,
             'placeholder' => 'For how many months the packet will be active',
-        ));
+        ]);
         if ($options!=null and $options->packetexpires) {
             $elements[3]->setValue($options->packetexpires);
         }
@@ -72,11 +72,11 @@ class PurchaseForm extends Form
         }
 
         $elements[6] = new Element\Text('money');
-        $elements[6]->setAttributes(array(
+        $elements[6]->setAttributes([
             'required'   =>  true,
             'size'        => 40,
             'placeholder' => 'Total price of the packet',
-        ));
+        ]);
         $elements[6]->setLabel('Packet price');
 
         if ($options!=null and $options->money) {
@@ -85,7 +85,7 @@ class PurchaseForm extends Form
 
         $elements[7] = new Element\Select('currency');
         $elements[7]->setLabel('Currency');
-        $valueOptions = array();
+        $valueOptions = [];
         foreach ($currency as $item) {
             $valueOptions[$item->id] = $item->toString();
         }

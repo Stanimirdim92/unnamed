@@ -10,13 +10,13 @@ use Zend\ServiceManager\ServiceManager;
 
 class UserTable
 {
-    private $_tableGateway;
-    private $_serviceManager;
+    private $tableGateway;
+    private $serviceManager;
 
     public function __construct(ServiceManager $sm)
     {
-        $this->_serviceManager = $sm;
-        $this->_tableGateway = $sm->get("UserTableGateway");
+        $this->serviceManager = $sm;
+        $this->tableGateway = $sm->get("UserTableGateway");
     }
 
     /**
@@ -45,12 +45,12 @@ class UserTable
                 $select->offset($offset);
             }
             $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new User(null, $this->_serviceManager));
-            $paginatorAdapter = new DbSelect($select,$this->_tableGateway->getAdapter(),$resultSetPrototype);
+            $resultSetPrototype->setArrayObjectPrototype(new User(null, $this->serviceManager));
+            $paginatorAdapter = new DbSelect($select, $this->tableGateway->getAdapter(), $resultSetPrototype);
             $paginator = new Paginator($paginatorAdapter);
             return $paginator;
         } else {
-            $resultSet = $this->_tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
+            $resultSet = $this->tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
                 if ($where!=null) {
                     $select->where($where);
                 }
@@ -81,10 +81,10 @@ class UserTable
      */
     public function fetchJoin($paginated=false, $join, $on, $where=null, $order=null, $limit=null, $offset=null)
     {
-        $resultSet = $this->_tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
+        $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
             //when joining rename all columns from the joined table in order to avoid name clash
             //this means when both tables have a column id the second table will have id renamed to id1
-            $select->join($join, $on, array("id1"=>"id"));
+            $select->join($join, $on, ["id1"=>"id"]);
             if ($where!=null) {
                 $select->where($where);
             }
@@ -100,14 +100,14 @@ class UserTable
         });
         return $resultSet;
     }
-    
+
     /**
      * @return User
      */
     public function getUser($id = 0)
     {
         $id  = (int) $id;
-        $rowset = $this->_tableGateway->select(array('id' => $id));
+        $rowset = $this->tableGateway->select(['id' => $id]);
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception();
@@ -117,12 +117,12 @@ class UserTable
 
     public function deleteUser($id)
     {
-        $this->_tableGateway->delete(array('id' => (int) $id));
+        $this->tableGateway->delete(['id' => (int) $id]);
     }
-    
+
     public function saveUser(User $user)
     {
-        $data = array(
+        $data = [
             'name' => (string) $user->name,
             'surname' => (string) $user->surname,
             'password' => (string) $user->password,
@@ -138,21 +138,21 @@ class UserTable
             'admin' => (int) $user->admin,
             'language' => (int) $user->language,
             // 'currency' => (int) $user->currency,
-        );
+        ];
         $id = (int)$user->id;
         if ($id == 0) {
-            $this->_tableGateway->insert($data);
-            $user->id = $this->_tableGateway->lastInsertValue;
+            $this->tableGateway->insert($data);
+            $user->id = $this->tableGateway->lastInsertValue;
         } else {
             if ($this->getUser($id)) {
-                $this->_tableGateway->update($data, array('id' => $id));
+                $this->tableGateway->update($data, ['id' => $id]);
             } else {
                 throw new \Exception();
             }
         }
         return $user;
     }
-    
+
     public function duplicate($id)
     {
         $user = $this->getUser($id);

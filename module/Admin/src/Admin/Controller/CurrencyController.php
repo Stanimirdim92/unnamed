@@ -27,7 +27,7 @@ class CurrencyController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(array("reference"=>"/admin/currency", "name"=>"Currency"));
+        $this->addBreadcrumb(["reference"=>"/admin/currency", "name"=>"Currency"]);
         parent::onDispatch($e);
     }
 
@@ -61,16 +61,16 @@ class CurrencyController extends IndexController
         $id = $this->getParam("id", 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
         }
         try {
             $currency = $this->getTable("currency")->getCurrency($id);
             $this->view->currency = $currency;
-            $this->addBreadcrumb(array("reference"=>"/admin/currency/modify/id/{$currency->id}", "name"=>"Modify currency &laquo;".$currency->toString()."&raquo;"));
+            $this->addBreadcrumb(["reference"=>"/admin/currency/modify/id/{$currency->id}", "name"=>"Modify currency &laquo;".$currency->toString()."&raquo;"]);
             $this->showForm("Modify", $currency);
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Currency not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
         }
         return $this->view;
     }
@@ -99,7 +99,7 @@ class CurrencyController extends IndexController
                 $this->getTable("currency")->saveCurrency($currency);
                 $this->cache->success = $this->session->LANGUAGE."&nbsp;&laquo;".$currency->toString()."&raquo; ".$this->session->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
             } else {
                 $error = '';
                 foreach ($form->getMessages() as $msg) {
@@ -108,7 +108,7 @@ class CurrencyController extends IndexController
                     }
                 }
                 $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+                return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
             }
         }
     }
@@ -142,16 +142,16 @@ class CurrencyController extends IndexController
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
             $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
         }
         try {
             $curr = $this->getTable("Currency")->getCurrency($id);
             $this->view->curr = $curr;
         } catch (\Exception $ex) {
             $this->setErrorNoParam("Currency not found");
-            return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
+            return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
         }
-        $this->addBreadcrumb(array("reference"=>"/admin/currency/detail/id/{$curr->id}", "name"=>"currency &laquo;". $curr->toString()."&raquo; details"));
+        $this->addBreadcrumb(["reference"=>"/admin/currency/detail/id/{$curr->id}", "name"=>"currency &laquo;". $curr->toString()."&raquo; details"]);
         return $this->view;
     }
 
