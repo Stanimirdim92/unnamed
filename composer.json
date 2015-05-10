@@ -12,12 +12,12 @@
         "php": ">=5.4",
         "zendframework/zendframework": "2.4.*",
         "zendframework/zend-developer-tools": "dev-master",
-        "bjyoungblood/bjy-profiler": "dev-master"
+        "bjyoungblood/bjy-profiler": "dev-master",
+        "evandotpro/edp-module-layouts": "dev-master"
     },
     "suggest": {
         "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
         "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-        "zendframework/zendpdf": "ZendPdf for creating PDF representations of barcodes",
         "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
     },
     "autoload": {

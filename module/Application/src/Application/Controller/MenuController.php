@@ -56,7 +56,7 @@ class MenuController extends IndexController
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         $title = (string) $escaper->escapeUrl($this->getParam("title"));
 
-        $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent"], "content.menu=menu.id", "inner", ["menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation], null, "menu.parent ASC, menu.menuOrder ASC");
+        $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation], null, "menu.parent ASC, menu.menuOrder ASC");
         $this->setMetaTags($this->view->contents);
         return $this->view;
     }
