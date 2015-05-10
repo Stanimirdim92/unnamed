@@ -12,11 +12,7 @@
         "php": ">=5.4",
         "zendframework/zendframework": "2.4.*"
     },
-    "require-dev": {
-        "zendframework/zend-developer-tools": "dev-master",
-        "bjyoungblood/bjy-profiler": "dev-master",
-        "fabpot/php-cs-fixer": "1.*"
-    },
+
     "suggest": {
         "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
         "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
