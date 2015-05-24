@@ -91,14 +91,10 @@ return [
         'abstract_factories' => [
         ],
         'factories' => [
+
         ],
     ],
     'controllers' => [
-        'factories' => [
-            'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
-            'Params'                   => 'Application\Factory\ParamsFactory',
-            'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
-        ],
         'invokables' => [
             'Application\Controller\Index'        => 'Application\Controller\IndexController',
             'Application\Controller\Login'        => 'Application\Controller\LoginController',

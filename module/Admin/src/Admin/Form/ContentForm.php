@@ -43,13 +43,20 @@ class ContentForm extends Form
      * Create the content form
      *
      * @param \Admin\Model\Content|null $options   holds the Content object
-     * @param array                     $menus     ResultSet arrayobject
+     * @param array                     $menus     \Admin\Model\Menu arrayobject
+     * @param array                     $submenus     \Admin\Model\Menu
      * @param array                     $languages ResultSet arrayobject
      */
-    public function __construct(\Admin\Model\Content $options = null, array $menus = [], $languages = [])
+    public function __construct(\Admin\Model\Content $options = null, array $menus = [], array $submenus = [], $languages = [])
     {
         parent::__construct("content");
         $elements = [];
+
+        $elements[100] = new Element\File('preview');
+        $elements[100]->setLabel('Image')
+                      ->setAttribute('id', 'imgajax')
+                      ->setAttribute('class', 'imgupload')
+                      ->setAttribute('multiple', true);
 
         $elements[0] = new Element\Text('title');
         $elements[0]->setLabel('Title');
@@ -64,28 +71,10 @@ class ContentForm extends Form
             $elements[0]->setValue($options->title);
         }
 
-        if ($options->preview!=null) {
-            $elements[101] = new Element\Image('preview');
-            $elements[101]->setLabel('Current preview')
-                          ->setAttribute('id', 'preview')
-                          ->setAttribute('height', 100)
-                          ->setAttribute('disabled', 'disabled')
-                          ->setAttribute('class', 'file')
-                          ->setAttribute('src', '/userfiles/preview/'.$options->preview);
-            $elements[201] = new Element\Checkbox('removepreview');
-            $elements[201]->setLabel('Remove preview')
-                                    ->setAttribute('id', 'removepreview');
-        } else {
-            $elements[1] = new Element\File('preview');
-            $elements[1]->setLabel('Preview')
-                          ->setAttribute('id', 'preview')
-                          ->setAttribute('class', 'file')->setValue('/userfiles/preview/default_logo.png');
-        }
-
         $elements[3] = new Element\Textarea('text');
         $elements[3]->setLabel('Text')
                           ->setAttribute('class', 'ckeditor')
-                          ->setAttribute('rows', 15)
+                          ->setAttribute('rows', 5)
                           ->setAttribute('cols', 80);
         if ($options!=null and $options->text) {
             $elements[3]->setValue($options->text);
@@ -94,7 +83,7 @@ class ContentForm extends Form
         $elements[4] = new Element\Select('menuOrder');
         $elements[4]->setLabel('Menu order');
         $valueOptions = [];
-        for ($i = 1; $i<40; $i++) {
+        for ($i = 1; $i<100; $i++) {
             $valueOptions[$i] = $i;
         }
         $elements[4]->setValueOptions($valueOptions);
@@ -114,7 +103,7 @@ class ContentForm extends Form
             $elements[5]->setValue($options->type);
         }
 
-        $elements[6] = new Element\DateTime('date');
+        $elements[6] = new Element\Text('date');
         $elements[6]->setLabel('Date')
                         ->setAttribute('size', 20);
         if ($options!=null and $options->date) {
@@ -128,11 +117,15 @@ class ContentForm extends Form
         $valueOptions = [];
         $valueOptions[0] = 'Select a menu';
 
-        foreach ($menus as $menu) {
-            if ($menu->parent != 0) {
-                $valueOptions[$menu->id] = "--".$menu->toString();
-            } else {
-                $valueOptions[$menu->id] = $menu->toString();
+        foreach ($menus as $key => $menu) {
+            $menu->setServiceManager(null);
+            $valueOptions[$menu->getId()] = $menu->getCaption();
+
+            if(!empty($submenus[$key])) {
+                foreach($submenus[$key] as $sub) {
+                    $sub->setServiceManager(null);
+                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
+                }
             }
         }
         $elements[7]->setValueOptions($valueOptions);
@@ -171,8 +164,8 @@ class ContentForm extends Form
             $this->add($e);
         }
 
-        // if there are no menus with the current session language, simply remove the menu.
-        if (sizeof($menus) <= 0) {
+        // if there are no menus for the current session language, simply remove the menu.
+        if (count($menus) <= 0) {
             $this->remove("menu");
         }
     }

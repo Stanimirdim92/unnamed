@@ -71,7 +71,7 @@ class MenuController extends \Admin\Controller\IndexController
             foreach ($menu as $submenu) {
                 if ($submenu->getParent() > 0) {
                     /**
-                     * This needs to have a second empty array in order th menu to work
+                     * This needs to have a second empty array in order to work
                      */
                     $submenus[$submenu->getParent()][] = $submenu;
                 } else {

@@ -36,8 +36,8 @@
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
-// use Zend\Cache\StorageFactory;
-// use Zend\Session\SaveHandler\Cache;
+use Zend\Cache\StorageFactory;
+use Zend\Session\SaveHandler\Cache;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
 use Zend\ModuleManager\Feature;
@@ -54,10 +54,19 @@ class Module implements
     /**
      * @param array $config Holds cookies params
      */
-    public function initSession(array $config = [])
+    public function initSession()
     {
         $sessionConfig = new SessionConfig();
-        $sessionConfig->setOptions($config);
+        $sessionConfig->setOptions([
+            'cookie_lifetime'     => 7200, //2hrs
+            'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
+            'use_cookies'         => true,
+            'cache_expire'        => 180,  //3hrs
+            'cookie_path'         => "/",
+            'cookie_secure'       => Functions::isSSL(),
+            'cookie_httponly'     => true,
+            'name'                => '__zpc', // zend press cookie
+        ]);
         $sessionManager = new SessionManager($sessionConfig);
         // $memCached = new StorageFactory::factory(array(
         //     'adapter' => array(
@@ -96,16 +105,7 @@ class Module implements
         /**
          * Init sessions and cookies before everything else
          */
-        $this->initSession([
-            'cookie_lifetime'     => 7200, //2hrs
-            'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
-            'use_cookies'         => true,
-            'cache_expire'        => 180,  //3hrs
-            'cookie_path'         => "/",
-            'cookie_secure'       => Functions::isSSL(),
-            'cookie_httponly'     => true,
-            'name'                => '__zpc', // zend press cookie
-        ]);
+        $this->initSession();
 
         $em = $e->getApplication()->getEventManager();
         $sm = $e->getApplication()->getServiceManager();
@@ -218,6 +218,17 @@ class Module implements
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],
+            ],
+        ];
+    }
+
+    public function getServiceConfig()
+    {
+        return [
+            'factories' => [
+                'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
+                'Params'                   => 'Application\Factory\ParamsFactory',
+                'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
             ],
         ];
     }

@@ -40,5 +40,8 @@ return [
             'error/index'             => __DIR__ . '/../../Admin/view/error/index.phtml',
             'error/layout'            => __DIR__ . '/../../Admin/view/error/layout.phtml',
         ],
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],
     ],
 ];

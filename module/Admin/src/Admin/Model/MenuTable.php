@@ -54,15 +54,11 @@ class MenuTable
     private $serviceManager = null;
 
     /**
-     * Define SQL consts to do earlier validation - taken from Zend\Db\Sql\Select.php
+     * Preducate contstants
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
     const PRE_NULL = null;
-    const JOIN_INNER = 'inner';
-    const JOIN_OUTER = 'outer';
-    const JOIN_LEFT = 'left';
-    const JOIN_RIGHT = 'right';
 
     /**
      * @param ServiceManager|null $sm
@@ -98,6 +94,7 @@ class MenuTable
             if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
                 return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
             }
+            return null;
         }
     }
 
@@ -118,24 +115,19 @@ class MenuTable
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
     {
-        if (!in_array($joinType, [self::JOIN_INNER, self::JOIN_RIGHT, self::JOIN_LEFT, self::JOIN_OUTER])) {
-            $joinType = self::JOIN_INNER;
-        }
-
         $select = new Select("menu");
         $select->join($join, $on, $tbl2OneCols, $joinType);
         if ((bool) $pagination === true) {
             $paginatorAdapter = new DbSelect($this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
             return new Paginator($paginatorAdapter);
-
         } else {
             $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
-            // echo \Zend\Debug\Debug::dump($result->getSqlString($this->tableGateway->getAdapter()->getPlatform()), null, false);exit;
             $resultSet = $this->tableGateway->selectWith($result);
             $resultSet->buffer();
             if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
                 return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
             }
+            return null;
         }
     }
 

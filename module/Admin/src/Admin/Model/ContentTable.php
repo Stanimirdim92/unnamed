@@ -94,6 +94,7 @@ class ContentTable
             if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
                 return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
             }
+            return null;
         }
     }
 
@@ -126,6 +127,7 @@ class ContentTable
             if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
                 return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
             }
+            return null;
         }
     }
 
@@ -134,7 +136,7 @@ class ContentTable
      *
      * @param  Select $select
      * @param  array $columns
-     * @param  null $where
+     * @param  null|array|string $where
      * @param  null $group
      * @param  null $predicate
      * @param  null $order

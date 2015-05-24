@@ -36,6 +36,13 @@
 namespace Admin\Controller;
 
 use Admin\Model\Content;
+use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
+use Admin\Form\ContentForm;
+use Zend\File\Transfer\Adapter\Http;
+use Zend\Validator\File\IsImage;
+use Zend\Validator\File\Size;
+use Zend\Validator\File\Extension;
 
 class ContentController extends \Admin\Controller\IndexController
 {
@@ -48,6 +55,8 @@ class ContentController extends \Admin\Controller\IndexController
      * Route name to which will redirect
      */
     const ADMIN_ROUTE = "admin";
+
+    private $root = null;
 
     /**
      * Initialize any variables before controller actions
@@ -67,25 +76,10 @@ class ContentController extends \Admin\Controller\IndexController
     {
         $type = (int) $this->getParam("type", 0);
         if ($type === 1) {
-            // fetch all contents that have value content.menu=0 and type=1
-            $this->view->contentNewsWithoutMenu = $this->getTable("content")->fetchList(false, ["menu", "type", "language"], "menu='0' AND type='1' AND language='".$this->langTranslation."'", null, null, "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchList(false, [], "(type='1' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null,  "content.date DESC");
+            $this->view->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->langTranslation."'", null, null,  "content.date DESC");
         }
         if ($type === 0) {
-            // fetch all contents that have value content.menu=0 and type=0
-            $this->view->contentMenusWithoutMenu = $this->getTable("content")->fetchList(false, ["menu", "type", "language"], "menu='0' AND type='0' AND language='".$this->langTranslation."'", null, null, "id ASC");
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", "content.menu=menu.id", "(type='0' AND content.menu != '0') AND (content.language='".$this->langTranslation."')", null, null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
-        }
-
-        $contentsWithoutMenu =  $this->getTable("content")->fetchList(false, ["menu", "language"], "menu != '0' AND language='".$this->langTranslation."'", null, null, "id ASC");
-        if (count($contentsWithoutMenu) > 0) {
-            $menuReport = [];
-            foreach ($contentsWithoutMenu as $cwm) {
-                if (!$cwm->getMenuObject()) {
-                    $menuReport[] = $cwm;
-                }
-            }
-            $this->view->menuReport = $menuReport;
+            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->langTranslation."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
         return $this->view;
     }
@@ -106,9 +100,10 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
+        $this->root = $_SERVER['DOCUMENT_ROOT'];
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->id}", "name"=>"Modify content &laquo;".$content->toString()."&raquo;"]);
+        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=>"Modify content &laquo;".$content->getTitle()."&raquo;"]);
         $this->showForm('Modify', $content);
         return $this->view;
     }
@@ -118,7 +113,7 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function deleteAction()
     {
-        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation);
+        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation)->current();
         $this->cache->success = "Content was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
@@ -128,9 +123,9 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function detailAction()
     {
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation);
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->toString()."&raquo; details"]);
+        $this->addBreadcrumb(["reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->getTitle()."&raquo; details"]);
         return $this->view;
     }
 
@@ -139,8 +134,8 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function cloneAction()
     {
-        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation);
-        $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully cloned";
+        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation)->current();
+        $this->cache->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
     }
@@ -153,81 +148,135 @@ class ContentController extends \Admin\Controller\IndexController
      */
     private function showForm($label = 'Add', Content $content = null)
     {
-        if ($content==null) {
+        if (!$content instanceof Content) {
             $content = new Content([], null);
         }
 
-        $orderMenus = $menus = $submenus = [];
-        $menus = $this->getTable("Menu")->fetchList(false, ["parent", "language", "id", "caption"], ["parent" => 0, "language" => $this->langTranslation], "AND", null, "menuOrder ASC");
-        foreach ($menus as $m) {
-            $m->setServiceManager(null);
-            $submenus[$m->id] = $this->getTable("Menu")->fetchList(false, ["parent", "language", "id", "caption"], ["parent" => $m->getId(), "language" => $this->langTranslation], "AND", null, "menuOrder ASC");
-        }
-        foreach ($menus as $menu) {
-            $menu->setServiceManager(null);
-            $orderMenus[] = $menu;
-            if (isset($submenus[$menu->id]) && count($submenus[$menu->id]) > 0) {
-                foreach ($submenus[$menu->id] as $sub) {
-                    $orderMenus[] = $sub;
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
+        if (count($menu) > 0) {
+            $submenus = $menus = [];
+            foreach ($menu as $submenu) {
+                if ($submenu->getParent() > 0) {
+                    /**
+                     * This needs to have a second empty array in order to work
+                     */
+                    $submenus[$submenu->getParent()][] = $submenu;
+                } else {
+                    $menus[$submenu->getId()] = $submenu;
                 }
             }
         }
-        $form = new \Admin\Form\ContentForm($content, $orderMenus, $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC"));
+
+        $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC");
+        $form = new ContentForm($content, $menus, $submenus, $languages);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
+
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($content->getInputFilter());
-            $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(), $this->getRequest()->getFiles()->toArray()));
-            if ($form->isValid()) {
-                $formData = $form->getData();
-                if (isset($formData['removepreview']) && $formData['removepreview'] && $content != null) {
-                    if (!is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview())) {
-                        $this->cache->error = "Image doesn't exist in that directory";
-                        $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
-                    }
-                    unlink($_SERVER['DOCUMENT_ROOT'] . '/userfiles/preview/' . $content->getPreview());
-                    $content->setPreview("");
-                }
-                if ($formData['preview']['name'] != null) {
-                    $adapter = new \Zend\File\Transfer\Adapter\Http();
-                    $adapter->setDestination($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/');
-                    if ($adapter->isValid('preview')) {
-                        // remove the old image from the directory if exists
-                        if ($content->preview != null && is_file($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview())) {
-                            unlink($_SERVER['DOCUMENT_ROOT'].'/userfiles/preview/'.$content->getPreview());
-                        }
-                        $param = $this->params()->fromFiles('preview');
-                        $adapter->receive($param['name']);
-                        $formData['preview'] = $param['name'];
-                    } else {
-                        $error = [];
-                        foreach ($adapter->getMessages() as $key => $value) {
-                            $error[] = $value;
-                        }
-                        $this->setErrorNoParam($error);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
-                    }
-                } else {
-                    $formData['preview'] = $content->getPreview();
-                }
-                $content->exchangeArray($formData);
-
-                // db table menu is empty, but we are still able to post contents.
-                // if so, simply show those types of contents at the bottom of the table from the index page
-                if (!$formData["menu"]) {
-                    $content->setMenu(0);
-                } else {
-                    $content->setMenu($formData['menu']);
-                }
-                $this->getTable("content")->saveContent($content);
-                $this->cache->success = "Content &laquo;".$content->toString()."&raquo; was successfully saved";
-                $this->view->setTerminal(true);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+            $data = array_merge_recursive(
+                $this->getRequest()->getPost()->toArray(),
+                $this->getRequest()->getFiles()->toArray()
+            );
+            $form->setData($data);
+            if (!empty($data["preview"]) && $this->getRequest()->isXmlHttpRequest()) {
+                /**
+                 * AJAX
+                 */
+                return $this->uploadImages($data["preview"]);
             } else {
-                $this->formErrors($form->getMessages());
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                /**
+                 * Not AJAX
+                 */
+                if ($form->isValid()) {
+                    $formData = $form->getData();
+                    $formData["preview"] = $content->getPreview();
+                    $content->exchangeArray($formData);
+                    $this->getTable("content")->saveContent($content);
+                    $this->cache->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully saved";
+                    $this->view->setTerminal(true);
+                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                } else {
+                    $this->formErrors($form->getMessages());
+                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                }
             }
         }
+    }
+
+    public function getFiles()
+    {
+        $iterator = new \DirectoryIterator($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+        $files = [];
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            $file = $file->getFileInfo();
+            if ($file->isDir()) {
+                continue;
+            }
+            $files[] = $file;
+        }
+        return $files;
+    }
+
+    /**
+     * Make/check dir
+     */
+    private function makeDirectories()
+    {
+        if (!is_dir($this->root.'/userfiles/')) {
+            mkdir($this->root.'/userfiles/');
+        }
+        if (!is_dir($this->root.'/userfiles/'.date("Y_m_d"))) {
+            mkdir($this->root.'/userfiles/'.date("Y_m_d"));
+        }
+        if (!is_dir($this->root.'/userfiles/'.date("Y_m_d").'/images/')) {
+            mkdir($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+        }
+    }
+
+    /**
+     * Upload all images async
+     *
+     * @param  array $files
+     */
+    private function uploadImages($files)
+    {
+        $adapter = new Http();
+        $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
+        $isImage = new IsImage();
+        $extension = new Extension(['jpg','gif','png','jpeg','bmp','webp'], true);
+
+        $adapter->setValidators([$size, $isImage, $extension]);
+        $this->makeDirectories();
+        $adapter->setDestination($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+
+        $successFiles = $errorFiles = [];
+        if ($adapter->isValid('preview')) {
+            foreach ($files as $key => $file) {
+                $adapter->receive($files[$key]['name']);
+                if ($adapter->isUploaded()) {
+                    $successFiles[$key] = $files[$key]['name']." was uploaded successfully";
+                } else {
+                    $errorFiles[$key] = $files[$key]['name']. " was not uploaded";
+                }
+            }
+            /**
+             * AJAX POST can't return data, so we need to fake the return
+             * The way to do this is by appending custom headers
+             */
+            if (!empty($errorFiles)) {
+                $this->getResponse()->getHeaders()->addHeaders(['errorFiles' => $errorFiles]);
+            }
+            if (!empty($successFiles)) {
+                $this->getResponse()->getHeaders()->addHeaders(['successFiles' => $successFiles]);
+            }
+        } else {
+            foreach ($adapter->getMessages() as $key => $error) {
+                $errorFiles[] = $error;
+            }
+            $this->getResponse()->getHeaders()->addHeaders(['errorFiles' => $errorFiles]);
+        }
+        echo \Zend\Debug\Debug::dump($this->getFiles(), null, false);
     }
 }

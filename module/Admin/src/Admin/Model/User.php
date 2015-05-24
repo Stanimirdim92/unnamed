@@ -446,7 +446,7 @@ class User implements InputFilterAwareInterface
     public function getLanguageObject()
     {
         try {
-            return $this->serviceManager->get('LanguageTable')->fetchList(false, "id={$this->language}");
+            return $this->serviceManager->get('LanguageTable')->getLanguage($this->language);
         } catch (\Exception $e) {
             return null;
         }
@@ -458,7 +458,7 @@ class User implements InputFilterAwareInterface
     public function getAdministratorObject()
     {
         try {
-            return $this->serviceManager->get('AdministratorTable')->fetchList(false, "id={$this->admin}");
+            return $this->serviceManager->get('AdministratorTable')->getAdministrator($this->admin);
         } catch (\Exception $e) {
             return null;
         }

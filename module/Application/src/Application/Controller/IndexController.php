@@ -167,7 +167,7 @@ class IndexController extends AbstractActionController
      * Second, itterate over each object and determinate if it's a submenu or not
      * Third devided each object based on it's type and prepare it for the view itteration
      *
-     * @todo  make it dinamcly multilevel
+     * @todo  make it dinamicly multilevel
      * @return void
      */
     private function initMenus()
@@ -178,7 +178,7 @@ class IndexController extends AbstractActionController
             foreach ($menu as $submenu) {
                 if ($submenu->getParent() > 0) {
                     /**
-                     * This needs to have a second empty array in order th menu to work
+                     * This needs to have a second empty array in order to work
                      */
                     $submenus[$submenu->getParent()][] = $submenu;
                 } else {
@@ -228,7 +228,7 @@ class IndexController extends AbstractActionController
                 }
                 return $this->redirect()->toUrl($url);
             }
-            $this->clearUserData($auth); // something is wrong, clear all user data
+            return $this->clearUserData($auth); // something is wrong, clear all user data
         }
     }
 
@@ -266,8 +266,7 @@ class IndexController extends AbstractActionController
         if (!$param) {
             return $default;
         }
-        $param = $escaper->escapeHtml($param);
-        return trim($param);
+        return $escaper->escapeHtml(trim($param));
     }
 
     /**

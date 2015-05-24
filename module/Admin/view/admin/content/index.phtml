@@ -12,9 +12,8 @@
       <TABLE class="table table-striped table-bordered table-hover dataTable">
           <THEAD>
             <TR>
-              <TH>ID</TH>
               <TH>title</TH>
-              <TH>order</TH>
+              <TH>text</TH>
               <TH>date</TH>
               <TH>details</TH>
               <TH>modify</TH>
@@ -23,157 +22,42 @@
           </THEAD>
           <TBODY>
 <?php
-/* @var $item Admin\Model\Menu */
-$menu = null;
-/* @var $item Admin\Model\Content */
+/**
+ * @var $item Admin\Model\Content
+ */
 foreach($this->contents as $item)
 {
-    if($item->menu!=0 && ($menu==null || $menu->id!=$item->menu))
-    {
-        $menu = $item->getMenuObject();
+    $item->setServiceManager(null);
 ?>
+
 <TR>
-    <TH colspan="8"><b><?=$menu->caption?></b></TH>
-</TR>
-<?php
-    }
-?>
-<TR>
-    <TD class='admin c'><?=$item->id?></TD>
-    <TD class='admin'><?=$item->title?></TD>
-    <TD class='admin'><?=substr(strip_tags($item->text),0,200)?>...</TD>
-    <TD class='admin'><?=$item->menuOrder?></TD>
-    <TD class='admin'><?=$item->date?></TD>
+    <TD class='admin'><?=$item->getTitle()?></TD>
+    <TD class='admin'><?=substr(strip_tags($item->getText()),0,200)?>...</TD>
+    <TD class='admin'><?=$item->getDate()?></TD>
     <TD class='admin c'>
-    <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$item->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
+        <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$item->getId()?>'>
+            <i class='fa fa-icon-fix fa-info'></i>
+        </a>
     </TD>
     <TD class='admin c'>
-    <a title='Modify content object' href='/admin/content/modify/id/<?=$item->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+        <a title='Modify content object' href='/admin/content/modify/id/<?=$item->getId()?>' class='btn btn-default btn-sm orange'>
+            <i class='fa fa-icon-fix fa-pencil'></i>
+        </a>
     </TD>
     <TD class='admin c'>
-    <a id='delete_<?=$item->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-    <div style='display: none' id='delete_delete_<?=$item->id?>' class='dialog_hide'>
+        <a id='delete_<?=$item->getId()?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'>
+            <i class='fa fa-icon-fix fa-trash-o'></i>
+        </a>
+    </TD>
+    <div style='display: none' id='delete_delete_<?=$item->getId()?>' class='dialog_hide'>
         <p>Are you sure you would like to delete this content?</p>
         <ul>
-          <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
+          <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$item->getId()?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
           <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
         </ul>
     </div>
-    </TD>
 </TR>
 <?php
-}
-// fetch all contents that have value content.menu=0 and type=0
-if (count($this->contentMenusWithoutMenu) > 0)
-{
-?>
-  <tr class="c">
-    <td colspan="8"><strong>Content menus with menu set to 0</strong></td>
-  </tr>
-<?php
-  foreach ($this->contentMenusWithoutMenu as $wm)
-  {
-?>
-    <TR>
-        <TD class='admin c'><?=$wm->id?></TD>
-        <TD class='admin'><?=$wm->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($wm->text),0,200)?>...</TD>
-        <TD class='admin'><?=$wm->menuOrder?></TD>
-        <TD class='admin'><?=$wm->date?></TD>
-        <TD class='admin c'>
-        <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$wm->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a title='Modify content object' href='/admin/content/modify/id/<?=$wm->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a id='delete_<?=$wm->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-        <div style='display: none' id='delete_delete_<?=$wm->id?>' class='dialog_hide'>
-            <p>Are you sure you would like to delete this content?</p>
-            <ul>
-              <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$wm->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
-              <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
-            </ul>
-        </div>
-        </TD>
-    </TR>
-<?php
-  }
-}
-
-if (count($this->menuReport) > 0)
-{
-?>
-  <tr class="c">
-    <td colspan="8"><strong>Contents without menu (menu was deleted)</strong></td>
-  </tr>
-<?php
-  foreach ($this->menuReport as $cwm)
-  {
-?>
-    <TR>
-        <TD class='admin c'><?=$cwm->id?></TD>
-        <TD class='admin'><?=$cwm->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($cwm->text),0,200)?>...</TD>
-        <TD class='admin'><?=$cwm->menuOrder?></TD>
-        <TD class='admin'><?=$cwm->date?></TD>
-        <TD class='admin c'>
-        <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$cwm->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a title='Modify content object' href='/admin/content/modify/id/<?=$cwm->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a id='delete_<?=$cwm->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-        <div style='display: none' id='delete_delete_<?=$cwm->id?>' class='dialog_hide'>
-            <p>Are you sure you would like to delete this content?</p>
-            <ul>
-              <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$cwm->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
-              <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
-            </ul>
-        </div>
-        </TD>
-    </TR>
-<?php
-  }
-}
-
-// fetch all contents that have value content.menu=0 and type=1
-if (count($this->contentNewsWithoutMenu) > 0)
-{
-?>
-  <tr class="c">
-    <td colspan="8"><strong>Content news with menu set to 0</strong></td>
-  </tr>
-<?php
-  foreach ($this->contentNewsWithoutMenu as $wm2)
-  {
-?>
-    <TR>
-        <TD class='admin c'><?=$wm2->id?></TD>
-        <TD class='admin'><?=$wm2->title?></TD>
-        <TD class='admin'><?=substr(strip_tags($wm2->text),0,200)?>...</TD>
-        <TD class='admin'><?=$wm2->menuOrder?></TD>
-        <TD class='admin'><?=$wm2->date?></TD>
-        <TD class='admin c'>
-        <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$wm2->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a title='Modify content object' href='/admin/content/modify/id/<?=$wm2->id?>' class='btn btn-default btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
-        </TD>
-        <TD class='admin c'>
-        <a id='delete_<?=$wm2->id?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-        <div style='display: none' id='delete_delete_<?=$wm2->id?>' class='dialog_hide'>
-            <p>Are you sure you would like to delete this content?</p>
-            <ul>
-              <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$wm2->id?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
-              <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
-            </ul>
-        </div>
-        </TD>
-    </TR>
-<?php
-  }
 }
 ?>
           </TBODY>

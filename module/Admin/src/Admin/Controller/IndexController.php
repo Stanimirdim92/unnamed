@@ -109,13 +109,13 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         /**
- * Check admin status, before anything else
- */
-        // $this->initAdminIdentity();
+         * @see IndexController::isAdmin
+         */
+        // $this->isAdmin();
         parent::onDispatch($e);
         $this->initViewVars();
         $this->initBreadcrumbs();
-        $this->initMenus();
+        // $this->initMenus();
     }
 
 /****************************************************
@@ -137,10 +137,8 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initCache()
     {
-        if (!$this->cache) {
-            $this->cache = new Container("cache");
-            $this->view->cache = $this->cache;
-        }
+        $this->cache = new Container("cache");
+        $this->view->cache = $this->cache;
     }
 
     /**
@@ -149,9 +147,11 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
     private function initViewVars()
     {
         $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
-        $this->view->controller = $this->getParam('__CONTROLLER__');
-        $this->view->action = $this->getParam('action');
+
+        if (!isset($this->translation->languageObject)) {
+            $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
+            $this->view->langName = $this->translation->languageObject->getName();
+        }
     }
 
     /**
@@ -169,12 +169,20 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     private function initTranslation()
     {
+        $this->translation = new Container("translations");
+
+        /**
+         * Load English as default language.
+         * Maybe make this possible to change via backend?
+         */
         if (!isset($this->translation->language)) {
             $this->translation = Functions::initTranslations(1, true);
             $this->translation->language = 1;
         }
+
         // keeping it simple and DRY
         $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
+        return $this->view;
     }
 
 /****************************************************
@@ -209,18 +217,19 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      * @todo create a bruteforce protection for failed loging attempts.
      * @return void
      */
-    private function initAdminIdentity()
+    private function isAdmin()
     {
         $auth = new \Zend\Authentication\AuthenticationService();
-        if ($auth->hasIdentity() && $this->cache->admin instanceof \Admin\Model\User) {
-            if ($auth->getIdentity()->role === 10 && $this->cache->role === 10 && $this->cache->logged === true) {
-                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
-                if (count($checkAdminExistence) === 1) {
-                    return $this->redirect()->toUrl("/admin");
-                }
-                unset($checkAdminExistence);
-                $this->clearUserData();
-                return $this->redirect()->toUrl("/");
+        if ($auth->hasIdentity()) {
+             if (isset($auth->getIdentity()->role) &&
+                ((int) $auth->getIdentity()->role === 10) && isset($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
+                    $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
+                    if (count($checkAdminExistence) === 1) {
+                        unset($checkAdminExistence);
+                        return true;
+                    }
+                    $this->clearUserData();
+                    return $this->redirect()->toUrl("/");
             }
             $this->clearUserData();
             return $this->redirect()->toUrl("/");
@@ -256,6 +265,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     protected function getParam($paramName = null, $default = null)
     {
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
         $param = $this->params()->fromPost($paramName, 0);
         if (!$param) {
             $param = $this->params()->fromRoute($paramName, null);
@@ -264,9 +274,15 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
             $param = $this->params()->fromQuery($paramName, null);
         }
         if (!$param) {
+            $param = $this->params()->fromFiles($paramName, null);
+        }
+        if (!$param) {
             return $default;
         }
-        return trim($param);
+        if (is_array($param)) {
+            return $param;
+        }
+        return $escaper->escapeHtml(trim($param));
     }
 
     /**

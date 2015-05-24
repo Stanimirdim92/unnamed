@@ -20,6 +20,7 @@ return [
     'Admin\Form\AdminMenuForm'                   => __DIR__ . '/src/Admin/Form/AdminMenuForm.php',
     'Admin\Form\AdminMenuSearchForm'             => __DIR__ . '/src/Admin/Form/AdminMenuSearchForm.php',
     'Admin\Form\ContentForm'                     => __DIR__ . '/src/Admin/Form/ContentForm.php',
+    'Admin\Form\AjaxImageUpload'                 => __DIR__ . '/src/Admin/Form/AjaxImageUpload.php',
     'Admin\Form\CurrencyForm'                    => __DIR__ . '/src/Admin/Form/CurrencyForm.php',
     'Admin\Form\LanguageForm'                    => __DIR__ . '/src/Admin/Form/LanguageForm.php',
     'Admin\Form\LanguageSearchForm'              => __DIR__ . '/src/Admin/Form/LanguageSearchForm.php',

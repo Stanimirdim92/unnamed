@@ -150,7 +150,7 @@ class AdministratorController extends \Admin\Controller\IndexController
                 $user = $this->getTable("user")->getUser($formData['user']);
                 // valid user id
                 if (count($user) == 1) {
-                    $adminExist = $this->getTable("administrator")->getAdministrator($user->id);
+                    $adminExist = $this->getTable("administrator")->getAdministrator($user->getId());
                     if (count($adminExist) != 0) {
                         $this->cache->error = $user->toString()." is already administrator";
                         $this->view->setTerminal(true);

@@ -36,6 +36,7 @@
 namespace Admin\Model;
 
 use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -448,174 +449,178 @@ class Content implements InputFilterAwareInterface
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $inputFilter->add([
-                'name'     => 'id',
-                'required' => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"preview",
-                "required" => false,
-                'validators' => [
-                    [
-                        'name' => 'Zend\Validator\File\Size',
-                        'options' => [
-                            'min' => 0,
-                            'max' => 3145728, //3mb
-                            'useByteString' => true,
-                        ],
+            $factory = new InputFactory();
+            $inputFilter->add(
+                $factory->createInput([
+                    'name'     => 'id',
+                    'required' => false,
+                    'filters'  => [
+                        ['name' => 'Int'],
                     ],
-                    [
-                        'name' => 'Zend\Validator\File\Extension',
-                        'options' => [
-                            'extension' => [
-                                'jpg',
-                                'gif',
-                                'png',
-                                'jpeg',
-                                'bmp',
-                                'webp',
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"title",
+                    "required" => true,
+                    'filters' => [
+                        ['name' => 'StripTags'],
+                        ['name' => 'StringTrim'],
+                    ],
+                    'validators' => [
+                        ['name' => 'NotEmpty'],
+                        [
+                            'name'    => 'StringLength',
+                            'options' => [
+                                'encoding' => 'UTF-8',
+                                'min' => 1,
+                                'max' => 200,
                             ],
-                            'case' => true,
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"title",
-                "required" => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    ['name' => 'NotEmpty'],
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 200,
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"text",
+                    "required" => true,
+                    'filters' => [
+                        ['name' => 'StripTags'],
+                        ['name' => 'StringTrim'],
+                    ],
+                    'validators' => [
+                        ['name' => 'NotEmpty'],
+                        [
+                            'name'    => 'StringLength',
+                            'options' => [
+                                'encoding' => 'UTF-8',
+                                'min' => 1,
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"text",
-                "required" => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    ['name' => 'NotEmpty'],
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"menuOrder",
+                    "required" => false,
+                    'filters'  => [
+                        ['name' => 'Int'],
+                    ],
+                    'validators' => [
+                        [
+                            'name' => 'Regex',
+                            'options' => [
+                                'pattern' => '/^[0-9]+$/',
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"menuOrder",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"language",
+                    "required" => false,
+                    'filters'  => [
+                        ['name' => 'Int'],
+                    ],
+                    'validators' => [
+                        [
+                            'name' => 'Regex',
+                            'options' => [
+                                'pattern' => '/^[0-9]+$/',
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"language",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"menu",
+                    "required" => false,
+                    'filters'  => [
+                        ['name' => 'Int'],
+                    ],
+                    'validators' => [
+                        [
+                            'name' => 'Regex',
+                            'options' => [
+                                'pattern' => '/^[0-9]+$/',
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"menu",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"type",
+                    "required" => false,
+                    'filters'  => [
+                        ['name' => 'Int'],
+                    ],
+                    'validators' => [
+                        [
+                            'name' => 'Regex',
+                            'options' => [
+                                'pattern' => '/^[0-1]+$/',
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"type",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-1]+$/',
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"date",
+                    "required" => false,
+                    'filters' => [
+                        ['name' => 'StripTags'],
+                        ['name' => 'StringTrim'],
+                    ],
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"preview",
+                    "required" => false,
+                    'validators' => [
+                        [
+                            'name' => 'Zend\Validator\File\Size',
+                            'options' => [
+                                'min' => '10kB',
+                                'max' => '5MB',
+                                'useByteString' => true,
+                            ],
+                        ],
+                        [
+                            'name' => 'Zend\Validator\File\Extension',
+                            'options' => [
+                                'extension' => [
+                                    'jpg',
+                                    'gif',
+                                    'png',
+                                    'jpeg',
+                                    'bmp',
+                                    'webp',
+                                ],
+                                'case' => true,
+                            ],
                         ],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"date",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'date',
-                        'options' => [
-                            'locale' => 'en',
-                            'format' => 'Y-m-d H:i:s',
-                        ],
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"titleLink",
+                    "required" => false,
+                    'filters' => [
+                        ['name' => 'StripTags'],
+                        ['name' => 'StringTrim'],
+                        ['name' => 'StringToLower'],
                     ],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"titleLink",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                    ['name' => 'StringToLower'],
-                ],
-            ]);
+                ])
+            );
             $this->inputFilter = $inputFilter;
         }
         return $this->inputFilter;
-    }
-
-    /**
-     * toString method
-     */
-    public function toString()
-    {
-        return $this->title;
     }
 }
