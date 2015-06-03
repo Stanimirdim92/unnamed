@@ -52,7 +52,13 @@ class ContentForm extends Form
         parent::__construct("content");
         $elements = [];
 
-        $elements[100] = new Element\File('preview');
+
+        $elements[99] = new Element\File('preview');
+        $elements[99]->setLabel('Image')
+                      ->setAttribute('id', 'preview')
+                      ->setAttribute('class', 'preview');
+
+        $elements[100] = new Element\File('imageUpload');
         $elements[100]->setLabel('Image')
                       ->setAttribute('id', 'imgajax')
                       ->setAttribute('class', 'imgupload')
@@ -158,6 +164,11 @@ class ContentForm extends Form
         if ($options!=null) {
             $elements[78]->setValue($options->titleLink);
         }
+
+
+$elements[79]  = new Element\Hidden('progress_key');
+$elements[79]->setAttribute('id', 'progress_key');
+$elements[79]->setValue(md5(uniqid(rand())));
 
         $elements[88] = new Element\Csrf('s');
         foreach ($elements as $e) {

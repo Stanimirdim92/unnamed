@@ -43,8 +43,9 @@ use Zend\File\Transfer\Adapter\Http;
 use Zend\Validator\File\IsImage;
 use Zend\Validator\File\Size;
 use Zend\Validator\File\Extension;
+use Admin\Controller\IndexController;
 
-class ContentController extends \Admin\Controller\IndexController
+class ContentController extends IndexController
 {
     /**
      * Controller name to which will redirect
@@ -55,8 +56,6 @@ class ContentController extends \Admin\Controller\IndexController
      * Route name to which will redirect
      */
     const ADMIN_ROUTE = "admin";
-
-    private $root = null;
 
     /**
      * Initialize any variables before controller actions
@@ -100,11 +99,10 @@ class ContentController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
-        $this->root = $_SERVER['DOCUMENT_ROOT'];
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=>"Modify content &laquo;".$content->getTitle()."&raquo;"]);
-        $this->showForm('Modify', $content);
+        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=> $this->translation->MODIFY_CONTENT." &laquo;".$content->getTitle()."&raquo;"]);
+        $this->showForm($this->translation->MODIFY, $content);
         return $this->view;
     }
 
@@ -141,7 +139,7 @@ class ContentController extends \Admin\Controller\IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication)
+     * This is common function used by add and edit actions
      *
      * @param string $label button title
      * @param  Content|null $menu menu object
@@ -169,6 +167,7 @@ class ContentController extends \Admin\Controller\IndexController
 
         $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC");
         $form = new ContentForm($content, $menus, $submenus, $languages);
+        $form->bind($content);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
 
@@ -178,20 +177,14 @@ class ContentController extends \Admin\Controller\IndexController
                 $this->getRequest()->getPost()->toArray(),
                 $this->getRequest()->getFiles()->toArray()
             );
+
             $form->setData($data);
-            if (!empty($data["preview"]) && $this->getRequest()->isXmlHttpRequest()) {
-                /**
-                 * AJAX
-                 */
-                return $this->uploadImages($data["preview"]);
+            if (!empty($data["imageUpload"]) && $this->getRequest()->isXmlHttpRequest()) {
+                return $this->uploadImages();
             } else {
-                /**
-                 * Not AJAX
-                 */
                 if ($form->isValid()) {
                     $formData = $form->getData();
-                    $formData["preview"] = $content->getPreview();
-                    $content->exchangeArray($formData);
+                    $formData->preview = $content->preview["name"];
                     $this->getTable("content")->saveContent($content);
                     $this->cache->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully saved";
                     $this->view->setTerminal(true);
@@ -204,34 +197,43 @@ class ContentController extends \Admin\Controller\IndexController
         }
     }
 
-    public function getFiles()
+    /**
+     * Get all files from all folders and list them in the gallery
+     */
+    public function filesAction()
     {
-        $iterator = new \DirectoryIterator($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+        $this->view->setTerminal(true);
+        $path = '/public/userfiles/';
+        $dir = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
+        $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
+        $it->setMaxDepth(3);
         $files = [];
-        /** @var \SplFileInfo $file */
-        foreach ($iterator as $file) {
-            $file = $file->getFileInfo();
-            if ($file->isDir()) {
-                continue;
+        $i = 0;
+        foreach ($it as $file) {
+            if ($file->isFile()) {
+                $filepath = explode("public", $file->getRealPath()); // ugly workaround :(
+                $files[$i]["link"] = Json::encode($filepath[1]);
+                $files[$i]["filename"] = Json::encode($file->getFilename());
+                $i++;
             }
-            $files[] = $file;
         }
-        return $files;
+        return new JsonModel($files);
     }
 
     /**
-     * Make/check dir
+     * Create directories
+     * @return  void
      */
-    private function makeDirectories()
+    private function createDirectories()
     {
-        if (!is_dir($this->root.'/userfiles/')) {
-            mkdir($this->root.'/userfiles/');
+        if (!is_dir('/public/userfiles/')) {
+            mkdir('/public/userfiles/');
         }
-        if (!is_dir($this->root.'/userfiles/'.date("Y_m_d"))) {
-            mkdir($this->root.'/userfiles/'.date("Y_m_d"));
+        if (!is_dir('/public/userfiles/'.date("Y_M"))) {
+            mkdir('/public/userfiles/'.date("Y_M"));
         }
-        if (!is_dir($this->root.'/userfiles/'.date("Y_m_d").'/images/')) {
-            mkdir($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+        if (!is_dir('/public/userfiles/'.date("Y_M").'/images/')) {
+            mkdir('/public/userfiles/'.date("Y_M").'/images/');
         }
     }
 
@@ -239,44 +241,54 @@ class ContentController extends \Admin\Controller\IndexController
      * Upload all images async
      *
      * @param  array $files
+     * @return Response containing headers with information about each image
      */
-    private function uploadImages($files)
+    private function uploadImages()
     {
+        $this->view->setTerminal(true);
         $adapter = new Http();
         $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
         $isImage = new IsImage();
-        $extension = new Extension(['jpg','gif','png','jpeg','bmp','webp'], true);
+        $extension = new Extension(['jpg','gif','png','jpeg','bmp','webp', 'svg'], true);
 
+        $this->createDirectories();
         $adapter->setValidators([$size, $isImage, $extension]);
-        $this->makeDirectories();
-        $adapter->setDestination($this->root.'/userfiles/'.date("Y_m_d").'/images/');
+        $adapter->setDestination('/public/userfiles/'.date("Y_M").'/images/');
+        $this->upload($adapter);
+    }
 
-        $successFiles = $errorFiles = [];
-        if ($adapter->isValid('preview')) {
-            foreach ($files as $key => $file) {
-                $adapter->receive($files[$key]['name']);
-                if ($adapter->isUploaded()) {
-                    $successFiles[$key] = $files[$key]['name']." was uploaded successfully";
+    /**
+     * @param  Zend\File\Transfer\Adapter\Http $adapter
+     */
+    private function upload($adapter)
+    {
+        $this->view->setTerminal(true);
+        $uploadStatus = [];
+        if ($adapter->isValid('imageUpload')) {
+            foreach ($adapter->getFileInfo() as $key => $file) {
+                /**
+                 * Skip the normal image upload input
+                 */
+                if ($key == "preview") {
+                    continue;
+                }
+
+                if ($adapter->receive($file["name"])) {
+                    $uploadStatus["successFiles"][] = $file["name"]." was uploaded successfully";
                 } else {
-                    $errorFiles[$key] = $files[$key]['name']. " was not uploaded";
+                    $uploadStatus["errorFiles"][] = $file["name"]. " was not uploaded";
                 }
             }
-            /**
-             * AJAX POST can't return data, so we need to fake the return
-             * The way to do this is by appending custom headers
-             */
-            if (!empty($errorFiles)) {
-                $this->getResponse()->getHeaders()->addHeaders(['errorFiles' => $errorFiles]);
-            }
-            if (!empty($successFiles)) {
-                $this->getResponse()->getHeaders()->addHeaders(['successFiles' => $successFiles]);
-            }
+            echo Json::encode($uploadStatus);
+            exit;
+            // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
         } else {
             foreach ($adapter->getMessages() as $key => $error) {
-                $errorFiles[] = $error;
+                $uploadStatus["errorFiles"][] = $error;
             }
-            $this->getResponse()->getHeaders()->addHeaders(['errorFiles' => $errorFiles]);
+            echo Json::encode($uploadStatus);
+            exit;
+            // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
         }
-        echo \Zend\Debug\Debug::dump($this->getFiles(), null, false);
     }
 }

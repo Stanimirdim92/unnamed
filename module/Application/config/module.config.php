@@ -91,7 +91,9 @@ return [
         'abstract_factories' => [
         ],
         'factories' => [
-
+            'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
+            'Params'                   => 'Application\Factory\ParamsFactory',
+            'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
         ],
     ],
     'controllers' => [

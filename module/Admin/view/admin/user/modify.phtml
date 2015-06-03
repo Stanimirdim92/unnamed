@@ -7,7 +7,7 @@
     <div class='form-inputs'>
     <?php
         $form = $this->form;
-        $form->setAttribute('action', $this->url('admin',array('controller' =>'user','action' => 'modify','id' => $this->id)));
+        $form->setAttribute('action', $this->url('admin',array('controller' =>'user','action' => <?=$this->translation->MODIFY;?>,'id' => $this->id)));
         $form->prepare();
         echo $this->form()->openTag($form);
         echo $this->formCollection($form);

@@ -221,15 +221,4 @@ class Module implements
             ],
         ];
     }
-
-    public function getServiceConfig()
-    {
-        return [
-            'factories' => [
-                'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
-                'Params'                   => 'Application\Factory\ParamsFactory',
-                'ResetPasswordTable'       => "Application\Factory\ResetPasswordTableFactory",
-            ],
-        ];
-    }
 }

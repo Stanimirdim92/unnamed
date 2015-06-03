@@ -1,12 +1,13 @@
 <?php
-$children = $this->viewModel()->getCurrent()->getChildren();
-$view = $children[0];
+if ($this->viewModel()->getCurrent()->getChildren() != null) {
+    $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
     <head>
         <meta charset="utf-8">
         <title><?=$view->webTitle?></title>
+        <meta http-equiv="x-dns-prefetch-control" content="on">
         <meta name="robots" content="noindex, nofollow">
         <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
         <meta name="HandheldFriendly" content="True">
@@ -117,3 +118,6 @@ $view = $children[0];
         <script defer src="/back/js/custom.js"></script>
     </body>
 </html>
+<?php
+}
+?>

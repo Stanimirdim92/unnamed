@@ -1,33 +1,34 @@
-<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
-    <a href="/admin/content" class="btn btn-labeled btn-default">
-        <span class="btn-label"><i class="fa fa-chevron-left"></i></span>back to the list of contents
-    </a>
-    <br/><br/>
-    <header>
-        <span class="widget-icon"><i class="fa fa-list"></i></span>
-        <h2>Modify content</h2>
-    </header>
-    <div class='well'>
-    <?php
-    // First, set the action on the form
-    $form = $this->form;
-    $form->setAttribute('action', $this->url('admin',array('controller' =>'content','action' => 'imgupload')));
-    $form->prepare();
-    echo $this->form()->openTag($form);
-    echo $this->formCollection($form);
-    echo $this->form()->closeTag();
-    ?>
+<div id="modal-imgupload">
+    <div class="media-modal">
+        <button type="button" class="media-modal-toggle media-modal-close"><i class="fa fa-close"></i></button>
+        <div class="media-modal-content">
+            <div class="media-frame-menu">
+                <div class="media-frame-router">
+                    <div class="media-router">
+                        <button type="button" class="upload media-menu-item"><?=$this->translation->UPLOAD_FILES?></button>
+                        <button type="button" class="gallery media-menu-item"><?=$this->translation->GALLERY?></button>
+                    </div>
+                </div>
+                <div class="media-frame-content">
+                    <div class="uploader-inline">
+                        <label for="imgajax" class="media-file-upload">
+                            <?=$this->translation->FILE_UPLOAD; ?>
+                            <?php
+                                echo $this->formFile($form->get('imageUpload'));
+                            ?>
+                        </label>
+                    </div>
+                    <div class="gallery-view">
+                        <div class="view-large-image">
+                            <img src="/userfiles" class="large-image">
+                        </div>
+                        <div class="image-grid">
 
-<button id="imgupl" type="button">sgfsg</button>
-     <?php
-    // First, set the action on the form
-    // $AjaxImageUpload = $this->AjaxImageUpload;
-    // $AjaxImageUpload->setAttribute('action', $this->url('admin',array('controller' =>'content','action' => 'modify','id' => $this->content->id)));
-    // $AjaxImageUpload->prepare();
-    // echo $this->AjaxImageUpload()->openTag($AjaxImageUpload);
-    // echo $this->AjaxImageUploadCollection($AjaxImageUpload);
-    // echo $this->AjaxImageUpload()->closeTag();
-    ?>
-
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="media-modal-backdrop"></div>
 </div>

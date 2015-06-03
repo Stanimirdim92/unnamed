@@ -5,16 +5,34 @@
     <br/>
     <br/>
     <header>
-        <span class="widget-icon"><i class="fa fa-list"></i></span>
-        <h2>Modify content</h2>
+        <i class="fa fa-list"></i>
+        <h2><?=$this->translation->MODIFY_CONTENT;?></h2>
     </header>
-    <section class='well'>
-        <?php
-            $this->form->setAttribute('action', $this->url('admin',array('controller' =>'content','action' => 'modify','id' => $this->content->getId())));
-            $this->form->prepare();
-            echo $this->form()->openTag($this->form);
-            echo $this->formCollection($this->form);
+    <section class='form'>
+        <button type="button" class="media-modal-toggle"><i class="fa fa-upload"></i><?=$this->translation->UPLOAD_IMAGES?></button>
+<?php
+            $form = $this->form;
+            $form->setAttribute('action', $this->url('admin',array('controller' =>'content','action' => 'modify','id' => $this->content->getId())));
+            $form->prepare();
+
+            echo $this->form()->openTag($form);
+
+            echo $this->formFile($form->get("preview"));
+            echo $this->formText($form->get("title"));
+            echo $this->formTextarea($form->get("text"));
+            echo $this->formSelect($form->get("menuOrder"));
+            echo $this->formSelect($form->get("type"));
+            echo $this->formDate($form->get("date"));
+            echo $this->formSelect($form->get("menu"));
+            echo $this->formSelect($form->get("language"));
+            echo $this->formSubmit($form->get("submit"));
+            echo $this->formHidden($form->get("titleLink"));
+            echo $this->formHidden($form->get("id"));
+            echo $this->formRow($form->get("s"));
+
+            echo $this->partial("/imgupload.phtml");
+
             echo $this->form()->closeTag();
-        ?>
+?>
     </section>
 </div>

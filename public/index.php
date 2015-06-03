@@ -60,7 +60,7 @@ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER["APPLICATION_ENV"] === 'devel
 }
 
 /**
- * Display all errors when APPLICATION_ENV is development.
+ * Display all errors when APPLICATION_ENV is set to development.
  */
 if (APP_ENV === 'development') {
     /**

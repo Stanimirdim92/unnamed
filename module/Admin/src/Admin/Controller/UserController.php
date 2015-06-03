@@ -184,10 +184,9 @@ class UserController extends IndexController
      */
     protected function searchAction()
     {
-        $request = $this->getRequest();
-        $search = $this->params()->fromQuery('usersearch');
+        $search = $this->getParam('usersearch');
         if (isset($search)) {
-            if ($request->isXmlHttpRequest()) {
+            if ($this->getRequest()->isXmlHttpRequest()) {
                 $this->view->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%'";
                 $results = $this->getTable("user")->fetchList(false, $where, "id DESC");

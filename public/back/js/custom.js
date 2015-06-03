@@ -1,43 +1,119 @@
 ;(function (w, d, $, undefined) {
     'use strict';
 
-    // Detect desktop browsers
-    var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-    // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
-    var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
-    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-    // At least Safari 3+: "[object HTMLElementConstructor]"
-    var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
-    var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
-
-    // Place any jQuery/helper plugins in here.
-    $(document).ready(function ($) {
-        'use strict';
+    var ajaxImageUpload = {
 
         /**
-         * Create SEO captions/URLs for menus and content.
+         * Attach event listeners
          */
-        function fixSEOCaption (caption) {
-            return caption.toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
-        }
+        init: function () {
+
+            $("button.upload").on("click", function () {
+                $(".uploader-inline").show();
+                $(".gallery-view").hide().find("img").remove();
+            });
+
+            /**
+             * AJAX image upload
+             * TODO add loading image
+             */
+            $("#imgajax").change(function (e) {
+                var $form = $("#content").submit();
+
+                $.ajax({
+                    url: $form.attr("action"),
+                    type: "POST",
+                    data: new FormData($form[0]),
+                    processData:false,
+                    contentType:  false,
+                    cache: false,
+                }).done(function (result, request, headers) {
+                    var $resp = $.parseJSON(result);
+                    ajaxImageUpload.getAjaxResponse($resp["successFiles"], "p", "header", "image-upload-message successFiles");
+                    ajaxImageUpload.getAjaxResponse($resp["errorFiles"], "p", "header", "image-upload-message errorFiles");
+                    ajaxImageUpload.showFiles();
+                }).fail(function (result, request, headers) {
+                    console.error("Error:", result); //TODO must create a dialog popup
+                });
+                // clear file input
+                $("#imgajax").replaceWith($("#imgajax").val('').clone(true));
+            });
+        },
 
         /**
          * Create DOM nodes with text, class and appends them to elementAppend
          */
-        function showMessages(text, elementCreate, elementAppend, className) {
+        showMessages: function (text, elementCreate, elementAppend, className) {
             var el = document.createElement(elementCreate);
             el.className += className;
             el.innerHTML = text;
 
-            var frag = document.createDocumentFragment();
-            frag.appendChild(el);
-
-            $(elementAppend).append(frag).fadeIn(function () {
+            $(elementAppend).append(el).slideDown(1000, function () {
                 setTimeout(function() {
-                    $(elementCreate).fadeOut(1000);
+                    $(elementCreate).slideUp(1000, function () {
+                        $(this).fadeOut("slow", function () {
+                            $(this).remove();
+                         });
+                    });
                 }, 6000);
             });
+        },
+
+        /**
+         * Show AJAX reponse
+         */
+        getAjaxResponse: function (response, elementCreate, elementAppend, className) {
+            if (typeof response !== "undefined" && typeof response !== undefined) {
+                $(elementAppend).append($("<div class='dinamicly-div-append-wrapper'></div>"));
+                $.each(response, function(key, text) {
+                    ajaxImageUpload.showMessages(text, elementCreate, 'div.dinamicly-div-append-wrapper', className);
+                });
+            }
+        },
+
+        /**
+         * Gallery
+         */
+        showFiles: function () {
+            $.get( "/admin/content/files", function (files) {
+                $(".uploader-inline").hide();
+                $(".gallery-view").find("img").not(".large-image").remove();
+                $(".gallery-view").show();
+                $.each(files, function (key, file) {
+                    $("div.image-grid").append("<figure class='centered'><img src='"+$.parseJSON(file["link"])+"' class='thumbnail' /></figure>");
+                });
+                ajaxImageUpload.viewImage();
+            });
+        },
+
+        viewImage: function () {
+            $(".large-image").attr("src",$(".thumbnail").first().attr("src"));
+            $(".thumbnail").on("click", function () {
+                $(".large-image").attr("src",$(this).attr("src"));
+            });
         }
+
+    };
+
+    $(".gallery").on("click", function() {
+        ajaxImageUpload.showFiles();
+    });
+
+    $("button.media-modal-toggle").on("click", function () {
+        $("#modal-imgupload").fadeToggle(850);
+    });
+
+    /**
+     * Create SEO captions/URLs for menus and content.
+     */
+    var fixSEOCaption = function (caption) {
+        return caption.toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
+    };
+
+    $(document).ready(function ($) {
+        'use strict';
+
+        ajaxImageUpload.init();
 
         /**
          * Custom dialog window for delete button
@@ -56,40 +132,6 @@
         });
 
         /**
-         *  AJAX image upload
-         */
-        $("#imgajax").change(function (e) {
-            var form = $("#content").submit();
-
-            $.ajax({
-                url: form.attr("action"),
-                type: "POST",
-                data: new FormData(form[0]),
-                processData:false,
-                contentType:  false,
-                cache: false,
-            }).done(function (result, request, headers) {
-                var successHeaders = headers.getResponseHeader("successFiles");
-                if (successHeaders !== null && successHeaders !== '') {
-                    $.each(successHeaders.split(","), function(key, text) {
-                        showMessages(text, "p", "header", "success");
-                    });
-                }
-
-                var errorHeaders = headers.getResponseHeader("errorFiles");
-                if (errorHeaders !== null && errorHeaders !== '') {
-                    $.each(errorHeaders.split(","), function(key, text) {
-                        showMessages(text, "p", "header", "error");
-                    });
-                }
-            }).fail(function (result, request, headers) {
-                console.log("Error:", result); //TODO must create a dialog popup
-            });
-            // clear the file input
-            $("#imgajax").replaceWith($("#imgajax").val('').clone(true));
-        });
-
-        /*
          * replace: this is a menu caption => this-is-a-menu-caption, trim all white space and other characters
          */
         if ($("#titleLink").val() !== undefined) {
@@ -112,13 +154,13 @@
          * AJAX search form.
          * TODO: make the for loop more flexible so it can work with all kind of data
          */
-        var urlSplit = window.location.href.toString().split(window.location.host)[1].split("/");
+        var $urlSplit = window.location.href.toString().split(window.location.host)[1].split("/");
         $(".ajax-search").on("keyup", function () {
             var $search = $(".ajax-search").val();
             if ($.trim($search).length > 2) {
                 $.ajax({
                     type: "GET",
-                    url: "/admin/" + urlSplit[2] + "/search",
+                    url: "/admin/" + $urlSplit[2] + "/search",
                     data: {"ajaxsearch": $search},
                     dataType: "json",
                     contentType: "application/json; charset=utf-8;",
@@ -132,7 +174,8 @@
                             for (var property in $val) {
                                 if ($val.hasOwnProperty(property)) {
                                     if ($val[property] === null || $val[property] === undefined || $val[property] === '') {
-                                        $ul.append("<li class='table-cell'>&nbsp;</li>");
+                                        // $ul.append("<li class='table-cell'>&nbsp;</li>");
+                                        continue;
                                     } else {
                                         $ul.append("<li data-id ='"+$val["_id"]+"' class='table-cell'>"+$val[property]+"</li>");
                                     }
@@ -141,8 +184,8 @@
                             $("#results").append($ul);
                         });
                     }
-                }).fail(function (a) {
-                    console.log("Error:", a.responseText); //TODO must create a dialog popup
+                }).fail(function (error) {
+                    console.log("Error:", error.responseText); //TODO must create a dialog popup
                 });
                 $("#results").show();
                 $("#linked").hide();

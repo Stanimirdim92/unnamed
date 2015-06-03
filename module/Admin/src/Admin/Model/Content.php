@@ -141,6 +141,14 @@ class Content implements InputFilterAwareInterface
     }
 
     /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
+
+    /**
      * constructor
      *
      * @param array $options
@@ -369,7 +377,7 @@ class Content implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        (property_exists($this, $property) ? $this->{$property} = $value : null);
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -385,11 +393,10 @@ class Content implements InputFilterAwareInterface
      */
     public function __sleep()
     {
-        $skip = ["serviceManager"];
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, "serviceManager")) {
                 $returnValue[] = $key;
             }
         }
@@ -405,6 +412,10 @@ class Content implements InputFilterAwareInterface
 
     /**
      * this is a handy function for encoding the object to json for transfer purposes
+     *
+     * @param  array $skip skip class variables if necessary
+     * @param  bool $serializable
+     * @return string
      */
     public function getProperties(array $skip = [], $serializable = false)
     {
@@ -416,7 +427,7 @@ class Content implements InputFilterAwareInterface
             }
         }
         if ((bool) $serializable === true) {
-            return serialize($returnValue);
+            return json_encode($returnValue);
         }
         return $returnValue;
     }
@@ -610,8 +621,38 @@ class Content implements InputFilterAwareInterface
             );
             $inputFilter->add(
                 $factory->createInput([
-                    "name"=>"titleLink",
+                    "name"=>"imageUpload",
                     "required" => false,
+                    'validators' => [
+                        [
+                            'name' => 'Zend\Validator\File\Size',
+                            'options' => [
+                                'min' => '10kB',
+                                'max' => '5MB',
+                                'useByteString' => true,
+                            ],
+                        ],
+                        [
+                            'name' => 'Zend\Validator\File\Extension',
+                            'options' => [
+                                'extension' => [
+                                    'jpg',
+                                    'gif',
+                                    'png',
+                                    'jpeg',
+                                    'bmp',
+                                    'webp',
+                                ],
+                                'case' => true,
+                            ],
+                        ],
+                    ],
+                ])
+            );
+            $inputFilter->add(
+                $factory->createInput([
+                    "name"=>"titleLink",
+                    "required" => true,
                     'filters' => [
                         ['name' => 'StripTags'],
                         ['name' => 'StringTrim'],

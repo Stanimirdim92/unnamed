@@ -39,8 +39,10 @@ use Zend\Session\Container;
 
 use Custom\Error\AuthorizationException;
 use Custom\Plugins\Functions;
+use Zend\View\Model\ViewModel;
+use Zend\Mvc\Controller\AbstractActionController;
 
-class IndexController extends \Zend\Mvc\Controller\AbstractActionController
+class IndexController extends AbstractActionController
 {
     /**
      * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
@@ -94,7 +96,7 @@ class IndexController extends \Zend\Mvc\Controller\AbstractActionController
      */
     public function __construct()
     {
-        $this->view = new \Zend\View\Model\ViewModel();
+        $this->view = new ViewModel();
         $this->initCache();
         $this->initTranslation();
         $this->breadcrumbs[] = ["reference" => "/admin", "name" => "Home"];

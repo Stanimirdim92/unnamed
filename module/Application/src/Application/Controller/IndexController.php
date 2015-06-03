@@ -209,9 +209,10 @@ class IndexController extends AbstractActionController
 
     /**
      * See if user is logged in.
-     *
+     * @param bool $redirect
+     * @param string $url
      * @throws AuthorizationException
-     * @return void
+     * @return mixed
      */
     protected function checkIdentity($redirect = true, $url = "/")
     {
@@ -262,6 +263,9 @@ class IndexController extends AbstractActionController
         }
         if (!$param) {
             $param = $this->params()->fromQuery($paramName, null);
+        }
+        if (!$param) {
+            $param = $this->params()->fromFiles($paramName, null);
         }
         if (!$param) {
             return $default;
@@ -317,7 +321,7 @@ class IndexController extends AbstractActionController
      * @param  Pdo\Result|Content $content
      * @return void
      */
-    protected function setMetaTags($content = null)
+    protected function initMetaTags($content = null)
     {
         $description = $keywords = $text = $preview = $title = null;
 
@@ -378,7 +382,7 @@ class IndexController extends AbstractActionController
         $this->view->langName = $this->translation->languageObject->getName();
 
         /**
-         * This will reload the translations every time this method is called
+         * This will reload the translations every time the method is being called
          */
         $this->translation = Functions::initTranslations($this->translation->languageObject->getId(), true);
         $this->langTranslation = $this->translation->language = $this->translation->languageObject->getId();
