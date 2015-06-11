@@ -72,7 +72,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     private $parent;
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

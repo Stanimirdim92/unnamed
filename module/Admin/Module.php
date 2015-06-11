@@ -133,6 +133,9 @@ class Module implements
         ];
     }
 
+    /**
+     * After each controller rewrite move it's tg and sm to factory
+     */
     public function getServiceConfig()
     {
         return [
@@ -185,11 +188,7 @@ class Module implements
                     $resultSetPrototype->setArrayObjectPrototype(new User(null, $sm));
                     return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
                 },
-                'AdminErrorHandling' =>  'Admin\Factory\AdminErrorHandlingFactory',
-                'AdministratorTable' => 'Admin\Factory\AdministratorTableFactory',
-                'ContentTable' => 'Admin\Factory\ContentTableFactory',
-                'LanguageTable' => 'Admin\Factory\LanguageTableFactory',
-                'MenuTable'    => 'Admin\Factory\MenuTableFactory',
+
             ],
         ];
     }

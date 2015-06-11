@@ -117,7 +117,7 @@ class TermTranslationController extends IndexController
                     }
                 }
 
-                $this->cache->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
+                $this->translation->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
             } else {
@@ -147,7 +147,7 @@ class TermTranslationController extends IndexController
             $this->setErrorNoParam("Term translation not found");
             return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
         }
-        $this->cache->success = "Term translation was successfully deleted";
+        $this->translation->success = "Term translation was successfully deleted";
         $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
     }
 
@@ -235,7 +235,7 @@ class TermTranslationController extends IndexController
         if ($error != "") {
             $this->cache->warning = $error;
         } else {
-            $this->cache->success = "Export was successfull";
+            $this->translation->success = "Export was successfull";
         }
         $this->view->setTerminal(true);
         return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);

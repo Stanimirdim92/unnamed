@@ -34,11 +34,30 @@
  */
 namespace Application\Controller;
 
-use Application\Form\RegistrationForm;
 use Custom\Plugins\Functions;
+use Admin\Model\User;
+use Zend\Http\PhpEnvironment\RemoteAddress;
 
 class RegistrationController extends IndexController
 {
+
+    /**
+     * @var Application\Form\RegistrationForm $registrationForm
+     */
+    private $registrationForm = null;
+
+    /**
+     * @param  Application\Form\RegistrationForm $registrationForm
+     */
+    public function __construct(\Application\Form\RegistrationForm $registrationForm = null)
+    {
+        parent::__construct();
+        $this->registrationForm = $registrationForm;
+    }
+
+    /**
+     * @param MvcEvent $e
+     */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
@@ -51,18 +70,18 @@ class RegistrationController extends IndexController
             return $this->redirect()->toUrl("/registration");
         }
 
-        $form = new RegistrationForm(['action' => '/registration/processregistration', 'method' => 'post']);
+        $form = $this->registrationForm;
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
 
         if ($form->isValid()) {
             $formData = $form->getData();
-            $remote = new \Zend\Http\PhpEnvironment\RemoteAddress();
+            $remote = new RemoteAddress();
 
             $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."'");
-            (count($existingEmail) > 0 ? $this->setErrorNoParam($this->translation->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->translation->ALREADY_EXIST) : "");
+            (count($existingEmail) > 0 ? $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData["email"]."</b> ".$this->translate("ALREADY_EXIST"), 'info') : "");
 
-            $registerUser = new \Admin\Model\User();
+            $registerUser = new User();
             $registerUser->setName($formData['name']);
             $registerUser->setPassword(Functions::createPassword($formData["password"]));
             $registerUser->setSalt(""); // remove me
@@ -71,23 +90,23 @@ class RegistrationController extends IndexController
             $registerUser->setEmail($formData['email']);
             $registerUser->setLanguage($this->translation->language);
             $this->getTable("user")->saveUser($registerUser);
-            $this->cache->success = $this->translation->REGISTRATION_SUCCESS;
+            $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
             return $this->redirect()->toUrl("/login");
         } else {
-            $this->formErrors($form->getMessages());
+            $this->setLayoutMessages($form->getMessages(), 'success');
             return $this->redirect()->toUrl("/registration");
         }
     }
 
     public function indexAction()
     {
-        $form = new RegistrationForm(['action' => '/registration/processregistration', 'method' => 'post']);
-        $form->get("name")->setLabel($this->translation->NAME)->setAttribute("placeholder", $this->translation->NAME);
-        $form->get("email")->setLabel($this->translation->EMAIL);
-        $form->get("password")->setLabel($this->translation->PASSWORD);
-        $form->get("repeatpw")->setLabel($this->translation->REPEAT_PASSWORD)->setAttribute("placeholder", $this->translation->REPEAT_PASSWORD);
-        $form->get("captcha")->setLabel($this->translation->CAPTCHA)->setAttribute("placeholder", $this->translation->ENTER_CAPTCHA);
-        $form->get("register")->setValue($this->translation->CREATE_ACCOUNT);
+        $form = $this->registrationForm;
+        $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));
+        $form->get("email")->setLabel($this->translate("EMAIL"));
+        $form->get("password")->setLabel($this->translate("PASSWORD"));
+        $form->get("repeatpw")->setLabel($this->translate("REPEAT_PASSWORD"))->setAttribute("placeholder", $this->translate("REPEAT_PASSWORD"));
+        $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
+        $form->get("register")->setValue($this->translate("CREATE_ACCOUNT"));
 
         $this->view->form = $form;
         return $this->view;

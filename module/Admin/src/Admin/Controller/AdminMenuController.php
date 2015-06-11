@@ -91,7 +91,7 @@ class AdminMenuController extends IndexController
         }
         return $this->view;
     }
-    
+
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
@@ -114,7 +114,7 @@ class AdminMenuController extends IndexController
             if ($form->isValid()) {
                 $adminMenu->exchangeArray($form->getData());
                 $this->getTable("adminmenu")->saveAdminMenu($adminMenu);
-                $this->cache->success = "Admin menu &laquo;".$adminMenu->toString()."&raquo; was successfully saved";
+                $this->translation->success = "Admin menu &laquo;".$adminMenu->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             } else {
@@ -129,7 +129,7 @@ class AdminMenuController extends IndexController
             }
         }
     }
-    
+
     /**
      * this action deletes a adminmenu object with a provided id
      */
@@ -146,7 +146,7 @@ class AdminMenuController extends IndexController
             $this->setErrorNoParam("Admin menu not found");
             return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
-        $this->cache->success = "Admin menu was successfully deleted";
+        $this->translation->success = "Admin menu was successfully deleted";
         return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
     }
 
@@ -173,7 +173,7 @@ class AdminMenuController extends IndexController
     {
         $id = $this->getParam("id", 0);
         $adminmenu = $this->getTable("adminmenu")->duplicate($id);
-        $this->cache->success = "Admin menu &laquo;".$adminmenu->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "Admin menu &laquo;".$adminmenu->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/adminmenu");
         return $this->view;
     }

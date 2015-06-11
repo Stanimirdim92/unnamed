@@ -63,7 +63,7 @@ class Packet implements InputFilterAwareInterface
     private $euro;
 
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

@@ -113,7 +113,7 @@ class MenuController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $this->getTable("menu")->deleteMenu($this->getParam("id", 0), $this->langTranslation);
-        $this->cache->success = "Menu was successfully deleted";
+        $this->translation->success = "Menu was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -135,7 +135,7 @@ class MenuController extends \Admin\Controller\IndexController
     {
         $id = (int) $this->getParam("id", 0);
         $menu = $this->getTable("menu")->duplicate($id, $this->langTranslation);
-        $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -151,7 +151,7 @@ class MenuController extends \Admin\Controller\IndexController
             $menu = new Menu([], null);
         }
 
-        $menu->setServiceManager(null);
+        $menu->setServiceLocator(null);
         $form = new \Admin\Form\MenuForm($menu,
                 $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name DESC"),
                 $this->getTable("Menu")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'parent'], ["language" => $this->langTranslation], "AND", null, "menuOrder ASC", IndexController::MAX_COUNT)
@@ -168,7 +168,7 @@ class MenuController extends \Admin\Controller\IndexController
                 if ($this->params("action") == 'add') {
                     $existingMenu = $this->getTable('menu')->fetchList(false, ['menulink', 'menutype', 'language', 'parent'], ["parent" => 0, "language" => $this->langTranslation, "menutype" => $formData['menutype'], "menulink" => $formData['menulink']], "AND", null);
                     if ($existingMenu->count() > 0) {
-                        $this->cache->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
+                        $this->translation->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     }
@@ -180,7 +180,7 @@ class MenuController extends \Admin\Controller\IndexController
                 }
 
                 $this->getTable("menu")->saveMenu($menu);
-                $this->cache->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully saved";
+                $this->translation->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             } else {

@@ -106,7 +106,7 @@ class LanguageController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
-        $this->cache->success = "Language was successfully deleted";
+        $this->translation->success = "Language was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -133,7 +133,7 @@ class LanguageController extends \Admin\Controller\IndexController
             $language = new Language([], null);
         }
 
-        $language->setServiceManager(null);
+        $language->setServiceLocator(null);
         $form = new \Admin\Form\LanguageForm($language);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
@@ -143,7 +143,7 @@ class LanguageController extends \Admin\Controller\IndexController
             if ($form->isValid()) {
                 $language->exchangeArray($form->getData());
                 $this->getTable("language")->saveLanguage($language);
-                $this->cache->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
+                $this->translation->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             } else {

@@ -35,88 +35,107 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class LoginForm extends Form
+class LoginForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {
         parent::__construct('loginform');
+    }
 
-        $elements = [];
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+        $this->setAttribute('action', '/login/processlogin');
 
-        $elements[0] = new Element\Email("email");
-        $elements[0]->setAttributes([
-            'required'    => true,
-            'min'         => 5,
-            'size'        => 30,
-            'placeholder' => 'johnsmith@example.com',
+        $this->add([
+            'type' => 'Zend\Form\Element\Email',
+            'name' => 'email',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'size' => 30,
+                'placeholder' => 'johnsmith@example.com',
+            ],
         ]);
 
-        $elements[1] = new Element\Password("password");
-        $elements[1]->setAttributes([
-            'required'    => true,
-            'min'         => 8,
-            'size'        => 30,
-            'placeholder' => '123456789',
+        $this->add([
+            'type' => 'Zend\Form\Element\Password',
+            'name' => 'password',
+            'attributes' => [
+                'required' => true,
+                'min' => 8,
+                'size' => 30,
+                'placeholder' => '1234567890',
+            ],
         ]);
 
-        // $elements[8] = new Element\Csrf('s');
-        $elements[10] = new Element\Submit("login");
-        $elements[10]->setAttributes([
-            'id'    => 'submitbutton',
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 320
+                ]
+            ]
         ]);
 
-        $inputFilter = new \Zend\InputFilter\InputFilter();
-        $factory = new \Zend\InputFilter\Factory();
+        $this->add([
+            'name' => 'login',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
+    }
 
-        $inputFilter->add($factory->createInput([
-            "name"=>"email",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            "validators" => [
-                [
-                    'name' => 'EmailAddress',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
-                    ],
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                "name"=>"email",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
                 ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min'      => 5,
+                "validators" => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                        ],
                     ],
-                ],
-                ['name' => 'NotEmpty'],
-            ],
-        ]));
-        $inputFilter->add($factory->createInput([
-            "name"     =>"password",
-            'required' => true,
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 8,
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 5,
+                        ],
                     ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->setInputFilter($inputFilter);
-
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+            [
+                "name"     =>"password",
+                'required' => true,
+                'filters'  => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 8,
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ],
+        ];
     }
 }

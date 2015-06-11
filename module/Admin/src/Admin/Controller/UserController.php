@@ -112,7 +112,7 @@ class UserController extends IndexController
                     $user->setBirthDate($formData["birthDate"]);
                     $this->getTable("user")->saveUser($user);
                 }
-                $this->cache->success ="User &laquo;".$user->toString()."&raquo; was successfully saved";
+                $this->translation->success ="User &laquo;".$user->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             } else {
@@ -144,7 +144,7 @@ class UserController extends IndexController
             $this->setErrorNoParam("User not found");
             return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
-        $this->cache->success = "User was successfully deleted";
+        $this->translation->success = "User was successfully deleted";
         return $this->redirect()->toRoute('admin', ['controller' => 'user']);
     }
 
@@ -227,7 +227,7 @@ class UserController extends IndexController
     {
         $id = $this->getParam("id");
         $user = $this->getTable("user")->duplicate($id);
-        $this->cache->success = "User &laquo;".$user->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "User &laquo;".$user->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/user");
         return $this->view;
     }

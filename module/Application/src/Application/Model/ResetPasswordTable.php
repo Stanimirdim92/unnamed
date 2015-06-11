@@ -34,8 +34,12 @@
  */
 namespace Application\Model;
 
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
+use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Db\Sql\Predicate\Expression;
 
 class ResetPasswordTable
 {
@@ -45,17 +49,112 @@ class ResetPasswordTable
     private $tableGateway = null;
 
     /**
-     * @var ServiceManager
+     * @var serviceLocator
      */
-    private $serviceManager = null;
+    private $serviceLocator = null;
 
-    public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
+    /**
+     * Preducate contstants
+     */
+    const PRE_AND = "AND";
+    const PRE_OR = "OR";
+    const PRE_NULL = null;
+
+    /**
+     * @param serviceLocator|null $sm
+     * @param TableGateway|null   $tg
+     */
+    public function __construct(ServiceLocatorInterface $sm = null, TableGateway $tg = null)
     {
-        $this->serviceManager = $sm;
+        $this->serviceLocator = $sm;
         $this->tableGateway = $tg;
     }
 
     /**
+     * @param null $sm ServiceLocatorInterface|ServiceManager
+     * @return ServiceLocatorInterface|ServiceManager|null
+     */
+    public function setServiceLocator(ServiceLocatorInterface $sm = null)
+    {
+        $this->serviceLocator = $sm;
+    }
+
+    /**
+     * @return ServiceLocatorInterface|ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
+    }
+
+    /**
+     * Main function for handlin MySQL queries
+     *
+     * @param  bool $paginated should we use pagination or no
+     * @param  array $columns  substitute * with the columns you need
+     * @param  null $where     WHERE condition
+     * @param  null $group     GROUP condition
+     * @param  null $order     ORDER condition
+     * @param  null $limit     LIMIT condition
+     * @param  null $offset    OFFSET condition
+     * @return ResultSet|null
+     */
+    public function fetchList(array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    {
+        $select = $this->prepareQuery(new Select("resetpassword"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
+        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet->buffer();
+        if ($resultSet instanceof \Zend\Db\ResultSet\HydratingResultSet && $resultSet->isBuffered()) {
+            return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet->getDataSource() : null);
+        }
+        return null;
+    }
+
+    /**
+     * Prepare all statements before quering the database
+     *
+     * @param  Select $select
+     * @param  array $columns
+     * @param  null|array|string $where
+     * @param  null $group
+     * @param  null $predicate
+     * @param  null $order
+     * @param  null $limit
+     * @param  null $offset
+     *
+     * @return Select
+     */
+    private function prepareQuery(Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    {
+        if (is_array($columns) && !empty($columns)) {
+            $select->columns($columns);
+        }
+        if (is_array($where) && !empty($where)) {
+            if (!in_array($predicate, [self::PRE_AND, self::PRE_OR, self::PRE_NULL])) {
+                $predicate = self::PRE_NULL;
+            }
+            $select->where($where, $predicate);
+        } elseif ($where != null && is_string($where)) {
+            $select->where(new Expression($where));
+        }
+        if ($group != null) {
+            $select->group($group);
+        }
+        if ($order != null) {
+            $select->order($order);
+        }
+        if ($limit != null) {
+            $select->limit($limit);
+        }
+        if ($offset != null) {
+            $select->offset($offset);
+        }
+        return $select;
+    }
+
+    /**
+     * This method returns a single row which verifies that this is the user that needs to reset his password
+     *
      * @param int $id password id
      * @param int $id user id
      * @throws Exception If content is not found
@@ -65,7 +164,7 @@ class ResetPasswordTable
     {
         $rowset = $this->tableGateway->select(['id' => (int) $id, 'user' => (int) $user]);
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find password");
+            throw new \RuntimeException("Couldn't find row");
         }
         return $rowset->current();
     }
@@ -92,7 +191,7 @@ class ResetPasswordTable
             $resetpw->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getResetPassword($id, $user)) {
-                throw new \RuntimeException("Oops error.");
+                throw new \RuntimeException("Couldn't find user");
             }
             $this->tableGateway->update($data, ['id' => (int) $id, 'user' => (int) $user]);
         }

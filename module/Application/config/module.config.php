@@ -15,11 +15,12 @@ return [
             'application' => [
                 'type'    => 'Segment',
                 'options' => [
-                    'route' => '/[:controller[/][:action[/id/:id][/page/:page][/search/:search]]]',
+                    'route' => '/[:controller[/][:action[[/id/:id][/token/:token]][/page/:page][/search/:search]]]',
                     'constraints' => [
                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'         => '[0-9]+',
+                        'token'      => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'page'       => '[0-9]+',
                         'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ],
@@ -31,7 +32,7 @@ return [
                 ],
             ],
             'contact'     => [
-                'type'    => 'Segment',
+                'type'    => 'Literal',
                 'options' => [
                     'route'    => '/contact',
                     'defaults' => [
@@ -89,6 +90,8 @@ return [
     ],
     'service_manager' => [
         'abstract_factories' => [
+            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
             'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
@@ -98,12 +101,13 @@ return [
     ],
     'controllers' => [
         'invokables' => [
-            'Application\Controller\Index'        => 'Application\Controller\IndexController',
-            'Application\Controller\Login'        => 'Application\Controller\LoginController',
-            'Application\Controller\Registration' => 'Application\Controller\RegistrationController',
-            'Application\Controller\Profile'      => 'Application\Controller\ProfileController',
             'Application\Controller\News'         => 'Application\Controller\NewsController',
             'Application\Controller\Menu'         => 'Application\Controller\MenuController',
+        ],
+        'factories' => [
+            'Application\Controller\Registration' => "Application\Factory\Controller\RegistrationFormFactory",
+            'Application\Controller\Index'        => "Application\Factory\Controller\IndexControllerFactory",
+            'Application\Controller\Login'        => "Application\Factory\Controller\LoginFormFactory",
         ],
     ],
     'view_helpers' => [

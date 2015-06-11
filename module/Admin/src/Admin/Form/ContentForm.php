@@ -35,149 +35,346 @@
 namespace Admin\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class ContentForm extends Form
+class ContentForm extends Form implements InputFilterProviderInterface
 {
-    /**
-     * Create the content form
-     *
-     * @param \Admin\Model\Content|null $options   holds the Content object
-     * @param array                     $menus     \Admin\Model\Menu arrayobject
-     * @param array                     $submenus     \Admin\Model\Menu
-     * @param array                     $languages ResultSet arrayobject
-     */
-    public function __construct(\Admin\Model\Content $options = null, array $menus = [], array $submenus = [], $languages = [])
+    public function __construct()
     {
         parent::__construct("content");
-        $elements = [];
+    }
 
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
 
-        $elements[99] = new Element\File('preview');
-        $elements[99]->setLabel('Image')
-                      ->setAttribute('id', 'preview')
-                      ->setAttribute('class', 'preview');
-
-        $elements[100] = new Element\File('imageUpload');
-        $elements[100]->setLabel('Image')
-                      ->setAttribute('id', 'imgajax')
-                      ->setAttribute('class', 'imgupload')
-                      ->setAttribute('multiple', true);
-
-        $elements[0] = new Element\Text('title');
-        $elements[0]->setLabel('Title');
-        $elements[0]->setAttributes([
-            'required'   => true,
-            'size'        => 40,
-            'id'         => "seo-caption",
-            'placeholder' => 'Title',
+        /**
+         * Specific image for this content
+         */
+        $this->add([
+            'type' => 'Zend\Form\Element\File',
+            'name' => 'preview',
+            'attributes' => [
+                'id' => 'preview',
+                'class' => 'preview',
+            ],
+            'options' => [
+                'label' => 'Image',
+            ],
         ]);
 
-        if ($options!=null and $options->title) {
-            $elements[0]->setValue($options->title);
-        }
+        /**
+         *Gallery for all contents
+         */
+        $this->add([
+            'type' => 'Zend\Form\Element\File',
+            'name' => 'imageUpload',
+            'attributes' => [
+                'id' => 'imgajax',
+                'class' => 'imgupload',
+                'multiple' => true,
+            ],
+            'options' => [
+                'label' => 'Image',
+            ],
+        ]);
 
-        $elements[3] = new Element\Textarea('text');
-        $elements[3]->setLabel('Text')
-                          ->setAttribute('class', 'ckeditor')
-                          ->setAttribute('rows', 5)
-                          ->setAttribute('cols', 80);
-        if ($options!=null and $options->text) {
-            $elements[3]->setValue($options->text);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'title',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
+                'id'         => "seo-caption",
+                'placeholder' => 'Title',
+            ],
+            'options' => [
+                'label' => 'Title',
+            ],
+        ]);
 
-        $elements[4] = new Element\Select('menuOrder');
-        $elements[4]->setLabel('Menu order');
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'text',
+            'attributes' => [
+                'class'   => 'ckeditor',
+                'rows'        => 5,
+                'cols'      => 80,
+            ],
+            'options' => [
+                'label' => 'Text',
+            ],
+        ]);
+
         $valueOptions = [];
-        for ($i = 1; $i<100; $i++) {
+        for ($i = 1; $i < 100; $i++) {
             $valueOptions[$i] = $i;
         }
-        $elements[4]->setValueOptions($valueOptions);
-        if ($options!=null and $options->menuOrder) {
-            $elements[4]->setValue($options->menuOrder);
-        } else {
-            $elements[4]->setValue(0);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'menuOrder',
+            'options' => [
+                'empty_option' => 'Please choose menu order (optional)',
+                'value_options' => $valueOptions,
+                'label' => 'Menu order',
+            ],
+        ]);
 
-        $elements[5] = new Element\Select('type');
-        $elements[5]->setLabel('type');
-        $valueOptions = [];
-        $valueOptions[0] = "menu";
-        $valueOptions[1] = "news";
-        $elements[5]->setValueOptions($valueOptions);
-        if ($options!=null and $options->type) {
-            $elements[5]->setValue($options->type);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'type',
+            'options' => [
+                'label' => 'Type',
+                'empty_option' => 'Please choose your content type',
+                'value_options' => [
+                    '0' => "Menu",
+                    '1' => "News",
+                ],
+            ],
+        ]);
 
-        $elements[6] = new Element\Text('date');
-        $elements[6]->setLabel('Date')
-                        ->setAttribute('size', 20);
-        if ($options!=null and $options->date) {
-            $elements[6]->setValue($options->date);
-        } else {
-            $elements[6]->setValue(date("Y-m-d H:i:s"));
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'date',
+            'attributes' => [
+                'size'  => 20,
+            ],
+            'options' => [
+                'label' => 'Date',
+            ],
+        ]);
 
-        $elements[7] = new Element\Select('menu');
-        $elements[7]->setLabel('menu');
-        $valueOptions = [];
-        $valueOptions[0] = 'Select a menu';
-
-        foreach ($menus as $key => $menu) {
-            $menu->setServiceManager(null);
-            $valueOptions[$menu->getId()] = $menu->getCaption();
-
-            if(!empty($submenus[$key])) {
-                foreach($submenus[$key] as $sub) {
-                    $sub->setServiceManager(null);
-                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
-                }
-            }
-        }
-        $elements[7]->setValueOptions($valueOptions);
-
-        if ($options!=null and $options->menu) {
-            $elements[7]->setValue($options->menu);
-        }
-
-        $elements[8] = new Element\Select('language');
-        $elements[8]->setLabel('language');
-        $valueOptions = [];
-
-        foreach ($languages as $item) {
-            $valueOptions[$item->id] = $item->toString();
-        }
-        $elements[8]->setValueOptions($valueOptions);
-        if ($options!=null and $options->language) {
-            $elements[8]->setValue($options->language);
-        }
-
-        $elements[9] = new Element\Submit('submit');
-        $elements[9]->setAttribute('id', 'submitbutton');
-
-        if ($options!=null) {
-            $elements[10] = new Element\Hidden('id');
-            $elements[10]->setValue($options->id);
-        }
-        $elements[78] = new Element\Hidden('titleLink');
-        $elements[78]->setAttribute('id', 'titleLink');
-        if ($options!=null) {
-            $elements[78]->setValue($options->titleLink);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'menu',
+            'options' => [
+                'label' => 'Menu',
+                'empty_option' => 'Please choose your menu',
+            ],
+        ]);
 
 
-$elements[79]  = new Element\Hidden('progress_key');
-$elements[79]->setAttribute('id', 'progress_key');
-$elements[79]->setValue(md5(uniqid(rand())));
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'language',
+            'options' => [
+                'label' => 'Language',
+                'empty_option' => 'Please choose a language',
+            ],
+        ]);
 
-        $elements[88] = new Element\Csrf('s');
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 3600
+                ]
+            ]
+        ]);
 
-        // if there are no menus for the current session language, simply remove the menu.
-        if (count($menus) <= 0) {
-            $this->remove("menu");
-        }
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'titleLink',
+            'attributes' => [
+                'id' => 'titleLink',
+            ]
+        ]);
+    }
+
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name'     => 'id',
+                'required' => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"title",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 200,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"text",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"menuOrder",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"language",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"menu",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"type",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-1]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"date",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+            ],
+            [
+                "name"=>"preview",
+                "required" => false,
+                'validators' => [
+                    [
+                        'name' => 'Zend\Validator\File\Size',
+                        'options' => [
+                            'min' => '10kB',
+                            'max' => '5MB',
+                            'useByteString' => true,
+                        ],
+                    ],
+                    [
+                        'name' => 'Zend\Validator\File\Extension',
+                        'options' => [
+                            'extension' => [
+                                'jpg',
+                                'gif',
+                                'png',
+                                'jpeg',
+                                'bmp',
+                                'webp',
+                            ],
+                            'case' => true,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"imageUpload",
+                "required" => false,
+                'validators' => [
+                    [
+                        'name' => 'Zend\Validator\File\Size',
+                        'options' => [
+                            'min' => '10kB',
+                            'max' => '5MB',
+                            'useByteString' => true,
+                        ],
+                    ],
+                    [
+                        'name' => 'Zend\Validator\File\Extension',
+                        'options' => [
+                            'extension' => [
+                                'jpg',
+                                'gif',
+                                'png',
+                                'jpeg',
+                                'bmp',
+                                'webp',
+                            ],
+                            'case' => true,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"titleLink",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
+                ],
+            ],
+        ];
     }
 }

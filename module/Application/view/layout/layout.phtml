@@ -1,18 +1,19 @@
 <?php
-    $view = (isset($this->viewModel()->getCurrent()->getChildren()[0]) ?: null);
+if ($this->viewModel()->getCurrent()->getChildren() != null) {
+    $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html prefix="og: http://ogp.me/ns#" lang="<?=$view->langName?>">
+<html prefix="og: http://ogp.me/ns#" lang="<?=$this->escapeHtmlAttr($view->langName)?>">
     <head>
         <meta charset="utf-8">
-        <title><?=$this->headTitle()->renderTitle();?></title>
+        <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
         <meta http-equiv="x-dns-prefetch-control" content="on">
         <?=$this->headMeta()?>
         <meta property="og:type" content="article">
-        <meta property="og:url" content="<?=$view->baseURL?>">
-        <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle()?>">
+        <meta property="og:url" content="<?=$this->escapeHtmlAttr($view->baseURL)?>">
+        <meta property="og:site_name" content="<?=$this->escapeHtmlAttr($this->headTitle()->renderTitle())?>">
         <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
-        <link rel="canonical" href="<?=$view->baseURL?>">
+        <link rel="canonical" href="<?=$this->escapeHtmlAttr($view->baseURL)?>">
         <!-- <meta name="robots" content="index, follow" /> -->
         <!-- <meta name="Googlebot" content="index, follow" /> -->
         <!-- <meta name="revisit-after" content="3 Days" /> -->
@@ -41,13 +42,13 @@
     <body>
          <nav id="nav">
             <ul>
-                <li><a href="&sol;"><?=$view->translation->HOME?></a></li>
+                <li><a href="&sol;"><?=$this->escapeHtml($view->translation->HOME)?></a></li>
 <?php
         if(!empty($view->menus)) {
             foreach($view->menus as $key => $menu) {
-                $menu->setServiceManager(null);
+                $menu->setServiceLocator(null);
 ?>
-                <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $menu->getMenuLink()))?>'><?=$menu->getCaption();?></a>
+                <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $this->escapeHtml($menu->getMenuLink())))?>'><?=$this->escapeHtml($menu->getCaption());?></a>
 
 <?php
                 if(!empty($view->submenus[$key])) {
@@ -55,9 +56,9 @@
                     <ul class="sub-menu">
 <?php
                     foreach($view->submenus[$key] as $sub) {
-                        $sub->setServiceManager(null);
+                        $sub->setServiceLocator(null);
 ?>
-                        <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $sub->getMenuLink()));?>'><?=$sub->getCaption();?></a></li>
+                        <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $this->escapeHtml($sub->getMenuLink())));?>'><?=$this->escapeHtml($sub->getCaption());?></a></li>
 <?php
                     }
 ?>
@@ -67,76 +68,24 @@
                 echo "</li>";
             }
         }
-            echo "<li><a itemprop='url' href='&sol;login'>{$view->translation->LOGIN}</a></li>";
+            echo "<li><a itemprop='url' href='&sol;login'>{$this->escapeHtml($view->translation->LOGIN)}</a></li>";
         echo "</ul>";
         echo "</nav>";
 
-            if(!empty($view->cache->warning)) {
-                if (is_array($view->cache->warning)) {
-                    foreach ($view->cache->warning as $warning) {
-?>
-                        <div class="alert alert-warning">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-warning"></i> <?=$warning;?>
-                        </div>
-<?php
-                    }
-                } else {
-?>
-                        <div class="alert alert-warning">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-warning"></i> <?=$view->cache->warning;?>
-                        </div>
-<?php
-                }
-                $view->cache->warning = null;
+        if ($view->flashMessages) {
+            foreach ($view->flashMessages->getMessages() as $context => $message) {
+                echo '<div class="alert alert-' . $this->escapeHtmlAttr($view->flashMessages->getNamespace()) . '">';
+                echo '<button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>';
+                echo '<i class="fa-fw fa fa-'.$this->escapeHtmlAttr($view->flashMessages->getNamespace()).'"></i>' . $this->escapeHtml($message) . '</li>';
+                echo '</div>';
             }
-
-            if(!empty($view->cache->success)) {
-                if (is_array($view->cache->success)) {
-                    foreach ($view->cache->success as $success) {
+        }
+        echo $this->layout()->content;
 ?>
-                        <div class="alert alert-success">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-check"></i> <?=$success;?>
-                        </div>
-<?php
-                    }
-                } else {
-?>
-                        <div class="alert alert-success">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-check"></i> <?=$view->cache->success;?>
-                        </div>
-<?php
-                }
-                $view->cache->success = null;
-            }
-
-            if(!empty($view->cache->error)) {
-                if (is_array($view->cache->error)) {
-                    foreach ($view->cache->error as $error) {
-?>
-                        <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-times"></i> <?=$error;?>
-                        </div>
-<?php
-                    }
-                } else {
-?>
-                        <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                            <i class="fa-fw fa fa-times"></i> <?=$view->cache->error;?>
-                        </div>
-<?php
-                }
-                $view->cache->error = null;
-            }
-            echo $this->layout()->content;
-?>
-        <!-- Load jQuery async, but defer all other scripts -->
         <script src="/front/js/jquery.min.js"></script>
         <script defer src="/front/js/custom.js"></script>
     </body>
 </html>
+<?php
+}
+?>

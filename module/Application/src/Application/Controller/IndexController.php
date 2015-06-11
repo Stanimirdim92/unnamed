@@ -40,6 +40,7 @@ use Custom\Plugins\Functions;
 use Custom\Plugins\Mailing;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Application\Form\ContactForm;
 
 class IndexController extends AbstractActionController
 {
@@ -70,16 +71,37 @@ class IndexController extends AbstractActionController
     protected $langTranslation = null;
 
     /**
+     * @var ContactForm
+     */
+    protected $contactForm = null;
+
+    /**
+     * @var Zend\View\Helper\Placeholder\Container $customHead
+     */
+    protected $customHead = null;
+
+    /**
+     * @var Zend\View\Helper\HeadMeta $headMeta
+     */
+    protected $headMeta = null;
+
+    /**
      * Used to detect actions without IDs. Inherited in all other classes
      */
     const NO_ID = 'ID not found';
 
     /**
-     * constructor
+     * @param Application\Form\ContactForm $contactForm
+     * @param Zend\View\Helper\Placeholder\Container $customHead
+     * @param Zend\View\Helper\HeadMeta $headMeta
      */
-    public function __construct()
+    public function __construct(ContactForm $contactForm = null, $customHead = null, $headMeta = null)
     {
         $this->view = new ViewModel();
+        $this->contactForm = $contactForm;
+        $this->customHead = $customHead;
+        $this->headMeta = $headMeta;
+
         $this->initCache();
         $this->initTranslation();
     }
@@ -103,6 +125,8 @@ class IndexController extends AbstractActionController
         }
         $this->initMenus();
         $this->initViewVars();
+        // not working properly die to the passed classes into the consturctor. they are not being shared...
+        // $this->initMetaTags();
         return $this->view;
     }
 
@@ -117,7 +141,6 @@ class IndexController extends AbstractActionController
     private function initCache()
     {
         $this->cache = new Container("cache");
-        $this->view->cache = $this->cache;
         return $this->view;
     }
 
@@ -127,13 +150,14 @@ class IndexController extends AbstractActionController
      */
     private function initViewVars()
     {
-        $this->view->translation = $this->translation;
-        $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
-
         if (!isset($this->translation->languageObject)) {
             $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
             $this->view->langName = $this->translation->languageObject->getName();
         }
+
+        $this->view->cache = $this->cache;
+        $this->view->translation = $this->translation;
+        $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
         $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
         return $this->view;
     }
@@ -165,7 +189,7 @@ class IndexController extends AbstractActionController
      *
      * First get all menus.
      * Second, itterate over each object and determinate if it's a submenu or not
-     * Third devided each object based on it's type and prepare it for the view itteration
+     * Third separate each object based on it's type and prepare it for the view itteration
      *
      * @todo  make it dinamicly multilevel
      * @return void
@@ -174,21 +198,65 @@ class IndexController extends AbstractActionController
     {
         $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent",], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
         if (count($menu) > 0) {
-            $submenus = $menus = [];
+            $menus = [];
             foreach ($menu as $submenu) {
                 if ($submenu->getParent() > 0) {
                     /**
                      * This needs to have a second empty array in order to work
                      */
-                    $submenus[$submenu->getParent()][] = $submenu;
+                    $menus["submenus"][$submenu->getParent()][] = $submenu;
                 } else {
-                    $menus[$submenu->getId()] = $submenu;
+                    $menus["menus"][$submenu->getId()] = $submenu;
                 }
             }
-            $this->view->menus = $menus;
-            $this->view->submenus = $submenus;
+            $this->view->menus = $menus["menus"];
+            $this->view->submenus = $menus["submenus"];
         }
         return $this->view;
+    }
+
+    /**
+     * This function will generate all meta tags needed for SEO optimisation.
+     *
+     * @param  Pdo\Result|Content $content
+     * @return void
+     */
+    protected function initMetaTags($content = null)
+    {
+        $description = $keywords = $text = $preview = $title = null;
+        if (!empty($content)) {
+            /**
+             * If there is a menu attached to this content, get its SEO metadata
+             */
+            if ($content->current()->getMenu() > 0) {
+                $isMenuObject = $content->current()->getMenuObject();
+                $description = $isMenuObject->getDescription();
+                $keywords = $isMenuObject->getKeywords();
+            }
+
+            $text = $content->current()->getText();
+            $preview = $content->current()->getPreview();
+            $title = $content->current()->getTitle();
+        }
+
+        // must be set from db
+        (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
+        (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
+        (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
+        (empty($preview) ? $preview = "" : $preview);
+        (empty($title) ? $title = "ZendPress" : $title);
+
+        $placeholder = $this->customHead;
+        $placeholder->append("<meta itemprop='name' content='ZendPress'>\r\n"); // must be sey from db
+        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
+        $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
+        $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
+        $vhm = $this->headMeta;
+        $vhm->appendName('keywords', $keywords);
+        $vhm->appendName('description', $description);
+        $vhm->appendProperty('og:image', $preview);
+        $vhm->appendProperty("og:title", $title);
+        $vhm->appendProperty("og:description", $description);
     }
 
 /****************************************************
@@ -197,7 +265,7 @@ class IndexController extends AbstractActionController
 
     /**
      * @param null $name
-     * @return Object
+     * @return ObjectTable
      */
     protected function getTable($name = null)
     {
@@ -241,10 +309,9 @@ class IndexController extends AbstractActionController
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
         $auth->clearIdentity();
-        unset($this->cache->user);
         $this->cache = null;
         $this->translation = null;
-        throw new \Custom\Error\AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+        throw new \Custom\Error\AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
     }
 
     /**
@@ -274,34 +341,36 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @param null $message holds the generated error(s)
-     * @return string|array
+     *
+     * @param null|string $message
+     * @param null|string $namespace
      */
-    protected function setErrorNoParam($message = null)
+    protected function setLayoutMessages($message = null, $namespace = 'default')
     {
-        if (!empty($message)) {
-            $this->cache->error = $message;
-        } elseif ($message === self::NO_ID) {
-            $this->cache->error = $this->translation->NO_ID_SET;
-        } else {
-            $this->cache->error = $this->translation->ERROR_STRING;
-        }
-        $this->view->setTerminal(true);
-    }
+        $flashMessenger = $this->flashMessenger();
+        $messages = [];
+        $arrayMessages = [];
 
-    /**
-     * @var array|null $formErrors
-     * @return array
-     */
-    protected function formErrors($formErrors = null)
-    {
-        $error = [];
-        foreach ($formErrors as $msg) {
-            foreach ($msg as $text) {
-                $error[] = $text;
-            }
+        if (!in_array($namespace, ["success", "error", "warning", 'info', 'default'])) {
+            $namespace = 'default';
         }
-        return $this->setErrorNoParam($error);
+
+        $flashMessenger->setNamespace($namespace);
+        if (is_array($message)) {
+            foreach ($message as $msg) {
+                if (is_array($msg)) {
+                    foreach ($msg as $text) {
+                        $flashMessenger->addMessage($text, $namespace);
+                    }
+                } else {
+                    $flashMessenger->addMessage($msg, $namespace);
+                }
+            }
+        } else {
+            $flashMessenger->addMessage($message, $namespace);
+        }
+        $this->view->flashMessages = $flashMessenger;
+        return $this->view;
     }
 
     /**
@@ -316,49 +385,11 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * This function will generate all meta tags needed for SEO optimisation.
-     *
-     * @param  Pdo\Result|Content $content
-     * @return void
+     * Show translated message
      */
-    protected function initMetaTags($content = null)
+    public function translate($str = null)
     {
-        $description = $keywords = $text = $preview = $title = null;
-
-        if (!empty($content)) {
-            /**
-             * If there is a menu attached to this content, get its SEO metadata
-             */
-            if ($content->current()->getMenu() > 0) {
-                $isMenuObject = $content->current()->getMenuObject();
-                $description = $isMenuObject->getDescription();
-                $keywords = $isMenuObject->getKeywords();
-            }
-
-            $text = $content->current()->getText();
-            $preview = $content->current()->getPreview();
-            $title = $content->current()->getTitle();
-        }
-
-        // must be set from db
-        (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
-        (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
-        (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
-        (empty($preview) ? $preview = "" : $preview);
-        (empty($title) ? $title = "ZendPress" : $title);
-
-        $placeholder = $this->getServiceLocator()->get('ViewHelperManager')->get('placeholder')->getContainer("customHead");
-        $placeholder->append("<meta itemprop='name' content='ZendPress'>\r\n");
-        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
-        $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
-        $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
-
-        $vhm = $this->getServiceLocator()->get('ViewHelperManager')->get('headMeta');
-        $vhm->appendName('keywords', $keywords);
-        $vhm->appendName('description', $description);
-        $vhm->appendProperty('og:image', $preview);
-        $vhm->appendProperty("og:title", $title);
-        $vhm->appendProperty("og:description", $description);
+        return (string) $this->translation->{$str};
     }
 
 /****************************************************
@@ -372,6 +403,7 @@ class IndexController extends AbstractActionController
     {
         return $this->view;
     }
+
 
     /**
      * Select new language and reload all text
@@ -387,9 +419,6 @@ class IndexController extends AbstractActionController
         $this->translation = Functions::initTranslations($this->translation->languageObject->getId(), true);
         $this->langTranslation = $this->translation->language = $this->translation->languageObject->getId();
 
-        /**
-         * TODO: redirect to the same url where the user was
-         */
         return $this->redirect()->toUrl("/");
     }
 
@@ -398,12 +427,12 @@ class IndexController extends AbstractActionController
      */
     public function contactAction()
     {
-        $form = new \Application\Form\ContactForm();
-        $form->get("email")->setLabel($this->translation->EMAIL);
-        $form->get("name")->setLabel($this->translation->NAME)->setAttribute("placeholder", $this->translation->NAME);
-        $form->get("subject")->setLabel($this->translation->SUBJECT)->setAttribute("placeholder", $this->translation->SUBJECT);
-        $form->get("captcha")->setLabel($this->translation->CAPTCHA)->setAttribute("placeholder", $this->translation->ENTER_CAPTCHA);
-        $form->get("message")->setLabel($this->translation->MESSAGE)->setAttribute("placeholder", $this->translation->ENTER_MESSAGE);
+        $form = $this->contactForm;
+        $form->get("email")->setLabel($this->translate("EMAIL"));
+        $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));
+        $form->get("subject")->setLabel($this->translate("SUBJECT"))->setAttribute("placeholder", $this->translate("SUBJECT"));
+        $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
+        $form->get("message")->setLabel($this->translate("MESSAGE"))->setAttribute("placeholder", $this->translate("ENTER_MESSAGE"));
 
         $this->view->form = $form;
         if ($this->getRequest()->isPost()) {
@@ -411,18 +440,15 @@ class IndexController extends AbstractActionController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $to = "stanimirdim92@gmail.com"; // must be set from db
+                $to = "psyxopat@gmail.com"; // must be set from db
                 try {
                     $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
-                    $this->cache->success = $this->translation->CONTACT_SUCCESS;
+                    $this->setLayoutMessages($this->translat("CONTACT_SUCCESS"), 'success');
                 } catch (\Exception $e) {
-                    $this->cache->error = $this->translation->CONTACT_ERROR;
-                    $this->setErrorNoParam($e->getMessage());
+                    $this->setLayoutMessages($this->translat("CONTACT_ERROR"), 'error');
                 }
-                return $this->redirect()->toUrl("/contact");
             } else {
-                $this->formErrors($form->getMessages());
-                return $this->redirect()->toUrl("/contact");
+                $this->setLayoutMessages($form->getMessages(), 'error');
             }
         }
         return $this->view;

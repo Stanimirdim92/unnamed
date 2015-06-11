@@ -42,7 +42,7 @@ class ParamsFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $sm = null)
     {
-        $app = $sm->get('Application');
+        $app = $sm->getServiceLocator()->get('Application');
         return new Params($app->getRequest(), $app->getMvcEvent());
     }
 }

@@ -35,7 +35,7 @@
 
 namespace Application\Controller;
 
-class NewsController extends \Application\Controller\IndexController
+class NewsController extends IndexController
 {
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
@@ -50,7 +50,7 @@ class NewsController extends \Application\Controller\IndexController
         if (!empty($post)) {
             $new = $this->getTable("content")->fetchList(false, ["title", "text", "date", "preview"], ["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->langTranslation], "AND", null, "date DESC");
             $this->view->new = $new->current();
-            $this->initMetaTags($new);
+            // $this->initMetaTags($new);
         } else {
             $news = $this->getTable("content")->fetchList(true, ["title", "titleLink", "text", "date", "preview"], ["type" => 1, "menu" => 0, "language" => $this->langTranslation], "AND", null, "date DESC");
             $news->setCurrentPageNumber((int)$this->getParam('page', 1));

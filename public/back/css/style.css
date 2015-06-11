@@ -720,7 +720,9 @@ ul {
     color: #FFF;
     background: #C0392B;
 }
-
+#modal-imgupload {
+    display: none;
+}
 .media-modal {
   position: fixed;
   top: 0;
@@ -728,7 +730,13 @@ ul {
   right: 0;
   bottom: 0;
 }
-
+.ajax-loader {
+      background: url("../img/ajax-loader.gif");
+  width: 18px;
+  height: 15px;
+  text-align: center;
+  margin: 0 50% 0 48%;
+}
 .media-modal-close {
   position: absolute;
   top: 0;
@@ -837,7 +845,6 @@ ul {
   bottom: 0;
   overflow: auto;
   min-height: 300px;
-  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.7);
   box-shadow: 0 5px 15px rgba(0,0,0,.7);
   background: #fcfcfc;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -863,7 +870,7 @@ position: relative;
     height: 100px;
 }
 .gallery-view {
-      display: none;
+    display: none;
     width: auto;
 }
 

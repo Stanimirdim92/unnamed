@@ -10,7 +10,15 @@
 
             $("button.upload").on("click", function () {
                 $(".uploader-inline").show();
-                $(".gallery-view").hide().find("img").remove();
+                $(".gallery-view").hide().find("figure.centered").remove();
+            });
+
+            $(".gallery").on("click", function() {
+                ajaxImageUpload.showFiles();
+            });
+
+            $("button.media-modal-toggle").on("click", function () {
+                $("#modal-imgupload").fadeToggle(850);
             });
 
             /**
@@ -18,6 +26,7 @@
              * TODO add loading image
              */
             $("#imgajax").change(function (e) {
+                e.preventDefault();
                 var $form = $("#content").submit();
 
                 $.ajax({
@@ -37,6 +46,7 @@
                 });
                 // clear file input
                 $("#imgajax").replaceWith($("#imgajax").val('').clone(true));
+                return false;
             });
         },
 
@@ -75,12 +85,14 @@
          * Gallery
          */
         showFiles: function () {
+                $(".uploader-inline, .large-image").hide();
+                $(".gallery-view").find("figure.centered").not(".large-image").remove();
+                $(".gallery-view, .ajax-loader").show();
             $.get( "/admin/content/files", function (files) {
-                $(".uploader-inline").hide();
-                $(".gallery-view").find("img").not(".large-image").remove();
-                $(".gallery-view").show();
+                $(".ajax-loader").hide();
+                $(".large-image").show();
                 $.each(files, function (key, file) {
-                    $("div.image-grid").append("<figure class='centered'><img src='"+$.parseJSON(file["link"])+"' class='thumbnail' /></figure>");
+                    $("div.image-grid").append("<figure class='centered'><img src='"+$.parseJSON(file["link"])+"' class='thumbnail' alt='"+$.parseJSON(file["filename"])+"' title='"+$.parseJSON(file["filename"])+"' /></figure>");
                 });
                 ajaxImageUpload.viewImage();
             });
@@ -95,13 +107,6 @@
 
     };
 
-    $(".gallery").on("click", function() {
-        ajaxImageUpload.showFiles();
-    });
-
-    $("button.media-modal-toggle").on("click", function () {
-        $("#modal-imgupload").fadeToggle(850);
-    });
 
     /**
      * Create SEO captions/URLs for menus and content.

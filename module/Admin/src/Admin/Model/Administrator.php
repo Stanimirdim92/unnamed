@@ -67,7 +67,7 @@ class Administrator implements InputFilterAwareInterface
      * @param null $sm ServiceManager
      * @return ServiceManager|null
      */
-    public function setServiceManager(ServiceManager $sm = null)
+    public function setServiceLocator(ServiceManager $sm = null)
     {
         $this->serviceManager = $sm;
     }

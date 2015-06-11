@@ -101,7 +101,7 @@ class TermCategoryController extends IndexController
             if ($form->isValid()) {
                 $termcategory->exchangeArray($form->getData());
                 $this->getTable("termcategory")->saveTermCategory($termcategory);
-                $this->cache->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully saved";
+                $this->translation->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
             } else {
@@ -133,7 +133,7 @@ class TermCategoryController extends IndexController
             $this->setErrorNoParam("Term category not found");
             return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
-        $this->cache->success = "Term category was successfully deleted";
+        $this->translation->success = "Term category was successfully deleted";
         return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
     }
 
@@ -141,7 +141,7 @@ class TermCategoryController extends IndexController
     {
         $id = $this->getParam("id", 0);
         $termcategory = $this->getTable("termcategory")->duplicate($id);
-        $this->cache->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "Term category &laquo;".$termcategory->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/termcategory");
         return $this->view;
     }

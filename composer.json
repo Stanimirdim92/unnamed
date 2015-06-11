@@ -1,6 +1,6 @@
 {
     "name": "ZendPress",
-    "description": "Wordpress ported to Zend Framework 2",
+    "description": "Flexible, strong and fast CMS built on top of Zend Framework 2",
     "license": "BSD-3-Clause",
     "keywords": [
         "framework",
@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": ">=5.4",
-        "zendframework/zendframework": "2.*.*"
+        "zendframework/zendframework": "2.4.*",
+        "imagine/Imagine": "dev-master"
     },
     "require-dev": {
         "zendframework/zend-developer-tools": "dev-master",

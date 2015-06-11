@@ -39,7 +39,7 @@ class TermTranslation implements InputFilterAwareInterface
      */
     private $term;
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

@@ -57,7 +57,7 @@ class MenuController extends IndexController
         $title = (string) $escaper->escapeUrl($this->getParam("title"));
 
         $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation], null, "menu.parent ASC, menu.menuOrder ASC");
-        $this->initMetaTags($this->view->contents);
+        // $this->initMetaTags($this->view->contents);
         return $this->view;
     }
 }

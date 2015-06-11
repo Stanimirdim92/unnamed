@@ -294,11 +294,11 @@ class IndexController extends AbstractActionController
     protected function setErrorNoParam($message = null)
     {
         if (!empty($message)) {
-            $this->cache->error = $message;
+            $this->translation->error = $message;
         } elseif ($message === self::NO_ID) {
-            $this->cache->error = $this->translation->NO_ID_SET;
+            $this->translation->error = $this->translation->NO_ID_SET;
         } else {
-            $this->cache->error = $this->translation->ERROR_STRING;
+            $this->translation->error = $this->translation->ERROR_STRING;
         }
         $this->view->setTerminal(true);
     }

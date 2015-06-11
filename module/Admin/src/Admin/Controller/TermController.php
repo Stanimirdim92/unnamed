@@ -113,7 +113,7 @@ class TermController extends IndexController
                 $formData["name"] = strtoupper($formData["name"]);
                 $term->exchangeArray($formData);
                 $this->getTable("term")->saveTerm($term);
-                $this->cache->success = "Term &laquo;".$term->toString()."&raquo; was successfully saved";
+                $this->translation->success = "Term &laquo;".$term->toString()."&raquo; was successfully saved";
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'term']);
             } else {
@@ -145,7 +145,7 @@ class TermController extends IndexController
             $this->setErrorNoParam("Term not found");
             return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
-        $this->cache->success = "Term was successfully saved";
+        $this->translation->success = "Term was successfully saved";
         return $this->redirect()->toRoute('admin', ['controller' => 'term']);
     }
 
@@ -153,7 +153,7 @@ class TermController extends IndexController
     {
         $id = $this->getParam("id", 0);
         $term = $this->getTable("term")->duplicate($id);
-        $this->cache->success = "term &laquo;".$term->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "term &laquo;".$term->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/term");
         return $this->view;
     }

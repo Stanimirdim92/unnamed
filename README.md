@@ -8,15 +8,30 @@ This README would normally document whatever steps are necessary to get your app
 ### ZendPress CMS ###
 
 * Trying to rewrite Wordpess with Zend Framework 2
-* Version 0.02
+* Version 0.03
 
 ### Requirements ###
 
-* PHP 5.3.0+
-* MySQL with PDO. MySQLI is possible as well.
+* PHP 5.4.0+
+* Extensions:
+ - PDO
+ - mysql
+ - mysqli
+ - mcrypt
+ - mbstring
+ - pdo_mysql
+ - GD (will be required later)
+* ircmaxell password class (it's integrated into the system)
 * Apache 2.11+ or nginx
-* Zend Framework 2.3.3+ (it's integrated into the system)
+* Zend Framework 2.4+ (it's integrated into the system)
 * CodePlex (it's integrated into the system)
+* Imagine module for creating thumbnails (it's integrated into the system)
+
+### Requirements for development ###
+
+* APPLICATION_ENV must be set to development via .htaccess
+* ZendDeveloperTools (it's integrated into the system)
+* bjyoungblood (it's integrated into the system)
 
 ### Contacts ###
 

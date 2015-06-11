@@ -34,57 +34,64 @@
  */
 namespace Application\Form;
 
-use Zend\Form\Element;
 use Zend\Form\Form;
 use Zend\Captcha;
 use Zend\Captcha\Image as CaptchaImage;
-use Zend\InputFilter;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class ContactForm extends Form
+class ContactForm extends Form implements InputFilterProviderInterface
 {
-    /**
-     * @var null $inputFilter
-     */
-    protected $inputFilter = null;
-
-    /**
-     * @var array $elements
-     */
-    protected $elements = [];
-
     public function __construct()
     {
         parent::__construct('contact_form');
+    }
 
-        $this->elements[0] = new Element\Text('name');
-        $this->elements[0]->setAttributes([
-            'required'    => true,
-            'min'         => 3,
-            'max'         => 20,
-            'size'        => 30,
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'name',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'max' => 20,
+                'size' => 30,
+            ],
         ]);
 
-        $this->elements[1] = new Element\Text('email');
-        $this->elements[1]->setAttributes([
-            'required'    => true,
-            'min'         => 5,
-            'size'        => 30,
-            'placeholder' => 'johnsmith@example.com',
+        $this->add([
+            'type' => 'Zend\Form\Element\Email',
+            'name' => 'email',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'size' => 30,
+                'placeholder' => 'johnsmith@example.com',
+            ],
         ]);
 
-        $this->elements[2] = new Element\Text('subject');
-        $this->elements[2]->setAttributes([
-            'required'    => true,
-            'min'         => 3,
-            'size'        => 30,
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'subject',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'size' => 30,
+            ],
         ]);
 
-        $this->elements[4] = new Element\Textarea('message');
-        $this->elements[4]->setAttributes([
-            'required'     => true,
-            'rows'         => 8,
-            'cols'         => 70,
+        $this->add([
+            'type' => 'Zend\Form\Element\Textarea',
+            'name' => 'message',
+            'attributes' => [
+                'required' => true,
+                'rows' => 8,
+                'cols' => 70,
+            ],
         ]);
+
 
         $captchaImage = new CaptchaImage([
             'font'           => './data/fonts/arial.ttf',
@@ -98,126 +105,122 @@ class ContactForm extends Form
         );
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
-        $this->elements[3] = new Element\Captcha('captcha');
-        $this->elements[3]->setCaptcha($captchaImage);
-        $this->elements[3]->setAttributes([
-            'required'    => true,
-            'size'        => 30,
-            'class'       => 'captcha-input',
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Captcha',
+            'name' => 'captcha',
+            'attributes' => [
+                'class' => 'captcha-input',
+                'size' => 30,
+            ],
+            'options' => [
+                'captcha' => $captchaImage,
+            ],
         ]);
 
-        $this->elements[5] = new Element\Submit('submit');
-        $this->elements[5]->setAttributes([
-            'id'    => 'submitbutton',
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
         ]);
 
-        $this->elements[8] = new Element\Csrf('s');
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 320
+                ]
+            ]
+        ]);
+    }
 
-        $this->inputFilter = new \Zend\InputFilter\InputFilter();
-        $factory = new \Zend\InputFilter\Factory();
-        $this->inputFilter->add($factory->createInput([
-            "name"=>"email",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            "validators" => [
-                [
-                    'name' => 'EmailAddress',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
-                    ],
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                "name"=>"email",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
                 ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min'      => 5,
+                "validators" => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                        ],
                     ],
-                ],
-                ['name' => 'NotEmpty'],
-            ],
-        ]));
-        $this->inputFilter->add($factory->createInput([
-            "name"=>"subject",
-            'required' => true,
-            'filters'  => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min'      => 3,
-                        'max'      => 100,
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 5,
+                        ],
                     ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->inputFilter->add($factory->createInput([
-            "name"=>"message",
-            'required' => true,
-            'filters'  => [
-                ['name' => 'StripTags'],
-            ],
-            'validators' => [
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min'      => 3,
-                        'max'      => 3000,
+            [
+                "name"=>"subject",
+                'required' => true,
+                'filters'  => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 3,
+                            'max'      => 100,
+                        ],
                     ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->inputFilter->add($factory->createInput([
-            "name"=>"captcha",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 30,
+            [
+                "name"=>"message",
+                'required' => true,
+                'filters'  => [
+                    ['name' => 'StripTags'],
+                ],
+                'validators' => [
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 3,
+                            'max'      => 3000,
+                        ],
                     ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->inputFilter->add($factory->createInput([
-            "name"=>"name",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 3,
-                        'max' => 20,
+            [
+                "name"=>"name",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 3,
+                            'max' => 20,
+                        ],
                     ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->setInputFilter($this->inputFilter);
-        foreach ($this->elements as $e) {
-            $this->add($e);
-        }
+        ];
     }
 }

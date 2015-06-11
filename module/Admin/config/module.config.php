@@ -5,10 +5,16 @@ return [
         ],
         'factories' => [
             'Admin\AuthenticationAdapter' => 'Admin\Factory\AuthenticationAdapterFactory',
+            'AdminErrorHandling'          => 'Admin\Factory\AdminErrorHandlingFactory',
+            'AdministratorTable'          => 'Admin\Factory\AdministratorTableFactory',
+            'ContentTable'                => 'Admin\Factory\ContentTableFactory',
+            'LanguageTable'               => 'Admin\Factory\LanguageTableFactory',
+            'MenuTable'                   => 'Admin\Factory\MenuTableFactory',
         ],
     ],
     'controllers' => [
         'factories' => [
+            'Admin\Controller\Content' => "Admin\Factory\Controller\ContentFormFactory",
         ],
         'invokables' => [
             'Admin\Controller\Index'            => 'Admin\Controller\IndexController',
@@ -20,7 +26,7 @@ return [
             'Admin\Controller\Administrator'    => 'Admin\Controller\AdministratorController',
             'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
             'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
-            'Admin\Controller\Content'          => 'Admin\Controller\ContentController',
+            'ImagineService'                    => 'Imagine\Gd\Imagine',
         ],
     ],
     'view_helpers' => [

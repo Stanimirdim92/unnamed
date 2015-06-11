@@ -49,7 +49,7 @@ class ResetPasswordTableFactory implements FactoryInterface
         $resultSetPrototype = new HydratingResultSet();
         $resultSetPrototype->setHydrator(new ObjectProperty());
         $resultSetPrototype->setObjectPrototype(new ResetPassword([], $sm));
-        $tg = new TableGateway('resetpassword', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
+        $tg = new TableGateway('resetpassword', $sm->getServiceLocator()->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
         return new ResetPasswordTable(null, $tg);
     }
 }

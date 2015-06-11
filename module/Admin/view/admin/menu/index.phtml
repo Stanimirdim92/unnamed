@@ -28,7 +28,7 @@
 if (!empty($this->menus)) {
 foreach($this->menus as $key => $menu)
 {
-    $menu->setServiceManager(null);
+    $menu->setServiceLocator(null);
 ?>
 <TR>
     <TD class='admin'><?=$menu->getCaption()?></TD>
@@ -58,7 +58,7 @@ foreach($this->menus as $key => $menu)
     {
         foreach($this->submenus[$key] as $sub)
         {
-            $sub->setServiceManager(null);
+            $sub->setServiceLocator(null);
 ?>
             <TR>
                 <TD class='admin'><?=$sub->getCaption()?></TD>

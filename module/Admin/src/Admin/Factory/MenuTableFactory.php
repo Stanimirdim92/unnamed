@@ -46,7 +46,7 @@ class MenuTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Menu(array(), $sm));
+        $resultSetPrototype->setArrayObjectPrototype(new Menu([], $sm));
         $tg = new TableGateway('menu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
         return new MenuTable($sm, $tg);
     }

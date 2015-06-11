@@ -34,7 +34,7 @@ class Term implements InputFilterAwareInterface
      */
     private $termcategory;
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

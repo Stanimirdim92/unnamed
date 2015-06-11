@@ -40,6 +40,8 @@ use Zend\Cache\StorageFactory;
 use Zend\Session\SaveHandler\Cache;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\SessionManager;
+use Zend\Session\Validator\HttpUserAgent;
+use Zend\Session\Validator\RemoteAddr;
 use Zend\ModuleManager\Feature;
 use Zend\Session\Container;
 use Zend\Mvc\MvcEvent;
@@ -92,8 +94,8 @@ class Module implements
         // $saveHandler = new Cache($memCached);
         // $sessionManager->setSaveHandler($saveHandler);
         $sessionManager->start();
-        $sessionManager->getValidatorChain()->attach('session.validate', [ new \Zend\Session\Validator\HttpUserAgent(), 'isValid']);
-        $sessionManager->getValidatorChain()->attach('session.validate', [ new \Zend\Session\Validator\RemoteAddr(), 'isValid']);
+        $sessionManager->getValidatorChain()->attach('session.validate', [ new HttpUserAgent(), 'isValid']);
+        $sessionManager->getValidatorChain()->attach('session.validate', [ new RemoteAddr(), 'isValid']);
         return Container::setDefaultManager($sessionManager);
     }
 

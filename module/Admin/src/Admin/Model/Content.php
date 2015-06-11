@@ -35,23 +35,14 @@
 
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\Factory as InputFactory;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Content implements InputFilterAwareInterface
+class Content
 {
     /**
-     * @var null $inputFilter inputFilter
+     * @var null $serviceLocator ServiceManager
      */
-    private $inputFilter = null;
-
-    /**
-     * @var null $serviceManager ServiceManager
-     */
-    private $serviceManager = null;
+    private $serviceLocator = null;
 
     /**
      * @var Int $id
@@ -114,12 +105,20 @@ class Content implements InputFilterAwareInterface
     private $titleLink = null;
 
     /**
-     * @param null $sm ServiceManager
-     * @return ServiceManager|null
+     * @param null $sm ServiceLocatorInterface|ServiceManager
+     * @return ServiceLocatorInterface|ServiceManager|null
      */
-    public function setServiceManager(ServiceManager $sm = null)
+    public function setServiceLocator(ServiceLocatorInterface $sm = null)
     {
-        $this->serviceManager = $sm;
+        $this->serviceLocator = $sm;
+    }
+
+    /**
+     * @return ServiceLocatorInterface|ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
     }
 
     /**
@@ -154,10 +153,10 @@ class Content implements InputFilterAwareInterface
      * @param array $options
      * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = [], ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceLocatorInterface $sm = null)
     {
         $this->exchangeArray($options);
-        $this->serviceManager = $sm;
+        $this->setServiceLocator($sm);
     }
 
     /**
@@ -202,7 +201,7 @@ class Content implements InputFilterAwareInterface
     public function getMenuObject()
     {
         try {
-            return $this->serviceManager->get('MenuTable')->getMenu($this->menu, $this->language);
+            return $this->getServiceLocator()->get('MenuTable')->getMenu($this->menu, $this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -358,7 +357,7 @@ class Content implements InputFilterAwareInterface
     public function getLanguageObject()
     {
         try {
-            return $this->serviceManager->get('LanguageTable')->getLanguage($this->language);
+            return $this->getServiceLocator()->get('LanguageTable')->getLanguage($this->language);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -396,7 +395,7 @@ class Content implements InputFilterAwareInterface
         $returnValue = [];
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
-            if (!in_array($key, "serviceManager")) {
+            if (!in_array($key, "serviceLocator")) {
                 $returnValue[] = $key;
             }
         }
@@ -449,219 +448,5 @@ class Content implements InputFilterAwareInterface
         $clone->setLanguage($this->language);
         $clone->setTitleLink($this->titleLink);
         return $clone;
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $factory = new InputFactory();
-            $inputFilter->add(
-                $factory->createInput([
-                    'name'     => 'id',
-                    'required' => false,
-                    'filters'  => [
-                        ['name' => 'Int'],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"title",
-                    "required" => true,
-                    'filters' => [
-                        ['name' => 'StripTags'],
-                        ['name' => 'StringTrim'],
-                    ],
-                    'validators' => [
-                        ['name' => 'NotEmpty'],
-                        [
-                            'name'    => 'StringLength',
-                            'options' => [
-                                'encoding' => 'UTF-8',
-                                'min' => 1,
-                                'max' => 200,
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"text",
-                    "required" => true,
-                    'filters' => [
-                        ['name' => 'StripTags'],
-                        ['name' => 'StringTrim'],
-                    ],
-                    'validators' => [
-                        ['name' => 'NotEmpty'],
-                        [
-                            'name'    => 'StringLength',
-                            'options' => [
-                                'encoding' => 'UTF-8',
-                                'min' => 1,
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"menuOrder",
-                    "required" => false,
-                    'filters'  => [
-                        ['name' => 'Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'Regex',
-                            'options' => [
-                                'pattern' => '/^[0-9]+$/',
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"language",
-                    "required" => false,
-                    'filters'  => [
-                        ['name' => 'Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'Regex',
-                            'options' => [
-                                'pattern' => '/^[0-9]+$/',
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"menu",
-                    "required" => false,
-                    'filters'  => [
-                        ['name' => 'Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'Regex',
-                            'options' => [
-                                'pattern' => '/^[0-9]+$/',
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"type",
-                    "required" => false,
-                    'filters'  => [
-                        ['name' => 'Int'],
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'Regex',
-                            'options' => [
-                                'pattern' => '/^[0-1]+$/',
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"date",
-                    "required" => false,
-                    'filters' => [
-                        ['name' => 'StripTags'],
-                        ['name' => 'StringTrim'],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"preview",
-                    "required" => false,
-                    'validators' => [
-                        [
-                            'name' => 'Zend\Validator\File\Size',
-                            'options' => [
-                                'min' => '10kB',
-                                'max' => '5MB',
-                                'useByteString' => true,
-                            ],
-                        ],
-                        [
-                            'name' => 'Zend\Validator\File\Extension',
-                            'options' => [
-                                'extension' => [
-                                    'jpg',
-                                    'gif',
-                                    'png',
-                                    'jpeg',
-                                    'bmp',
-                                    'webp',
-                                ],
-                                'case' => true,
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"imageUpload",
-                    "required" => false,
-                    'validators' => [
-                        [
-                            'name' => 'Zend\Validator\File\Size',
-                            'options' => [
-                                'min' => '10kB',
-                                'max' => '5MB',
-                                'useByteString' => true,
-                            ],
-                        ],
-                        [
-                            'name' => 'Zend\Validator\File\Extension',
-                            'options' => [
-                                'extension' => [
-                                    'jpg',
-                                    'gif',
-                                    'png',
-                                    'jpeg',
-                                    'bmp',
-                                    'webp',
-                                ],
-                                'case' => true,
-                            ],
-                        ],
-                    ],
-                ])
-            );
-            $inputFilter->add(
-                $factory->createInput([
-                    "name"=>"titleLink",
-                    "required" => true,
-                    'filters' => [
-                        ['name' => 'StripTags'],
-                        ['name' => 'StringTrim'],
-                        ['name' => 'StringToLower'],
-                    ],
-                ])
-            );
-            $this->inputFilter = $inputFilter;
-        }
-        return $this->inputFilter;
     }
 }

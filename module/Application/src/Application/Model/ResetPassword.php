@@ -35,17 +35,14 @@
 
 namespace Application\Model;
 
-use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ResetPassword
 {
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
-     * Please, note that this is not the best way, but it does the job.
-     *
-     * @var $serviceManager ServiceManager
+     * @var $serviceLocator ServiceManager
      */
-    private $serviceManager = null;
+    private $serviceLocator = null;
 
     /**
      * @param Int $id
@@ -78,12 +75,20 @@ class ResetPassword
     private $user = 0;
 
     /**
-     * @param null $sm
-     * @return ServiceManager
+     * @param null $sm ServiceLocatorInterface|ServiceManager
+     * @return ServiceLocatorInterface|ServiceManager|null
      */
-    public function setServiceManager(ServiceManager $sm = null)
+    public function setServiceLocator(ServiceLocatorInterface $sm = null)
     {
-        $this->serviceManager = $sm;
+        $this->serviceLocator = $sm;
+    }
+
+    /**
+     * @return ServiceLocatorInterface|ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
     }
 
     /**
@@ -102,10 +107,10 @@ class ResetPassword
     /**
      * constructor
      */
-    public function __construct(array $options = [], ServiceManager $sm = null)
+    public function __construct(array $options = [], ServiceLocatorInterface $sm = null)
     {
         $this->exchangeArray($options);
-        $this->serviceManager = $sm;
+        $this->setServiceLocator($sm);
     }
 
     /**
@@ -203,7 +208,7 @@ class ResetPassword
     public function getUserObject()
     {
         try {
-            return $this->serviceManager->get('UserTable')->getUser($this->user);
+            return $this->getServiceLocator()->get('UserTable')->getUser($this->user);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -240,11 +245,10 @@ class ResetPassword
      */
     public function __sleep()
     {
-        $skip = ["serviceManager"];
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
+        foreach ($data as $key => $value) {
+            if (!in_array($key, "serviceLocator")) {
                 $returnValue[] = $key;
             }
         }
@@ -261,7 +265,7 @@ class ResetPassword
     /**
      * this is a handy function for encoding the object to json for transfer purposes
      */
-    public function getProperties(array $skip = ["serviceManager"], $serializable = false)
+    public function getProperties(array $skip = [], $serializable = false)
     {
         $returnValue = [];
         $data = get_class_vars(get_class($this));
@@ -271,7 +275,7 @@ class ResetPassword
             }
         }
         if ((bool) $serializable === true) {
-            return serialize($returnValue);
+            return json_encode($returnValue);
         }
         return $returnValue;
     }

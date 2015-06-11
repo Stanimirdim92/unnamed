@@ -106,7 +106,7 @@ class AdministratorController extends \Admin\Controller\IndexController
         $user->setAdmin(0);
         $this->getTable("user")->saveUser($user);
         $this->getTable("administrator")->deleteAdministrator($this->getParam('id', 0));
-        $this->cache->success = "Administrator was successfully deleted";
+        $this->translation->success = "Administrator was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -152,7 +152,7 @@ class AdministratorController extends \Admin\Controller\IndexController
                 if (count($user) == 1) {
                     $adminExist = $this->getTable("administrator")->getAdministrator($user->getId());
                     if (count($adminExist) != 0) {
-                        $this->cache->error = $user->toString()." is already administrator";
+                        $this->translation->error = $user->toString()." is already administrator";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     } else {
@@ -160,7 +160,7 @@ class AdministratorController extends \Admin\Controller\IndexController
                         $administrator->exchangeArray($formData);
                         $this->getTable("user")->saveUser($user);
                         $this->getTable("administrator")->saveAdministrator($administrator);
-                        $this->cache->success = "Administrator was successfully saved";
+                        $this->translation->success = "Administrator was successfully saved";
                         $this->view->setTerminal(true);
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     }

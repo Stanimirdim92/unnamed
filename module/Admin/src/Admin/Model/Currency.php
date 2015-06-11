@@ -39,7 +39,7 @@ class Currency implements InputFilterAwareInterface
 
     private $symbol;
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

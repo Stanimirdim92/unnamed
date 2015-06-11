@@ -114,7 +114,7 @@ class User implements InputFilterAwareInterface
      */
     private $currency;
 
-    public function setServiceManager($sm)
+    public function setServiceLocator($sm)
     {
         $this->serviceManager = $sm;
     }

@@ -39,7 +39,8 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\ServiceManager;
+use Zend\Db\Sql\Predicate\Expression;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ContentTable
 {
@@ -51,7 +52,7 @@ class ContentTable
     /**
      * @var ServiceManager
      */
-    private $serviceManager = null;
+    private $serviceLocator = null;
 
     /**
      * Preducate contstants
@@ -61,13 +62,30 @@ class ContentTable
     const PRE_NULL = null;
 
     /**
-     * @param ServiceManager|null $sm
+     * @param serviceLocator|null $sm
      * @param TableGateway|null   $tg
      */
-    public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
+    public function __construct(ServiceLocatorInterface $sm = null, TableGateway $tg = null)
     {
-        $this->serviceManager = $sm;
+        $this->setServiceLocator($sm);
         $this->tableGateway = $tg;
+    }
+
+    /**
+     * @param null $sm ServiceLocatorInterface|ServiceManager
+     * @return ServiceLocatorInterface|ServiceManager|null
+     */
+    public function setServiceLocator(ServiceLocatorInterface $sm = null)
+    {
+        $this->serviceLocator = $sm;
+    }
+
+    /**
+     * @return ServiceLocatorInterface|ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
     }
 
     /**
@@ -155,8 +173,8 @@ class ContentTable
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
-        } elseif ($where != null) {
-            $select->where($where);
+        } elseif ($where != null && is_string($where)) {
+            $select->where(new Expression($where));
         }
         if ($group != null) {
             $select->group($group);

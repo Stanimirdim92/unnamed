@@ -2,7 +2,7 @@
 
 namespace Custom\Plugins;
 
-use Zend\Mvc\Controller\AbstractActionController;
+// use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 
@@ -10,7 +10,7 @@ use Zend\Mail;
 use Zend\Mime\Part as MimePart;
 use Zend\Mime\Message as MimeMessage;
 
-class Mailing extends AbstractActionController
+class Mailing
 {
     /**
      * @param String  $to
@@ -24,20 +24,22 @@ class Mailing extends AbstractActionController
     public static function sendMail($to, $toName, $subject, $message, $from, $fromName)
     {
         $transport = new SmtpTransport();
-        $options   = new SmtpOptions(array(
+        $options   = new SmtpOptions([
             'host'              => 'smtp.gmail.com',
+            'name'              => 'ZendPress',
             'connection_class'  => 'login',
-            'connection_config' => array(
-                'username' => 'psyxopat@gmail.com',
-                'password' => 'rompompom',
-            ),
+            'connection_config' => [
+                'username' => 'stanimirdim92@gmail.com',
+                'password' => 'Thug4life',
+                'ssl' => 'tls',
+            ],
             'port' => '587',
-        ));
+        ]);
         $htmlPart = new MimePart($message);
         $htmlPart->type = "text/html";
 
         $body = new MimeMessage();
-        $body->setParts(array($htmlPart));
+        $body->setParts([$htmlPart]);
 
         $mail = new Mail\Message();
         $mail->setFrom($from, $fromName);
@@ -51,7 +53,7 @@ class Mailing extends AbstractActionController
             $transport->setOptions($options);
             $transport->send($mail);
         } catch (\Exception $e) {
-            echo "<pre>".print_r($e->getTraceAsString(), true)."</pre>";
+            echo "There was a problem while sending the email";
             exit;
         }
         return true;

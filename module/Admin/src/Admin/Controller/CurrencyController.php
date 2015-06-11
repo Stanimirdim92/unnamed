@@ -41,7 +41,7 @@ class CurrencyController extends IndexController
         $this->view->paginator = $paginator;
         return $this->view;
     }
-    
+
     /**
      * This action serves for adding a new object of type Currency
      */
@@ -74,7 +74,7 @@ class CurrencyController extends IndexController
         }
         return $this->view;
     }
-    
+
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
@@ -97,7 +97,7 @@ class CurrencyController extends IndexController
             if ($form->isValid()) {
                 $currency->exchangeArray($form->getData());
                 $this->getTable("currency")->saveCurrency($currency);
-                $this->cache->success = $this->session->LANGUAGE."&nbsp;&laquo;".$currency->toString()."&raquo; ".$this->session->SAVE_SUCCESS;
+                $this->translation->success = $this->session->LANGUAGE."&nbsp;&laquo;".$currency->toString()."&raquo; ".$this->session->SAVE_SUCCESS;
                 $this->view->setTerminal(true);
                 return $this->redirect()->toRoute('admin', ['controller' => 'currency']);
             } else {
@@ -112,7 +112,7 @@ class CurrencyController extends IndexController
             }
         }
     }
-    
+
     /**
      * this action deletes a currency object with a provided id
      */
@@ -133,7 +133,7 @@ class CurrencyController extends IndexController
     //         $this->setErrorNoParam("Currency not found");
     //         return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
     //     }
-    //     $this->cache->success = "Currency was successfully deleted";
+    //     $this->translation->success = "Currency was successfully deleted";
     //     return $this->redirect()->toRoute('admin', array('controller' => 'currency'));
     // }
 
@@ -159,7 +159,7 @@ class CurrencyController extends IndexController
     {
         $id = $this->getParam("id", 0);
         $currency = $this->getTable("currency")->duplicate($id);
-        $this->cache->success = "Currency &laquo;".$currency->toString()."&raquo; was successfully cloned";
+        $this->translation->success = "Currency &laquo;".$currency->toString()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/currency");
         return $this->view;
     }

@@ -36,84 +36,106 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class NewPasswordForm extends Form
+class NewPasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {
         parent::__construct('resetpw');
+    }
 
-        $elements = [];
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+        $this->setAttribute('action', '/login/newpasswordprocess');
 
-        $elements[1] = new Element\Password("password");
-        $elements[1]->setAttributes([
-            'required'    => true,
-            'min'         => 8,
-            'size'        => 30,
-        ]);
-
-        $elements[2] = new Element\Password("repeatpw");
-        $elements[2]->setAttributes([
-            'required'    => true,
-            'min'         => 8,
-            'size'        => 30,
-        ]);
-
-        $elements[8] = new Element\Csrf('s');
-        $elements[20] = new Element\Submit("resetpw");
-        $elements[20]->setAttributes([
-            'id'    => 'submitbutton',
-        ]);
-
-        $inputFilter = new \Zend\InputFilter\InputFilter();
-        $factory = new \Zend\InputFilter\Factory();
-        $inputFilter->add($factory->createInput([
-            "name"=>"password",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
+        $this->add([
+            'type' => 'Zend\Form\Element\Password',
+            'name' => 'password',
+            'attributes' => [
+                'required' => true,
+                'min' => 8,
+                'size' => 30,
+                'placeholder' => '1234567890'
             ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 8,
-                    ],
-                ],
-                ['name' => 'NotEmpty'],
-            ],
-        ]));
-        $inputFilter->add($factory->createInput([
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Password',
             'name' => 'repeatpw',
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
+            'attributes' => [
+                'required' => true,
+                'size' => 30,
+                'placeholder' => '1234567890'
             ],
-            'validators' => [
-                [
-                    'name' => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min' => 8,
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 320
+                ]
+            ]
+        ]);
+
+        $this->add([
+            'name' => 'resetpw',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
+    }
+
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                "name"=>"password",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 8,
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ],
+            [
+                'name' => 'repeatpw',
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 8,
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name' => 'Identical',
+                        'options' => [
+                            'token' => 'password',
+                            'message' => 'Passwords do not match',
+                        ],
                     ],
                 ],
-                ['name' => 'NotEmpty'],
-                [
-                    'name' => 'Identical',
-                    'options' => [
-                        'token' => 'password',
-                        'message' => 'Passwords do not match',
-                    ],
-                ],
             ],
-        ]));
-        $this->setInputFilter($inputFilter);
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+        ];
     }
 }

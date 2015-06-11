@@ -40,9 +40,6 @@ use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
-use Zend\Validator\File\IsImage;
-use Zend\Validator\File\Size;
-use Zend\Validator\File\Extension;
 use Admin\Controller\IndexController;
 
 class ContentController extends IndexController
@@ -56,6 +53,21 @@ class ContentController extends IndexController
      * Route name to which will redirect
      */
     const ADMIN_ROUTE = "admin";
+
+    /**
+     * @var Admin\Form\ContentForm $contentForm
+     */
+    private $contentForm = null;
+
+    /**
+     * @param Admin\Form\ContentForm $contentForm
+     */
+    public function __construct(ContentForm $contentForm = null)
+    {
+        parent::__construct();
+
+        $this->contentForm = $contentForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -112,7 +124,7 @@ class ContentController extends IndexController
     public function deleteAction()
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->cache->success = "Content was successfully deleted";
+        $this->translation->success = "Content was successfully deleted";
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -133,9 +145,29 @@ class ContentController extends IndexController
     public function cloneAction()
     {
         $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->cache->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully cloned";
+        $this->translation->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully cloned";
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
+    }
+
+    public function prepareMenusData()
+    {
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
+        if (count($menu) > 0) {
+            $menus = [];
+            foreach ($menu as $submenu) {
+                if ($submenu->getParent() > 0) {
+                    /**
+                     * This needs to have a second empty array in order to work
+                     */
+                    $menus["submenus"][$submenu->getParent()][] = $submenu;
+                } else {
+                    $menus["menus"][$submenu->getId()] = $submenu;
+                }
+            }
+            return $menus;
+        }
+        return [];
     }
 
     /**
@@ -150,49 +182,59 @@ class ContentController extends IndexController
             $content = new Content([], null);
         }
 
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
-        if (count($menu) > 0) {
-            $submenus = $menus = [];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $submenus[$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus[$submenu->getId()] = $submenu;
+        $menus = $this->prepareMenusData();
+        $valueOptions = [];
+        foreach ($menus["menus"] as $key => $menu) {
+            $menu->setServiceLocator(null);
+            $valueOptions[$menu->getId()] = $menu->getCaption();
+
+            if(!empty($menus["submenus"][$key])) {
+                foreach($menus["submenus"][$key] as $sub) {
+                    $sub->setServiceLocator(null);
+                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
                 }
             }
         }
 
+        $form = $this->contentForm;
+        $form->get("menu")->setValueOptions($valueOptions);
+
         $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC");
-        $form = new ContentForm($content, $menus, $submenus, $languages);
+        $valueOptions = [];
+        foreach ($languages as $language) {
+            $valueOptions[$language->getId()] = $language->getName();
+        }
+        $form->get("language")->setValueOptions($valueOptions);
+
         $form->bind($content);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
 
         if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($content->getInputFilter());
+            $form->setInputFilter($form->getInputFilter());
             $data = array_merge_recursive(
                 $this->getRequest()->getPost()->toArray(),
                 $this->getRequest()->getFiles()->toArray()
             );
 
             $form->setData($data);
-            if (!empty($data["imageUpload"]) && $this->getRequest()->isXmlHttpRequest()) {
-                return $this->uploadImages();
-            } else {
-                if ($form->isValid()) {
-                    $formData = $form->getData();
-                    $formData->preview = $content->preview["name"];
-                    $this->getTable("content")->saveContent($content);
-                    $this->cache->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully saved";
-                    $this->view->setTerminal(true);
-                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+            if ($form->isValid()) {
+                if (!empty($data["imageUpload"]) && $this->getRequest()->isXmlHttpRequest()) {
+                    return $this->uploadImages();
                 } else {
-                    $this->formErrors($form->getMessages());
-                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                    try {
+                        $formData = $form->getData();
+                        $formData->preview = $content->preview["name"];
+                        $this->getTable("content")->saveContent($content);
+                        $this->translation->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully saved";
+                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                    } catch (\Exception $e) {
+                        return;
+                    }
                 }
+            } else {
+                $this->formErrors($form->getMessages());
+                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             }
         }
     }
@@ -203,8 +245,7 @@ class ContentController extends IndexController
     public function filesAction()
     {
         $this->view->setTerminal(true);
-        $path = '/public/userfiles/';
-        $dir = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
+        $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
         $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
         $it->setMaxDepth(3);
         $files = [];
@@ -226,14 +267,14 @@ class ContentController extends IndexController
      */
     private function createDirectories()
     {
-        if (!is_dir('/public/userfiles/')) {
-            mkdir('/public/userfiles/');
+        if (!is_dir('public/userfiles/')) {
+            mkdir('public/userfiles/');
         }
-        if (!is_dir('/public/userfiles/'.date("Y_M"))) {
-            mkdir('/public/userfiles/'.date("Y_M"));
+        if (!is_dir('public/userfiles/'.date("Y_M"))) {
+            mkdir('public/userfiles/'.date("Y_M"));
         }
-        if (!is_dir('/public/userfiles/'.date("Y_M").'/images/')) {
-            mkdir('/public/userfiles/'.date("Y_M").'/images/');
+        if (!is_dir('public/userfiles/'.date("Y_M").'/images/')) {
+            mkdir('public/userfiles/'.date("Y_M").'/images/');
         }
     }
 
@@ -247,13 +288,9 @@ class ContentController extends IndexController
     {
         $this->view->setTerminal(true);
         $adapter = new Http();
-        $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
-        $isImage = new IsImage();
-        $extension = new Extension(['jpg','gif','png','jpeg','bmp','webp', 'svg'], true);
 
         $this->createDirectories();
-        $adapter->setValidators([$size, $isImage, $extension]);
-        $adapter->setDestination('/public/userfiles/'.date("Y_M").'/images/');
+        $adapter->setDestination('public/userfiles/'.date("Y_M").'/images/');
         $this->upload($adapter);
     }
 
@@ -283,6 +320,7 @@ class ContentController extends IndexController
             exit;
             // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
         } else {
+            $this->view->setTerminal(true);
             foreach ($adapter->getMessages() as $key => $error) {
                 $uploadStatus["errorFiles"][] = $error;
             }

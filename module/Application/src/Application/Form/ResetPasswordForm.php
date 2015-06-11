@@ -36,24 +36,31 @@
 namespace Application\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Captcha;
 use Zend\Captcha\Image as CaptchaImage;
 
-class ResetPasswordForm extends Form
+class ResetPasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {
         parent::__construct('loginform');
+    }
 
-        $elements = [];
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+        $this->setAttribute('action', '/login/resetpassword');
 
-        $elements[0] = new Element\Email("email");
-        $elements[0]->setAttributes([
-            'required'    => true,
-            'min'         => 5,
-            'size'        => 30,
-            'placeholder' => 'johnsmith@example.com',
+        $this->add([
+            'type' => 'Zend\Form\Element\Email',
+            'name' => 'email',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'size' => 30,
+                'placeholder' => 'johnsmith@example.com',
+            ],
         ]);
 
         $captchaImage = new CaptchaImage([
@@ -66,56 +73,69 @@ class ResetPasswordForm extends Form
             'lineNoiseLevel' => 2,
             ]
         );
-
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
-        $elements[4] = new Element\Captcha('captcha');
-        $elements[4]->setCaptcha($captchaImage);
-        $elements[4]->setAttributes([
-            'required'    => true,
-            'size'        => 30,
-            'class'       => 'captcha-input',
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Captcha',
+            'name' => 'captcha',
+            'attributes' => [
+                'class' => 'captcha-input',
+                'size' => 30,
+            ],
+            'options' => [
+                'captcha' => $captchaImage,
+            ],
         ]);
 
-        $elements[8] = new Element\Csrf('s');
-        $elements[10] = new Element\Submit("resetpw");
-        $elements[10]->setAttributes([
-            'id'    => 'submitbutton',
+        $this->add([
+            'name' => 'resetpw',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
         ]);
 
-        $inputFilter = new \Zend\InputFilter\InputFilter();
-        $factory = new \Zend\InputFilter\Factory();
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 600
+                ]
+            ]
+        ]);
+    }
 
-        $inputFilter->add($factory->createInput([
-            "name"=>"email",
-            'required' => true,
-            'filters' => [
-                ['name' => 'StripTags'],
-                ['name' => 'StringTrim'],
-            ],
-            "validators" => [
-                [
-                    'name' => 'EmailAddress',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
-                    ],
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                "name"=>"email",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
                 ],
-                [
-                    'name'    => 'StringLength',
-                    'options' => [
-                        'encoding' => 'UTF-8',
-                        'min'      => 5,
-                        'max'      => 255,
+                "validators" => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                        ],
                     ],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 5,
+                            'max'      => 255,
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
                 ],
-                ['name' => 'NotEmpty'],
             ],
-        ]));
-        $this->setInputFilter($inputFilter);
-
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+        ];
     }
 }

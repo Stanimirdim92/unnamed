@@ -47,10 +47,13 @@ class ErrorHandling
     private $destination = './data/logs/';
 
     /**
-     * @var null $logger;
+     * @var null|Logger $logger;
      */
     private $logger = null;
 
+    /**
+     * @param Logger $logger
+     */
     public function __construct($logger = null)
     {
         $this->logger = $logger;
@@ -64,7 +67,7 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if (!$destination) {
+        if ($destination) {
             $this->destination = $destination;
         }
     }
