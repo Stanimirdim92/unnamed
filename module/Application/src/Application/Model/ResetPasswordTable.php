@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\ResetPassword
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 namespace Application\Model;
@@ -40,6 +40,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 class ResetPasswordTable
 {
@@ -66,7 +67,7 @@ class ResetPasswordTable
      */
     public function __construct(ServiceLocatorInterface $sm = null, TableGateway $tg = null)
     {
-        $this->serviceLocator = $sm;
+        $this->setServiceLocator($sm);
         $this->tableGateway = $tg;
     }
 
@@ -77,14 +78,6 @@ class ResetPasswordTable
     public function setServiceLocator(ServiceLocatorInterface $sm = null)
     {
         $this->serviceLocator = $sm;
-    }
-
-    /**
-     * @return ServiceLocatorInterface|ServiceManager
-     */
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
     }
 
     /**
@@ -104,8 +97,8 @@ class ResetPasswordTable
         $select = $this->prepareQuery(new Select("resetpassword"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
         $resultSet = $this->tableGateway->selectWith($select);
         $resultSet->buffer();
-        if ($resultSet instanceof \Zend\Db\ResultSet\HydratingResultSet && $resultSet->isBuffered()) {
-            return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet->getDataSource() : null);
+        if ($resultSet instanceof HydratingResultSet && $resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0 ) {
+            return $resultSet->getDataSource();
         }
         return null;
     }

@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\Menu
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -57,7 +57,7 @@ class MenuController extends IndexController
         $title = (string) $escaper->escapeUrl($this->getParam("title"));
 
         $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation], null, "menu.parent ASC, menu.menuOrder ASC");
-        // $this->initMetaTags($this->view->contents);
+        $this->initMetaTags($this->view->contents);
         return $this->view;
     }
 }

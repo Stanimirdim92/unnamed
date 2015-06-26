@@ -1,21 +1,21 @@
 {
-    "name": "ZendPress",
+    "name": "Unnamed",
     "description": "Flexible, strong and fast CMS built on top of Zend Framework 2",
     "license": "BSD-3-Clause",
     "keywords": [
         "framework",
         "zf2",
-        "zendpress",
+        "Unnamed",
         "zp"
     ],
     "require": {
         "php": ">=5.4",
-        "zendframework/zendframework": "2.4.*",
-        "imagine/Imagine": "dev-master"
+        "zendframework/zendframework": "2.4.*"
     },
     "require-dev": {
         "zendframework/zend-developer-tools": "dev-master",
         "bjyoungblood/bjy-profiler": "dev-master",
+        "san/san-session-toolbar": "0.*",
         "fabpot/php-cs-fixer": "1.*"
     },
     "suggest": {

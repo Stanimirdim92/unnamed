@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Custom\Plugins
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -40,6 +40,7 @@ use Zend\Session\Container;
 use Zend\Math\Rand;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Stdlib\Hydrator\ObjectProperty;
+use Zend\Db\Adapter\Driver\Pdo\Result;
 
 class Functions
 {
@@ -96,7 +97,7 @@ class Functions
         $stmt = $db->createStatement((string) $sql);
         $stmt->prepare();
         $result = $stmt->execute();
-        if ($result instanceof \Zend\Db\Adapter\Driver\Pdo\Result && $result->isQueryResult()) {
+        if ($result instanceof Result && $result->isQueryResult() && $result->getAffectedRows()) {
             $resultSet = new HydratingResultSet(new ObjectProperty(), new \stdClass());
             $resultSet->initialize($result);
             $resultSet->buffer();
@@ -145,15 +146,11 @@ class Functions
     /**
      * Generate a random 64 chars long string via the OpenSSL|MCRYPT|M_RAND functions.
      *
-     * @param int $number is used to determinate how long should the token. Currently we pass 48 and the output should be 64
      * @return string
      */
-    public static function generateToken($number = 0)
+    public static function generateToken()
     {
-        if ($number === 48) {
-            return base64_encode(Rand::getBytes($number, true));
-        }
-        throw new \Exception("Error while generating a token");
+        return base64_encode(Rand::getBytes(48, true));
     }
 
     /**

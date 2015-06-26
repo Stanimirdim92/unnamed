@@ -3,119 +3,55 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
     $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en">
     <head>
         <meta charset="utf-8">
-        <title><?=$view->webTitle?></title>
-        <meta http-equiv="x-dns-prefetch-control" content="on">
-        <meta name="robots" content="noindex, nofollow">
-        <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta http-equiv="cleartype" content="on">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/back/img/apple-touch-icon-144x144-precomposed.png">
+        <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
+        <?php
+            echo $this->headMeta()
+                ->appendName('robots', 'noindex, nofollow')
+                ->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com')
+                ->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent')
+                ->appendName('HandheldFriendly', 'True')
+                ->appendName('MobileOptimized', '320')
+                ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+                ->appendName('apple-mobile-web-app-capable', 'yes')
+                ->appendName('mobile-web-app-capable', 'yes')
+                ->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent')
+                ->appendHttpEquiv('cleartype', 'on')
+                ->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
-        <link rel="stylesheet" media="screen" href="/front/css/font-awesome.min.css">
-        <link rel="stylesheet" media="screen" href="/back/css/style.css">
+            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath() . '/favicon.ico'])
+                ->prependStylesheet($this->basePath('/back/css/style.css'), 'screen')
+                ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
+
+        ?>
     </head>
     <body>
         <div class="breadcrumbs">
             <ul>
             <?php
-                foreach($view->breadcrumbs as $bread)
-                {
-                    echo "<li><a title='".$bread['name']."' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
+                foreach($view->breadcrumbs as $bread) {
+                    echo "<li><a itemprop='url' title='".$this->escapeHtmlAttr($bread['name'])."' href='".$this->escapeUrl($bread['reference'])."'>".$this->escapeHtml($bread['name'])."</a></li>&nbsp;&sol;&nbsp;";
                 }
             ?>
             </ul>
         </div>
 <?php
-            echo $this->layout()->content;
-
-            if(!empty($view->cache->warning))
-            {
-                if (is_array($view->cache->warning))
-                {
-                    foreach ($view->cache->warning as $value)
-                    {
-?>
-                  <div class="alert alert-warning">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-warning"></i> <?=$value?>
-                  </div>
-<?php
-                    }
-                }
-                else
-                {
-?>
-                  <div class="alert alert-warning">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-warning"></i> <?=$view->cache->warning?>
-                  </div>
-<?php
-                }
-                $view->cache->warning = null;
+        if ($view->flashMessages) {
+            foreach ($view->flashMessages->getMessages() as $context => $message) {
+                echo '<div class="alert alert-' . $this->escapeHtmlAttr($view->flashMessages->getNamespace()) . '">';
+                echo '<button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>';
+                echo '<i class="fa-fw fa fa-'.$this->escapeHtmlAttr($view->flashMessages->getNamespace()).'"></i>' . $this->escapeHtml($message) . '</li>';
+                echo '</div>';
             }
+        }
+        echo $this->layout()->content;
 
-            if(!empty($view->cache->success))
-            {
-                if (is_array($view->cache->success))
-                {
-                    foreach ($view->cache->success as $value)
-                    {
+        echo $this->headScript()
+            ->prependFile($this->basePath('/back/js/custom.js'), 'defer')
+            ->prependFile($this->basePath('/front/js/jquery.min.js'));
 ?>
-                  <div class="alert alert-success">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$value?>
-                  </div>
-<?php
-                    }
-                }
-                else
-                {
-?>
-                  <div class="alert alert-success">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-check"></i> <?=$view->cache->success?>
-                  </div>
-<?php
-                }
-                $view->cache->success = null;
-            }
-
-            if(!empty($view->cache->error))
-            {
-                if (is_array($view->cache->error))
-                {
-                    foreach ($view->cache->error as $value)
-                    {
-?>
-                  <div class="alert alert-danger">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$value?>
-                  </div>
-<?php
-                    }
-                }
-                else
-                {
-?>
-                  <div class="alert alert-danger">
-                    <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
-                    <i class="fa-fw fa fa-times"></i> <?=$view->cache->error?>
-                  </div>
-<?php
-                }
-                $view->cache->error = null;
-            }
-?>
-        <script src="/front/js/jquery.min.js"></script>
-        <script defer src="/back/js/custom.js"></script>
     </body>
 </html>
 <?php

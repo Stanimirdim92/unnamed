@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Admin\Content
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -41,6 +41,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Db\ResultSet\ResultSet;
 
 class ContentTable
 {
@@ -81,14 +82,6 @@ class ContentTable
     }
 
     /**
-     * @return ServiceLocatorInterface|ServiceManager
-     */
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
-    }
-
-    /**
      * Main function for handlin MySQL queries
      *
      * @param  bool $paginated should we use pagination or no
@@ -109,8 +102,8 @@ class ContentTable
             $select = $this->prepareQuery(new Select("content"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
-            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
-                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            if ($resultSet instanceof ResultSet && $resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
             }
             return null;
         }
@@ -142,8 +135,8 @@ class ContentTable
             $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($result);
             $resultSet->buffer();
-            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
-                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            if ($resultSet instanceof ResultSet && $resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
             }
             return null;
         }
@@ -238,7 +231,7 @@ class ContentTable
             'preview'   => (string) $content->preview,
             'text'      => (string) $content->text,
             'menuOrder' => (int) $content->menuOrder,
-            'type'      => (int) $content->type,
+            'type'      => (bool) $content->type,
             'date'      => (string) $content->date,
             'language'  => (int) $content->language,
             'titleLink' => (string) $content->titleLink,

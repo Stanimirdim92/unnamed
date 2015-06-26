@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   index
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -83,7 +83,7 @@ define("ZEND_PRESS_VER", "0.03");
 
 if (version_compare(MIN_PHP_VER, PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but ZendPress <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, ZEND_PRESS_VER, MIN_PHP_VER));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, ZEND_PRESS_VER, MIN_PHP_VER));
 }
 
 /**
@@ -97,7 +97,7 @@ if (!extension_loaded("PDO")        &&
     !extension_loaded("pdo_mysql")
     ) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('One or more of these <b>%1$s</b> required extensions by ZendPress are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring"))));
+    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring"))));
 }
 
 /*================================================================================

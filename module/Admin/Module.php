@@ -29,96 +29,49 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
 namespace Admin;
 
-use Admin\Model\Term;
-use Admin\Model\TermTable;
-use Admin\Model\TermCategory;
-use Admin\Model\TermCategoryTable;
-use Admin\Model\TermTranslation;
-use Admin\Model\TermTranslationTable;
-use Admin\Model\User;
-use Admin\Model\UserTable;
-use Admin\Model\AdminMenu;
-use Admin\Model\AdminMenuTable;
-
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-
-use Zend\ModuleManager\Feature;
-use Zend\Session\Container;
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
 
-class Module implements
-    Feature\AutoloaderProviderInterface,
-    Feature\ConfigProviderInterface,
-    Feature\BootstrapListenerInterface
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface
 {
     /**
+     * Listen to the bootstrap event
+     *
      * @param EventInterface $e
+     * @return array
      */
     public function onBootstrap(EventInterface $e)
     {
-        $em = $e->getApplication()->getEventManager();
-        $sm = $e->getApplication()->getServiceManager();
+        $em = $e->getTarget()->getEventManager();
+        $sm = $e->getTarget()->getServiceManager();
 
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
-            return $this->logError($sm->get('AdminErrorHandling'), $e, $sm);
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
+            $service = $sm->get('AdminErrorHandling')->logError($event, $sm);
         });
     }
 
     /**
-     * @param  AdminErrorHandling $service
-     * @param  Zend\Mvc\MvcEvent $e
-     * @param  ServiceManager $sm
-     * @param  $userRole int
-     *
-     * @return void
+     * @return array|\Traversable
      */
-    private function logError($service, $e, $sm, $userRole = "Guest")
+    public function getConfig()
     {
-        if ($e->getParam("exception") instanceof \Custom\Error\AuthorizationException) {
-            $service->logAuthorisationError($e, $sm, new Container("cache"), $userRole);
-        } elseif ($e->getParam("exception") != null) {
-            $service->logException($e->getParam("exception"));
-        } else {
-            return $this->errorResponse($e);
-        }
-        return $this->errorResponse($e);
+        return include __DIR__.'/config/module.config.php';
     }
 
     /**
-     * This function is used to simulate a fake redirect to errors page,
-     * where it will show a friendly error message to the user.
-     * The error message comes from the throwed exception.
-     * Also make sure that we always send a 404 response.
+     * Return an array for passing to Zend\Loader\AutoloaderFactory.
      *
-     * @param \Zend\Mvc\MvcEvent $e
-     * @return  MvcEvent
+     * @return array
      */
-    private function errorResponse(MvcEvent $e)
-    {
-        $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setVariables([
-            'message' => '404 Not found',
-            'reason' => 'Error',
-            'exception' => ($e->getParam("exception") ? $e->getParam("exception")->getMessage(): ""),
-        ]);
-        $e->getViewModel()->setTemplate('error/index.phtml');
-        $e->stopPropagation();
-        return $e;
-    }
-
-    public function getConfig()
-    {
-        return include __DIR__ . '/config/module.config.php';
-    }
-
     public function getAutoloaderConfig()
     {
         return [
@@ -129,66 +82,6 @@ class Module implements
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],
-            ],
-        ];
-    }
-
-    /**
-     * After each controller rewrite move it's tg and sm to factory
-     */
-    public function getServiceConfig()
-    {
-        return [
-            'factories' => [
-                'AdminMenuTable' => function ($sm) {
-                    return new AdminMenuTable($sm);
-                },
-                'AdminMenuTableGateway' => function ($sm) {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new AdminMenu(null, $sm));
-                    return new TableGateway('adminmenu', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-                'TermTable' => function ($sm) {
-                    $table = new TermTable($sm);
-                    return $table;
-                },
-                'TermTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Term());
-                    return new TableGateway('term', $dbAdapter, null, $resultSetPrototype);
-                },
-
-                'TermCategoryTable' => function ($sm) {
-                    $table = new TermCategoryTable($sm);
-                    return $table;
-                },
-                'TermCategoryTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-                    return new TableGateway('termcategory', $dbAdapter, null, $resultSetPrototype);
-                },
-
-                'TermTranslationTable' => function ($sm) {
-                    $table = new TermTranslationTable($sm);
-                    return $table;
-                },
-                'TermTranslationTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new TermTranslation());
-                    return new TableGateway('termtranslation', $dbAdapter, null, $resultSetPrototype);
-                },
-                'UserTable' => function ($sm) {
-                    return new UserTable($sm);
-                },
-                'UserTableGateway' => function ($sm) {
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new User(null, $sm));
-                    return new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-                },
-
             ],
         ];
     }

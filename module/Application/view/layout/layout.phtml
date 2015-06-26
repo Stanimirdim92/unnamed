@@ -7,37 +7,18 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
-        <meta http-equiv="x-dns-prefetch-control" content="on">
-        <?=$this->headMeta()?>
-        <meta property="og:type" content="article">
-        <meta property="og:url" content="<?=$this->escapeHtmlAttr($view->baseURL)?>">
-        <meta property="og:site_name" content="<?=$this->escapeHtmlAttr($this->headTitle()->renderTitle())?>">
-        <meta name="author" content="Stanimir Dimitrov - stanimirdim92 at gmail dot com">
-        <link rel="canonical" href="<?=$this->escapeHtmlAttr($view->baseURL)?>">
-        <!-- <meta name="robots" content="index, follow" /> -->
-        <!-- <meta name="Googlebot" content="index, follow" /> -->
-        <!-- <meta name="revisit-after" content="3 Days" /> -->
-        <?=$this->placeholder('customHead');?>
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta http-equiv="cleartype" content="on">
-        <link rel="apple-touch-icon" href="/front/img/apple-touch-icon.png">
-        <link rel='shortcut icon' type="image/x-icon"  href='favicon.ico' />
-        <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
-        <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160">
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-        <meta name="msapplication-TileColor" content="#ededed">
-        <meta name="msapplication-TileImage" content="/mstile-144x144.png">
-        <link rel="stylesheet" media="screen" href="/front/css/font-awesome.min.css">
+        <?php
+            echo $this->headMeta();
+            echo $this->placeholder('customHead');
+            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath() . '/favicon.ico'])
+                        ->prependStylesheet($this->basePath('/front/css/style.css'), 'screen')
+                        ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
 
-        <!-- TODO: add css  -->
-        <link rel="stylesheet" media="screen" href="/front/css/style.css">
+
+        ?>
+        <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle()?>">
+        <link rel="apple-touch-icon" href="<?=$this->basePath('/front/img/apple-touch-icon.png')?>">
+        <link rel="canonical" href="<?=$this->serverUrl(true)?>">
     </head>
     <body>
          <nav id="nav">
@@ -80,10 +61,14 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 echo '</div>';
             }
         }
+
         echo $this->layout()->content;
+
+        echo $this->headScript()
+            ->prependFile($this->basePath('/front/js/custom.js'), 'defer')
+            ->prependFile($this->basePath('/front/js/jquery.min.js'));
 ?>
-        <script src="/front/js/jquery.min.js"></script>
-        <script defer src="/front/js/custom.js"></script>
+
     </body>
 </html>
 <?php

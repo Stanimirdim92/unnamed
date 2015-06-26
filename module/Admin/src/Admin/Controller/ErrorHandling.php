@@ -24,16 +24,16 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Error
+ * @category   Application\Error
  * @package    ZendPress
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
-namespace Admin\Controller;
+namespace Application\Controller;
 
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
@@ -47,10 +47,13 @@ class ErrorHandling
     private $destination = './data/logs/';
 
     /**
-     * @var null $logger;
+     * @var null|Logger $logger;
      */
     private $logger = null;
 
+    /**
+     * @param Logger $logger
+     */
     public function __construct($logger = null)
     {
         $this->logger = $logger;
@@ -64,7 +67,7 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if (!$destination) {
+        if ($destination) {
             $this->destination = $destination;
         }
     }
@@ -72,7 +75,7 @@ class ErrorHandling
     /**
      * @param null $e Exception
      */
-    public function logException($e = null)
+    private function logException($e = null)
     {
         $i = 1;
         do {
@@ -87,27 +90,64 @@ class ErrorHandling
     }
 
     /**
+     * @param  Zend\Mvc\MvcEvent $e
+     * @param  ServiceManager $sm
+     *
+     * @return MvcEvent
+     */
+    public function logError($e, $sm)
+    {
+        $exception = $e->getParam("exception");
+        if ($exception instanceof \Custom\Error\AuthorizationException) {
+            $this->logAuthorisationError($e, $sm);
+        } elseif ($exception != null) {
+            $this->logException($exception);
+        }
+
+        $e->getResponse()->setStatusCode(404);
+        $e->getViewModel()->setVariables([
+            'message' => '404 Not found',
+            'reason' => 'Error',
+            'exception' => $exception->getMessage(),
+        ]);
+        $e->getViewModel()->setTemplate('error/index.phtml');
+        $e->stopPropagation();
+        return $e;
+    }
+
+    /**
      * @param MvcEvent $e
      * @param ServiceManager $sm
      * @param Container $cache
      * @param string $userRole
      */
-    public function logAuthorisationError($e, $sm, $cache, $userRole)
+    private function logAuthorisationError($e, $sm)
     {
         $remote = new RemoteAddress();
 
-        if ($cache->role == 1) {
-            $userRole = $cache->role;
-        } elseif ($cache->role == 10) {
-            $userRole = $cache->role;
-        }
+        // if ($cache->role == 1) {
+        //     $userRole = $cache->role;
+        // } elseif ($cache->role == 10) {
+        //     $userRole = $cache->role;
+        // }
 
-        $errorMsg = " *** ADMIN LOG ***
+        // $errorMsg = " *** APPLICATION LOG ***
+        // Controller: " . $e->getRouteMatch()->getParam('controller') . ",
+        // Controller action: " . $e->getRouteMatch()->getParam('action') . ",
+        // User role: " . $userRole. ",
+        // User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
+        // Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
+        // IP: " . $remote->getIpAddress() . ",
+        // Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
+        // Date: " . date("Y-m-d H:i:s", time()) . ",
+        // Full URL: ".$sm->get("Request")->getRequestUri().",
+        // User port: ".$_SERVER["REMOTE_PORT"].",
+        // Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
+        // Method used: " . $sm->get("Request")->getMethod() . "\n";
+
+        $errorMsg = " *** APPLICATION LOG ***
         Controller: " . $e->getRouteMatch()->getParam('controller') . ",
         Controller action: " . $e->getRouteMatch()->getParam('action') . ",
-        User role: " . $userRole. ",
-        User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-        Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
         IP: " . $remote->getIpAddress() . ",
         Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
         Date: " . date("Y-m-d H:i:s", time()) . ",

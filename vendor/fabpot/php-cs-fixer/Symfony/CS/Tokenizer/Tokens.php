@@ -190,7 +190,7 @@ class Tokens extends \SplFixedArray
     private static function getCache($key)
     {
         if (!self::hasCache($key)) {
-            throw new \OutOfBoundsException('Unknown cache key: '.$key);
+            throw new \OutOfBoundsException(sprintf('Unknown cache key: %s', $key));
         }
 
         return self::$cache[$key];
@@ -329,7 +329,7 @@ class Tokens extends \SplFixedArray
         $blockEdgeDefinitions = self::getBlockEdgeDefinitions();
 
         if (!isset($blockEdgeDefinitions[$type])) {
-            throw new \InvalidArgumentException('Invalid param $type');
+            throw new \InvalidArgumentException(sprintf('Invalid param type: %s', $type));
         }
 
         $startEdge = $blockEdgeDefinitions[$type]['start'];
@@ -791,7 +791,7 @@ class Tokens extends \SplFixedArray
                 $token = new Token($token);
             }
             if ($token->isWhitespace() || $token->isComment() || $token->isEmpty()) {
-                throw new \InvalidArgumentException('Non-meaningful token at position: '.$key);
+                throw new \InvalidArgumentException(sprintf('Non-meaningful token at position: %s', $key));
             }
         }
 
@@ -1314,6 +1314,17 @@ class Tokens extends \SplFixedArray
      */
     public function isMonolithicPhp()
     {
+        $size = $this->count();
+
+        if (0 === $size) {
+            return false;
+        }
+
+        // If code is not monolithic there is a great chance that first or last token is `T_INLINE_HTML`:
+        if ($this[0]->isGivenKind(T_INLINE_HTML) || $this[$size - 1]->isGivenKind(T_INLINE_HTML)) {
+            return false;
+        }
+
         $kinds = $this->findGivenKind(array(T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_INLINE_HTML));
 
         /*

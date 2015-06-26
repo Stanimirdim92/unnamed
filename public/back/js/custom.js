@@ -1,4 +1,4 @@
-;(function (w, d, $, undefined) {
+;(function (win, doc, $, undefined) {
     'use strict';
 
     var ajaxImageUpload = {
@@ -54,7 +54,7 @@
          * Create DOM nodes with text, class and appends them to elementAppend
          */
         showMessages: function (text, elementCreate, elementAppend, className) {
-            var el = document.createElement(elementCreate);
+            var el = doc.createElement(elementCreate);
             el.className += className;
             el.innerHTML = text;
 
@@ -115,7 +115,7 @@
         return caption.toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
     };
 
-    $(document).ready(function ($) {
+    $(doc).ready(function ($) {
         'use strict';
 
         ajaxImageUpload.init();
@@ -159,7 +159,7 @@
          * AJAX search form.
          * TODO: make the for loop more flexible so it can work with all kind of data
          */
-        var $urlSplit = window.location.href.toString().split(window.location.host)[1].split("/");
+        var $urlSplit = win.location.href.toString().split(win.location.host)[1].split("/");
         $(".ajax-search").on("keyup", function () {
             var $search = $(".ajax-search").val();
             if ($.trim($search).length > 2) {

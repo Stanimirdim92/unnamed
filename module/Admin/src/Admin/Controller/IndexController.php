@@ -25,27 +25,27 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Admin\Index
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Zend\Session\Container;
-
 use Custom\Error\AuthorizationException;
 use Custom\Plugins\Functions;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Authentication\AuthenticationService;
 
 class IndexController extends AbstractActionController
 {
     /**
-     * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
+     * @var null $cache holds any other session information
      * @return Zend\Session\Container|mixed
      */
     protected $cache = null;
@@ -116,21 +116,11 @@ class IndexController extends AbstractActionController
         // $this->isAdmin();
         parent::onDispatch($e);
         $this->initViewVars();
-        $this->initBreadcrumbs();
-        // $this->initMenus();
     }
 
 /****************************************************
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
-    /**
-     * initialize breadcrumbs
-     * @return  array
-     */
-    private function initBreadcrumbs()
-    {
-        $this->view->breadcrumbs = $this->breadcrumbs;
-    }
 
     /**
      * initialize any session variables in this method
@@ -140,7 +130,6 @@ class IndexController extends AbstractActionController
     private function initCache()
     {
         $this->cache = new Container("cache");
-        $this->view->cache = $this->cache;
     }
 
     /**
@@ -148,16 +137,20 @@ class IndexController extends AbstractActionController
      */
     private function initViewVars()
     {
-        $this->view->translation = $this->translation;
-
+        // $this->initMenus();
         if (!isset($this->translation->languageObject)) {
             $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
             $this->view->langName = $this->translation->languageObject->getName();
         }
+
+        $this->view->breadcrumbs = $this->breadcrumbs;
+        $this->view->cache = $this->cache;
+        $this->view->translation = $this->translation;
     }
 
     /**
      * initialize the admin menus
+     * @todo  rewrite
      */
     private function initMenus()
     {
@@ -184,7 +177,6 @@ class IndexController extends AbstractActionController
 
         // keeping it simple and DRY
         $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
-        return $this->view;
     }
 
 /****************************************************
@@ -197,12 +189,15 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @param String $name
-     * @return Ambigous <object, multitype:>
+     * Definitely not the best way, but for now I can't think for a better way.
+     *
+     * @todo  call this via a factory
+     * @param null $name
+     * @return ObjectTable
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || !$name) {
+        if (!is_string($name) || empty($name)) {
             throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
         }
         return $this->getServiceLocator()->get($name . "Table");
@@ -221,7 +216,7 @@ class IndexController extends AbstractActionController
      */
     private function isAdmin()
     {
-        $auth = new \Zend\Authentication\AuthenticationService();
+        $auth = new AuthenticationService();
         if ($auth->hasIdentity()) {
              if (isset($auth->getIdentity()->role) &&
                 ((int) $auth->getIdentity()->role === 10) && isset($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
@@ -230,32 +225,26 @@ class IndexController extends AbstractActionController
                         unset($checkAdminExistence);
                         return true;
                     }
-                    $this->clearUserData();
-                    return $this->redirect()->toUrl("/");
+                    $this->clearUserData($auth);
             }
-            $this->clearUserData();
-            return $this->redirect()->toUrl("/");
+            $this->clearUserData($auth);
         }
-        $this->clearUserData();
-        return $this->redirect()->toUrl("/");
+        $this->clearUserData($auth);
     }
 
     /**
-     * clear user data - sessions, cache etc
-     * TODO maybe include a logging function
-     *
+     * @param AuthenticationService $auth
      * @return void
      * @throws AuthorizationException
      */
-    private function clearUserData()
+    private function clearUserData(AuthenticationService $auth = null)
     {
         $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
-        $this->cache = new Container("cache");
-        $this->translation = new Container("translations");
-        $authSession = new Container('ul');
-        $authSession->getManager()->getStorage()->clear();
-        throw new AuthorizationException($this->translation->ERROR_AUTHORIZATION);
+        $auth->clearIdentity();
+        $this->cache = null;
+        $this->translation = null;
+        throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
     }
 
     /**
@@ -281,6 +270,9 @@ class IndexController extends AbstractActionController
         if (!$param) {
             return $default;
         }
+        /**
+         * If this is array it must comes from fromFiles()
+         */
         if (is_array($param)) {
             return $param;
         }
@@ -288,34 +280,36 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * @param null $message holds the generated error(s)
-     * @return string|array
+     *
+     * @param null|string $message
+     * @param null|string $namespace
      */
-    protected function setErrorNoParam($message = null)
+    protected function setLayoutMessages($message = null, $namespace = 'default')
     {
-        if (!empty($message)) {
-            $this->translation->error = $message;
-        } elseif ($message === self::NO_ID) {
-            $this->translation->error = $this->translation->NO_ID_SET;
-        } else {
-            $this->translation->error = $this->translation->ERROR_STRING;
-        }
-        $this->view->setTerminal(true);
-    }
+        $flashMessenger = $this->flashMessenger();
+        $messages = [];
+        $arrayMessages = [];
 
-    /**
-     * @var array|null $formErrors
-     * @return array
-     */
-    protected function formErrors($formErrors = null)
-    {
-        $error = [];
-        foreach ($formErrors as $msg) {
-            foreach ($msg as $key => $text) {
-                $error[] = $text;
-            }
+        if (!in_array($namespace, ["success", "error", "warning", 'info', 'default'])) {
+            $namespace = 'default';
         }
-        return $this->setErrorNoParam($error);
+
+        $flashMessenger->setNamespace($namespace);
+        if (is_array($message)) {
+            foreach ($message as $msg) {
+                if (is_array($msg)) {
+                    foreach ($msg as $text) {
+                        $flashMessenger->addMessage($text, $namespace);
+                    }
+                } else {
+                    $flashMessenger->addMessage($msg, $namespace);
+                }
+            }
+        } else {
+            $flashMessenger->addMessage($message, $namespace);
+        }
+        $this->view->flashMessages = $flashMessenger;
+        return $this->view;
     }
 
     /**
@@ -327,6 +321,16 @@ class IndexController extends AbstractActionController
         $this->getResponse()->setStatusCode($code);
         $this->view->setTemplate('error/index.phtml');
         return $this->view;
+    }
+
+    /**
+     * Show translated message
+     * @param  null|string $str the constant name from the database. It should always be upper case.
+     */
+    protected function translate($str = null)
+    {
+        $str = strtoupper($str);
+        return (string) $this->translation->{$str};
     }
 
 /****************************************************

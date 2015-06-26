@@ -25,143 +25,46 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\Module
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
-use Zend\Cache\StorageFactory;
-use Zend\Session\SaveHandler\Cache;
-use Zend\Session\Config\SessionConfig;
-use Zend\Session\SessionManager;
-use Zend\Session\Validator\HttpUserAgent;
-use Zend\Session\Validator\RemoteAddr;
-use Zend\ModuleManager\Feature;
-use Zend\Session\Container;
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
-use Custom\Plugins\Functions;
 
-class Module implements
-    Feature\AutoloaderProviderInterface,
-    Feature\ConfigProviderInterface,
-    Feature\BootstrapListenerInterface
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface
 {
-    /**
-     * @param array $config Holds cookies params
-     */
-    public function initSession()
-    {
-        $sessionConfig = new SessionConfig();
-        $sessionConfig->setOptions([
-            'cookie_lifetime'     => 7200, //2hrs
-            'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
-            'use_cookies'         => true,
-            'cache_expire'        => 180,  //3hrs
-            'cookie_path'         => "/",
-            'cookie_secure'       => Functions::isSSL(),
-            'cookie_httponly'     => true,
-            'name'                => '__zpc', // zend press cookie
-        ]);
-        $sessionManager = new SessionManager($sessionConfig);
-        // $memCached = new StorageFactory::factory(array(
-        //     'adapter' => array(
-        //        'name'     =>'memcached',
-        //         'lifetime' => 7200,
-        //         'options'  => array(
-        //             'servers'   => array(
-        //                 array(
-        //                     '127.0.0.1',11211
-        //                 ),
-        //             ),
-        //             'namespace'  => 'MYMEMCACHEDNAMESPACE',
-        //             'liboptions' => array(
-        //                 'COMPRESSION' => true,
-        //                 'binary_protocol' => true,
-        //                 'no_block' => true,
-        //                 'connect_timeout' => 100
-        //             )
-        //         ),
-        //     ),
-        // ));
-
-        // $saveHandler = new Cache($memCached);
-        // $sessionManager->setSaveHandler($saveHandler);
-        $sessionManager->start();
-        $sessionManager->getValidatorChain()->attach('session.validate', [ new HttpUserAgent(), 'isValid']);
-        $sessionManager->getValidatorChain()->attach('session.validate', [ new RemoteAddr(), 'isValid']);
-        return Container::setDefaultManager($sessionManager);
-    }
 
     /**
+     * Listen to the bootstrap event
+     *
      * @param EventInterface $e
+     * @return array
      */
     public function onBootstrap(EventInterface $e)
     {
-        /**
-         * Init sessions and cookies before everything else
-         */
-        $this->initSession();
 
         $em = $e->getApplication()->getEventManager();
-        $sm = $e->getApplication()->getServiceManager();
+        $sm = $e->getTarget()->getServiceManager();
 
-        $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'setModuleLayouts']);
         $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $e) use ($sm) {
-            return $this->logError($sm->get('ApplicationErrorHandling'), $e, $sm);
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
+            $service = $sm->get('ApplicationErrorHandling');
+            $service->logError($event, $sm);
         });
 
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
-    }
-
-    /**
-     * @param  ApplicationErrorHandling $service
-     * @param  Zend\Mvc\MvcEvent $e
-     * @param  ServiceManager $sm
-     * @param  $userRole int
-     *
-     * @return void
-     */
-    private function logError($service, $e, $sm, $userRole = "Guest")
-    {
-        if ($e->getParam("exception") instanceof \Custom\Error\AuthorizationException) {
-            $service->logAuthorisationError($e, $sm, new Container("cache"), $userRole);
-        } elseif ($e->getParam("exception") != null) {
-            $service->logException($e->getParam("exception"));
-        } else {
-            return $this->errorResponse($e);
-        }
-        return $this->errorResponse($e);
-    }
-
-    /**
-     * This function is used to simulate a fake redirect to errors page,
-     * where it will show a friendly error message to the user.
-     * The error message comes from the throwed exception.
-     * Also make sure that we almost always send a 404 response.
-     *
-     * @param Zend\Mvc\MvcEvent $e
-     * @return  MvcEvent
-     */
-    private function errorResponse(MvcEvent $e)
-    {
-        $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setVariables([
-            'message' => '404 Not found',
-            'reason' => 'Error',
-            'exception' => ($e->getParam("exception") ? $e->getParam("exception")->getMessage(): ""),
-        ]);
-        $e->getViewModel()->setTemplate('error/index.phtml');
-        $e->stopPropagation();
-        return $e;
     }
 
     /**
@@ -171,45 +74,55 @@ class Module implements
      */
     public function onDispatch(MvcEvent $e)
     {
-        $action = $e->getRouteMatch()->getParam('title');
+        /**
+         * Setup module layouts
+         */
+        $moduleNamespace = substr(get_class($e->getTarget()), 0, strpos(get_class($e->getTarget()), '\\'));
+        $config = $e->getApplication()->getServiceManager()->get('Config');
+        $route = $e->getRouteMatch();
+        if (isset($config['module_layouts'][$moduleNamespace])) {
+            $e->getTarget()->layout($config['module_layouts'][$moduleNamespace]);
+        }
+
+        /**
+         * Title param comes from MenuController
+         */
+        $action = trim($route->getParam('title'));
 
         if (empty($action)) {
-            $action = strtolower($e->getRouteMatch()->getParam('action'));
-            if ($action === "index" && $e->getRouteMatch()->getMatchedRouteName() !== 'application') {
-                $action = $e->getRouteMatch()->getMatchedRouteName();
-            } elseif ($action !== "index") {
-                $action .= ($e->getRouteMatch()->getParam("post") ? " - ".$e->getRouteMatch()->getParam("post") : "");
+            $action = strtolower($route->getParam('action'));
+            if ($action !== "index") {
+                /**
+                 * Post param means that the user is in NewsController
+                 */
+                $action .= ($route->getParam("post") ? " - ".$route->getParam("post") : "");
             } else {
+                /**
+                 * Front main page aka IndexController::indexAction
+                 */
                 $action = "Home"; // must be set from db
             }
         }
 
         $headTitleHelper = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('headTitle');
-        $headTitleHelper->append('ZendPress'); // must be set from db
+        $headTitleHelper->append('Unnamed'); // must be set from db
         $headTitleHelper->setSeparator(' - ');
         $headTitleHelper->append($action);
     }
 
     /**
-     * Handle different layouts for each module
-     */
-    public function setModuleLayouts(MvcEvent $e)
-    {
-        $moduleNamespace = substr(get_class($e->getTarget()), 0, strpos(get_class($e->getTarget()), '\\'));
-        $config = $e->getApplication()->getServiceManager()->get('Config');
-        if (isset($config['module_layouts'][$moduleNamespace])) {
-            $e->getTarget()->layout($config['module_layouts'][$moduleNamespace]);
-        }
-    }
-
-    /**
-     * @return array|mixed|\Traversable
+     * @return array|\Traversable
      */
     public function getConfig()
     {
         return include __DIR__.'/config/module.config.php';
     }
 
+    /**
+     * Return an array for passing to Zend\Loader\AutoloaderFactory.
+     *
+     * @return array
+     */
     public function getAutoloaderConfig()
     {
         return [

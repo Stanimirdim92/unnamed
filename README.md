@@ -5,7 +5,7 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
-### ZendPress CMS ###
+### Unnamed CMS ###
 
 * Trying to rewrite Wordpess with Zend Framework 2
 * Version 0.03

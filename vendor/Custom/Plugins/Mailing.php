@@ -26,7 +26,7 @@ class Mailing
         $transport = new SmtpTransport();
         $options   = new SmtpOptions([
             'host'              => 'smtp.gmail.com',
-            'name'              => 'ZendPress',
+            'name'              => 'Unnamed',
             'connection_class'  => 'login',
             'connection_config' => [
                 'username' => 'stanimirdim92@gmail.com',

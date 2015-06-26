@@ -847,7 +847,7 @@ FileETag None
 # http://cspisawesome.com/.
 
 <IfModule mod_headers.c>
-    Header set Content-Security-Policy "script-src 'self' https://www.google-analytics.com/analytics.js; object-src 'self'"
+    Header set X-Content-Security-Policy "allow 'self'; media-src *; img-src *; script-src 'self' https://ajax.googleapis.com; style-src 'self';"
     # `mod_headers` cannot match based on the content-type, however,
     # the `Content-Security-Policy` response header should be send
     # only for HTML documents and not for the other resources.

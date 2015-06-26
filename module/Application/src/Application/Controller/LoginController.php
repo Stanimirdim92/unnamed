@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\Login
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -140,6 +140,9 @@ class LoginController extends IndexController
      */
     public function indexAction()
     {
+        /**
+         * @var  Application\Form\LoginForm
+         */
         $form = $this->loginForm;
         $form->get("login")->setValue($this->translate("LOGIN"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
@@ -155,6 +158,9 @@ class LoginController extends IndexController
             return $this->logoutAction("/login");
         }
 
+        /**
+         * @var  Application\Form\LoginForm
+         */
         $form = $this->loginForm;
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
@@ -165,7 +171,6 @@ class LoginController extends IndexController
 
         $adapter = $this->getAuthAdapter($form->getData());
         $auth = new AuthenticationService();
-        // TODO add setStorage
         $result = $auth->authenticate($adapter);
         if (!$result->isValid()) {
             $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
@@ -177,11 +182,11 @@ class LoginController extends IndexController
             $data = $adapter->getResultRowObject($includeRows, $excludeRows);
             $user = $this->getTable('user')->getUser($data->id);
 
-            if ($user->getDeleted() === 1) {
+            if ((bool) $user->getDeleted() === 1) {
                 $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
                 return $this->logoutAction("/login");
             }
-            if ($user->getAdmin() === 1) {
+            if ((bool) $user->getAdmin() === 1) {
                 $role = self::ROLE_ADMIN;
             }
 
@@ -238,8 +243,10 @@ class LoginController extends IndexController
 
     public function newpasswordprocessAction()
     {
+        /**
+         * @var  Application\Form\NewPasswordForm
+         */
         $form = $this->newPasswordForm;
-
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
@@ -271,6 +278,9 @@ class LoginController extends IndexController
      */
     public function resetpasswordAction()
     {
+        /**
+         * @var  Application\Form\ResetPasswordForm
+         */
         $form = $this->resetPasswordForm;
         $form->get("resetpw")->setValue($this->translate("RESET_PW"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
@@ -280,7 +290,7 @@ class LoginController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("User")->fetchList(false, "email = '".$formData['email']."'")->current()   ;
+                $existingEmail = $this->getTable("User")->fetchList(false, "email = '".$formData['email']."'")->current();
 
                 if (count($existingEmail) === 1) {
                     $token = Functions::generateToken(48); // returns 64 characters long string

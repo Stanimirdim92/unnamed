@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\ResetPassword
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -241,6 +241,14 @@ class ResetPassword
     }
 
     /**
+     * magic property remove (unset)
+     */
+    public function __unset($property)
+    {
+        return (property_exists($this, $property) ? unset($this->{$property}) : null);
+    }
+
+    /**
      * magic serializer
      */
     public function __sleep()
@@ -263,7 +271,11 @@ class ResetPassword
     }
 
     /**
-     * this is a handy function for encoding the object to json for transfer purposes
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
     public function getProperties(array $skip = [], $serializable = false)
     {
@@ -271,11 +283,11 @@ class ResetPassword
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[$key] = $this->$key;
+                $returnValue[$key] = $this->{$key};
             }
         }
         if ((bool) $serializable === true) {
-            return json_encode($returnValue);
+            return serialize($returnValue);
         }
         return $returnValue;
     }

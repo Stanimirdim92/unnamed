@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Admin\Content
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 
@@ -100,7 +100,7 @@ class ContentController extends IndexController
      */
     public function addAction()
     {
-        $this->showForm('Add', null);
+        $this->showForm($this->translate("ADD"), null);
         $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>"Add a new content"]);
         return $this->view;
     }
@@ -113,8 +113,8 @@ class ContentController extends IndexController
     {
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=> $this->translation->MODIFY_CONTENT." &laquo;".$content->getTitle()."&raquo;"]);
-        $this->showForm($this->translation->MODIFY, $content);
+        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
+        $this->showForm($this->translate("MODIFY"), $content);
         return $this->view;
     }
 
@@ -124,7 +124,7 @@ class ContentController extends IndexController
     public function deleteAction()
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->translation->success = "Content was successfully deleted";
+        $this->setLayoutMessages("Content was successfully deleted", "success");
         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
     }
 
@@ -145,7 +145,7 @@ class ContentController extends IndexController
     public function cloneAction()
     {
         $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->translation->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully cloned";
+        $this->setLayoutMessages("Content &laquo;".$content->getTitle()."&raquo; was successfully cloned", "success");
         $this->redirect()->toUrl("/admin/content");
         return $this->view;
     }
@@ -182,6 +182,9 @@ class ContentController extends IndexController
             $content = new Content([], null);
         }
 
+        /**
+         * Populate the form with menus and languages data
+         */
         $menus = $this->prepareMenusData();
         $valueOptions = [];
         foreach ($menus["menus"] as $key => $menu) {
@@ -226,14 +229,14 @@ class ContentController extends IndexController
                         $formData = $form->getData();
                         $formData->preview = $content->preview["name"];
                         $this->getTable("content")->saveContent($content);
-                        $this->translation->success = "Content &laquo;".$content->getTitle()."&raquo; was successfully saved";
+                        $this->setLayoutMessages("Content &laquo;".$content->getTitle()."&raquo; was successfully saved", "success");
                         return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
                     } catch (\Exception $e) {
                         return;
                     }
                 }
             } else {
-                $this->formErrors($form->getMessages());
+                $this->setLayoutMessages($form->getMessages(), "error");
                 return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
             }
         }

@@ -10,6 +10,11 @@ return [
             'ContentTable'                => 'Admin\Factory\ContentTableFactory',
             'LanguageTable'               => 'Admin\Factory\LanguageTableFactory',
             'MenuTable'                   => 'Admin\Factory\MenuTableFactory',
+            'UserTable'                   => 'Admin\Factory\UserTableFactory',
+            'TermTranslationTable'        => 'Admin\Factory\TermTranslationTableFactory',
+            'TermCategoryTable'           => 'Admin\Factory\TermCategoryTableFactory',
+            'TermTable'                   => 'Admin\Factory\TermTableFactory',
+            'AdminMenu'                   => 'Admin\Factory\AdminMenuFactory',
         ],
     ],
     'controllers' => [
@@ -27,10 +32,6 @@ return [
             'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
             'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
             'ImagineService'                    => 'Imagine\Gd\Imagine',
-        ],
-    ],
-    'view_helpers' => [
-        'factories' => [
         ],
     ],
     'view_manager' => [

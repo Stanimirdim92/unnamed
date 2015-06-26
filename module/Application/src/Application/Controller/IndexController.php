@@ -25,11 +25,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @category   Application\Index
- * @package    ZendPress
+ * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.3
  * @link       TBA
  */
 namespace Application\Controller;
@@ -45,7 +45,7 @@ use Application\Form\ContactForm;
 class IndexController extends AbstractActionController
 {
     /**
-     * @var null $cache holds any other session information, contains warning, success and error vars that are shown just once and then reset
+     * @var null $cache holds any other session information
      * @return Zend\Session\Container
      */
     protected $cache = null;
@@ -91,6 +91,10 @@ class IndexController extends AbstractActionController
     const NO_ID = 'ID not found';
 
     /**
+     * Pass all dependencies from service manager via the constructor
+     *
+     * @see Application\Factory\IndexControllerFactory
+     *
      * @param Application\Form\ContactForm $contactForm
      * @param Zend\View\Helper\Placeholder\Container $customHead
      * @param Zend\View\Helper\HeadMeta $headMeta
@@ -125,9 +129,8 @@ class IndexController extends AbstractActionController
         }
         $this->initMenus();
         $this->initViewVars();
-        // not working properly die to the passed classes into the consturctor. they are not being shared...
-        // $this->initMetaTags();
-        return $this->view;
+        // not working properly due to the passed classes into the consturctor. they are not being shared...
+        $this->initMetaTags();
     }
 
 /****************************************************
@@ -141,7 +144,6 @@ class IndexController extends AbstractActionController
     private function initCache()
     {
         $this->cache = new Container("cache");
-        return $this->view;
     }
 
     /**
@@ -157,7 +159,6 @@ class IndexController extends AbstractActionController
 
         $this->view->cache = $this->cache;
         $this->view->translation = $this->translation;
-        $this->view->baseURL = $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri();
         $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
         return $this->view;
     }
@@ -172,7 +173,7 @@ class IndexController extends AbstractActionController
 
         /**
          * Load English as default language.
-         * Maybe make this possible to change via backend?
+         * Maybe make this possible to change the default language via backend?
          */
         if (!isset($this->translation->language)) {
             $this->translation = Functions::initTranslations(1, true);
@@ -181,7 +182,6 @@ class IndexController extends AbstractActionController
 
         // keeping it simple and DRY
         $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
-        return $this->view;
     }
 
     /**
@@ -244,19 +244,40 @@ class IndexController extends AbstractActionController
         (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
         (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
         (empty($preview) ? $preview = "" : $preview);
-        (empty($title) ? $title = "ZendPress" : $title);
+        (empty($title) ? $title = "Unnamed" : $title);
 
+        /**
+         * @var Zend\View\Helper\Placeholder\Container
+         */
         $placeholder = $this->customHead;
-        $placeholder->append("<meta itemprop='name' content='ZendPress'>\r\n"); // must be sey from db
+        $placeholder->append("<meta itemprop='name' content='Unnamed'>\r\n"); // must be sey from db
         $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
         $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
         $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
+
+        /**
+         * @var Zend\View\Helper\HeadMeta
+         */
         $vhm = $this->headMeta;
+        // $vhm->appendName('robots', 'index, follow');
+        // $vhm->appendName('Googlebot', 'index, follow');
+        // $vhm->appendName('revisit-after', '3 Days');
         $vhm->appendName('keywords', $keywords);
         $vhm->appendName('description', $description);
+        $vhm->appendName('viewport', 'width=device-width, initial-scale=1.0');
+        $vhm->appendName('apple-mobile-web-app-capable', 'yes');
+        $vhm->appendName('mobile-web-app-capable', 'yes');
+        $vhm->appendName('HandheldFriendly', 'True');
+        $vhm->appendName('MobileOptimized', '320');
+        $vhm->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
+        $vhm->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
         $vhm->appendProperty('og:image', $preview);
         $vhm->appendProperty("og:title", $title);
         $vhm->appendProperty("og:description", $description);
+        $vhm->appendProperty("og:type", 'article');
+        $vhm->appendProperty("og:url", $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri());
+        $vhm->appendHttpEquiv('cleartype', 'on');
+        $vhm->appendHttpEquiv('x-dns-prefetch-control', 'on');
     }
 
 /****************************************************
@@ -264,6 +285,9 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
+     * Definitely not the best way, but for now I can't think for a better way.
+     *
+     * @todo  call this via a factory
      * @param null $name
      * @return ObjectTable
      */
@@ -286,9 +310,9 @@ class IndexController extends AbstractActionController
     {
         $auth = new AuthenticationService();
         if ($auth->hasIdentity()) {
-            if (isset($auth->getIdentity()->role) &&
+            if (!empty($auth->getIdentity()->role) &&
               ((int) $auth->getIdentity()->role === 1 || (int) $auth->getIdentity()->role === 10) &&
-              isset($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
+              !empty($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
                 /**
                  * If everything went fine, just return true and let the user access the desired area or make a redirect
                  */
@@ -299,10 +323,12 @@ class IndexController extends AbstractActionController
             }
             return $this->clearUserData($auth); // something is wrong, clear all user data
         }
+        return null;
     }
 
     /**
      * @param AuthenticationService $auth
+     * @throws AuthorizationException
      */
     private function clearUserData(AuthenticationService $auth = null)
     {
@@ -386,9 +412,11 @@ class IndexController extends AbstractActionController
 
     /**
      * Show translated message
+     * @param  null|string $str the constant name from the database. It should always be upper case.
      */
-    public function translate($str = null)
+    protected function translate($str = null)
     {
+        $str = strtoupper($str);
         return (string) $this->translation->{$str};
     }
 
