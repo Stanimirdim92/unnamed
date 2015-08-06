@@ -16,7 +16,7 @@ DD.MM.YYYY
  - Removed $this->cache and $this->initCache()
  - Removed SM from controllers
  - initMetaTags() improvements
- - Refactored initViewVars()
+ - Removed initViewVars()
  - Fixed variable check in checkIdentity()
  - Deleted unused Params.php View Helper and AjaxSearchForm.php
  - Removed ServiceManager from all files
@@ -37,6 +37,7 @@ DD.MM.YYYY
  - Fixed user export in excel file
  - Fixed session not being initiated. translation session no longer exists. It was replaced by a global session named zpc
  - Created new controller plugin IndexPlugin
+ - Deactivated translations for now.
 
 # TODO
  - After/In Beta version start creating the first PHPUnit and Selenium tests

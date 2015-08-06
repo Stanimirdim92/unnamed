@@ -5,6 +5,10 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
+### CHANGELOG ###
+
+[CHANGELOG](https://bitbucket.org/StanimirDim92/zend-boilerplate/src/119577f41693d87d79fdd85e399dd62ba098f431/CHANGELOG.md?at=master)
+
 ### Unnamed CMS ###
 
 * Trying to rewrite Wordpess with Zend Framework 2
@@ -21,7 +25,7 @@ This README would normally document whatever steps are necessary to get your app
  - mbstring
  - pdo_mysql
 * ircmaxell password class (integrated into the system)
-* Apache 2.11+ or nginx
+* Apache 2.11+ or nginx (nginx setup will be proveded later)
 * Zend Framework 2.4+ (integrated into the system)
 * CodePlex (integrated into the system)
 
