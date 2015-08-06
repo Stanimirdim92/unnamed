@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Module
- * @package    ZendPress
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -38,24 +36,57 @@ namespace Admin;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
+use Zend\ModuleManager\ModuleManagerInterface;
+use Zend\Session\Container;
+use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
 
-class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
+    /**
+     * @param  $mm ModuleManager
+     */
+    public function init(ModuleManagerInterface $mm)
+    {
+        /**
+         * Setup module layout
+         */
+        $mm->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+            $e->getTarget()->layout('layout/admin');
+        });
+    }
+
     /**
      * Listen to the bootstrap event
      *
      * @param EventInterface $e
-     * @return array
      */
     public function onBootstrap(EventInterface $e)
     {
-        $em = $e->getTarget()->getEventManager();
-        $sm = $e->getTarget()->getServiceManager();
+        $app = $e->getTarget();
 
+        if (!($app->getRequest() instanceof HttpRequest)) {
+            return;
+        }
+
+       /**
+        * @var $em Zend\EventManager\EventManager
+        */
+        $em = $app->getEventManager();
+
+       /**
+        * @var $sm Zend\ServiceManager\ServiceManager
+        */
+        $sm = $app->getServiceManager();
+
+        /**
+         * Atach event listener for all types of errors, warnings, exceptions etc.
+         */
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
-            $service = $sm->get('AdminErrorHandling')->logError($event, $sm);
+            $service = $sm->get('AdminErrorHandling');
+            $service->logError($event, $sm);
         });
     }
 

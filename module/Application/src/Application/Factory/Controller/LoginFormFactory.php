@@ -24,14 +24,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Factory
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Application\Factory\Controller;
 
 use Application\Controller\LoginController;
@@ -44,14 +43,15 @@ class LoginFormFactory
      */
     public function __invoke(ControllerManager $controllerManager)
     {
-        return new LoginController(
-            $controllerManager->getServiceLocator()->get('FormElementManager')->get('Application\Form\LoginForm'),
-            $controllerManager->getServiceLocator()->get('Zend\Db\Adapter\Adapter'),
-            $controllerManager->getServiceLocator()->get('FormElementManager')->get('Application\Form\ResetPasswordForm'),
-            $controllerManager->getServiceLocator()->get('FormElementManager')->get('Application\Form\NewPasswordForm')
+        $serviceLocator = $controllerManager->getServiceLocator();
+
+        $controller = new LoginController(
+            $serviceLocator->get('FormElementManager')->get('Application\Form\LoginForm'),
+            $serviceLocator->get('Zend\Db\Adapter\Adapter'),
+            $serviceLocator->get('FormElementManager')->get('Application\Form\ResetPasswordForm'),
+            $serviceLocator->get('FormElementManager')->get('Application\Form\NewPasswordForm')
         );
+
+        return $controller;
     }
 }
-
-
-

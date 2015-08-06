@@ -1,18 +1,17 @@
 <div>
-    <a href="/admin/content" class="btn btn-labeled btn-default">
-        <span class="btn-label"><i class="fa fa-chevron-left"></i></span><?=$this->translation->BACK;?>
-    </a>
-    <br/>
-    <br/>
-    <header>
-        <i class="fa fa-list"></i>
-        <h2><?=$this->translation->MODIFY_CONTENT;?></h2>
-    </header>
-    <section class='form'>
-        <button type="button" class="media-modal-toggle"><i class="fa fa-upload"></i><?=$this->translation->UPLOAD_IMAGES?></button>
+    <p>
+        <a href="<?=$this->url("admin", ["controller" => "content"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
+    <div class='form-inputs'>
+        <button type="button" class="media-modal-toggle"><i class="fa fa-upload"></i><?=$this->translate("UPLOAD_IMAGES")?></button>
 <?php
+            /**
+             * @var Admin\Form\ContentForm
+             */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin',array('controller' =>'content','action' => 'modify','id' => $this->content->getId())));
+            $form->setAttribute('action', $this->url('admin', ['controller' =>'content','action' => 'modify','id' => $this->content->getId()]));
             $form->prepare();
 
             echo $this->form()->openTag($form);
@@ -34,5 +33,5 @@
 
             echo $this->form()->closeTag();
 ?>
-    </section>
+    </div>
 </div>

@@ -24,16 +24,14 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Error
- * @package    ZendPress
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
-namespace Application\Controller;
+namespace Admin\Controller;
 
 use Zend\Http\PhpEnvironment\RemoteAddress;
 
@@ -67,7 +65,7 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if ($destination) {
+        if (is_dir($destination)) {
             $this->destination = $destination;
         }
     }
@@ -107,10 +105,10 @@ class ErrorHandling
         $e->getResponse()->setStatusCode(404);
         $e->getViewModel()->setVariables([
             'message' => '404 Not found',
-            'reason' => 'Error',
-            'exception' => $exception->getMessage(),
+            'reason' => 'The link you have requested doesn\'t exists',
+            'exception' => ($exception != null ? $exception->getMessage() : ""),
         ]);
-        $e->getViewModel()->setTemplate('error/index.phtml');
+        $e->getViewModel()->setTemplate('error/index');
         $e->stopPropagation();
         return $e;
     }
@@ -120,44 +118,25 @@ class ErrorHandling
      * @param ServiceManager $sm
      * @param Container $cache
      * @param string $userRole
+     * @todo add user data like id and name
      */
     private function logAuthorisationError($e, $sm)
     {
         $remote = new RemoteAddress();
 
-        // if ($cache->role == 1) {
-        //     $userRole = $cache->role;
-        // } elseif ($cache->role == 10) {
-        //     $userRole = $cache->role;
-        // }
-
-        // $errorMsg = " *** APPLICATION LOG ***
-        // Controller: " . $e->getRouteMatch()->getParam('controller') . ",
-        // Controller action: " . $e->getRouteMatch()->getParam('action') . ",
-        // User role: " . $userRole. ",
-        // User id: " . (isset($cache->user->id) ? $cache->user->id : "Guest"). ",
-        // Admin: " . (isset($cache->user->admin) ? "Yes" : "No"). ",
-        // IP: " . $remote->getIpAddress() . ",
-        // Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
-        // Date: " . date("Y-m-d H:i:s", time()) . ",
-        // Full URL: ".$sm->get("Request")->getRequestUri().",
-        // User port: ".$_SERVER["REMOTE_PORT"].",
-        // Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-        // Method used: " . $sm->get("Request")->getMethod() . "\n";
-
-        $errorMsg = " *** APPLICATION LOG ***
-        Controller: " . $e->getRouteMatch()->getParam('controller') . ",
-        Controller action: " . $e->getRouteMatch()->getParam('action') . ",
-        IP: " . $remote->getIpAddress() . ",
-        Browser string: " . $sm->get("Request")->getServer()->get('HTTP_USER_AGENT') . ",
-        Date: " . date("Y-m-d H:i:s", time()) . ",
+        $errorMsg = " *** ADMIN LOG ***
+        Controller: ".$e->getRouteMatch()->getParam('controller').",
+        Controller action: ".$e->getRouteMatch()->getParam('action').",
+        IP: ".$remote->getIpAddress().",
+        Browser string: ".$sm->get("Request")->getServer()->get('HTTP_USER_AGENT').",
+        Date: ".date("Y-m-d H:i:s", time()).",
         Full URL: ".$sm->get("Request")->getRequestUri().",
         User port: ".$_SERVER["REMOTE_PORT"].",
         Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
-        Method used: " . $sm->get("Request")->getMethod() . "\n";
+        Method used: ".$sm->get("Request")->getMethod()."\n";
 
-        $log = new \Zend\Log\Logger();
-        $writer = new \Zend\Log\Writer\Stream($this->destination . date('F') . '.txt');
+        $log = new Logger();
+        $writer = new Stream($this->destination.date('F').'.txt');
         $log->addWriter($writer);
         $log->info($errorMsg);
         return $log;

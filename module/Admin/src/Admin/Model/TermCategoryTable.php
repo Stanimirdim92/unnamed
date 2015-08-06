@@ -1,154 +1,225 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\ServiceManager\ServiceManager;
+use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Predicate\Expression;
 
 class TermCategoryTable
 {
-    private $tableGateway;
-    private $serviceManager;
+    /**
+     * @var TableGateway $tableGateway
+     */
+    private $tableGateway = null;
 
-    public function __construct(ServiceManager $sm)
+    /**
+     * Preducate constants
+     */
+    const PRE_AND = "AND";
+    const PRE_OR = "OR";
+    const PRE_NULL = null;
+
+    /**
+     * @param TableGateway|null   $tg
+     */
+    public function __construct(TableGateway $tg = null)
     {
-        $this->serviceManager = $sm;
-        $this->tableGateway = $sm->get("TermCategoryTableGateway");
+        $this->tableGateway = $tg;
     }
 
     /**
-     * Fetch all records from the DB
-     * @param boolean $paginated
-     * @param string $where
-     * @param string $order
-     * @param string $limit
-     * @param string $offset
-     * @return unknown
+     * Main function for handling MySQL queries
+     *
+     * @param  bool $paginated              should we use pagination or no
+     * @param  array $columns               substitute * with the columns you need
+     * @param  null|array|string $where     WHERE condition
+     * @param  null $group                  GROUP condition
+     * @param  null $order                  ORDER condition
+     * @param  int $limit                   LIMIT condition
+     * @param  int $offset                  OFFSET condition
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchList($paginated=false, $where=null, $order=null, $limit=null, $offset=null)
+    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
-        if ($paginated) {
-            $select = new Select("termcategory");
-            if ($where!=null) {
-                $select->where($where);
-            }
-            if ($order!=null) {
-                $select->order($order);
-            }
-            if ($limit!=null) {
-                $select->limit($limit);
-            }
-            if ($offset!=null) {
-                $select->offset($offset);
-            }
-            $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-            $paginatorAdapter = new DbSelect($select, $this->tableGateway->getAdapter(), $resultSetPrototype);
-            $paginator = new Paginator($paginatorAdapter);
-            return $paginator;
+        $select = $this->prepareQuery($this->tableGateway->getSql()->select(), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
+        if ((bool) $paginated === true) {
+            return new Paginator(new DbSelect($select, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
         } else {
-            $resultSet = $this->tableGateway->select(function (Select $select) use ($where, $order, $limit, $offset) {
-                if ($where!=null) {
-                    $select->where($where);
-                }
-                if ($order!=null) {
-                    $select->order($order);
-                }
-                if ($limit!=null) {
-                    $select->limit($limit);
-                }
-                if ($offset!=null) {
-                    $select->offset($offset);
-                }
-            });
+            $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
-            return $resultSet;
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
+            }
+            return null;
         }
-    }
-    
-    /**
-     * fetch a list of records from the DB
-     * (this method is for backward compatibility with existing BOZA Solutions systems)
-     */
-    public function getList($where, $order, $limit, $offset)
-    {
-        return $this->fetchList($where, $order, $limit, $offset);
     }
 
     /**
-     * Fetch all records from the DB by joining them
+     * @param bool $pagination
      * @param string $join
+     * @param array $tbl1OneCols - content table
+     * @param array $tbl2OneCols - the joined table
      * @param string $on
-     * @param string $where
-     * @param string $order
-     * @param string $limit
-     * @param string $offset
-     * @return unknown
+     * @param string $joinType
+     * @param null|array|string $where
+     * @param null $group
+     * @param null $order
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchJoin($join, $on, $where=null, $order=null, $limit=null, $offset=null)
+    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
-        $resultSet = $this->tableGateway->select(function (Select $select) use ($join, $on, $where, $order, $limit, $offset) {
-            $select->join($join, $on);
-            if ($where!=null) {
-                $select->where($where);
+        $select = $this->tableGateway->getSql()->select();
+        $select->join($join, $on, $tbl2OneCols, $joinType);
+        $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
+        if ((bool) $pagination === true) {
+            return new Paginator(new DbSelect($result, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
+        } else {
+            $resultSet = $this->tableGateway->selectWith($result);
+            $resultSet->buffer();
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
             }
-            if ($order!=null) {
-                $select->order($order);
-            }
-            if ($limit!=null) {
-                $select->limit($limit);
-            }
-            if ($offset!=null) {
-                $select->offset($offset);
-            }
-        });
-        return $resultSet;
-    }
-
-    public function getTermCategory($id)
-    {
-        $id  = (int) $id;
-        $rowset = $this->tableGateway->select(['id' => $id]);
-        $row = $rowset->current();
-        if (!$row) {
-            throw new \Exception();
+            return null;
         }
-        return $row;
     }
 
-    public function deleteTermCategory($id)
+    /**
+     * Prepare all statements before quering the database
+     *
+     * @param  Select $select
+     * @param  array $columns
+     * @param  null|array|string $where
+     * @param  null $group
+     * @param  null $predicate
+     * @param  null $order
+     * @param  null $limit
+     * @param  null $offset
+     *
+     * @return Zend\Db\Sql\Select
+     */
+    private function prepareQuery($select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        $this->tableGateway->delete(['id' => (int) $id]);
+        if (!empty($columns)) {
+            $select->columns($columns);
+        }
+        if (is_array($where) && !empty($where)) {
+            if (!in_array($predicate, [self::PRE_AND, self::PRE_OR, self::PRE_NULL])) {
+                $predicate = self::PRE_NULL;
+            }
+            $select->where($where, $predicate);
+        } elseif ($where != null && is_string($where)) {
+            $select->where(new Expression($where));
+        }
+        if ($group != null) {
+            $select->group($group);
+        }
+        if ($order != null) {
+            $select->order($order);
+        }
+        if ($limit != null) {
+            $select->limit($limit);
+        }
+        if ($offset != null) {
+            $select->offset($offset);
+        }
+        return $select;
     }
-    
-    public function saveTermCategory(TermCategory $termcategory)
+
+    /**
+     * @param int $id term category id
+     * @throws Exception If term category is not found
+     * @return TermCategory
+     */
+    public function getTermCategory($id = 0)
+    {
+        $rowset = $this->tableGateway->select(['id' => (int) $id]);
+        $rowset->buffer();
+        if (!$rowset->current()) {
+            throw new \RuntimeException("Couldn't find term category");
+        }
+        return $rowset;
+    }
+
+    /**
+     * Delete a term category based on the provided id
+     *
+     * @param int $id termcategory id
+     * @throws Exception If termcategory is not found
+     * @return TermCategory
+     */
+    public function deleteTermCategory($id = 0)
+    {
+        if ($this->getTermCategory($id)) {
+            $this->tableGateway->delete(['id' => (int) $id]);
+        }
+    }
+
+    public function saveTermCategory(TermCategory $termcategory = null)
     {
         $data = [
-        'name' => (string) $termcategory->name,
-
+            'name' => (string) $termcategory->getName(),
         ];
-        $id = (int)$termcategory->id;
-        if ($id == 0) {
+        $id = (int)$termcategory->getId();
+        if (!$id) {
             $this->tableGateway->insert($data);
             $termcategory->id = $this->tableGateway->lastInsertValue;
         } else {
-            if ($this->getTermCategory($id)) {
-                $this->tableGateway->update($data, ['id' => $id]);
-            } else {
-                throw new \Exception();
+            if (!$this->getTermCategory($id)) {
+                throw new \RuntimeException("Couldn't save term category");
             }
+            $this->tableGateway->update($data, ['id' => $id]);
         }
+        unset($id, $data);
         return $termcategory;
     }
 
-    public function duplicate($id)
+    /**
+     * duplicate a term category
+     *
+     * @param  int    $id
+     * @return TermCategory
+     */
+    public function duplicate($id = 0)
     {
         $user = $this->getTermCategory($id);
         $clone = $user->getCopy();
-        $this->tableGateway->saveTermCategory($clone);
+        $this->saveTermCategory($clone);
         return $clone;
     }
 }

@@ -24,17 +24,14 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Menu
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Application\Controller;
-
 
 class MenuController extends IndexController
 {
@@ -51,13 +48,19 @@ class MenuController extends IndexController
      *
      * @return Content
      */
-    public function menuAction()
+    public function titleAction()
     {
+        $this->view->setTemplate("application/menu/title");
         $escaper = new \Zend\Escaper\Escaper('utf-8');
-        $title = (string) $escaper->escapeUrl($this->getParam("title"));
 
-        $this->view->contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => $title, "content.type" => 0, "content.language" => $this->langTranslation], null, "menu.parent ASC, menu.menuOrder ASC");
-        $this->initMetaTags($this->view->contents);
+        $contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("title")), "content.type" => 0, "content.language" => $this->language()], null, "menu.parent ASC, menu.menuOrder ASC");
+
+        if (!$contents) {
+            return $this->setErrorCode(404);
+        }
+
+        $this->view->contents = $contents->getDataSource()->current();
+        $this->initMetaTags($contents->getDataSource()->current());
         return $this->view;
     }
 }

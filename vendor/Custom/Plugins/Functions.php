@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Custom\Plugins
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -38,73 +36,48 @@ namespace Custom\Plugins;
 use Zend\Db\Adapter\Adapter;
 use Zend\Session\Container;
 use Zend\Math\Rand;
-use Zend\Db\ResultSet\HydratingResultSet;
-use Zend\Stdlib\Hydrator\ObjectProperty;
-use Zend\Db\Adapter\Driver\Pdo\Result;
+use Zend\Db\Adapter\Driver\Pdo\Statement;
 
 class Functions
 {
     /**
-     * @var null $translation
+     * @var  Zend\Db\Adapter\Adapter
      */
-    private static $translation = null;
+    private static $adapter = null;
 
     /**
-     * This method loads into translation all term translations from the database
-     *
-     * @param Int $language
-     * @param Bool $reload - will force to reload even if translation exists
-     * @return Zend\Session\Container
+     * Create Adapter instance and cache it
+     * @return  Adapter
      */
-    public static function initTranslations($language = 1, $reload = false)
-    {
-        static::$translation = new Container('translations');
-
-        if ((bool) $reload === true) {
-            $result = self::createPlainQuery("SELECT `termtranslation`.`translation`, `term`.`name` FROM `term` INNER JOIN `termtranslation` ON `term`.`id`=`termtranslation`.`term` WHERE `termtranslation`.`language` = '".(int)$language."' ORDER BY `term`.`name` ASC");
-            if (count($result) > 0) {
-                foreach ($result as $r) {
-                    if (!empty($r['name'])) {
-                        static::$translation->__set($r['name'], $r['translation']);
-                    }
-                }
-            }
+    final private static function getAdapter() {
+        if (!static::$adapter) {
+            static::$adapter = include('config/autoload/local.php');
         }
-        return static::$translation;
+        return new Adapter(static::$adapter['db']);
     }
 
     /**
      * Create plain mysql queries.
      *
-     * @param String $sql the plain query
-     * @throws Exception If database is not found or $sql is empty
-     * @return array|HydratingResultSet|null
+     * @param string $query
+     * @param array $params for the moment $params is optional
+     * @param bool $returnResults
+     * @return array
      */
-    public static function createPlainQuery($sql = null)
+    public static function createPlainQuery($query = null, array $params = [])
     {
-        $dir = dirname(dirname(dirname(__DIR__)));
-
-        if (!is_file($dir.'/config/autoload/local.php')) {
-            throw new \Exception("Could not load database settings");
+        if (empty($query)) {
+            throw new \InvalidArgumentException('Query must not be empty');
         }
 
-        if (empty($sql)) {
-            throw new \Exception(__METHOD__ . ' must not be empty');
+        if (empty($params)) {
+            throw new \InvalidArgumentException('Query parameturs must not be empty');
         }
 
-        $local = require($dir.'/config/autoload/local.php');
-        $db = new Adapter($local['db']);
-        $stmt = $db->createStatement((string) $sql);
-        $stmt->prepare();
-        $result = $stmt->execute();
-        if ($result instanceof Result && $result->isQueryResult() && $result->getAffectedRows()) {
-            $resultSet = new HydratingResultSet(new ObjectProperty(), new \stdClass());
-            $resultSet->initialize($result);
-            $resultSet->buffer();
-
-            return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet->toArray() : null);
-        }
-        return null;
+        $db = static::getAdapter();
+        $stmt = $db->query($query, $params);
+        $stmt->buffer();
+        return $stmt->toArray();
     }
 
     /**
@@ -117,11 +90,12 @@ class Functions
      */
     public static function createPassword($password = null)
     {
-        require '/vendor/Custom/Plugins/Password.php';
+        require_once('/vendor/Custom/Plugins/Password.php');
 
         if (empty($password)) {
             throw new \Exception("Password cannot be empty");
         }
+
         if (self::strLength($password) < 8) {
             throw new \Exception("Password must be atleast 8 characters long");
         }
@@ -131,6 +105,7 @@ class Functions
         if (!$pw) {
             throw new \Exception("Error while generating password");
         }
+
         return $pw;
     }
 

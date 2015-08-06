@@ -24,48 +24,94 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Module
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
+use Zend\Mvc\MvcEvent;
+use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\EventManager\EventInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
+use Zend\ModuleManager\ModuleManagerInterface;
+use Zend\Session\Container;
+use Zend\Http\PhpEnvironment\Request as HttpRequest;
 
-class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
+    /**
+     * @param  $mm ModuleManager
+     */
+    public function init(ModuleManagerInterface $mm)
+    {
+        /**
+         * Setup module layout
+         */
+        $mm->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+            $e->getTarget()->layout('layout/layout');
+        });
+    }
 
     /**
      * Listen to the bootstrap event
      *
      * @param EventInterface $e
-     * @return array
      */
     public function onBootstrap(EventInterface $e)
     {
+        $app = $e->getTarget();
 
-        $em = $e->getApplication()->getEventManager();
-        $sm = $e->getTarget()->getServiceManager();
+        if (!($app->getRequest() instanceof HttpRequest)) {
+            return;
+        }
 
+       /**
+        * @var $em Zend\EventManager\EventManager
+        */
+        $em = $app->getEventManager();
+
+       /**
+        * @var $sm Zend\ServiceManager\ServiceManager
+        */
+        $sm = $app->getServiceManager();
+
+        /**
+         * Init session
+         */
+        $sessionManager = $sm->get('initSession');
+        $sessionManager->setName("zpc");
+        $sessionManager->start();
+        Container::setDefaultManager($sessionManager);
+
+        if (!$sessionManager->sessionExists()) {
+            $sessionManager->regenerateId();
+        }
+
+        /**
+         * Attach event listener for page titles
+         */
         $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
+
+        /**
+         * Atach event listener for all types of errors, warnings, exceptions etc.
+         */
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
             $service = $sm->get('ApplicationErrorHandling');
             $service->logError($event, $sm);
+            $event->stopPropagation();
         });
 
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
     }
+
 
     /**
      * Handle layout titles onDispatch
@@ -77,37 +123,26 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         /**
          * Setup module layouts
          */
-        $moduleNamespace = substr(get_class($e->getTarget()), 0, strpos(get_class($e->getTarget()), '\\'));
-        $config = $e->getApplication()->getServiceManager()->get('Config');
+        $sm = $e->getApplication()->getServiceManager();
         $route = $e->getRouteMatch();
-        if (isset($config['module_layouts'][$moduleNamespace])) {
-            $e->getTarget()->layout($config['module_layouts'][$moduleNamespace]);
-        }
 
         /**
          * Title param comes from MenuController
          */
-        $action = trim($route->getParam('title'));
+        $action = $route->getParam('title');
 
         if (empty($action)) {
             $action = strtolower($route->getParam('action'));
-            if ($action !== "index") {
+            if ($action != "index") {
                 /**
                  * Post param means that the user is in NewsController
                  */
-                $action .= ($route->getParam("post") ? " - ".$route->getParam("post") : "");
-            } else {
-                /**
-                 * Front main page aka IndexController::indexAction
-                 */
-                $action = "Home"; // must be set from db
+                $action .= ($route->getParam("post") ? $route->getParam("post") : "");
             }
         }
-
-        $headTitleHelper = $e->getApplication()->getServiceManager()->get('ViewHelperManager')->get('headTitle');
-        $headTitleHelper->append('Unnamed'); // must be set from db
-        $headTitleHelper->setSeparator(' - ');
-        $headTitleHelper->append($action);
+        $headTitleHelper = $sm->get('ViewHelperManager')->get('headTitle');
+        $headTitleHelper->append('Unnamed - '.$action); // must be set from db
+        $e->stopPropagation();
     }
 
     /**
@@ -132,6 +167,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
             'Zend\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                    'Custom' => __DIR__ . '/../../vendor/Custom',
                 ],
             ],
         ];

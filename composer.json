@@ -5,8 +5,7 @@
     "keywords": [
         "framework",
         "zf2",
-        "Unnamed",
-        "zp"
+        "Unnamed"
     ],
     "require": {
         "php": ">=5.4",
@@ -24,10 +23,9 @@
         "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
     },
     "autoload": {
-        "psr-4":{
-            "Custom\\" : "vendor/Custom/",
-            "Zend\\": "vendor/zendframework/zendframework/library/Zend/"
-        },
+        "classmap": ["vendor/CodePlex"]
+    },
+    "autoload-dev": {
         "classmap": ["vendor/CodePlex"]
     }
 }

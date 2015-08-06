@@ -1,26 +1,57 @@
 <?php
-namespace Admin\Controller;
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *mits
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
 
+namespace Admin\Controller;
 
 use Admin\Model\AdminMenu;
 use Admin\Form\AdminMenuForm;
-use Admin\Form\AdminMenuSearchForm;
 
 class AdminMenuController extends IndexController
 {
     /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
+     * @var Admin\Form\AdminMenuForm $adminMenuForm
      */
-    private $MAX_COUNT = 200;
+    private $adminMenuForm = null;
 
     /**
-     * @param string $NO_ID
-     * @return string
+     * @param Admin\Form\AdminMenuForm $adminMenuForm
      */
-    protected $NO_ID = "no_id"; // const!!!
+    public function __construct(AdminMenuForm $adminMenuForm = null)
+    {
+        parent::__construct();
+
+        $this->adminMenuForm = $adminMenuForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -29,152 +60,126 @@ class AdminMenuController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>"Admin Menus"]);
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
         parent::onDispatch($e);
     }
 
     /**
-     * This action shows the list of all (or filtered) AdminMenu objects
+     * This action shows the list of all admin menus
      */
     public function indexAction()
     {
-        $search = $this->getParam("search", null);
-        $where = "parent = '0'";
-        if ($search != null) {
-            $where = "(parent = '0') AND (`caption` LIKE '%{$search}%' OR `menuOrder` LIKE '%{$search}%' OR `controller` LIKE '%{$search}%'  OR `action` LIKE '%{$search}%'  OR `class` LIKE '%{$search}%')";
+        $this->view->setTemplate("admin/admin-menu/index");
+        $menu = $this->getTable("adminmenu")->fetchList(false, [], [], "AND", null, "advanced ASC, menuOrder ASC");
+        if (count($menu) > 0) {
+            $menus = ["menus" => null, "submenus" => null];
+            foreach ($menu as $submenu) {
+                if ($submenu->getParent() > 0) {
+                    /**
+                     * This needs to have a second empty array in order to work
+                     */
+                    $menus["submenus"][$submenu->getParent()][] = $submenu;
+                } else {
+                    $menus["menus"][$submenu->getId()] = $submenu;
+                }
+            }
+            $this->view->menus = $menus["menus"];
+            $this->view->submenus = $menus["submenus"];
         }
-
-        $order = "advanced ASC, menuOrder ASC";
-        $menus = $this->getTable("adminmenu")->fetchList(false, $where, $order);
-        $this->view->menus = $menus;
-        $submenus = [];
-        foreach ($menus as $m) {
-            $submenus[$m->id] = $this->getTable("adminmenu")->fetchList(false, "parent='{$m->id}'", $order);
-        }
-        $this->view->submenus = $submenus;
-        $form = new AdminMenuSearchForm();
-        $form->get("submit")->setValue($this->session->SEARCH);
-        $form->get("search")->setValue($search);
-        $this->view->form = $form;
         return $this->view;
     }
 
     /**
-     * This action serves for adding a new object of type AdminMenu
+     * This action serves for adding a new admin menus
      */
     public function addAction()
     {
-        $this->showForm('Add', null);
-        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/add", "name"=>"Add new admin menu"]);
+        $this->view->setTemplate("admin/admin-menu/add");
+        $this->initForm($this->translate("ADD_ADMINMENU"), null);
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/add", "name"=>$this->translate("ADD_ADMINMENU")]);
         return $this->view;
     }
 
     /**
-     * This action presents a modify form for AdminMenu object with a given id
+     * This action presents a modify form for AdminMenu with a given id
      * Upon POST the form is processed and saved
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
-        try {
-            $adminMenu = $this->getTable("adminmenu")->getAdminMenu($id);
-            $this->view->adminMenu = $adminMenu;
-            $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/id/{$adminMenu->id}", "name"=>"Modify admin menu &laquo;".$adminMenu->toString()."&raquo;"]);
-            $this->showForm("Modify", $adminMenu);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
+        $this->view->setTemplate("admin/admin-menu/modify");
+        $adminMenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0))->current();
+        $this->view->adminMenu = $adminMenu;
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/{$adminMenu->getId()}", "name"=>$this->translate("MODIFY_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY_ADMINMENU"), $adminMenu);
         return $this->view;
+    }
+
+    /**
+     * this action deletes a admin menu with a provided id
+     */
+    public function deleteAction()
+    {
+        $this->getTable("adminmenu")->deleteAdminMenu($this->getParam("id", 0));
+        $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
+    }
+
+    public function detailAction()
+    {
+        $this->view->setTemplate("admin/admin-menu/detail");
+        $adminmenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0), $this->language())->current();
+        $this->view->adminmenu = $adminmenu;
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/".$adminmenu->getId()."", "name"=>"&laquo;". $adminmenu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
+        return $this->view;
+    }
+
+    public function cloneAction()
+    {
+        $adminmenu = $this->getTable("adminmenu")->duplicate($this->getParam("id", 0));
+        $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
     }
 
     /**
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label
-     * @param null|AdminMenu $user
+     * @param null|AdminMenu $adminMenu
      */
-    public function showForm($label='Add', $adminMenu=null)
+    public function initForm($label = '', AdminMenu $adminMenu = null)
     {
-        if ($adminMenu==null) {
-            $adminMenu = new AdminMenu();
+        if (!$adminMenu instanceof AdminMenu) {
+            $adminMenu = new AdminMenu([], null);
         }
-        $form = new AdminMenuForm($adminMenu,
-                $this->getTable("adminmenu")->fetchList(false, "parent='0'", "caption ASC")
-        );
+
+        /**
+         * @var $form Admin\Form\AdminMenuForm
+         */
+        $form = $this->adminMenuForm;
         $form->get("submit")->setValue($label);
+        $parents =         $this->getTable("adminmenu")->fetchList(false, [], ["parent" => 0]);
+
+        $valueOptions = [];
+        $valueOptions[0] = 'Parent menu';
+        foreach ($parents as $parent) {
+            $valueOptions[$parent->getId()] = $parent->getCaption();
+        }
+
+        $form->get("parent")->setValueOptions($valueOptions);
+        $form->bind($adminMenu);
         $this->view->form = $form;
+
         if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($adminMenu->getInputFilter());
+            $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $adminMenu->exchangeArray($form->getData());
                 $this->getTable("adminmenu")->saveAdminMenu($adminMenu);
-                $this->translation->success = "Admin menu &laquo;".$adminMenu->toString()."&raquo; was successfully saved";
-                $this->view->setTerminal(true);
+                $this->setLayoutMessages("&laquo;".$adminMenu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             } else {
-                $error = '';
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+                $this->setLayoutMessages($form->getMessages(), 'error');
                 return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             }
         }
-    }
-
-    /**
-     * this action deletes a adminmenu object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
-        try {
-            $this->getTable("adminmenu")->deleteAdminMenu($id);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
-        $this->translation->success = "Admin menu was successfully deleted";
-        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-    }
-
-    public function detailAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
-        try {
-            $adminmenu = $this->getTable("adminmenu")->getAdminMenu($id);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("Admin menu not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
-        }
-        $this->view->adminmenu = $adminmenu;
-        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/id/{$adminmenu->id}", "name"=> "Admin menu &laquo;". $adminmenu->toString()."&raquo; details"]);
-
-        return $this->view;
-    }
-
-    public function cloneAction()
-    {
-        $id = $this->getParam("id", 0);
-        $adminmenu = $this->getTable("adminmenu")->duplicate($id);
-        $this->translation->success = "Admin menu &laquo;".$adminmenu->toString()."&raquo; was successfully cloned";
-        $this->redirect()->toUrl("/admin/adminmenu");
-        return $this->view;
     }
 }

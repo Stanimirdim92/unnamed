@@ -24,56 +24,93 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Administrator
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class AdministratorForm extends Form
+class AdministratorForm extends Form implements InputFilterProviderInterface
 {
-    /**
-     * Create administrator form
-     *
-     * @param \Admin\Model\Administrator|null $options [description]
-     */
-    public function __construct(\Admin\Model\Administrator $options = null)
+    public function __construct()
     {
         parent::__construct("administrator");
-        $elements = [];
+    }
 
-        $elements[5] = new Element\Text('user');
-        $elements[5]->setLabel('User ID');
-        $elements[5]->setAttributes([
-            'required'   => true,
-            'size'        => 40,
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'user',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
             'class'      => 'administrator-user ajax-search',
             'placeholder' => 'User ID',
             'autocomplete' => "off",
+            ],
+            'options' => [
+                'label' => 'Caption',
+            ],
         ]);
 
-        if ($options!=null and $options->user) {
-            $elements[5]->setValue($options->user);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 1400,
+                ],
+            ],
+        ]);
 
-        $elements[69] = new Element\Csrf('s');
-        $elements[111] = new Element\Submit('submit');
-        $elements[111]->setAttribute('id', 'submitbutton');
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
 
-        if ($options!=null) {
-            $elements[112] = new Element\Hidden('id');
-            $elements[112]->setValue($options->id);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
+    }
 
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name'     => 'id',
+                'required' => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"user",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

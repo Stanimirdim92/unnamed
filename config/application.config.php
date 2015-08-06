@@ -1,19 +1,18 @@
 <?php
-/**
- * If you need an environment-specific system or application configuration,
- * there is an example in the documentation
- * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-system-configuration
- * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-application-configuration
- */
+$modules = [
+    'Application',
+    'Admin',
+];
+
+if (APP_ENV === 'development') {
+    $modules[] = 'ZendDeveloperTools';
+    $modules[] = 'SanSessionToolbar';
+    $modules[] = 'BjyProfiler';
+}
+
 return [
     // This should be an array of module namespaces used in the application.
-    'modules' => [
-        'Application',
-        'Admin',
-        // 'ZendDeveloperTools',
-        // 'SanSessionToolbar',
-        // 'BjyProfiler',
-    ],
+    'modules' => $modules,
 
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => [
@@ -36,26 +35,25 @@ return [
         // Whether or not to enable a configuration cache.
         // If enabled, the merged configuration will be cached and used in
         // subsequent requests.
-        //'config_cache_enabled' => $booleanValue,
+        'config_cache_enabled' => (APP_ENV === 'production'),
 
         // The key used to create the configuration cache file name.
-        //'config_cache_key' => $stringKey,
+        'config_cache_key' => md5('app_config'),
 
         // Whether or not to enable a module class map cache.
         // If enabled, creates a module class map cache which will be used
         // by in future requests, to reduce the autoloading process.
-        //'module_map_cache_enabled' => $booleanValue,
+        'module_map_cache_enabled' => (APP_ENV === 'production'),
 
         // The key used to create the class map cache file name.
-        //'module_map_cache_key' => $stringKey,
-
+        'module_map_cache_key' => md5('module_map'),
         // The path in which to cache merged configuration.
-        //'cache_dir' => $stringPath,
+        'cache_dir' => dirname(__DIR__)."/data/cache",
 
         // Whether or not to enable modules dependency checking.
         // Enabled by default, prevents usage of modules that depend on other modules
         // that weren't loaded.
-        // 'check_dependencies' => true,
+        'check_dependencies' => (APP_ENV !== 'production'),
     ],
 
     // Used to create an own service manager. May contain one or more child arrays.

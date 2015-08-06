@@ -24,119 +24,83 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Content
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Model;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-
 class Content
 {
     /**
-     * @var null $serviceLocator ServiceManager
-     */
-    private $serviceLocator = null;
-
-    /**
      * @var Int $id
-     * @return int
      */
     private $id = 0;
 
     /**
      * @var Int $id
-     * @return int
      */
     private $menu = 0;
 
     /**
-     * @var null $title
-     * @return string
+     * @var string $title
      */
     private $title = null;
 
     /**
-     * @var null $preview
-     * @return string
+     * @var string $preview
      */
     private $preview = null;
 
     /**
-     * @var null $text
-     * @return string
+     * @var string $text
      */
     private $text = null;
 
     /**
      * @var Int $id
-     * @return int
      */
     private $menuOrder = 0;
 
     /**
      * @var Int $id
-     * @return int
      */
     private $type = 0;
 
     /**
-     * @var null $date
-     * @return string
+     * @var string $date
      */
     private $date = "0000-00-00 00:00:00";
 
     /**
      * @var Int $language
-     * @return int
      */
     private $language = 1;
 
     /**
-     * @var null $titleLink
-     * @return string
+     * @var string $titleLink
      */
     private $titleLink = null;
 
     /**
-     * @param null $sm ServiceLocatorInterface|ServiceManager
-     * @return ServiceLocatorInterface|ServiceManager|null
-     */
-    public function setServiceLocator(ServiceLocatorInterface $sm = null)
-    {
-        $this->serviceLocator = $sm;
-    }
-
-    /**
-     * @return ServiceLocatorInterface|ServiceManager
-     */
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
-    }
-
-    /**
-     * @var array $data
-     * @return mixed
+     * @param array $data
+     * @return void
      */
     public function exchangeArray(array $data = [])
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : $this->id;
-        $this->menu = (isset($data['menu'])) ? $data['menu'] : $this->menu;
-        $this->title = (isset($data['title'])) ? $data['title'] : $this->title;
-        $this->preview = (isset($data['preview'])) ? $data['preview'] : $this->preview;
-        $this->text = (isset($data['text'])) ? $data['text'] : $this->text;
-        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->menuOrder;
-        $this->type = (isset($data['type'])) ? $data['type'] : $this->type;
-        $this->date = (isset($data['date'])) ? $data['date'] : $this->date;
-        $this->language = (isset($data['language'])) ? $data['language'] : $this->language;
-        $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->titleLink;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->menu = (isset($data['menu'])) ? $data['menu'] : $this->getMenu();
+        $this->title = (isset($data['title'])) ? $data['title'] : $this->getTitle();
+        $this->preview = (isset($data['preview'])) ? $data['preview'] : $this->getPreview();
+        $this->text = (isset($data['text'])) ? $data['text'] : $this->getText();
+        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->getMenuOrder();
+        $this->type = (isset($data['type'])) ? $data['type'] : $this->getType();
+        $this->date = (isset($data['date'])) ? $data['date'] : $this->getDate();
+        $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
+        $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->getTitleLink();
     }
 
     /**
@@ -151,16 +115,15 @@ class Content
      * constructor
      *
      * @param array $options
-     * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = [], ServiceLocatorInterface $sm = null)
+    public function __construct(array $options = [])
     {
         $this->exchangeArray($options);
-        $this->setServiceLocator($sm);
     }
 
     /**
      * Get id
+     * @return int
      */
     public function getId()
     {
@@ -175,7 +138,6 @@ class Content
     {
         $this->id = $id;
     }
-
 
     /**
      * Set Menu
@@ -193,18 +155,6 @@ class Content
     public function getMenu()
     {
         return $this->menu;
-    }
-
-    /**
-     * Get the related object from the DB
-     */
-    public function getMenuObject()
-    {
-        try {
-            return $this->getServiceLocator()->get('MenuTable')->getMenu($this->menu, $this->language);
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
     }
 
     /**
@@ -352,18 +302,6 @@ class Content
     }
 
     /**
-     * Get the related object from the DB
-     */
-    public function getLanguageObject()
-    {
-        try {
-            return $this->getServiceLocator()->get('LanguageTable')->getLanguage($this->language);
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
      * magic getter
      */
     public function __get($property)
@@ -385,36 +323,6 @@ class Content
     public function __isset($property)
     {
         return (property_exists($this, $property) ? isset($this->{$property}) : null);
-    }
-
-    /**
-     * magic property remove (unset)
-     */
-    // public function __unset($property)
-    // {
-    //     return (property_exists($this, $property) ? unset($this->{$property}) : null);
-    // }
-
-    /**
-     * magic serializer
-     */
-    public function __sleep()
-    {
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key => $value) {
-            if (!in_array($key, "serviceLocator")) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
     }
 
     /**
@@ -446,15 +354,15 @@ class Content
     public function getCopy()
     {
         $clone = new self();
-        $clone->setMenu($this->menu);
-        $clone->setTitle($this->title);
-        $clone->setPreview($this->preview);
-        $clone->setText($this->text);
-        $clone->setMenuOrder($this->menuOrder);
-        $clone->setType($this->type);
-        $clone->setDate($this->date);
-        $clone->setLanguage($this->language);
-        $clone->setTitleLink($this->titleLink);
+        $clone->setMenu($this->getMenu());
+        $clone->setTitle($this->getTitle());
+        $clone->setPreview($this->getPreview());
+        $clone->setText($this->getText());
+        $clone->setMenuOrder($this->getMenuOrder());
+        $clone->setType($this->getType());
+        $clone->setDate($this->getDate());
+        $clone->setLanguage($this->getLanguage());
+        $clone->setTitleLink($this->getTitleLink());
         return $clone;
     }
 }

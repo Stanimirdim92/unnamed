@@ -1,81 +1,56 @@
-<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
 <?php
-/* @var $menu Admin\Model\Menu */
-$menu = $this->menu;
+    /**
+    * @var $menu Admin\Model\Menu
+    */
+    $menu = $this->menu;
 ?>
-<a href="/admin/menu/index" class="btn btn-labeled btn-default">
-<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>back to the list of menus
-</a>
-<br/><br/>
-<header>
-  <span class="widget-icon"><i class="fa fa-icon-fix fa-info"></i></span>
-  <h2>Details for menu &laquo;<?=$menu->toString()?>&raquo;</h2>
-</header>
-<div class='well'>
-<TABLE class='table table-bordered table-striped' style='clear: both' id='menu'>
-<TBODY>
-<TR>
-    <TD class='definition'>Caption</TD>
-    <TD class='admin al l'><?=$menu->caption?>
-    </TD>
-</TR>
-<TR>
-    <TD class='definition'>Order</TD>
-    <TD class='admin al l'><?=$menu->menuOrder?>
-    </TD>
-</TR>
-<TR>
-    <TD class='definition'>Keywords</TD>
-    <TD class='admin al l'><?=$menu->keywords?>
-    </TD>
-</TR>
-<TR>
-    <TD class='definition'>Description</TD>
-    <TD class='admin al l'><?=$menu->description?>
-    </TD>
-</TR>
-<TR>
-    <TD class='definition'>Menu type</TD>
-    <TD class='admin al l'><?=$menu->getMenuTypeAsName()?>
-    </TD>
-</TR>
+<section>
+    <p>
+        <a href="<?=$this->url("admin", ['controller' => "menu"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
+    <div class='table-style'>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("CAPTION")?></li>
+            <li class="table-cell"><?=$menu->getCaption()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("MENU_ORDER")?></li>
+            <li class="table-cell"><?=$menu->getMenuOrder()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("KEYWORDS")?></li>
+            <li class="table-cell"><?=$menu->getKeywords()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("DESCRIPTION")?></li>
+            <li class="table-cell"><?=$menu->getDescription()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("MENU_TYPE")?></li>
+            <li class="table-cell"><?=$menu->getMenuTypeAsName()?></li>
+        </ul>
 
-<TR>
-    <TD class='definition'>Language</TD>
-    <TD class='admin al l'>
 <?php
-    $language = $menu->getLanguageObject();
-    if($language!=null)
-    {
+    if ($menu->getParent() > 0) {
+        $parent = $menu->getParentObject();
+        if ($parent instanceof \Admin\Model\Menu) {
 ?>
-        <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("PARENT")?></li>
+            <li class="table-cell">
+                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin", ['controller' => "menu", 'action' => 'detail', 'id' => $parent->getId()])?>'><i class='fa fa-info'></i> <?=echo $parent->getCaption();?></a>
+            </li>
+        </ul>
 <?php
-        echo $language->toString();
+        }
     }
 ?>
-    </TD>
-</TR>
+    </div>
+    <br/>
 
-<?php
-    $parent = $menu->getParentObject();
-    if($parent instanceof \Admin\Model\Menu && count($parent) > 0)
-    {
-?>
-<TR>
-    <TD class='definition'>Parent</TD>
-    <TD class='admin al l'>
-        <a class='btn btn-labeled btn-default blue' title='Parent details' href='/admin/menu/detail/id/<?=$parent->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?php
-        echo $parent->toString();
-    }
-?>
-    </TD>
-</TR>
-</TABLE>
-<br/>
-
-<a href="/admin/menu/modify/id/<?=$menu->id?>" class="btn btn-labeled btn-default">
-<span class="btn-label"><i class="fa fa-pencil"></i></span>modify
-</a><br/><br/>
-</div>
-</div>
+    <a href="<?=$this->url("admin", ['controller' => "menu", 'action' => 'modify', 'id' => $menu->getId()])?>" class="btn btn-labeled btn-default">
+        <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("MODIFY")?>
+    </a>
+</section>

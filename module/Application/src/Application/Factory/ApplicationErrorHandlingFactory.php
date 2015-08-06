@@ -24,29 +24,31 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Factory
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Application\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as LogWriterStream;
-use Application\Controller\ErrorHandling as ErrorHandlingService;
+use Zend\Log\Writer\Stream;
+use Application\Controller\ErrorHandling;
 
 class ApplicationErrorHandlingFactory implements FactoryInterface
 {
-    public function createService(ServiceLocatorInterface $sm = null)
+    /**
+     * {@inheritDoc}
+     */
+    public function createService(ServiceLocatorInterface $servicLocator = null)
     {
         $log = new Logger();
-        $writer = new LogWriterStream('./data/logs/front_end_log_' . date('F') . '.txt');
-        $log->addWriter($writer);
-        return new ErrorHandlingService($log);
+        $log->addWriter(new Stream('./data/logs/front_end_log_'.date('F').'.txt'));
+        $error =  new ErrorHandling($log);
+        return $error;
     }
 }

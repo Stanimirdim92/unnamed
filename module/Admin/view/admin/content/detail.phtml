@@ -1,100 +1,69 @@
-<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
 <?php
-//* @var $content Admin\Model\Content */
-$content = $this->content;
+    /**
+     * @var $content Admin\Model\Content
+     */
+    $content = $this->content;
 ?>
-<a href="/admin/content/index" class="btn btn-labeled btn-default">
-<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>back to the list of content objects
-</a>
-<br/><br/>
-<header>
-  <span class="widget-icon"><i class="fa fa-icon-fix fa-info"></i></span>
-  <h2>Details for content &laquo;<?=$content->toString()?>&raquo;</h2>
-</header>
-<div class='well'>
-<table class='table table-bordered table-striped' style='clear: both' id='content'>
-<tbody>
-<tr>
-    <td class='definition'>Title</td>
-    <td class='admin al l'><?=$content->title?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Preview</td>
-    <td class='admin al l'><?php
-    if($content->preview)
-    {
-        ?><img src='/userfiles/preview/<?=$content->preview?>' width='150'><?php
-    }
-    else
-    {
-        ?><img src='/back/img/noimg.png' width='100'><?php
-    }
+<section>
+    <p>
+        <a href="<?=$this->url("admin", ["controller" => "content"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
+    <div class="table-style">
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("TITLE")?></li>
+            <li class="table-cell"><?=$content->getTitle()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("TITLE")?></li>
+            <li class="table-cell">
+<?php
+            if($content->getPreview() != null) {
 ?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Text</td>
-    <td class='admin al l'><?=$content->text?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Order</td>
-    <td class='admin al l'><?=$content->order?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Type</td>
-    <td class='admin al l'><?=$content->type?>
-    </td>
-</tr>
-<tr>
-    <td class='definition'>Date</td>
-    <td class='admin al l'><?=$content->date?>
-    </td>
-</tr>
+                <img src="/userfiles/preview/<?=$content->getPreview()?>" width="150">
+<?php
+            } else {
+?>
+                <img src="/back/img/noimg.png" width="100">
+<?php
+            }
+?>
+            </li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("TEXT")?></li>
+            <li class="table-cell"><?=$content->getText()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("ORDER")?></li>
+            <li class="table-cell"><?=$content->getMenuOrder()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("TYPE")?></li>
+            <li class="table-cell"><?=$content->getType()?></li>
+        </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("DATE")?></li>
+            <li class="table-cell"><?=$content->getDate()?></li>
+        </ul>
+<?php
+        if($content->getMenu() > 0) {
+?>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("MENU")?></li>
+            <li class="table-cell">
+                <a class="btn btn-labeled btn-default blue" title="<?=$this->translate("DETAILS")?>" href="<?=$this->url("admin", ["controller" => "menu", "action" => "details", "id" => $content->getMenu()])?>">
+                    <i class="fa fa-info"></i>
+                </a>
+            </li>
+        </ul>
+<?php
+        }
+?>
+    </div>
 
-<tr>
-    <td class='definition'>Language</td>
-    <td class='admin al l'>
-<?php
-    $language = $content->getLanguageObject();
-    if($language!=null)
-    {
-?>
-        <a class='btn btn-labeled btn-default blue' title='Language details' href='/admin/language/detail/id/<?=$language->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?php
-        echo $language->toString();
-    }
-?>
-    </td>
-</tr>
-
-<tr>
-    <td class='definition'>Menu</td>
-    <td class='admin al l'>
-<?php
-    $menu = $content->getMenuObject();
-    if($menu != null)
-    {
-?>
-        <a class='btn btn-labeled btn-default blue' title='Menu details' href='/admin/menu/detail/id/<?=$menu->id?>' target='_blank'><i class='fa fa-info'></i></a>
-<?php
-        echo $menu->toString();
-    }
-?>
-    </td>
-</tr>
-</tbody>
-</table>
-<br/>
-
-<a href="/admin/content/modify/id/<?=$content->id?>" class="btn btn-labeled btn-default">
-<span class="btn-label"><i class="fa fa-pencil"></i></span>modify
-</a><br/><br/>
-</div>
-<?
-
-//#BlockEnd number=177
-?>
-</div>
+    <a title="<?=$this->translate("MODIFY_CONTENT")?>" href="<?=$this->url("admin", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>" class="btn btn-labeled btn-default modify-btn">
+        <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("MODIFY_CONTENT")?>
+    </a>
+</section>

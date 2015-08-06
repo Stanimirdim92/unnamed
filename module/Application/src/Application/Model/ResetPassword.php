@@ -24,97 +24,67 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\ResetPassword
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Application\Model;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-
 class ResetPassword
 {
     /**
-     * @var $serviceLocator ServiceManager
-     */
-    private $serviceLocator = null;
-
-    /**
-     * @param Int $id
-     * @return int
+     * @var Int $id
      */
     private $id = 0;
 
     /**
-     * @param string $password
-     * @return string
+     * @var string $password
      */
     private $token = null;
 
     /**
-     * @param string $ip
-     * @return string
+     * @var string $ip
      */
     private $ip = null;
 
     /**
-     * @param string $date
-     * @return string
+     * @var string $date
      */
     private $date = "0000-00-00 00:00:00";
 
     /**
-     * @param int $user
-     * @return int
+     * @var int $user
      */
     private $user = 0;
 
     /**
-     * @param null $sm ServiceLocatorInterface|ServiceManager
-     * @return ServiceLocatorInterface|ServiceManager|null
-     */
-    public function setServiceLocator(ServiceLocatorInterface $sm = null)
-    {
-        $this->serviceLocator = $sm;
-    }
-
-    /**
-     * @return ServiceLocatorInterface|ServiceManager
-     */
-    public function getServiceLocator()
-    {
-        return $this->serviceLocator;
-    }
-
-    /**
-     * @var array $data
+     * @param array $data
      * @return mixed
      */
     public function exchangeArray(array $data = [])
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : 0;
-        $this->ip = (isset($data['ip'])) ? $data['ip'] : null;
-        $this->date = (isset($data['date'])) ? $data['date'] : "0000-00-00 00:00:00";
-        $this->token = (isset($data['token'])) ? $data['token'] : null;
-        $this->user = (isset($data['user'])) ? $data['user'] : 0;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->ip = (isset($data['ip'])) ? $data['ip'] :  $this->getIp();
+        $this->date = (isset($data['date'])) ? $data['date'] :  $this->getDate();
+        $this->token = (isset($data['token'])) ? $data['token'] :  $this->getToken();
+        $this->user = (isset($data['user'])) ? $data['user'] :  $this->getUser();
     }
 
     /**
      * constructor
+     * @param  array $options
      */
-    public function __construct(array $options = [], ServiceLocatorInterface $sm = null)
+    public function __construct(array $options = [])
     {
         $this->exchangeArray($options);
-        $this->setServiceLocator($sm);
     }
 
     /**
      * Get id
+     * @return int
      */
     public function getId()
     {
@@ -203,18 +173,6 @@ class ResetPassword
     }
 
     /**
-     * Get the related object from the DB
-     */
-    public function getUserObject()
-    {
-        try {
-            return $this->getServiceLocator()->get('UserTable')->getUser($this->user);
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
      * magic getter
      */
     public function __get($property)
@@ -238,36 +196,6 @@ class ResetPassword
     public function __isset($property)
     {
         return (property_exists($this, $property) ? isset($this->{$property}) : null);
-    }
-
-    /**
-     * magic property remove (unset)
-     */
-    public function __unset($property)
-    {
-        return (property_exists($this, $property) ? unset($this->{$property}) : null);
-    }
-
-    /**
-     * magic serializer
-     */
-    public function __sleep()
-    {
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key => $value) {
-            if (!in_array($key, "serviceLocator")) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
     }
 
     /**

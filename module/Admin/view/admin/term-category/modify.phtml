@@ -1,17 +1,20 @@
 <div>
     <p>
-        <a href="/admin/termcategory" class="btn btn-default">
-            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+        <a href="<?=$this->url("admin", ["controller" => "termcategory"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
     <div class='form-inputs'>
-    <?php
-        $form = $this->form;
-        $form->setAttribute('action', $this->url('admin',array('controller' =>'termcategory','action' => 'modify','id' => $this->id)));
-        $form->prepare();
-        echo $this->form()->openTag($form);
-        echo $this->formCollection($form);
-        echo $this->form()->closeTag();
-    ?>
+        <?php
+            /**
+             * @var Admin\Form\TermCategoryForm
+             */
+            $form = $this->form;
+            $form->setAttribute('action', $this->url('admin', ['controller' =>'termcategory', 'action' => 'modify', 'id'=> $this->adminMenu->getId()]));
+            $form->prepare();
+            echo $this->form()->openTag($form);
+            echo $this->formCollection($form);
+            echo $this->form()->closeTag();
+        ?>
     </div>
 </div>

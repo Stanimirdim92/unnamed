@@ -1,67 +1,50 @@
-<div class="jarviswidget jarviswidget-sortable jarviswidget-color-white" data-widget-deletebutton='false' data-widget-editbutton='false' data-widget-colorbutton='false'>
-<header>
-  <span class="widget-icon"><i class="fa fa-list"></i></span>
-  <h2>List of all content objects</h2>
-</header>
-<!-- widget div-->
-<div>
-<!-- widget content -->
-  <div class="widget-body no-padding">
-    <!-- <div class="widget-body-toolbar"></div> -->
-  <!-- widget content -->
-      <TABLE class="table table-striped table-bordered table-hover dataTable">
-          <THEAD>
-            <TR>
-              <TH>title</TH>
-              <TH>text</TH>
-              <TH>date</TH>
-              <TH>details</TH>
-              <TH>modify</TH>
-              <TH>delete</TH>
-            </TR>
-          </THEAD>
-          <TBODY>
-<?php
-/**
- * @var $item Admin\Model\Content
- */
-foreach($this->contents as $item)
-{
-    $item->setServiceLocator(null);
-?>
-
-<TR>
-    <TD class='admin'><?=$item->getTitle()?></TD>
-    <TD class='admin'><?=substr(strip_tags($item->getText()),0,200)?>...</TD>
-    <TD class='admin'><?=$item->getDate()?></TD>
-    <TD class='admin c'>
-        <a title='details' class='btn blue btn-default btn-sm' href='/admin/content/detail/id/<?=$item->getId()?>'>
-            <i class='fa fa-icon-fix fa-info'></i>
-        </a>
-    </TD>
-    <TD class='admin c'>
-        <a title='<?=$this->translation->MODIFY_CONTENT;?> object' href='/admin/content/modify/id/<?=$item->getId()?>' class='btn btn-default btn-sm orange'>
-            <i class='fa fa-icon-fix fa-pencil'></i>
-        </a>
-    </TD>
-    <TD class='admin c'>
-        <a id='delete_<?=$item->getId()?>' href='#' class='btn btn-default btn-sm red delete dialog_delete' title='delete'>
-            <i class='fa fa-icon-fix fa-trash-o'></i>
-        </a>
-    </TD>
-    <div style='display: none' id='delete_delete_<?=$item->getId()?>' class='dialog_hide'>
-        <p>Are you sure you would like to delete this content?</p>
-        <ul>
-          <li><a class='btn btn-danger' href='/admin/content/delete/id/<?=$item->getId()?>'><i class='fa fa-trash-o'></i>&nbsp; Delete</a></li>
-          <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp; Cancel</a></li>
+<section>
+    <div class="table-style">
+        <ul class="table-header">
+              <li class="table-cell"><?=$this->translate("TITLE")?></li>
+              <li class="table-cell"><?=$this->translate("TEXT")?></li>
+              <li class="table-cell"><?=$this->translate("DATE")?></li>
+              <li class="table-cell"><?=$this->translate("DETAILS")?></li>
+              <li class="table-cell"><?=$this->translate("MODIFY")?></li>
+              <li class="table-cell"><?=$this->translate("DELETE")?></li>
         </ul>
-    </div>
-</TR>
 <?php
-}
+        /**
+         * @var $content Admin\Model\Content
+         */
+        foreach($this->contents as $content) {
 ?>
-          </TBODY>
-        </TABLE>
-  </div>
-</div>
-</div>
+        <ul class="table-row">
+            <li class="table-cell"><?=$content->getTitle()?></li>
+            <li class="table-cell"><?=substr(strip_tags($content->getText()),0,300)?>...</li>
+            <li class="table-cell"><?=$content->getDate()?></li>
+            <li class="table-cell">
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-default btn-sm' href='<?=$this->url("admin", ["controller" => "content", "action" => "detail", "id" => $content->getId()])?>'>
+                    <i class='fa fa-info'></i>
+                </a>
+            </li>
+            <li class="table-cell">
+                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-default btn-sm orange'>
+                    <i class='fa fa-pencil'></i>
+                </a>
+            </li>
+            <li class="table-cell">
+                <button id='delete_<?=$content->getId()?>' type="button" class='btn btn-default btn-sm red delete dialog_delete'><i class='fa fa-trash-o'></i></button>
+                <div style='display: none' id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>
+                    <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
+                    <ul>
+                        <li>
+                            <a class='btn btn-danger' href='<?=$this->url("admin", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
+                        </li>
+                        <li>
+                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+<?php
+        }
+?>
+    </div>
+</section>

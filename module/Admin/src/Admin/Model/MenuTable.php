@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Menu
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -37,21 +35,15 @@ namespace Admin\Model;
 
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
-use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\ServiceManager\ServiceManager;
+use Zend\Db\Sql\Predicate\Expression;
 
 class MenuTable
 {
     /**
-     * @var TableGateway
+     * @var TableGateway $tableGateway
      */
     private $tableGateway = null;
-
-    /**
-     * @var ServiceManager
-     */
-    private $serviceManager = null;
 
     /**
      * Preducate contstants
@@ -61,38 +53,35 @@ class MenuTable
     const PRE_NULL = null;
 
     /**
-     * @param ServiceManager|null $sm
      * @param TableGateway|null   $tg
      */
-    public function __construct(ServiceManager $sm = null, TableGateway $tg = null)
+    public function __construct(TableGateway $tg = null)
     {
-        $this->serviceManager = $sm;
         $this->tableGateway = $tg;
     }
 
     /**
-     * Main function for handlin MySQL queries
+     * Main function for handling MySQL queries
      *
-     * @param  bool $paginated should we use pagination or no
-     * @param  array $columns  substitute * with the columns you need
-     * @param  null $where     WHERE condition
-     * @param  null $group     GROUP condition
-     * @param  null $order     ORDER condition
-     * @param  null $limit     LIMIT condition
-     * @param  null $offset    OFFSET condition
-     * @return ResultSet|Paginator|null
+     * @param  bool $paginated              should we use pagination or no
+     * @param  array $columns               substitute * with the columns you need
+     * @param  null|array|string $where     WHERE condition
+     * @param  null $group                  GROUP condition
+     * @param  null $order                  ORDER condition
+     * @param  int $limit                   LIMIT condition
+     * @param  int $offset                  OFFSET condition
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
+        $select = $this->prepareQuery($this->tableGateway->getSql()->select(), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
         if ((bool) $paginated === true) {
-            $paginatorAdapter = new DbSelect($this->prepareQuery(new Select("menu"), $columns, $where, $predicate, $group, $order, $limit, $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
-            return new Paginator($paginatorAdapter);
+            return new Paginator(new DbSelect($select, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
         } else {
-            $select = $this->prepareQuery(new Select("menu"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
-            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
-                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
             }
             return null;
         }
@@ -105,27 +94,26 @@ class MenuTable
      * @param array $tbl2OneCols - the joined table
      * @param string $on
      * @param string $joinType
-     * @param null $where
+     * @param null|array|string $where
      * @param null $group
      * @param null $order
-     * @param null $limit
-     * @param null $offset
+     * @param int $limit
+     * @param int $offset
      *
-     * @return ResultSet|Paginator|null
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
-        $select = new Select("menu");
+        $select = $this->tableGateway->getSql()->select();
         $select->join($join, $on, $tbl2OneCols, $joinType);
+        $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
         if ((bool) $pagination === true) {
-            $paginatorAdapter = new DbSelect($this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
-            return new Paginator($paginatorAdapter);
+            return new Paginator(new DbSelect($result, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
         } else {
-            $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($result);
             $resultSet->buffer();
-            if ($resultSet instanceof \Zend\Db\ResultSet\ResultSet && $resultSet->isBuffered()) {
-                return ($resultSet->valid() && $resultSet->count() > 0 ? $resultSet : null);
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+                return $resultSet;
             }
             return null;
         }
@@ -135,19 +123,19 @@ class MenuTable
      * Prepare all statements before quering the database
      *
      * @param  Select $select
-     * @param  array  $columns
-     * @param  null $where
+     * @param  array $columns
+     * @param  null|array|string $where
      * @param  null $group
      * @param  null $predicate
      * @param  null $order
      * @param  null $limit
      * @param  null $offset
      *
-     * @return Select
+     * @return Zend\Db\Sql\Select
      */
-    private function prepareQuery(Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery($select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        if (is_array($columns) && !empty($columns)) {
+        if (!empty($columns)) {
             $select->columns($columns);
         }
         if (is_array($where) && !empty($where)) {
@@ -155,8 +143,8 @@ class MenuTable
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
-        } elseif ($where != null) {
-            $select->where($where);
+        } elseif ($where != null && is_string($where)) {
+            $select->where(new Expression($where));
         }
         if ($group != null) {
             $select->group($group);
@@ -186,7 +174,7 @@ class MenuTable
         if (!$rowset->current()) {
             throw new \RuntimeException("Couldn't find menu");
         }
-        return $rowset->current();
+        return $rowset;
     }
 
     /**
@@ -214,26 +202,26 @@ class MenuTable
     public function saveMenu(Menu $menu = null)
     {
         $data = [
-            'caption'      => (string) $menu->caption,
-            'menuOrder'    => (int) $menu->menuOrder,
-            'language'     => (int) $menu->language,
-            'parent'       => (int) $menu->parent,
-            'keywords'     => (string) $menu->keywords,
-            'description'  => (string) $menu->description,
-            'menutype'     => (int) $menu->menutype,
-            'footercolumn' => (int) $menu->footercolumn,
-            'menulink'     => (string) $menu->menulink,
+            'caption'      => (string) $menu->getCaption(),
+            'menuOrder'    => (int) $menu->getMenuOrder(),
+            'language'     => (int) $menu->getLanguage(),
+            'parent'       => (int) $menu->getParent(),
+            'keywords'     => (string) $menu->getKeywords(),
+            'description'  => (string) $menu->getDescription(),
+            'menutype'     => (int) $menu->getMenuType(),
+            'footercolumn' => (int) $menu->getFooterColumn(),
+            'menulink'     => (string) $menu->getMenuLink(),
         ];
-        $id = (int) $menu->id;
-        $language = (int) $menu->language;
+        $id = (int) $menu->getId();
+        $language = (int) $menu->getLanguage();
         if (!$id) {
             $this->tableGateway->insert($data);
             $menu->id = $this->tableGateway->lastInsertValue;
         } else {
-            if ($this->getMenu($id, $language)) {
+            if (!$this->getMenu($id, $language)) {
                 throw new \RuntimeException("Couldn't save menu");
-                $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
             }
+            $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
         }
         unset($id, $language, $data);
         return $menu;
@@ -244,13 +232,13 @@ class MenuTable
      *
      * @param  int    $id
      * @param  int    $language
-     *
      * @return Menu
      */
     public function duplicate($id = 0, $language = 1)
     {
         $menu = $this->getMenu($id, $language);
-        $this->saveMenu($menu->getCopy());
+        $clone = $menu->getCopy();
+        $this->saveMenu($clone);
         return $clone;
     }
 }

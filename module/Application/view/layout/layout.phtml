@@ -3,7 +3,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
     $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html prefix="og: http://ogp.me/ns#" lang="<?=$this->escapeHtmlAttr($view->langName)?>">
+<html prefix="og: http://ogp.me/ns#" lang="">
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
@@ -11,64 +11,62 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             echo $this->headMeta();
             echo $this->placeholder('customHead');
             echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath() . '/favicon.ico'])
-                        ->prependStylesheet($this->basePath('/front/css/style.css'), 'screen')
-                        ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
-
-
+                ->prependStylesheet($this->basePath('/front/css/style.css'), 'screen')
+                ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
         ?>
-        <meta property="og:site_name" content="<?=$this->headTitle()->renderTitle()?>">
-        <link rel="apple-touch-icon" href="<?=$this->basePath('/front/img/apple-touch-icon.png')?>">
-        <link rel="canonical" href="<?=$this->serverUrl(true)?>">
+        <meta property="og:site_name" content="<?=$this->escapeHtml($this->headTitle()->renderTitle());?>">
+        <link rel="apple-touch-icon" href="<?=$this->basePath('/front/img/apple-touch-icon.png');?>">
+        <link rel="canonical" href="<?=$this->serverUrl(true);?>">
+        <link rel="shortlink" href="<?=$this->serverUrl(true);?>">
     </head>
-    <body>
+    <body itemscope itemtype="http://schema.org/WebPage">
          <nav id="nav">
             <ul>
-                <li><a href="&sol;"><?=$this->escapeHtml($view->translation->HOME)?></a></li>
+                <li><a itemprop='url' href="&sol;"><?=$this->translate("HOME");?></a></li>
 <?php
-        if(!empty($view->menus)) {
-            foreach($view->menus as $key => $menu) {
-                $menu->setServiceLocator(null);
-?>
-                <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $this->escapeHtml($menu->getMenuLink())))?>'><?=$this->escapeHtml($menu->getCaption());?></a>
+                if(!empty($view->menus)) {
+                    foreach($view->menus as $key => $menu) {
 
-<?php
-                if(!empty($view->submenus[$key])) {
-?>
-                    <ul class="sub-menu">
-<?php
-                    foreach($view->submenus[$key] as $sub) {
-                        $sub->setServiceLocator(null);
-?>
-                        <li><a itemprop='url' href='<?=$this->url('menu', array('title' => $this->escapeHtml($sub->getMenuLink())));?>'><?=$this->escapeHtml($sub->getCaption());?></a></li>
-<?php
+                        echo "<li><a itemprop='url' href='".$this->url('application', ['controller' => 'menu', 'action' => 'title', 'title' => $this->escapeHtml($menu->getMenuLink())])."'>".$menu->getCaption()."</a>";
+
+                        if(!empty($view->submenus[$key])) {
+
+                            echo "<ul class='sub-menu'>";
+                                foreach($view->submenus[$key] as $sub) {
+                                    echo "<li><a itemprop='url' href='".$this->url('application', ['controller' => 'menu', 'action' => 'title', 'title' => $this->escapeHtml($sub->getMenuLink())])."'>".$sub->getCaption()."</a></li>";
+                                }
+                            echo "</ul>";
+
+                        }
+                        echo "</li>";
                     }
-?>
-                    </ul>
-<?php
                 }
-                echo "</li>";
-            }
-        }
-            echo "<li><a itemprop='url' href='&sol;login'>{$this->escapeHtml($view->translation->LOGIN)}</a></li>";
-        echo "</ul>";
-        echo "</nav>";
-
+?>
+            <li><a itemprop='url' href='<?=$this->url('application', ['controller' => 'login'])?>'><?=$this->translate("LOGIN");?></a></li>
+            <li><a itemprop='url' href='<?=$this->url('application', ['controller' => 'news'])?>'>News (name temporary hardcoded)<?=$this->translate("NEWS");?></a></li>
+        </ul>
+    </nav>
+<?php
         if ($view->flashMessages) {
-            foreach ($view->flashMessages->getMessages() as $context => $message) {
-                echo '<div class="alert alert-' . $this->escapeHtmlAttr($view->flashMessages->getNamespace()) . '">';
-                echo '<button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>';
-                echo '<i class="fa-fw fa fa-'.$this->escapeHtmlAttr($view->flashMessages->getNamespace()).'"></i>' . $this->escapeHtml($message) . '</li>';
-                echo '</div>';
+            foreach ($view->flashMessages->getCurrentMessages() as $context => $message) {
+                echo '<div class="alert alert-' . $view->flashMessages->getNamespace() . '">
+                        <ul>
+                            <li>
+                                <i class="fa-fw fa fa-'.$view->flashMessages->getNamespace().'"></i>' . $message . '
+                                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            </li>
+                        </ul>
+                      </div>
+                ';
             }
         }
 
         echo $this->layout()->content;
 
         echo $this->headScript()
-            ->prependFile($this->basePath('/front/js/custom.js'), 'defer')
+            ->prependFile($this->basePath('/front/js/custom.js'))
             ->prependFile($this->basePath('/front/js/jquery.min.js'));
 ?>
-
     </body>
 </html>
 <?php

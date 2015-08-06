@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\News
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -37,24 +35,34 @@ namespace Application\Controller;
 
 class NewsController extends IndexController
 {
+    /**
+     * @param MvcEvent $e
+     */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         parent::onDispatch($e);
     }
 
-    public function newsAction()
+    /**
+     * Get the contents for all the news or only one newspost
+     *
+     * @return Content
+     */
+    public function postAction()
     {
+        $this->view->setTemplate("application/news/post");
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         $post = (string) $escaper->escapeUrl($this->getParam("post"));
+        $content = $this->getTable("content");
 
         if (!empty($post)) {
-            $new = $this->getTable("content")->fetchList(false, ["title", "text", "date", "preview"], ["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->langTranslation], "AND", null, "date DESC");
-            $this->view->new = $new->current();
-            // $this->initMetaTags($new);
+            $new = $content->fetchList(false, ["title", "text", "date", "preview"], ["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->language()], "AND", null, "date DESC")->getDataSource()->current();
+            $this->view->new = $new;
+            $this->initMetaTags($new);
         } else {
-            $news = $this->getTable("content")->fetchList(true, ["title", "titleLink", "text", "date", "preview"], ["type" => 1, "menu" => 0, "language" => $this->langTranslation], "AND", null, "date DESC");
+            $news = $content->fetchList(true, ["title", "titleLink", "text", "date", "preview"], ["type" => 1, "menu" => 0, "language" => $this->language()], "AND", null, "date DESC");
             $news->setCurrentPageNumber((int)$this->getParam('page', 1));
-            $news->setItemCountPerPage(10);
+            $news->setItemCountPerPage(2); // must be set from db
             $this->view->news = $news;
         }
         return $this->view;

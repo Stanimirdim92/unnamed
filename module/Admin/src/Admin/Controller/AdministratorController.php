@@ -24,32 +24,36 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Administrator
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Admin\Model\Administrator;
+use Admin\Form\AdministratorForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
-class AdministratorController extends \Admin\Controller\IndexController
+class AdministratorController extends IndexController
 {
     /**
-     * Controller name to which will redirect
+     * @var Admin\Form\AdministratorForm $administratorForm
      */
-    const CONTROLLER_NAME = "administrator";
+    private $administratorForm = null;
 
     /**
-     * Route name to which will redirect
+     * @param Admin\Form\AdministratorForm $administratorForm
      */
-    const ADMIN_ROUTE = "admin";
+    public function __construct(AdministratorForm $administratorForm = null)
+    {
+        parent::__construct();
+
+        $this->administratorForm = $administratorForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -58,29 +62,31 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>"Administrators"]);
+        $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
         parent::onDispatch($e);
     }
 
     /**
-     * This action shows the list of all (or filtered) Administrator objects
+     * This action shows the list of all Administrators
      */
     public function indexAction()
     {
-        $paginator = $this->getTable("administrator")->fetchList(true);
-        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
-        $paginator->setItemCountPerPage(15);
+        $this->view->setTemplate("admin/administrator/index");
+        $paginator = $this->getTable("administrator")->fetchJoin(true, "user", ["user"], ["name"], "administrator.user=user.id", "left");
+        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        $paginator->setItemCountPerPage(20);
         $this->view->paginator = $paginator;
         return $this->view;
     }
 
     /**
-     * This action serves for adding a new object of type UserClass
+     * This action serves for adding a new users as administrators
      */
     public function addAction()
     {
-        $this->showForm("Add administrator", null);
-        $this->addBreadcrumb(["reference"=>"/admin/administrator/add", "name"=>"Add new administrator"]);
+        $this->view->setTemplate("admin/administrator/add");
+        $this->initForm($this->translate("ADD_ADMINISTRATOR"), null);
+        $this->addBreadcrumb(["reference"=>"/admin/administrator/add", "name"=>$this->translate("ADD_ADMINISTRATOR")]);
         return $this->view;
     }
 
@@ -90,10 +96,11 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
-        $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0));
+        $this->view->setTemplate("admin/administrator/modify");
+        $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0))->current();
         $this->view->administrator = $administrator;
-        $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/id/{$administrator->user}", "name"=>"Modify administrator"]);
-        $this->showForm("Modify administrator", $administrator);
+        $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/{$administrator->getUser()}", "name"=>$this->translate("MODIY_ADMINISTRATOR")]);
+        $this->initForm($this->translate("MODIY_ADMINISTRATOR"), $administrator);
         return $this->view;
     }
 
@@ -102,21 +109,27 @@ class AdministratorController extends \Admin\Controller\IndexController
      */
     public function deleteAction()
     {
-        $user = $this->getTable("user")->getUser($this->getParam('id', 0));
+        $id = $this->getParam('id', 0);
+        $userTable = $this->getTable("user");
+        $user = $userTable->getUser($id)->current();
         $user->setAdmin(0);
-        $this->getTable("user")->saveUser($user);
-        $this->getTable("administrator")->deleteAdministrator($this->getParam('id', 0));
-        $this->translation->success = "Administrator was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+        $userTable->saveUser($user);
+        $this->getTable("administrator")->deleteAdministrator($id);
+        $this->setLayoutMessages($this->translate("DELETE_ADMINISTRATOR_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
     }
 
+    /**
+     * This action is used in combination with the javascript ajax function
+     * to search for existing users and add them as administrators
+     */
     protected function searchAction()
     {
-        $search = $this->getParam('ajaxsearch');
+        $search = (string) $this->getParam('ajaxsearch');
+        $this->view->setTerminal(true);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
-            $this->view->setTerminal(true);
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
-            $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
+            $results = $this->getTable("user")->fetchList(false, ["id", "name", "surname", "email"], $where)->getDataSource();
             $json = [];
             foreach ($results as $result) {
                 $json[] = Json::encode($result);
@@ -133,50 +146,50 @@ class AdministratorController extends \Admin\Controller\IndexController
      * @param String $label
      * @param null|Administrator $administrator
      */
-    private function showForm($label='Add administrator', Administrator $administrator = null)
+    private function initForm($label = '', Administrator $administrator = null)
     {
-        if ($administrator==null) {
+        if (!$administrator instanceof Administrator) {
             $administrator = new Administrator([], null);
         }
-        $form = new \Admin\Form\AdministratorForm($administrator);
+
+        /**
+         * @var $form Admin\Form\AdministratorForm
+         */
+        $form = $this->administratorForm;
         $form->get("submit")->setValue($label);
+        $form->bind($administrator);
         $this->view->form = $form;
+
         if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($administrator->getInputFilter());
+            $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-
-                $user = $this->getTable("user")->getUser($formData['user']);
+                $user = $this->getTable("user")->getUser($formData->user)->current();
                 // valid user id
-                if (count($user) == 1) {
-                    $adminExist = $this->getTable("administrator")->getAdministrator($user->getId());
-                    if (count($adminExist) != 0) {
-                        $this->translation->error = $user->toString()." is already administrator";
-                        $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
-                    } else {
+                if (count($user) === 1) {
+                    // should return false|null|0 etc.
+                    $adminExist = $this->getTable("administrator")->getAdministrator($user->getId())->current();
+                    /**
+                     * See if user is already admin
+                     */
+                    if (!$adminExist && (int) $user->getAdmin() === 0) {
                         $user->setAdmin(1);
-                        $administrator->exchangeArray($formData);
                         $this->getTable("user")->saveUser($user);
                         $this->getTable("administrator")->saveAdministrator($administrator);
-                        $this->translation->success = "Administrator was successfully saved";
-                        $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                        $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
+                        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
+                    } else {
+                        $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');
+                        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
                     }
                 } else {
-                    $this->setErrorNoParam(IndexController::NO_ID);
-                    return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                    $this->setLayoutMessages($this->translate("ERROR"), 'error');
+                    return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
                 }
             } else {
-                $error = [];
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                $this->setLayoutMessages($form->getMessages(), 'error');
+                return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
             }
         }
     }

@@ -1,110 +1,123 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ServiceManager\ServiceManager;
-
-class AdminMenu implements InputFilterAwareInterface
+class AdminMenu
 {
-    private $inputFilter;
+    /**
+     * @var Int $id
+     */
+    private $id = 0;
 
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
-     * Please, note that this is not the best way, but it does the job.
-     *
-     * @var $serviceManager ServiceManager
+     * @var null $caption
      */
-    private $serviceManager;
+    private $caption = null;
 
     /**
-     * @param Int $id
-     * @return int
+     * @var Int $menuOrder
      */
-    private $id;
-
-    /**
-     * @param String $caption
-     * @return string
-     */
-    private $caption;
-
-    /**
-     * @param Int $menuOrder
-     * @return int
-     */
-    private $menuOrder;
+    private $menuOrder = 0;
 
     /**
      * @param Int $advanced
-     * @return int
      */
-    private $advanced;
+    private $advanced = 0;
 
     /**
      * @param String $controller
-     * @return string
      */
-    private $controller;
+    private $controller = null;
 
     /**
      * @param String $action
-     * @return string
      */
-    private $action;
+    private $action = null;
 
     /**
      * @param String $class
-     * @return string
      */
-    private $class;
+    private $class = null;
 
     /**
      * @param String $description
-     * @return string
      */
-    private $description;
+    private $description = null;
 
     /**
      * @param Int $parent
-     * @return int
      */
-    private $parent;
+    private $parent = 0;
 
-    public function setServiceLocator($sm)
+    /**
+     * @var array $data
+     * @return mixed
+     */
+    public function exchangeArray(array $data = [])
     {
-        $this->serviceManager = $sm;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->caption = (isset($data['caption'])) ? $data['caption'] : $this->getCaption();
+        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->getMenuOrder();
+        $this->advanced = (isset($data['advanced'])) ? $data['advanced'] : $this->getAdvanced();
+        $this->controller = (isset($data['controller'])) ? $data['controller'] : $this->getController();
+        $this->action = (isset($data['action'])) ? $data['action'] : $this->getAction();
+        $this->class = (isset($data['class'])) ? $data['class'] : $this->getClass();
+        $this->description = (isset($data['description'])) ? $data['description'] : $this->getDescription();
+        $this->parent = (isset($data['parent'])) ? $data['parent'] : $this->getParent();
     }
 
-    public function exchangeArray($data)
+    /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : null;
-        $this->caption = (isset($data['caption'])) ? $data['caption'] : null;
-        $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : null;
-        $this->advanced = (isset($data['advanced'])) ? $data['advanced'] : null;
-        $this->controller = (isset($data['controller'])) ? $data['controller'] : null;
-        $this->action = (isset($data['action'])) ? $data['action'] : null;
-        $this->class = (isset($data['class'])) ? $data['class'] : null;
-        $this->description = (isset($data['description'])) ? $data['description'] : null;
-        $this->parent = (isset($data['parent'])) ? $data['parent'] : null;
+        return get_object_vars($this);
     }
 
     /**
      * constructor
+     *
+     * @param array $options
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = [])
     {
-        if (is_array($options) && $options instanceof Traversable) {
-            $this->exchangeArray($options);
-        }
-        if ($sm != null) {
-            $this->serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
     }
 
     /**
      * Get id
+     * @return int
      */
     public function getId()
     {
@@ -115,7 +128,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set id
      * @param int
      */
-    public function setId(int $id)
+    public function setId($id = 0)
     {
         $this->id = $id;
     }
@@ -124,7 +137,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set caption
      * @param String $caption
      */
-    public function setCaption($caption)
+    public function setCaption($caption = null)
     {
         $this->caption = $caption;
     }
@@ -142,7 +155,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set menuOrder
      * @param int $menuOrder
      */
-    public function setMenuOrder($menuOrder)
+    public function setMenuOrder($menuOrder = 0)
     {
         $this->menuOrder = $menuOrder;
     }
@@ -160,7 +173,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set advanced
      * @param Boolean $advanced
      */
-    public function setAdvanced($advanced)
+    public function setAdvanced($advanced = 0)
     {
         $this->advanced = $advanced;
     }
@@ -178,7 +191,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set controller
      * @param String $controller
      */
-    public function setController($controller)
+    public function setController($controller = null)
     {
         $this->controller = $controller;
     }
@@ -196,7 +209,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set action
      * @param String $action
      */
-    public function setAction($action)
+    public function setAction($action = null)
     {
         $this->action = $action;
     }
@@ -214,7 +227,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set class
      * @param String $class
      */
-    public function setClass($class)
+    public function setClass($class = null)
     {
         $this->class = $class;
     }
@@ -232,7 +245,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set description
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description = null)
     {
         $this->description = $description;
     }
@@ -250,7 +263,7 @@ class AdminMenu implements InputFilterAwareInterface
      * Set parent
      * @param int $parent
      */
-    public function setParent($parent)
+    public function setParent($parent = 0)
     {
         $this->parent = $parent;
     }
@@ -262,18 +275,6 @@ class AdminMenu implements InputFilterAwareInterface
     public function getParent()
     {
         return $this->parent;
-    }
-
-    /**
-     * Get the related object from the DB
-     */
-    public function getParentObject()
-    {
-        try {
-            return $this->serviceManager->get('AdminMenuTable')->getAdminMenu("{$this->parent}");
-        } catch (\Exception $e) {
-            return null;
-        }
     }
 
     /**
@@ -289,9 +290,7 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
-        }
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -299,97 +298,29 @@ class AdminMenu implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, $property));
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
-     * magic serializer
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
-    public function __sleep()
-    {
-        $skip = ["serviceManager"];
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
-     * this is a handy function for encoding the object to json for transfer purposes
-     */
-    public function getProperties($skip=["serviceManager"])
+    public function getProperties(array $skip = [], $serializable = false)
     {
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->{$key};
             }
         }
-        return $returnValue;
-    }
-
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $inputFilter->add(['name' => 'id', 'required' => false, 'filters' => [['name' => 'Int']]]);
-
-            $inputFilter->add([
-                "name"=>"caption",
-                "required" => true,
-                "filters"=> [['name' => 'StringTrim']], ]);
-            $inputFilter->add([
-                "name"=>"menuOrder",
-                "required" => false, ]);
-            $inputFilter->add([
-                "name"=>"advanced",
-                "required" => false, ]);
-            $inputFilter->add([
-                "name"=>"controller",
-                "required" => true,
-                "filters"=> [['name' => 'StringTrim']], ]);
-            $inputFilter->add([
-                "name"=>"action",
-                "required" => false,
-                "filters"=> [['name' => 'StringTrim']], ]);
-            $inputFilter->add([
-                "name"=>"class",
-                "required" => false,
-                "filters"=> [['name' => 'StringTrim']], ]);
-            $inputFilter->add([
-                "name"=>"description",
-                "required" => false, ]);
-            $inputFilter->add([
-                "name"=>"parent",
-                "required" => false, ]);
-            $this->inputFilter = $inputFilter;
+        if ((bool) $serializable === true) {
+            return serialize($returnValue);
         }
-        return $this->inputFilter;
+        return $returnValue;
     }
 
     /**
@@ -399,22 +330,14 @@ class AdminMenu implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setCaption($this->caption);
-        $clone->setMenuOrder($this->menuOrder);
-        $clone->setAdvanced($this->advanced);
-        $clone->setController($this->controller);
-        $clone->setAction($this->action);
-        $clone->setClass($this->class);
-        $clone->setDescription($this->description);
-        $clone->setParent($this->parent);
+        $clone->setCaption($this->getCaption());
+        $clone->setMenuOrder($this->getMenuOrder());
+        $clone->setAdvanced($this->getAdvanced());
+        $clone->setController($this->getController());
+        $clone->setAction($this->getAction());
+        $clone->setClass($this->getClass());
+        $clone->setDescription($this->getDescription());
+        $clone->setParent($this->getParent());
         return $clone;
-    }
-
-    /**
-     * toString method
-     */
-    public function toString()
-    {
-        return $this->caption;
     }
 }

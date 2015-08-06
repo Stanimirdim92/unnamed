@@ -1,71 +1,109 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-
-class Term implements InputFilterAwareInterface
+class Term
 {
-    private $inputFilter;
+    /**
+     * @var Int $id
+     */
+    private $id = 0;
 
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access
-     *
-     * @var $serviceManager ServiceManager
+     * @var String $name
      */
-    private $serviceManager;
+    private $name = null;
 
     /**
-     * @param Int $id
-     * @return int
+     * @var Int $termcategory
      */
-    private $id;
+    private $termcategory = 0;
 
     /**
-     * @param String $name
-     * @return string
+     * @var array $data
+     * @return mixed
      */
-    private $name;
-
-    /**
-     * @param Int $termcategory
-     * @return int
-     */
-    private $termcategory;
-
-    public function setServiceLocator($sm)
+    public function exchangeArray(array $data = [])
     {
-        $this->serviceManager = $sm;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->name = (isset($data['name'])) ? $data['name'] : $this->getName();
+        $this->termcategory = (isset($data['termcategory'])) ? $data['termcategory'] : $this->getTermCategory();
     }
 
-    public function exchangeArray($data)
+    /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : null;
-        $this->name = (isset($data['name'])) ? $data['name'] : null;
-        $this->termcategory = (isset($data['termcategory'])) ? $data['termcategory'] : null;
+        return get_object_vars($this);
     }
 
     /**
      * constructor
+     *
+     * @param array $options
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = [])
     {
-        if (is_array($options) && $options instanceof Traversable) {
-            $this->exchangeArray($options);
-        }
-        if ($sm != null) {
-            $this->serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
+    }
+
+    /**
+     * Set id
+     * @param int $id
+     */
+    public function setId($id = 0)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Get id
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
      * Set name
      * @param String $name
      */
-    public function setName($name)
+    public function setName($name = null)
     {
-        $this->name = (String) $name;
+        $this->name = $name;
     }
 
     /**
@@ -81,9 +119,9 @@ class Term implements InputFilterAwareInterface
      * Set TermCategory
      * @param int $termcategory
      */
-    public function setTermCategory($termcategory)
+    public function setTermCategory($termcategory = 0)
     {
-        $this->termcategory = (int) $termcategory;
+        $this->termcategory = $termcategory;
     }
 
     /**
@@ -108,9 +146,7 @@ class Term implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
-        }
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -118,102 +154,29 @@ class Term implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, $property));
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
-     * magic serializer
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
-    public function __sleep()
-    {
-        $skip = ["serviceManager"];
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
-     * this is a handy function for encoding the object to json for transfer purposes
-     */
-    public function getProperties($skip=["serviceManager"])
+    public function getProperties(array $skip = [], $serializable = false)
     {
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->{$key};
             }
         }
-        return $returnValue;
-    }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $inputFilter->add([
-                'name' => 'id',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-
-            $inputFilter->add([
-                "name"=>"name",
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                        ],
-                    ],
-                    ['name' => 'NotEmpty'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"termcategory",
-                'required' => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    ['name' => 'NotEmpty'],
-                ],
-            ]);
-            $this->inputFilter = $inputFilter;
+        if ((bool) $serializable === true) {
+            return serialize($returnValue);
         }
-        return $this->inputFilter;
+        return $returnValue;
     }
 
     /**
@@ -223,16 +186,8 @@ class Term implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setName($this->name);
-        $clone->setTermCategory($this->termcategory);
+        $clone->setName($this->getName());
+        $clone->setTermCategory($this->getTermCategory());
         return $clone;
-    }
-
-    /**
-     * toString method
-     */
-    public function toString()
-    {
-        return $this->name;
     }
 }

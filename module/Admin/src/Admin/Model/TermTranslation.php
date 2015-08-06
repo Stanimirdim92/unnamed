@@ -1,77 +1,121 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-
-class TermTranslation implements InputFilterAwareInterface
+class TermTranslation
 {
-    private $inputFilter;
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access
-     *
-     * @var $serviceManager ServiceManager
+     * @var Int $id
      */
-    private $serviceManager;
+    private $id = 0;
 
     /**
-     * @param Int $id
-     * @return int
+     * @var Int $language
      */
-    private $id;
+    private $language = 1;
 
     /**
-     * @param Int $language
-     * @return int
+     * @var String $translation
      */
-    private $language;
-
-    /**
-     * @param String $translation
-     * @return string
-     */
-    private $translation;
+    private $translation = null;
 
     /**
      * @param Int $term
-     * @return int
      */
-    private $term;
+    private $term = 0;
 
-    public function setServiceLocator($sm)
+    /**
+     * @var null $termName
+     */
+    private $termName = null;
+
+    /**
+     * @var array $data
+     * @return mixed
+     */
+    public function exchangeArray(array $data = [])
     {
-        $this->serviceManager = $sm;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
+        $this->translation = (isset($data['translation'])) ? $data['translation'] : $this->getTranslation();
+        $this->term = (isset($data['term'])) ? $data['term'] : $this->getTerm();
+        $this->termName = (isset($data['termName'])) ? $data['termName'] : $this->getTermName();
     }
 
-    public function exchangeArray($data)
+    /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : null;
-        $this->language = (isset($data['language'])) ? $data['language'] : null;
-        $this->translation = (isset($data['translation'])) ? $data['translation'] : null;
-        $this->term = (isset($data['term'])) ? $data['term'] : null;
+        return get_object_vars($this);
     }
 
     /**
      * constructor
+     *
+     * @param array $options
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = [])
     {
-        if (is_array($options) && $options instanceof Traversable) {
-            $this->exchangeArray($options);
-        }
-        if ($sm != null) {
-            $this->serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
+    }
+
+    /**
+     * Set id
+     * @param int $id
+     */
+    public function setId($id = 0)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Get id
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
      * Set Language
      * @param int $
      */
-    public function setLanguage($language)
+    public function setLanguage($language = 1)
     {
-        $this->language = (int) $language;
+        $this->language = $language;
     }
 
     /**
@@ -87,9 +131,9 @@ class TermTranslation implements InputFilterAwareInterface
      * Set translation
      * @param String $translation
      */
-    public function setTranslation($translation)
+    public function setTranslation($translation = null)
     {
-        $this->translation = (String) $translation;
+        $this->translation = $translation;
     }
 
     /**
@@ -105,14 +149,9 @@ class TermTranslation implements InputFilterAwareInterface
      * Set Term
      * @param int $
      */
-    public function setTerm($term)
+    public function setTerm($term = 0)
     {
-        $this->term = (int) $term;
-    }
-
-    public function getLanguageObject()
-    {
-        return $this->serviceManager->get("LanguageTable")->getLanguage($this->language);
+        $this->term = $term;
     }
 
     /**
@@ -122,6 +161,24 @@ class TermTranslation implements InputFilterAwareInterface
     public function getTerm()
     {
         return $this->term;
+    }
+
+    /**
+     * Set Term
+     * @param int $termName
+     */
+    public function setTermName($termName = 0)
+    {
+        $this->termName = $termName;
+    }
+
+    /**
+     * Get termName
+     * @return null|int
+     */
+    public function getTermName()
+    {
+        return $this->termName;
     }
 
     /**
@@ -137,9 +194,7 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
-        }
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -147,107 +202,29 @@ class TermTranslation implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, $property));
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
-     * magic serializer
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
-    public function __sleep()
-    {
-        $skip = ["serviceManager"];
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
-     * this is a handy function for encoding the object to json for transfer purposes
-     */
-    public function getProperties($skip=["serviceManager"])
+    public function getProperties(array $skip = [], $serializable = false)
     {
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[$key]=$this->$key;
+                $returnValue[$key] = $this->{$key};
             }
         }
-        return $returnValue;
-    }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $inputFilter->add([
-                'name' => 'id',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-
-            $inputFilter->add([
-                'name' => 'language',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-
-            $inputFilter->add([
-                "name"=>"translation",
-                'required' => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                        ],
-                    ],
-                    ['name' => 'NotEmpty'],
-                ],
-            ]);
-
-            $inputFilter->add([
-                'name' => 'term',
-                'required' => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $this->inputFilter = $inputFilter;
+        if ((bool) $serializable === true) {
+            return serialize($returnValue);
         }
-        return $this->inputFilter;
+        return $returnValue;
     }
 
     /**
@@ -257,17 +234,9 @@ class TermTranslation implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setLanguage($this->language);
-        $clone->setTranslation($this->translation);
-        $clone->setTerm($this->term);
+        $clone->setLanguage($this->getLanguage());
+        $clone->setTranslation($this->getTranslation());
+        $clone->setTerm($this->getTerm());
         return $clone;
-    }
-
-    /**
-     * toString method
-     */
-    public function toString()
-    {
-        return $this->id;
     }
 }

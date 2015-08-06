@@ -24,157 +24,312 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Menu
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class MenuForm extends Form
+class MenuForm extends Form implements InputFilterProviderInterface
 {
-    /**
-     * Create the menu form
-     *
-     * @param \Admin\Model\Menu|null $options   holds the Menu object
-     * @param array              $languages     ResultSet arrayobject
-     * @param array              $parents       ResultSet arrayobject
-     */
-    public function __construct(\Admin\Model\Menu $options = null,  $languages = [], $parents = [])
+    public function __construct()
     {
         parent::__construct("menu");
-        $elements = [];
+    }
 
-        $elements[0] = new Element\Text('caption');
-        $elements[0]->setLabel('Caption');
-        $elements[0]->setAttributes([
-            'required'   => true,
-            'id'         => "seo-caption",
-            'size'        => 40,
-            'placeholder' => 'Caption',
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'caption',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
+                'id'         => "seo-caption",
+                'placeholder' => 'Caption',
+            ],
+            'options' => [
+                'label' => 'Caption',
+            ],
         ]);
 
-        if ($options!=null and $options->caption) {
-            $elements[0]->setValue($options->caption);
-        }
-
-        $elements[1] = new Element\Select('menuOrder');
-        $elements[1]->setLabel('Menu order');
         $valueOptions = [];
-        for ($i = 1; $i<40; $i++) {
+        for ($i = 1; $i < 150; $i++) {
             $valueOptions[$i] = $i;
         }
-        $elements[1]->setValueOptions($valueOptions);
-        if ($options!=null and $options->menuOrder) {
-            $elements[1]->setValue($options->menuOrder);
-        } else {
-            $elements[1]->setValue(0);
-        }
-
-        $elements[2] = new Element\Text('keywords');
-        $elements[2]->setLabel('Keywords');
-        $elements[2]->setAttributes([
-            'required'   => false,
-            'size'        => 40,
-            'placeholder' => 'Keywords (max 15 words) seperate by commas',
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'menuOrder',
+            'options' => [
+                'empty_option' => 'Please choose menu order (optional)',
+                'value_options' => $valueOptions,
+                'label' => 'Menu order',
+            ],
         ]);
-        if ($options!=null and $options->keywords) {
-            $elements[2]->setValue($options->keywords);
-        }
 
-        $elements[3] = new Element\Text('description');
-        $elements[3]->setLabel('Description');
-        $elements[3]->setAttributes([
-            'required'   => false,
-            'size'        => 40,
-            'placeholder' => 'Description (max 150 characters)',
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'keywords',
+            'attributes' => [
+                'required'   => false,
+                'size'        => 40,
+                'placeholder' => 'Keywords (max 15 words) seperate by commas',
+            ],
+            'options' => [
+                'label' => 'Keywords',
+            ],
         ]);
-        if ($options!=null and $options->description) {
-            $elements[3]->setValue($options->description);
-        }
 
-        $elements[4] = new Element\Select('language');
-        $elements[4]->setLabel('language');
-        $valueOptions = [];
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'description',
+            'attributes' => [
+                'required'   => false,
+                'size'        => 40,
+                'placeholder' => 'Description (max 150 characters)',
+            ],
+            'options' => [
+                'label' => 'Description',
+            ],
+        ]);
 
-        foreach ($languages as $item) {
-            $valueOptions[$item->id] = $item->toString();
-        }
-        $elements[4]->setValueOptions($valueOptions);
-        if ($options!=null and $options->language) {
-            $elements[4]->setValue($options->language);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'language',
+            'options' => [
+                'label' => 'Language',
+                'empty_option' => 'Please choose a language',
+            ],
+        ]);
 
-        $elements[5] = new Element\Select('parent');
-        $elements[5]->setLabel('parent');
-        $valueOptions = [];
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'parent',
+            'options' => [
+                'label' => 'Parent',
+            ],
+        ]);
 
-        $valueOptions[0] = 'Select parent menu';
-        foreach ($parents as $item) {
-            if ($item->parent != 0) {
-                $valueOptions[$item->id] = "--".$item->toString();
-            } else {
-                $valueOptions[$item->id] = $item->toString();
-            }
-        }
-        $elements[5]->setValueOptions($valueOptions);
-        if ($options!=null and $options->parent) {
-            $elements[5]->setValue($options->parent);
-        }
-
-        $elements[6] = new Element\Select('menutype');
-        $elements[6]->setLabel('Choose menu type');
         $valueOptions = [];
         $valueOptions[0] = "Main menu";
         $valueOptions[1] = "Left menu";
         $valueOptions[2] = "Right menu";
         $valueOptions[3] = "Footer menu";
-        $elements[6]->setValueOptions($valueOptions)->setAttribute("id", "menutype");
-        if ($options!=null and $options->menutype) {
-            $elements[6]->setValue($options->menutype);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'menutype',
+            'options' => [
+                'empty_option' => 'Please choose menu type',
+                'value_options' => $valueOptions,
+                'label' => 'Choose menu type',
+            ],
+        ]);
 
-        $elements[7] = new Element\Select('footercolumn');
-        $elements[7]->setLabel('Choose footer column');
         $valueOptions = [];
+        // 0 index missed intentionally
         $valueOptions[1] = "Column one";
         $valueOptions[2] = "Column two";
         $valueOptions[3] = "Column three";
         $valueOptions[4] = "Column four";
-        $elements[7]->setValueOptions($valueOptions);
-        if ($options!=null and $options->footercolumn) {
-            $elements[7]->setValue($options->footercolumn);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'footercolumn',
+            'options' => [
+                'empty_option' => 'Please choose footer column',
+                'value_options' => $valueOptions,
+                'label' => 'Choose footer column',
+            ],
+        ]);
 
-        $elements[66] = new Element\Submit('submit');
-        $elements[66]->setAttribute('id', 'submitbutton');
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 1400,
+                ],
+            ],
+        ]);
 
-        $elements[69] = new Element\Csrf('s');
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
 
-        if ($options!=null) {
-            $elements[77] = new Element\Hidden('id');
-            $elements[77]->setValue($options->id);
-        }
-        $elements[78] = new Element\Hidden('menulink');
-        $elements[78]->setAttribute('id', 'menulink');
-        if ($options!=null) {
-            $elements[78]->setValue($options->menulink);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
 
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'menulink',
+            'attributes' => [
+                'id' => 'menulink',
+            ],
+        ]);
+    }
 
-        // if there is only one main menu or no menus at all remove the parent input and set menu.parent=0.
-        if (count($parents) <= 1) {
-            $this->remove("parent");
-        }
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name'     => 'id',
+                'required' => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"caption",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 200,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"menuOrder",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"language",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"parent",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"keywords",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 0,
+                            'max' => 200,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"description",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 0,
+                            'max' => 150,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"menutype",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"footercolumn",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-9]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"menulink",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StringToLower'],
+                ],
+            ],
+        ];
     }
 }

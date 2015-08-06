@@ -1,13 +1,13 @@
 <div>
 <p>
     <a href='/admin/termtranslation/export' class="btn btn-default">
-       <i class="fa fa-save"></i>&nbsp;<?=$this->session->EXCEL_EXPORT?>
+       <i class="fa fa-save"></i>&nbsp;<?=$this->translate("EXCEL_EXPORT");?>
     </a>
 </p>
 <hr />
 <form id='importform' action='/admin/termtranslation/import' method='POST' enctype='multipart/form-data'>
     <input  type='file' class='btn btn-default' id='file' name='excel'>
-    <button class="btn btn-default" type='submit'><i class="fa fa-folder-open"></i>&nbsp;<?=$this->session->EXCEL_IMPORT?></button>
+    <button class="btn btn-default" type='submit'><i class="fa fa-folder-open"></i>&nbsp;<?=$this->translate("EXCEL_IMPORT");?></button>
 </form>
 
 <br/>
@@ -15,18 +15,17 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-          <li class="table-cell"><?=$this->session->TERMTRANSLATION?></li>
-		  <li class="table-cell"><?=$this->session->MODIFY?></li>
+          <li class="table-cell"><?=$this->translate("TERMTRANSLATION");?></li>
+		  <li class="table-cell"><?=$this->translate("MODIFY");?></li>
         </ul>
-        <?php
-        foreach($this->termCategories as $item)
-        {
+<?php
+        foreach($this->termCategories as $item) {
             echo "<ul class='table-row'>";
             echo "<li class='table-cell'>{$item->name}</li>";
-            echo "<li class='table-cell'><a title='".$this->session->LANGUAGE."&nbsp;".$this->languageObject->name."' href='/admin/termtranslation/modify/id/{$item->id}' class='btn orange btn-sm'><i class='fa fa-icon-fix fa-pencil'></i></a></li>";
+            echo "<li class='table-cell'><a title='".$this->translate("LANGUAGE")."&nbsp;' href='/admin/termtranslation/modify/{$item->id}' class='btn orange btn-sm'><i class='fa fa-icon-fix fa-pencil'></i></a></li>";
             echo "</ul>";
         }
-        ?>
+?>
     </div>
 </section>
 </div>

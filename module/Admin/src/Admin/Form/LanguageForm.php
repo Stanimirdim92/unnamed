@@ -24,62 +24,118 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Language
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class LanguageForm extends Form
+class LanguageForm extends Form implements InputFilterProviderInterface
 {
-    /**
-     * Create the language form
-     *
-     * @param \Admin\Model\Language|null $options holds language options
-     */
-    public function __construct(\Admin\Model\Language $options = null)
+    public function __construct()
     {
         parent::__construct("language");
-        $elements = [];
+    }
 
-        $elements[0] = new Element\Text('name');
-        $elements[0]->setLabel('Name');
-        $elements[0]->setAttributes([
-            'required'   => true,
-            'size'        => 40,
-            'class'      => 'language-name',
-            'placeholder' => 'Name',
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'name',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
+                'placeholder' => 'Name',
+            ],
+            'options' => [
+                'label' => 'Name',
+            ],
         ]);
-        if ($options!=null and $options->name) {
-            $elements[0]->setValue($options->name);
-        }
 
-        $elements[1] = new Element\Checkbox('active');
-        $elements[1]->setLabel('Active');
-        if ($options!=null and $options->active) {
-            $elements[1]->setValue($options->active);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Checkbox',
+            'name' => 'active',
+            'options' => [
+                'label' => 'Active',
+            ],
+        ]);
 
-        $elements[2] = new Element\Submit('submit');
-        $elements[2]->setAttribute('id', 'submitbutton');
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 500,
+                ],
+            ],
+        ]);
 
-        $elements[69] = new Element\Csrf('s');
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
 
-        if ($options!=null) {
-            $elements[3] = new Element\Hidden('id');
-            $elements[3]->setValue($options->id);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
+    }
 
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name' => 'id',
+                'required' => false,
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"name",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 10,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"active",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-1]+$/',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

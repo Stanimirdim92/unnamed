@@ -39,6 +39,27 @@ EOF;
         $this->makeTest($expected, $input);
     }
 
+    public function testPropertyFix()
+    {
+        $expected = <<<'EOF'
+<?php
+/**
+ * @property int $foo
+ */
+
+EOF;
+
+        $input = <<<'EOF'
+<?php
+/**
+ * @property integer $foo
+ */
+
+EOF;
+
+        $this->makeTest($expected, $input);
+    }
+
     public function testDoNotModifyVariables()
     {
         $expected = <<<'EOF'
@@ -233,6 +254,20 @@ EOF;
 
 EOF;
 
+        $this->makeTest($expected);
+    }
+
+    public function testWrongCasedPhpdocTagIsNotAltered()
+    {
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @Param boolean
+     *
+     * @Return int
+     */
+
+EOF;
         $this->makeTest($expected);
     }
 }

@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Content
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -37,72 +35,52 @@ namespace Admin\Model;
 
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
-use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
 
 class ContentTable
 {
     /**
-     * @var TableGateway
+     * @var TableGateway $tableGateway
      */
     private $tableGateway = null;
 
     /**
-     * @var ServiceManager
-     */
-    private $serviceLocator = null;
-
-    /**
-     * Preducate contstants
+     * Preducate constants
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
     const PRE_NULL = null;
 
     /**
-     * @param serviceLocator|null $sm
      * @param TableGateway|null   $tg
      */
-    public function __construct(ServiceLocatorInterface $sm = null, TableGateway $tg = null)
+    public function __construct(TableGateway $tg = null)
     {
-        $this->setServiceLocator($sm);
         $this->tableGateway = $tg;
     }
 
     /**
-     * @param null $sm ServiceLocatorInterface|ServiceManager
-     * @return ServiceLocatorInterface|ServiceManager|null
-     */
-    public function setServiceLocator(ServiceLocatorInterface $sm = null)
-    {
-        $this->serviceLocator = $sm;
-    }
-
-    /**
-     * Main function for handlin MySQL queries
+     * Main function for handling MySQL queries
      *
-     * @param  bool $paginated should we use pagination or no
-     * @param  array $columns  substitute * with the columns you need
-     * @param  null $where     WHERE condition
-     * @param  null $group     GROUP condition
-     * @param  null $order     ORDER condition
-     * @param  null $limit     LIMIT condition
-     * @param  null $offset    OFFSET condition
-     * @return ResultSet|Paginator|null
+     * @param  bool $paginated              should we use pagination or no
+     * @param  array $columns               substitute * with the columns you need
+     * @param  null|array|string $where     WHERE condition
+     * @param  null $group                  GROUP condition
+     * @param  null $order                  ORDER condition
+     * @param  int $limit                   LIMIT condition
+     * @param  int $offset                  OFFSET condition
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
+        $select = $this->prepareQuery($this->tableGateway->getSql()->select(), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
         if ((bool) $paginated === true) {
-            $paginatorAdapter = new DbSelect($this->prepareQuery(new Select("menu"), $columns, $where, $predicate, $group, $order, $limit, $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
-            return new Paginator($paginatorAdapter);
+            return new Paginator(new DbSelect($select, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
         } else {
-            $select = $this->prepareQuery(new Select("content"), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
-            if ($resultSet instanceof ResultSet && $resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
             return null;
@@ -116,26 +94,25 @@ class ContentTable
      * @param array $tbl2OneCols - the joined table
      * @param string $on
      * @param string $joinType
-     * @param null $where
+     * @param null|array|string $where
      * @param null $group
      * @param null $order
-     * @param null $limit
-     * @param null $offset
+     * @param int $limit
+     * @param int $offset
      *
-     * @return ResultSet|Paginator|null
+     * @return HydratingResultSet|Paginator|null
      */
-    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = null, $offset = null)
+    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
-        $select = new Select("content");
+        $select = $this->tableGateway->getSql()->select();
         $select->join($join, $on, $tbl2OneCols, $joinType);
+        $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
         if ((bool) $pagination === true) {
-            $paginatorAdapter = new DbSelect($this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset), $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
-            return new Paginator($paginatorAdapter);
+            return new Paginator(new DbSelect($result, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype()));
         } else {
-            $result = $this->prepareQuery($select, $tbl1OneCols, $where, self::PRE_NULL, $group, $order, (int) $limit, (int) $offset);
             $resultSet = $this->tableGateway->selectWith($result);
             $resultSet->buffer();
-            if ($resultSet instanceof ResultSet && $resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
+            if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
             return null;
@@ -154,11 +131,11 @@ class ContentTable
      * @param  null $limit
      * @param  null $offset
      *
-     * @return Select
+     * @return Zend\Db\Sql\Select
      */
-    private function prepareQuery(Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery($select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
-        if (is_array($columns) && !empty($columns)) {
+        if (!empty($columns)) {
             $select->columns($columns);
         }
         if (is_array($where) && !empty($where)) {
@@ -201,7 +178,7 @@ class ContentTable
     }
 
     /**
-     * Delete a content based on the provided id and language
+     * Delete content based on the provided id and language
      *
      * @param int $id content id
      * @param int $language user language
@@ -210,10 +187,9 @@ class ContentTable
      */
     public function deleteContent($id = 0, $language = 1)
     {
-        if (!$this->getContent($id, $language)) {
-            throw new \RuntimeException("Couldn't delete content");
+        if ($this->getContent($id, $language)) {
+            $this->tableGateway->delete(['id' => (int) $id, "language" => (int) $language]);
         }
-        $this->tableGateway->delete(['id' => (int) $id, "language" => (int) $language]);
     }
 
     /**
@@ -226,18 +202,18 @@ class ContentTable
     public function saveContent(Content $content = null)
     {
         $data = [
-            'menu'      => (int) $content->menu,
-            'title'     => (string) $content->title,
-            'preview'   => (string) $content->preview,
-            'text'      => (string) $content->text,
-            'menuOrder' => (int) $content->menuOrder,
-            'type'      => (bool) $content->type,
-            'date'      => (string) $content->date,
-            'language'  => (int) $content->language,
-            'titleLink' => (string) $content->titleLink,
+            'menu'      => (int) $content->getMenu(),
+            'title'     => (string) $content->getTitle(),
+            'preview'   => (string) $content->getPreview(),
+            'text'      => (string) $content->getText(),
+            'menuOrder' => (int) $content->getMenuOrder(),
+            'type'      => (int) $content->getType(),
+            'date'      => (string) $content->getDate(),
+            'language'  => (int) $content->getLanguage(),
+            'titleLink' => (string) $content->getTitleLink(),
         ];
-        $id = (int) $content->id;
-        $language = (int) $content->language;
+        $id = (int) $content->getId();
+        $language = (int) $content->getLanguage();
         if (!$id) {
             $this->tableGateway->insert($data);
             $content->id = $this->tableGateway->lastInsertValue;
@@ -256,15 +232,11 @@ class ContentTable
      *
      * @param  int    $id
      * @param  int    $language
-     *
      * @return Content
      */
     public function duplicate($id = 0, $language = 1)
     {
         $content = $this->getContent($id, $language);
-        if (!$content) {
-            throw new \RuntimeException("Couldn't clone content");
-        }
         $clone = $content->getCopy();
         $this->saveContent($clone);
         return $clone;

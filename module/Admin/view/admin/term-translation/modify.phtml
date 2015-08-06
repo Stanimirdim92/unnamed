@@ -1,17 +1,19 @@
 <div>
     <p>
         <a href="/admin/termtranslation" class="btn btn-default">
-            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK");?>
         </a>
     </p>
     <div class='form-inputs'>
-    <?php
-        $form = $this->form;
-        $form->setAttribute('action', $this->url('admin',array('controller' =>'termtranslation','action' => <?=$this->translation->MODIFY;?>,'id' => $this->id)));
-        $form->prepare();
-        echo $this->form()->openTag($form);
-        echo $this->formCollection($form);
-        echo $this->form()->closeTag();
-    ?>
+        <?php
+            $form = $this->form;
+            $form->setAttribute('action', $this->url('admin', ['controller' =>'termtranslation','action' => 'modify','id' => 1]));
+            $form->prepare();
+            $ttf = $form->get("termtranslationfieldset");
+            // echo \Zend\Debug\Debug::dump($form->get("termtranslationfieldset"), null, false);
+            echo $this->form()->openTag($form);
+            echo $this->formCollection($ttf);
+            echo $this->form()->closeTag();
+        ?>
     </div>
 </div>

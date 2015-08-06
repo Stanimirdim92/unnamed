@@ -24,30 +24,34 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Menu
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Admin\Model\Menu;
+use Admin\Form\MenuForm;
 
-class MenuController extends \Admin\Controller\IndexController
+class MenuController extends IndexController
 {
     /**
-     * Controller name to which will redirect
+     * @var Admin\Form\MenuForm $menuForm
      */
-    const CONTROLLER_NAME = "menu";
+    private $menuForm = null;
 
     /**
-     * Route name to which will redirect
+     * @param Admin\Form\MenuForm $menuForm
      */
-    const ADMIN_ROUTE = "admin";
+    public function __construct(MenuForm $menuForm = null)
+    {
+        parent::__construct();
+
+        $this->menuForm = $menuForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -56,41 +60,32 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>"Menus"]);
+        $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>$this->translate("MENUS")]);
         parent::onDispatch($e);
     }
 
     /**
-     * This action shows the list of all (or filtered) Menu objects
+     * This action shows the list with all menus
      */
     public function indexAction()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent",], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
-        if (count($menu) > 0) {
-            $submenus = $menus = [];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $submenus[$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus[$submenu->getId()] = $submenu;
-                }
-            }
-            $this->view->menus = $menus;
-            $this->view->submenus = $submenus;
+        $this->view->setTemplate("admin/menu/index");
+        $menus = $this->prepareMenusData();
+        if (!empty($menus)) {
+            $this->view->menus = $menus["menus"];
+            $this->view->submenus = $menus["submenus"];
         }
         return $this->view;
     }
 
     /**
-     * This action serves for adding a new object of type Menu
+     * This action serves for adding a new menu
      */
     public function addAction()
     {
-        $this->showForm('Add menu', null);
-        $this->addBreadcrumb(["reference"=>"/admin/menu/add", "name"=>"Add a new menu"]);
+        $this->view->setTemplate("admin/menu/add");
+        $this->initForm($this->translate("ADD_NEW_MENU"), null);
+        $this->addBreadcrumb(["reference"=>"/admin/menu/add", "name"=>$this->translate("ADD_NEW_MENU")]);
         return $this->view;
     }
 
@@ -100,10 +95,11 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
-        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->langTranslation);
+        $this->view->setTemplate("admin/menu/modify");
+        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
         $this->view->menu = $menu;
-        $this->addBreadcrumb(["reference"=>"/admin/menu/modify/id/{$menu->getId()}", "name"=>"Modify menu &laquo;".$menu->toString()."&raquo;"]);
-        $this->showForm('Modify menu', $menu);
+        $this->addBreadcrumb(["reference"=>"/admin/menu/modify/{$menu->getId()}", "name"=> $this->translate("MODIFY_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY_MENU"), $menu);
         return $this->view;
     }
 
@@ -112,9 +108,9 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function deleteAction()
     {
-        $this->getTable("menu")->deleteMenu($this->getParam("id", 0), $this->langTranslation);
-        $this->translation->success = "Menu was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+        $this->getTable("menu")->deleteMenu($this->getParam("id", 0), $this->language());
+        $this->setLayoutMessages($this->translate("DELETE_MENU_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
     }
 
     /**
@@ -122,9 +118,10 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function detailAction()
     {
-        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->langTranslation);
+        $this->view->setTemplate("admin/menu/detail");
+        $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
         $this->view->menu = $menu;
-        $this->addBreadcrumb(["reference"=>"/admin/menu/detail/id/".$menu->getId()."", "name"=>"Menu &laquo;". $menu->toString()."&raquo; details"]);
+        $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->view;
     }
 
@@ -133,10 +130,9 @@ class MenuController extends \Admin\Controller\IndexController
      */
     public function cloneAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        $menu = $this->getTable("menu")->duplicate($id, $this->langTranslation);
-        $this->translation->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully cloned";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+        $menu = $this->getTable("menu")->duplicate($this->getParam("id", 0), $this->language());
+        $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
     }
 
     /**
@@ -145,47 +141,67 @@ class MenuController extends \Admin\Controller\IndexController
      * @param string $label button title
      * @param  Menu|null $menu menu object
      */
-    private function showForm($label = '', Menu $menu = null)
+    private function initForm($label = '', Menu $menu = null)
     {
-        if ($menu == null) {
+        if (!$menu instanceof Menu) {
             $menu = new Menu([], null);
         }
 
-        $menu->setServiceLocator(null);
-        $form = new \Admin\Form\MenuForm($menu,
-                $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name DESC"),
-                $this->getTable("Menu")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'parent'], ["language" => $this->langTranslation], "AND", null, "menuOrder ASC", IndexController::MAX_COUNT)
-        );
+        /**
+         * @var Admin\Form\MenuForm $form
+         */
+        $form = $this->menuForm;
+
+        /**
+         * Populate the form with menus and languages data
+         */
+        $menus = $this->prepareMenusData();
+        $valueOptions = [];
+        $valueOptions[0] = "Select a parent menu";
+        foreach ($menus["menus"] as $key => $m) {
+            $valueOptions[$m->getId()] = $m->getCaption();
+
+            if (!empty($menus["submenus"][$key])) {
+                foreach ($menus["submenus"][$key] as $sub) {
+                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
+                }
+            }
+        }
+
+        $form->get("parent")->setValueOptions($valueOptions);
+
+        $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC");
+        $valueOptions = [];
+        foreach ($languages as $language) {
+            $valueOptions[$language->getId()] = $language->getName();
+        }
+        $form->get("language")->setValueOptions($valueOptions);
+
+
+        $form->bind($menu);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
+
         if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($menu->getInputFilter());
-            $form->setData(array_merge_recursive($this->getRequest()->getPost()->toArray(), $this->getRequest()->getFiles()->toArray()));
+            $form->setInputFilter($form->getInputFilter());
+            $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-
                 // see if we have menu with the exact same caption.
                 if ($this->params("action") == 'add') {
-                    $existingMenu = $this->getTable('menu')->fetchList(false, ['menulink', 'menutype', 'language', 'parent'], ["parent" => 0, "language" => $this->langTranslation, "menutype" => $formData['menutype'], "menulink" => $formData['menulink']], "AND", null);
-                    if ($existingMenu->count() > 0) {
-                        $this->translation->error = "Menu with name &laquo; ".$formData['caption']." &raquo; already exists";
-                        $this->view->setTerminal(true);
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                    $existingMenu = $this->getTable('menu')->fetchList(false, ['menulink', 'menutype', 'language', 'parent'], ["parent" => 0, "language" => $this->language(), "menutype" => $formData->menutype, "menulink" => $formData->menulink], "AND", null);
+                    if (count($existingMenu) > 0) {
+                        $this->setLayoutMessages($this->translate("MENU_WITH_NAME")." &laquo; ".$formData->caption." &raquo; ".$this->translate("ALREADY_EXIST"), 'warning');
+                        return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
                     }
                 }
 
-                $menu->exchangeArray($formData);
-                if (empty($formData["parent"])) {
-                    $menu->setParent(0);
-                }
-
                 $this->getTable("menu")->saveMenu($menu);
-                $this->translation->success = "Menu &laquo;".$menu->toString()."&raquo; was successfully saved";
-                $this->view->setTerminal(true);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
+                return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
             } else {
-                $this->formErrors($form->getMessages());
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                $this->setLayoutMessages($form->getMessages(), 'error');
+                return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
             }
         }
     }

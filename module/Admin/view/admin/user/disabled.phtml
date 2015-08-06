@@ -1,55 +1,47 @@
-<div>
-<?php
-$form = $this->form;
-$form->setAttribute("method", "GET");
-$form->setAttribute('action', $this->url('admin',array('controller' =>'user')));
-$form->prepare();
-echo $this->form()->openTag($form);
-echo $this->formCollection($form);
-echo $this->form()->closeTag();
-?>
-
 <section>
+    <p>
+        <a href="<?=$this->url("admin", ["controller" => "user"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell">Id</li>
-            <li class="table-cell"><?=$this->session->NAME?></li>
-            <li class="table-cell"><?=$this->session->USERNAME?></li>
-            <li class="table-cell"><?=$this->session->EMAIL?></li>
-            <li class="table-cell"><?=$this->session->LAST_LOGIN?></li>
-            <li class="table-cell"><?=$this->session->DISABLED?></li>
-            <li class="table-cell"><?=$this->session->REGISTERED?></li>
-            <li class="table-cell"><?=$this->session->DETAILS?></li>
-            <li class="table-cell"><?=$this->session->MODIFY?></li>
-            <li class="table-cell"><?=$this->session->DELETE?></li>
+            <li class="table-cell"><?=$this->translate("NAME")?></li>
+            <li class="table-cell"><?=$this->translate("EMAIL")?></li>
+            <li class="table-cell"><?=$this->translate("DETAILS")?></li>
+            <li class="table-cell"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell"><?=$this->translate("ENABLE")?></li>
         </ul>
-        <div id="linked">
 <?php
-/* @var $item Admin\Model\User */
-foreach($this->paginator as $item)
-{
+    /**
+     * @var $user Admin\Model\User
+     */
+    foreach($this->paginator as $user) {
 ?>
         <ul class="table-row">
-            <li class="table-cell"><?=$item->getId()?></li>
-            <li class="table-cell"><?=$item->getName()."&nbsp;".$item->getSurname()?></li>
-            <li class="table-cell"><?=$item->getUsername()?></li>
-            <li class="table-cell"><?=$item->getEmail()?></li>
-            <li class="table-cell"><?=$item->getLastLogin()?></li>
-            <li class="table-cell"><? if ($item->getDeleted()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?></li>
-            <li class="table-cell"><?=$item->getRegistered()?></li>
+            <li class="table-cell"><?=$user->getId()?></li>
+            <li class="table-cell"><?=$user->getFullName()?></li>
+            <li class="table-cell"><?=$user->getEmail()?></li>
+            <li class="table-cell"><?=$user->getLastLogin()?></li>
+            <li class="table-cell"><?php if ($user->getDeleted()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
+            <li class="table-cell"><?=$user->getRegistered()?></li>
             <li class="table-cell">
-                <a title='<?=$this->session->DETAILS?>' class='btn blue btn-sm' href='/admin/user/detail/id/<?=$item->getId()?>'><i class='fa fa-icon-fix fa-info'></i></a>
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "user", "action" => "detail", "id" => $user->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->session->MODIFY?>' href='/admin/user/modify/id/<?=$item->getId()?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+                <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->session->DELETE?>' id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-                <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
-                    <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getUsername()?>&raquo;&quest;</p>
+                <button id='delete_<?=$user->getId()?>' type="button" class='btn btn-default btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
+                <div id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
+                   <p><?=$this->translate("ENABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
-                        <li><a class='btn delete' href='/admin/user/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
-                        <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
+                        <li>
+                            <a class='btn enable' href='<?=$this->url("admin", ['controller' => "user", "action" => "enable", "id" => $user->getId()])?>'><i class='fa fa-plus'></i> <?=$this->translate("ENABLE")?></a>
+                        </li>
+                        <li>
+                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                        </li>
                     </ul>
                 </div>
             </li>
@@ -57,11 +49,8 @@ foreach($this->paginator as $item)
 <?php
 }
 ?>
-        </div>
-        <div id="results"></div>
     </div>
+    <div id="results"></div>
 </section>
 <?php
-echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
-?>
-</div>
+    echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin']);

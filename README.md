@@ -8,7 +8,7 @@ This README would normally document whatever steps are necessary to get your app
 ### Unnamed CMS ###
 
 * Trying to rewrite Wordpess with Zend Framework 2
-* Version 0.03
+* Version 0.0.4
 
 ### Requirements ###
 
@@ -20,18 +20,17 @@ This README would normally document whatever steps are necessary to get your app
  - mcrypt
  - mbstring
  - pdo_mysql
- - GD (will be required later)
-* ircmaxell password class (it's integrated into the system)
+* ircmaxell password class (integrated into the system)
 * Apache 2.11+ or nginx
-* Zend Framework 2.4+ (it's integrated into the system)
-* CodePlex (it's integrated into the system)
-* Imagine module for creating thumbnails (it's integrated into the system)
+* Zend Framework 2.4+ (integrated into the system)
+* CodePlex (integrated into the system)
 
 ### Requirements for development ###
 
 * APPLICATION_ENV must be set to development via .htaccess
-* ZendDeveloperTools (it's integrated into the system)
-* bjyoungblood (it's integrated into the system)
+* ZendDeveloperTools (integrated into the system)
+* BjyProfiler (integrated into the system)
+* SanSessionToolbar (integrated into the system)
 
 ### Contacts ###
 

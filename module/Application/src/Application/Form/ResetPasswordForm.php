@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Login
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -63,47 +61,12 @@ class ResetPasswordForm extends Form implements InputFilterProviderInterface
             ],
         ]);
 
-        $captchaImage = new CaptchaImage([
-            'font'           => './data/fonts/arial.ttf',
-            'width'          => 180,
-            'height'         => 50,
-            'size'           => 30,
-            'fsize'          => 20,
-            'dotNoiseLevel'  => 10,
-            'lineNoiseLevel' => 2,
-            ]
-        );
-        $captchaImage->setImgDir('./public/userfiles/captcha');
-        $captchaImage->setImgUrl('/userfiles/captcha');
-
-        $this->add([
-            'type' => 'Zend\Form\Element\Captcha',
-            'name' => 'captcha',
-            'attributes' => [
-                'class' => 'captcha-input',
-                'size' => 30,
-            ],
-            'options' => [
-                'captcha' => $captchaImage,
-            ],
-        ]);
-
         $this->add([
             'name' => 'resetpw',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
-
-        $this->add([
-            'type' => 'Zend\Form\Element\Csrf',
-            'name' => 's',
-            'options' => [
-                'csrf_options' => [
-                    'timeout' => 600
-                ]
-            ]
         ]);
     }
 

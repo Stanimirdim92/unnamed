@@ -1,159 +1,153 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
+
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ServiceManager\ServiceManager;
-
-class User implements InputFilterAwareInterface
+class User
 {
-    private $inputFilter;
+    /**
+     * @var Int $id
+     */
+    private $id = 0;
 
     /**
-     * ServiceManager is a dependency injection we use for any additional methods requiring DB access.
-     * Please, note that this is not the best way, but it does the job.
-     *
-     * @var $serviceManager ServiceManager
+     * @var String $name
      */
-    private $serviceManager;
+    private $name = null;
 
     /**
-     * @param Int $id
-     * @return int
+     * @var String $surname
      */
-    private $id;
+    private $surname = null;
 
     /**
-     * @param String $name
-     * @return string
+     * @var string $password
      */
-    private $name;
+    private $password = null;
 
     /**
-     * @param String $surname
-     * @return string
+     * @var String $email
      */
-    private $surname;
+    private $email = null;
 
     /**
-     * @param Binary $password
-     * @return string
+     * @var string $birthDate
      */
-    private $password;
+    private $birthDate = "0000-00-00";
 
     /**
-     * @param String $email
-     * @return string
+     * @var string $lastLogin
      */
-    private $email;
+    private $lastLogin = "0000-00-00 00:00:00";
 
     /**
-     * @param Date $birthDate
-     * @return string
+     * @var Int $deleted
      */
-    private $birthDate;
+    private $deleted = 0;
 
     /**
-     * @param Datetime $lastLogin
-     * @return string
+     * @var String $image
      */
-    private $lastLogin;
+    private $image = null;
 
     /**
-     * @param Int $deleted
-     * @return boolean
+     * @var string $registered
      */
-    private $deleted;
+    private $registered = "0000-00-00 00:00:00";
 
     /**
-     * @param String $salt
-     * @return string
+     * @var Int $hideEmail
      */
-    private $salt;
+    private $hideEmail = 0;
 
     /**
-     * @param String $image
-     * @return string
+     * @var String $ip
      */
-    private $image;
+    private $ip = null;
 
     /**
-     * @param Date $registered
-     * @return string
+     * @var Int $admin
      */
-    private $registered;
+    private $admin = 0;
 
     /**
-     * @param Int $hideEmail
-     * @return boolean
+     * @var Int $language
      */
-    private $hideEmail;
+    private $language = 1;
 
     /**
-     * @param String $ip
-     * @return string
+     * @param array $data
+     * @return void
      */
-    private $ip;
-
-    /**
-     * @param Int $admin
-     * @return int
-     */
-    private $admin;
-
-    /**
-     * @param Int $language
-     * @return int
-     */
-    private $language;
-
-    /**
-     * @param Int $currency
-     * @return int
-     */
-    private $currency;
-
-    public function setServiceLocator($sm)
+    public function exchangeArray(array $data = [])
     {
-        $this->serviceManager = $sm;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->name = (isset($data['name'])) ? $data['name'] : $this->getName();
+        $this->surname = (isset($data['surname'])) ? $data['surname'] : $this->getSurname();
+        $this->password = (isset($data['password'])) ? $data['password'] : $this->getPassword();
+        $this->email = (isset($data['email'])) ? $data['email'] : $this->getEmail();
+        $this->birthDate = (isset($data['birthDate'])) ? $data['birthDate'] : $this->getBirthDate();
+        $this->lastLogin = (isset($data['lastLogin'])) ? $data['lastLogin'] : $this->getLastLogin();
+        $this->deleted = (isset($data['deleted'])) ? $data['deleted'] : $this->getDeleted();
+        $this->image = (isset($data['image'])) ? $data['image'] : $this->getImage();
+        $this->registered = (isset($data['registered'])) ? $data['registered'] : $this->getRegistered();
+        $this->hideEmail = (isset($data['hideEmail'])) ? $data['hideEmail'] : $this->getHideEmail();
+        $this->ip = (isset($data['ip'])) ? $data['ip'] : $this->getIp();
+        $this->admin = (isset($data['admin'])) ? $data['admin'] : $this->getAdmin();
+        $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
     }
 
-    public function exchangeArray($data)
+    /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : null;
-        $this->name = (isset($data['name'])) ? $data['name'] : null;
-        $this->surname = (isset($data['surname'])) ? $data['surname'] : null;
-        $this->password = (isset($data['password'])) ? $data['password'] : null;
-        $this->email = (isset($data['email'])) ? $data['email'] : null;
-        $this->birthDate = (isset($data['birthDate'])) ? $data['birthDate'] : null;
-        $this->lastLogin = (isset($data['lastLogin'])) ? $data['lastLogin'] : null;
-        $this->deleted = (isset($data['deleted'])) ? $data['deleted'] : null;
-        $this->salt = (isset($data['salt'])) ? $data['salt'] : null;
-        $this->image = (isset($data['image'])) ? $data['image'] : null;
-        $this->registered = (isset($data['registered'])) ? $data['registered'] : null;
-        $this->hideEmail = (isset($data['hideEmail'])) ? $data['hideEmail'] : null;
-        $this->ip = (isset($data['ip'])) ? $data['ip'] : null;
-        $this->admin = (isset($data['admin'])) ? $data['admin'] : null;
-        $this->language = (isset($data['language'])) ? $data['language'] : null;
-        // $this->currency = (isset($data['currency'])) ? $data['currency'] : null;
+        return get_object_vars($this);
     }
 
     /**
      * constructor
+     *
+     * @param array $options
      */
-    public function __construct(array $options = null, ServiceManager $sm = null)
+    public function __construct(array $options = [])
     {
-        if (is_array($options) && $options instanceof Traversable) {
-            $this->exchangeArray($options);
-        }
-        if ($sm != null) {
-            $this->serviceManager = $sm;
-        }
+        $this->exchangeArray($options);
     }
 
     /**
      * Get id
+     * @return int
      */
     public function getId()
     {
@@ -164,7 +158,7 @@ class User implements InputFilterAwareInterface
      * Set id
      * @param int
      */
-    public function setId(int $id)
+    public function setId($id = 0)
     {
         $this->id = $id;
     }
@@ -174,7 +168,7 @@ class User implements InputFilterAwareInterface
      * Set name
      * @param String $name
      */
-    public function setName($name)
+    public function setName($name = null)
     {
         $this->name = $name;
     }
@@ -192,7 +186,7 @@ class User implements InputFilterAwareInterface
      * Set surname
      * @param String $surname
      */
-    public function setSurname($surname)
+    public function setSurname($surname = null)
     {
         $this->surname = $surname;
     }
@@ -210,7 +204,7 @@ class User implements InputFilterAwareInterface
      * Set password
      * @param String $password
      */
-    public function setPassword($password)
+    public function setPassword($password = null)
     {
         $this->password = $password;
     }
@@ -228,7 +222,7 @@ class User implements InputFilterAwareInterface
      * Set email
      * @param String $email
      */
-    public function setEmail($email)
+    public function setEmail($email = null)
     {
         $this->email = $email;
     }
@@ -246,7 +240,7 @@ class User implements InputFilterAwareInterface
      * Set BirthDate
      * @param String $birthDate
      */
-    public function setBirthDate($birthDate)
+    public function setBirthDate($birthDate = "0000-00-00")
     {
         $this->birthDate = $birthDate;
     }
@@ -264,7 +258,7 @@ class User implements InputFilterAwareInterface
      * Set lastLogin
      * @param String $lastLogin
      */
-    public function setLastLogin($lastLogin)
+    public function setLastLogin($lastLogin = "0000-00-00 00:00:00")
     {
         $this->lastLogin = $lastLogin;
     }
@@ -280,16 +274,16 @@ class User implements InputFilterAwareInterface
 
     /**
      * Set deleted
-     * @param Boolean $deleted
+     * @param int $deleted
      */
-    public function setDeleted($deleted)
+    public function setDeleted($deleted = 0)
     {
         $this->deleted = $deleted;
     }
 
     /**
      * Get deleted
-     * @return Boolean
+     * @return int
      */
     public function getDeleted()
     {
@@ -297,28 +291,10 @@ class User implements InputFilterAwareInterface
     }
 
     /**
-     * Set salt
-     * @param String $salt
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
-    }
-
-    /**
-     * Get salt
-     * @return String
-     */
-    public function getSalt()
-    {
-        return $this->salt;
-    }
-
-    /**
      * Set image
      * @param String $image
      */
-    public function setImage($image)
+    public function setImage($image = null)
     {
         $this->image = $image;
     }
@@ -336,7 +312,7 @@ class User implements InputFilterAwareInterface
      * Set registered
      * @param String $registered
      */
-    public function setRegistered($registered)
+    public function setRegistered($registered = "0000-00-00 00:00:00")
     {
         $this->registered = $registered;
     }
@@ -354,7 +330,7 @@ class User implements InputFilterAwareInterface
      * Set hideEmail
      * @param Boolean $hideEmail
      */
-    public function setHideEmail($hideEmail)
+    public function setHideEmail($hideEmail = 0)
     {
         $this->hideEmail = $hideEmail;
     }
@@ -390,7 +366,7 @@ class User implements InputFilterAwareInterface
      * Set language
      * @param Int $language
      */
-    public function setLanguage($language)
+    public function setLanguage($language = 1)
     {
         $this->language = $language;
     }
@@ -406,9 +382,9 @@ class User implements InputFilterAwareInterface
 
     /**
      * Set admin
-     * @param Boolean $admin
+     * @param int $admin
      */
-    public function setAdmin($admin)
+    public function setAdmin($admin = 0)
     {
         $this->admin = $admin;
     }
@@ -420,48 +396,6 @@ class User implements InputFilterAwareInterface
     public function getAdmin()
     {
         return $this->admin;
-    }
-
-    /**
-     * Set currency
-     * @param Int $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-    }
-
-    /**
-     * Get currency
-     * @return Int
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * Get the related object from the DB
-     */
-    public function getLanguageObject()
-    {
-        try {
-            return $this->serviceManager->get('LanguageTable')->getLanguage($this->language);
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Get the related object from the DB
-     */
-    public function getAdministratorObject()
-    {
-        try {
-            return $this->serviceManager->get('AdministratorTable')->getAdministrator($this->admin);
-        } catch (\Exception $e) {
-            return null;
-        }
     }
 
     /**
@@ -477,9 +411,7 @@ class User implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
-        }
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -487,269 +419,33 @@ class User implements InputFilterAwareInterface
      */
     public function __isset($property)
     {
-        return (property_exists($this, $property));
+        return (property_exists($this, $property) ? isset($this->{$property}) : null);
     }
 
     /**
-     * magic serializer
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
-    public function __sleep()
+    public function getProperties(array $skip = [], $serializable = false)
     {
-        $skip = ["serviceManager"];
         $returnValue = [];
         $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[] = $key;
+                $returnValue[$key] = $this->{$key};
             }
+        }
+        if ((bool) $serializable === true) {
+            return serialize($returnValue);
         }
         return $returnValue;
     }
 
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
+    public function getFullName()
     {
-    }
-
-    /**
-     * this is a handy function for encoding the object to json for transfer purposes
-     */
-    public function getProperties($skip=["serviceManager"])
-    {
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key=>$value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[$key]=$this->$key;
-            }
-        }
-        return $returnValue;
-    }
-    /**
-     * encode this object as json, we do not include the mapper properties
-     */
-    public function toJson()
-    {
-        return \Zend\Json\Json::encode($this->getProperties());
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $inputFilter->add([
-                'name'     => 'id',
-                'required' => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-
-            $inputFilter->add([
-                "name"=>"name",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"surname",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"password",
-                "required" => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 3,
-                            'max' => 20,
-                        ],
-                    ],
-                    ['name' => 'NotEmpty'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"email",
-                "required" => true,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                "validators" => [
-                    [
-                        'name' => 'EmailAddress',
-                        'options' => [
-                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
-                        ],
-                    ],
-                    ['name' => 'NotEmpty'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"birthDate",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"lastLogin",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"deleted",
-                "required" => false,
-            ]);
-            $inputFilter->add([
-                "name"=>"salt",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"image",
-                "required" => false,
-            ]);
-            $inputFilter->add([
-                "name"=>"registered",
-                "required" => false,
-            ]);
-            $inputFilter->add([
-                "name"=>"hideEmail",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"ip",
-                "required" => false,
-            ]);
-            $inputFilter->add([
-                "name"=>"admin",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"language",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"currency",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $this->inputFilter = $inputFilter;
-        }
-        return $this->inputFilter;
-    }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field)
-     * Note that this method will not save the object
-     */
-    public function getCopy()
-    {
-        $clone = new self();
-        $clone->setName($this->name);
-        $clone->setSurname($this->surname);
-        $clone->setPassword($this->password);
-        $clone->setEmail($this->email);
-        $clone->setBirthDate($this->birthDate);
-        $clone->setLastLogin($this->lastLogin);
-        $clone->setDeleted($this->deleted);
-        $clone->setSalt($this->salt);
-        $clone->setImage($this->image);
-        $clone->setRegistered($this->registered);
-        $clone->setHideEmail($this->hideEmail);
-        $clone->setIp($this->ip);
-        $clone->setAdmin($this->admin);
-        $clone->setLanguage($this->language);
-        $clone->setCurrency($this->currency);
-        return $clone;
-    }
-
-    /**
-     * toString method
-     */
-    public function toString()
-    {
-        return $this->name." ".$this->surname;
-    }
-
-    public function export($path="/userfiles/userExports")
-    {
-        require_once($_SERVER["DOCUMENT_ROOT"]."/zend/vendor/CodePlex/PHPExcel.php");
-        $filename = md5($this->id." ".rand(10000, 2000000)).".xlsx";
-        $objPHPExcel = new \PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("SEO optimizer Excel Export Plugin")
-        ->setTitle("Office 2007 XLS Export Document")
-        ->setSubject("Office 2007 XLS Export Document")
-        ->setDescription("Excel Autoexport");
-        $tab = 0;
-        $objPHPExcel->createSheet();
-        $sheet = $objPHPExcel->setActiveSheetIndex($tab ++);
-        $sheet = $objPHPExcel->getActiveSheet();
-        $sheet->setTitle("User's auto export info");
-
-        $colLetters = ['A', 'B', 'C', 'D','E', 'F'];
-        foreach ($colLetters as $colLetter) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($colLetter)->setWidth(25);
-        }
-        $cellTitles = ['ID', "Name", "Surname", "Email", "Last login", "Registered on"];
-        $cellCol = 0;
-        foreach ($cellTitles as $cellTitle) {
-            $sheet->setCellValueExplicitByColumnAndRow($cellCol++, 1, $cellTitle);
-        }
-
-        $col = 0;
-        $row = 2;
-        $users = $this->serviceManager->get("UserTable")->fetchList(false, "deleted = '0'", "id DESC");
-        foreach ($users as $user) {
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getId, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getName());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getSurname());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getEmail());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getLastLogin());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getRegistered());
-            $col = 0; // reset column for next user
-            $row++;
-        }
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save($path."/".$filename);
-        return $filename;
+        return $this->getName()." ".$this->getSurname();
     }
 }

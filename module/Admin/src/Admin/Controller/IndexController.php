@@ -24,98 +24,62 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Index
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Zend\Session\Container;
-use Custom\Error\AuthorizationException;
-use Custom\Plugins\Functions;
-use Zend\View\Model\ViewModel;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Custom\Error\AuthorizationException;
 
 class IndexController extends AbstractActionController
 {
     /**
-     * @var null $cache holds any other session information
-     * @return Zend\Session\Container|mixed
-     */
-    protected $cache = null;
-
-    /**
-     * @var null $view creates instance to view model
-     * @return Zend\View\Model\ViewModel
+     * @var Zend\View\Model\ViewModel $view creates instance to view model
      */
     protected $view = null;
 
     /**
-     * @var null $translation holds language data as well as all translations
-     * @return Zend\Session\Container
+     * @var Zend\Session\Container $translation holds language data as well as all translations
      */
     protected $translation = null;
 
     /**
-     * DRY variable to hold the language. Easier to work with
-     *
-     * @var null
-     * @return int $this->translation->language
-     */
-    protected $langTranslation = null;
-
-    /**
      * @var array $breadcrumbs returns an array with links with the current user position on the website
-     * @return Array
      */
-    protected $breadcrumbs = [];
+    private $breadcrumbs = [];
 
-    /**
-     * Used to detect actions without IDs. Inherited in all other classes
-     */
-    const NO_ID = 'Not found';
-
-    /**
-     * Query limit
-     */
-    const MAX_COUNT = 200;
-
-    /**
-     * Used when throwing AuthorizationException
-     */
-    const ACCESS_DENIED = "Access Denied";
-
-    /**
-     * constructor
-     */
     public function __construct()
     {
         $this->view = new ViewModel();
-        $this->initCache();
-        $this->initTranslation();
-        $this->breadcrumbs[] = ["reference" => "/admin", "name" => "Home"];
+        $this->translation = new Container("zpc");
+        $this->breadcrumbs[] = ["reference" => "/admin", "name" => $this->translate("DASHBOARD")];
     }
 
     /**
      * Initialize any variables before controller actions
      *
-     * @throws Exception\RuntimeException
      * @param \Zend\Mvc\MvcEvent $e
+     * @method  IndexController::isAdmin()
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $e)
     {
-        /**
-         * @see IndexController::isAdmin
-         */
-        // $this->isAdmin();
+        if (APP_ENV !== 'development') {
+            /**
+             * @see IndexController::isAdmin()
+             */
+            $this->isAdmin();
+        }
         parent::onDispatch($e);
-        $this->initViewVars();
+        $this->initTranslation();
     }
 
 /****************************************************
@@ -123,84 +87,59 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * initialize any session variables in this method
-     *
-     * @return Zend\Session\Container
-     */
-    private function initCache()
-    {
-        $this->cache = new Container("cache");
-    }
-
-    /**
-     * initialize any view related stuff
-     */
-    private function initViewVars()
-    {
-        // $this->initMenus();
-        if (!isset($this->translation->languageObject)) {
-            $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
-            $this->view->langName = $this->translation->languageObject->getName();
-        }
-
-        $this->view->breadcrumbs = $this->breadcrumbs;
-        $this->view->cache = $this->cache;
-        $this->view->translation = $this->translation;
-    }
-
-    /**
      * initialize the admin menus
      * @todo  rewrite
      */
-    private function initMenus()
-    {
-        $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-        $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-        $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
-    }
+    // private function initMenus()
+    // {
+    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
+    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
+    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
+    // }
 
     /**
-     * initialize languages and language-related stuff like translations.
+     * Initialize translations.
+     *
+     * @return  void
      */
     private function initTranslation()
     {
-        $this->translation = new Container("translations");
+        if (empty($this->translation->language)) {
+            /**
+             * Load English as default language.
+             */
+            // $terms = $this->getTable("term")->fetchJoin(false, "termtranslation", ["name"], ["translation"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => $this->language()])->getDataSource();
 
-        /**
-         * Load English as default language.
-         * Maybe make this possible to change via backend?
-         */
-        if (!isset($this->translation->language)) {
-            $this->translation = Functions::initTranslations(1, true);
+            // foreach ($terms as $term) {
+            //     $this->translation->$term['name'] = $term['translation'];
+            // }
             $this->translation->language = 1;
         }
-
-        // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
     }
 
 /****************************************************
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
 
+    /**
+     * @param array $breadcrumbs
+     * @return  ViewModel
+     */
     protected function addBreadcrumb(array $breadcrumb = [])
     {
         $this->breadcrumbs[] = $breadcrumb;
+        $this->view->breadcrumbs = $this->breadcrumbs;
+        return $this->view;
     }
 
     /**
-     * Definitely not the best way, but for now I can't think for a better way.
-     *
-     * @todo  call this via a factory
      * @param null $name
-     * @return ObjectTable
+     * @return object
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || empty($name)) {
-            throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
-        }
-        return $this->getServiceLocator()->get($name . "Table");
+        $plugin = $this->IndexPlugin();
+        return $plugin->getTable($name);
     }
 
     /**
@@ -211,25 +150,26 @@ class IndexController extends AbstractActionController
      * 3. On success run this function. If all went fine, access admin else clear identity and create log
      *
      * @throws AuthorizationException If wrong credentials or not in administrator table
-     * @todo create a bruteforce protection for failed loging attempts.
-     * @return void
+     * @todo create a bruteforce protection for failed login attempts.
+     * @todo create a join query for admin column check via the user table.
+     * @return mixed
      */
     private function isAdmin()
     {
         $auth = new AuthenticationService();
         if ($auth->hasIdentity()) {
-             if (isset($auth->getIdentity()->role) &&
-                ((int) $auth->getIdentity()->role === 10) && isset($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
-                    $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
-                    if (count($checkAdminExistence) === 1) {
-                        unset($checkAdminExistence);
-                        return true;
-                    }
-                    $this->clearUserData($auth);
+            if (isset($auth->getIdentity()->role) &&
+                ((int) $auth->getIdentity()->role === 10) && isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
+                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
+                if (count($checkAdminExistence) === 1) {
+                    unset($checkAdminExistence);
+                    return true;
+                }
+                return $this->clearUserData($auth);
             }
-            $this->clearUserData($auth);
+            return $this->clearUserData($auth);
         }
-        $this->clearUserData($auth);
+        return $this->clearUserData($auth);
     }
 
     /**
@@ -239,11 +179,9 @@ class IndexController extends AbstractActionController
      */
     private function clearUserData(AuthenticationService $auth = null)
     {
-        $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
         $auth->clearIdentity();
-        $this->cache = null;
-        $this->translation = null;
+        $this->translation = new Container("zpc");
         throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
     }
 
@@ -267,47 +205,62 @@ class IndexController extends AbstractActionController
         if (!$param) {
             $param = $this->params()->fromFiles($paramName, null);
         }
-        if (!$param) {
-            return $default;
-        }
         /**
          * If this is array it must comes from fromFiles()
          */
-        if (is_array($param)) {
+        if (is_array($param) && !empty($param)) {
             return $param;
+        }
+        if (!$param) {
+            return $default;
         }
         return $escaper->escapeHtml(trim($param));
     }
 
     /**
+     * This method will iterate over an array and show its contents as separated strings
+     * The method will accept an array with unlimited depth.
      *
-     * @param null|string $message
-     * @param null|string $namespace
+     * <code>
+     *     $myArray = [
+     *         0 => 'A',
+     *         1 => ['subA','subB',
+     *                  [0 => 'subsubA', 1 => 'subsubB',
+     *                      2 => [0 => 'subsubsubA', 1 => 'subsubsubB']
+     *                  ]
+     *              ],
+     *         2 => 'B',
+     *         3 => ['subA','subB','subC'],
+     *         4 => 'C'
+     *     ];
+     *     $this->setLayoutMessages($myArray, "default");
+     * </code>
+     *
+     * @param array|arrayobject|string $message
+     * @param string $namespace determinates the message layout and color. It's also used for the flashMessenger namespace
+     * @return ViewModel
      */
-    protected function setLayoutMessages($message = null, $namespace = 'default')
+    protected function setLayoutMessages($message = [], $namespace = 'default')
     {
         $flashMessenger = $this->flashMessenger();
-        $messages = [];
-        $arrayMessages = [];
 
         if (!in_array($namespace, ["success", "error", "warning", 'info', 'default'])) {
             $namespace = 'default';
         }
 
         $flashMessenger->setNamespace($namespace);
-        if (is_array($message)) {
-            foreach ($message as $msg) {
-                if (is_array($msg)) {
-                    foreach ($msg as $text) {
-                        $flashMessenger->addMessage($text, $namespace);
-                    }
-                } else {
-                    $flashMessenger->addMessage($msg, $namespace);
-                }
+
+        $iterator = new \RecursiveArrayIterator((array) $message);
+
+        while ($iterator->valid()) {
+            if ($iterator->hasChildren()) {
+                $this->setLayoutMessages($iterator->getChildren(), $namespace);
+            } else {
+                $flashMessenger->addMessage($iterator->current(), $namespace);
             }
-        } else {
-            $flashMessenger->addMessage($message, $namespace);
+            $iterator->next();
         }
+
         $this->view->flashMessages = $flashMessenger;
         return $this->view;
     }
@@ -319,26 +272,97 @@ class IndexController extends AbstractActionController
     protected function setErrorCode($code = 404)
     {
         $this->getResponse()->setStatusCode($code);
-        $this->view->setTemplate('error/index.phtml');
+        $this->view->setVariables([
+            'message' => '404 Not found',
+            'reason' => 'The link you have requested doesn\'t exists',
+            'exception' => "",
+        ]);
+        $this->view->setTemplate('error/index');
         return $this->view;
     }
 
     /**
-     * Show translated message
-     * @param  null|string $str the constant name from the database. It should always be upper case.
+     * Show translated message. ERROR will be used as a default constant.
+     * @param string $str the constant name from the database. It should always be upper case.
+     * @return string
      */
-    protected function translate($str = null)
+    public function translate($str = "ERROR")
     {
-        $str = strtoupper($str);
-        return (string) $this->translation->{$str};
+        if (!empty($this->translation)) {
+            /**
+             * If the given string / offset doesn't exist
+             * the object will automatically return empty string
+             */
+            return (string) $this->translation->offsetGet($str);
+        }
+        return "";
+    }
+
+    /**
+     * Get Language id
+     * @return  int
+     */
+    protected function language()
+    {
+        if (isset($this->translation->language) && (int) $this->translation->language > 0) {
+            return $this->translation->language;
+        }
+        $this->translation->language = 1;
+        return $this->translation->language;
+    }
+
+    /**
+     * Copy of initMenus() used in Menus|Content controllers
+     * @return  array
+     */
+    private function prepareMenusData()
+    {
+        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder");
+        if (count($menu) > 0) {
+            $menus = ["menus" => null, "submenus" => null];
+            foreach ($menu->getDataSource() as $submenu) {
+                if ($submenu->getParent() > 0) {
+                    /**
+                     * This needs to have a second empty array in order to work
+                     */
+                    $menus["submenus"][$submenu->getParent()][] = $submenu;
+                } else {
+                    $menus["menus"][$submenu->getId()] = $submenu;
+                }
+            }
+            return $menus;
+        }
+        return [];
     }
 
 /****************************************************
  * START OF ALL ACTION METHODS
  ****************************************************/
 
+    /**
+     * @return  ViewModel
+     */
     public function indexAction()
     {
+        $this->view->setTemplate("admin/index/index");
         return $this->view;
+    }
+
+    /**
+     * Select new language
+     *
+     * This will reload the translations every time the method is being called
+     */
+    public function languageAction()
+    {
+        $terms = $this->getTable("term")->fetchList(false, ["name", "translation"], ["language" => (int) $this->getParam("id")]);
+
+        if ($terms) {
+            foreach ($terms as $term) {
+                $this->translation->offsetSet($term['name'], $term['translation']);
+            }
+            $this->translation->language = (int) $this->getParam("id");
+        }
+        return $this->redirect()->toUrl("/");
     }
 }

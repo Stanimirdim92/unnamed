@@ -199,6 +199,9 @@ class FixerTest extends \PHPUnit_Framework_TestCase
             array($fixers['phpdoc_order'], $fixers['phpdoc_trim']),
             array($fixers['unused_use'], $fixers['line_after_namespace']),
             array($fixers['linefeed'], $fixers['eof_ending']),
+            array($fixers['php_unit_strict'], $fixers['php_unit_construct']),
+            array($fixers['unary_operators_spaces'], $fixers['logical_not_operators_with_spaces']),
+            array($fixers['unary_operators_spaces'], $fixers['logical_not_operators_with_successor_space']),
         );
 
         $docFixerNames = array_filter(
@@ -208,15 +211,19 @@ class FixerTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        // prepare bulk tests for phpdoc fixers to test if:
+        // prepare bulk tests for phpdoc fixers to test that:
         // * `phpdoc_to_comment` is first
         // * `phpdoc_indent` is second
+        // * `phpdoc_scalar` is third
         // * `phpdoc_params` is last
         $cases[] = array($fixers['phpdoc_to_comment'], $fixers['phpdoc_indent']);
+        $cases[] = array($fixers['phpdoc_indent'], $fixers['phpdoc_scalar']);
+
         foreach ($docFixerNames as $docFixerName) {
-            if (!in_array($docFixerName, array('phpdoc_to_comment', 'phpdoc_indent'), true)) {
+            if (!in_array($docFixerName, array('phpdoc_to_comment', 'phpdoc_indent', 'phpdoc_scalar'), true)) {
                 $cases[] = array($fixers['phpdoc_to_comment'], $fixers[$docFixerName]);
                 $cases[] = array($fixers['phpdoc_indent'], $fixers[$docFixerName]);
+                $cases[] = array($fixers['phpdoc_scalar'], $fixers[$docFixerName]);
             }
 
             if ('phpdoc_params' !== $docFixerName) {

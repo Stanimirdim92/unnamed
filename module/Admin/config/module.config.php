@@ -1,8 +1,28 @@
 <?php
 return [
-    'service_manager' => [
-       'abstract_factories' => [
+    'router' => [
+        'routes' => [
+            'admin' => [
+                'type'    => 'Segment',
+                'options' => [
+                    'route' => '/admin[/][:controller[/][:action[/:id][/page/:page][/search/:search]]]',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z0-9_-]*',
+                        'action'     => '[a-zA-Z0-9_-]*',
+                        'search'     => '[a-zA-Z0-9_-]*',
+                        'id'         => '[0-9]+',
+                        'page'       => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        '__NAMESPACE__' => 'Admin\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'index',
+                    ],
+                ],
+            ],
         ],
+    ],
+    'service_manager' => [
         'factories' => [
             'Admin\AuthenticationAdapter' => 'Admin\Factory\AuthenticationAdapterFactory',
             'AdminErrorHandling'          => 'Admin\Factory\AdminErrorHandlingFactory',
@@ -14,39 +34,34 @@ return [
             'TermTranslationTable'        => 'Admin\Factory\TermTranslationTableFactory',
             'TermCategoryTable'           => 'Admin\Factory\TermCategoryTableFactory',
             'TermTable'                   => 'Admin\Factory\TermTableFactory',
-            'AdminMenu'                   => 'Admin\Factory\AdminMenuFactory',
+            'AdminMenuTable'              => 'Admin\Factory\AdminMenuTableFactory',
         ],
     ],
     'controllers' => [
         'factories' => [
-            'Admin\Controller\Content' => "Admin\Factory\Controller\ContentFormFactory",
+            'Admin\Controller\Content'          => 'Admin\Factory\Controller\ContentFormFactory',
+            'Admin\Controller\Menu'             => 'Admin\Factory\Controller\MenuFormFactory',
+            'Admin\Controller\Term'             => 'Admin\Factory\Controller\TermFormFactory',
+            'Admin\Controller\TermCategory'     => 'Admin\Factory\Controller\TermCategoryFormFactory',
+            'Admin\Controller\Language'         => 'Admin\Factory\Controller\LanguageFormFactory',
+            'Admin\Controller\Administrator'    => 'Admin\Factory\Controller\AdministratorFormFactory',
+            'Admin\Controller\AdminMenu'        => 'Admin\Factory\Controller\AdminMenuFormFactory',
+            'Admin\Controller\User'             => 'Admin\Factory\Controller\UserFormFactory',
         ],
         'invokables' => [
             'Admin\Controller\Index'            => 'Admin\Controller\IndexController',
-            'Admin\Controller\AdminMenu'        => 'Admin\Controller\AdminMenuController',
-            'Admin\Controller\Term'             => 'Admin\Controller\TermController',
-            'Admin\Controller\TermCategory'     => 'Admin\Controller\TermCategoryController',
             'Admin\Controller\TermTranslation'  => 'Admin\Controller\TermTranslationController',
-            'Admin\Controller\User'             => 'Admin\Controller\UserController',
-            'Admin\Controller\Administrator'    => 'Admin\Controller\AdministratorController',
-            'Admin\Controller\Language'         => 'Admin\Controller\LanguageController',
-            'Admin\Controller\Menu'             => 'Admin\Controller\MenuController',
-            'ImagineService'                    => 'Imagine\Gd\Imagine',
         ],
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/layout',
+        'not_found_template'       => 'error/index',
         'exception_template'       => 'error/index',
         // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
-        // 'default_template_suffix' => 'php',
-        'template_map' => [
-            'error/404'               => __DIR__ . '/../../Admin/view/error/layout.phtml',
-            'error/index'             => __DIR__ . '/../../Admin/view/error/index.phtml',
-            'error/layout'            => __DIR__ . '/../../Admin/view/error/layout.phtml',
-        ],
+        // 'default_template_suffix' => 'phtml',
+        'template_map' => include __DIR__ . '/../template_map.php',
         'strategies' => [
             'ViewJsonStrategy',
         ],

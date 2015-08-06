@@ -1,44 +1,45 @@
-<div>
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->translation->NAME;?></li>
-            <li class="table-cell"><?=$this->translation->ACTIVE;?></li>
-            <li class="table-cell"><?=$this->translation->DETAILS;?></li>
-            <li class="table-cell"><?=$this->translation->MODIFY;?></li>
-            <li class="table-cell"><?=$this->translation->DELETE;?></li>
+            <li class="table-cell"><?=$this->translate("NAME");?></li>
+            <li class="table-cell"><?=$this->translate("ACTIVE");?></li>
+            <li class="table-cell"><?=$this->translate("DETAILS");?></li>
+            <li class="table-cell"><?=$this->translate("MODIFY");?></li>
+            <li class="table-cell"><?=$this->translate("DELETE");?></li>
         </ul>
-        <?php
-        foreach($this->paginator as $item)
-        {
-        ?>
-        <ul class="table-row">
-            <li class="table-cell"><?=$item->name?></li>
-            <li class="table-cell">
-                <?php if (($item->active)) {?><i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i><?php } ?></li>
-            <li class="table-cell">
-                <a title='<?=$this->translation->DETAILS?>' class='btn blue btn-sm' href='/admin/language/detail/id/<?=$item->id?>'><i class='fa fa-icon-fix fa-info'></i></a>
-            </li>
-            <li class="table-cell">
-                <a title='<?=$this->translation->MODIFY?>' href='/admin/language/modify/id/<?=$item->id?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
-            </li>
-            <li class="table-cell">
-            <a id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete' title='<?=$this->translation->DELETE?>'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-            <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
-                <p><?=$this->translation->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getName()?>&raquo;&quest;</p>
-                <ul>
-                    <li><a class='btn delete' href='/admin/language/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->translation->DELETE?></a></li>
-                    <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->translation->CANCEL?></a></li>
-                </ul>
-            </div>
-            </li>
-        </ul>
-        <?php
-        }
-        ?>
-  </div>
-</section>
 <?php
-echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
+       /**
+        * @var $language Admin\Model\Language
+        */
+        foreach($this->paginator as $language) {
 ?>
-</div>
+        <ul class="table-row">
+            <li class="table-cell"><?=$language->getName()?></li>
+            <li class="table-cell">
+                <?php if (($language->getActive())) {?><i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i><?php } ?></li>
+            <li class="table-cell">
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "language", "action" => "detail", "id" => $language->getId()])?>'><i class='fa fa-info'></i></a>
+            </li>
+            <li class="table-cell">
+                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin", ['controller' => "language", "action" => "modify", "id" => $language->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+            </li>
+            <li class="table-cell">
+                <button id='delete_<?=$language->getId()?>' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
+                <div id='delete_delete_<?=$language->getId()?>' class='dialog_hide'>
+                    <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> laquo;<?=$language->getName()?>&raquo;</p>
+                    <ul>
+                        <li>
+                            <a class='btn delete' href='<?=$this->url("admin", ['controller' => "language", "action" => "delete", "id" => $language->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a></li>
+                        <li>
+                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+<?php
+        }
+    echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', ['route' => 'admin']);
+?>
+    </div>
+</section>

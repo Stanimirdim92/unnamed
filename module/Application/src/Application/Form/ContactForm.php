@@ -24,14 +24,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\ContactForm
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Application\Form;
 
 use Zend\Form\Form;
@@ -56,7 +55,7 @@ class ContactForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'required' => true,
                 'min' => 3,
-                'max' => 20,
+                'max' => 30,
                 'size' => 30,
             ],
         ]);
@@ -131,9 +130,9 @@ class ContactForm extends Form implements InputFilterProviderInterface
             'name' => 's',
             'options' => [
                 'csrf_options' => [
-                    'timeout' => 320
-                ]
-            ]
+                    'timeout' => 320,
+                ],
+            ],
         ]);
     }
 
@@ -215,7 +214,7 @@ class ContactForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 3,
-                            'max' => 20,
+                            'max' => 30,
                         ],
                     ],
                     ['name' => 'NotEmpty'],

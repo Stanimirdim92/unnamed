@@ -11,7 +11,9 @@
 
 RewriteEngine On
 
+# Change this to production when go live
 SetEnv APPLICATION_ENV "development"
+
 # The following rule tells Apache that if the requested filename
 # exists, simply serve it.
 RewriteCond %{REQUEST_FILENAME} -s [OR]
@@ -847,7 +849,15 @@ FileETag None
 # http://cspisawesome.com/.
 
 <IfModule mod_headers.c>
-    Header set X-Content-Security-Policy "allow 'self'; media-src *; img-src *; script-src 'self' https://ajax.googleapis.com; style-src 'self';"
+  #script-src https://apis.google.com https://platform.twitter.com; child-src https://youtube.com https://plusone.google.com https://facebook.com https://platform.twitter.com 'self' ;
+
+    Header set X-Content-Security-Policy "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+
+    Header set Content-Security-Policy: "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+
+    Header set X-WebKit-CSP: "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+
+    Header set X-Permitted-Cross-Domain-Policies: "master-only"
     # `mod_headers` cannot match based on the content-type, however,
     # the `Content-Security-Policy` response header should be send
     # only for HTML documents and not for the other resources.

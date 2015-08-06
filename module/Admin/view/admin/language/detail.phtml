@@ -1,17 +1,23 @@
+<?php
+    /**
+    * @var $language Admin\Model\Language
+    */
+    $language = $this->lang;
+?>
 <section>
     <p>
-        <a href="/admin/user" class="btn btn-default">
-            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->translation->BACK;?>
+        <a href="<?=$this->url("admin", ['controller' => "language"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
     <div class='table-style'>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->translation->NAME;?></li>
-            <li class="table-cell"><?=$this->lang->getName()?></li>
+            <li class="table-cell"><?=$this->translate("NAME");?></li>
+            <li class="table-cell"><?=$language->getName()?></li>
         </ul>
         <ul class="table-row">
-          <li class="table-cell"><?=$this->translation->ACTIVE;?></li>
-          <li class="table-cell"><?php if ($this->lang->getActive()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?> </li>
+          <li class="table-cell"><?=$this->translate("ACTIVE");?></li>
+          <li class="table-cell"><?php if ($language->getActive()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?> </li>
         </ul>
     </div>
 </section>

@@ -24,14 +24,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Factory
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
@@ -46,8 +45,12 @@ class UserTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new User([], $sm));
-        $tg = new TableGateway('user', $sm->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-        return new UserTable($sm, $tg);
+        $resultSetPrototype->setArrayObjectPrototype(new User());
+        $db = $sm->get('Zend\Db\Adapter\Adapter');
+
+        $tableGateway = new TableGateway('user', $db, null, $resultSetPrototype);
+        $table = new UserTable($tableGateway);
+
+        return $table;
     }
 }

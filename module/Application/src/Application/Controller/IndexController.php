@@ -20,94 +20,42 @@
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHE`HER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Index
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Application\Controller;
 
 use Zend\Session\Container;
 use Zend\Authentication\AuthenticationService;
-use Custom\Plugins\Functions;
-use Custom\Plugins\Mailing;
+use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Application\Form\ContactForm;
+use Custom\Error\AuthorizationException;
 
 class IndexController extends AbstractActionController
 {
     /**
-     * @var null $cache holds any other session information
-     * @return Zend\Session\Container
-     */
-    protected $cache = null;
-
-    /**
-     * @var null $view creates instance to view model
-     * @return Zend\View\Model\ViewModel
+     * @var Zend\View\Model\ViewModel $view creates instance to view model
      */
     protected $view = null;
 
     /**
-     * @var null $translation holds language data as well as all translations
-     * @return Zend\Session\Container
+     * @var Zend\Session\Container $translation holds language data as well as all translations
      */
     protected $translation = null;
 
-    /**
-     * DRY variable to hold the language. Easier to work with
-     *
-     * @var null
-     * @return int from $this->translation->language
-     */
-    protected $langTranslation = null;
-
-    /**
-     * @var ContactForm
-     */
-    protected $contactForm = null;
-
-    /**
-     * @var Zend\View\Helper\Placeholder\Container $customHead
-     */
-    protected $customHead = null;
-
-    /**
-     * @var Zend\View\Helper\HeadMeta $headMeta
-     */
-    protected $headMeta = null;
-
-    /**
-     * Used to detect actions without IDs. Inherited in all other classes
-     */
-    const NO_ID = 'ID not found';
-
-    /**
-     * Pass all dependencies from service manager via the constructor
-     *
-     * @see Application\Factory\IndexControllerFactory
-     *
-     * @param Application\Form\ContactForm $contactForm
-     * @param Zend\View\Helper\Placeholder\Container $customHead
-     * @param Zend\View\Helper\HeadMeta $headMeta
-     */
-    public function __construct(ContactForm $contactForm = null, $customHead = null, $headMeta = null)
+    public function __construct()
     {
         $this->view = new ViewModel();
-        $this->contactForm = $contactForm;
-        $this->customHead = $customHead;
-        $this->headMeta = $headMeta;
-
-        $this->initCache();
-        $this->initTranslation();
+        $this->translation = new Container("zpc");
     }
 
     /**
@@ -116,7 +64,7 @@ class IndexController extends AbstractActionController
      * @param \Zend\Mvc\MvcEvent $e
      * @method  IndexController::checkIdentity(bool $redirect, string $url)
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $e)
     {
         parent::onDispatch($e);
 
@@ -127,10 +75,15 @@ class IndexController extends AbstractActionController
             $auth = new AuthenticationService();
             $this->view->identity = $auth->getIdentity();
         }
+        $this->initTranslation();
         $this->initMenus();
-        $this->initViewVars();
-        // not working properly due to the passed classes into the consturctor. they are not being shared...
-        $this->initMetaTags();
+
+        /**
+         * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
+         */
+        if ($this->params('controller') != "Application\Controller\Menu" && $this->params('controller') != "Application\Controller\News") {
+            $this->initMetaTags();
+        }
     }
 
 /****************************************************
@@ -138,50 +91,28 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * initialize any session variables in this method
-     * @return void
-     */
-    private function initCache()
-    {
-        $this->cache = new Container("cache");
-    }
-
-    /**
-     * initialize any view related stuff
-     * @return void
-     */
-    private function initViewVars()
-    {
-        if (!isset($this->translation->languageObject)) {
-            $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->langTranslation);
-            $this->view->langName = $this->translation->languageObject->getName();
-        }
-
-        $this->view->cache = $this->cache;
-        $this->view->translation = $this->translation;
-        $this->view->languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "name ASC");
-        return $this->view;
-    }
-
-    /**
-     * initialize languages and language-related stuff like translations.
+     * Initialize translations.
+     *
      * @return  void
      */
     private function initTranslation()
     {
-        $this->translation = new Container("translations");
+        if (empty($this->translation->language)) {
+            /**
+             * Load English as default language.
+             */
+            // $terms = $this->getTable("term")->fetchJoin(false, "termtranslation", ["name"], ["translation"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => $this->language()])->getDataSource();
 
-        /**
-         * Load English as default language.
-         * Maybe make this possible to change the default language via backend?
-         */
-        if (!isset($this->translation->language)) {
-            $this->translation = Functions::initTranslations(1, true);
+            // foreach ($terms as $term) {
+            //     $this->translation->$term['name'] = $term['translation'];
+            // }
             $this->translation->language = 1;
         }
+    }
 
-        // keeping it simple and DRY
-        $this->langTranslation = ((int) $this->translation->language > 0 ? $this->translation->language : 1);
+    public function translatiossssssss()
+    {
+         $terms = $this->getTable("term")->fetchJoin(false, "termtranslation", ["name"], ["translation"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => $this->language()])->getDataSource();
     }
 
     /**
@@ -196,9 +127,9 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent",], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->language()], "AND", null, "id, menuOrder");
         if (count($menu) > 0) {
-            $menus = [];
+            $menus = ["menus" => null, "submenus" => null];
             foreach ($menu as $submenu) {
                 if ($submenu->getParent() > 0) {
                     /**
@@ -218,66 +149,72 @@ class IndexController extends AbstractActionController
     /**
      * This function will generate all meta tags needed for SEO optimisation.
      *
-     * @param  Pdo\Result|Content $content
+     * @param  array $content
      * @return void
      */
-    protected function initMetaTags($content = null)
+    protected function initMetaTags(array $content = [])
     {
-        $description = $keywords = $text = $preview = $title = null;
-        if (!empty($content)) {
-            /**
-             * If there is a menu attached to this content, get its SEO metadata
-             */
-            if ($content->current()->getMenu() > 0) {
-                $isMenuObject = $content->current()->getMenuObject();
-                $description = $isMenuObject->getDescription();
-                $keywords = $isMenuObject->getKeywords();
-            }
+        $description = $keywords = $text = $preview = $title = $time = null;
+        $plugin = $this->IndexPlugin();
 
-            $text = $content->current()->getText();
-            $preview = $content->current()->getPreview();
-            $title = $content->current()->getTitle();
+        if (!empty($content)) {
+            $description = (isset($content["description"]) ? $content["description"] : "lorem ipsum dolar sit amet");
+            $keywords = (isset($content["keywords"]) ? $content["keywords"] : "lorem, ipsum, dolar, sit, amet");
+            $text = $content["text"];
+            $preview = $content["preview"];
+            $title = $content["title"];
+        } else {
+            $description = "lorem ipsum dolar sit amet";
+            $keywords = "lorem, ipsum, dolar, sit, amet";
+            $text = "lorem ipsum dolar sit amet";
+            $preview = "";
+            $title = "Unnamed";
         }
 
-        // must be set from db
-        (empty($description) ? $description = "lorem ipsum dolar sit amet" : $description);
-        (empty($text) ? $text = "lorem ipsum dolar sit amet" : $text);
-        (empty($keywords) ? $keywords = "lorem, ipsum, dolar, sit, amet" : $keywords);
-        (empty($preview) ? $preview = "" : $preview);
-        (empty($title) ? $title = "Unnamed" : $title);
-
         /**
-         * @var Zend\View\Helper\Placeholder\Container
+         * @var Zend\View\Helper\Placeholder\Container $placeholder
          */
-        $placeholder = $this->customHead;
-        $placeholder->append("<meta itemprop='name' content='Unnamed'>\r\n"); // must be sey from db
-        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."..."."'>\r\n");
+        $placeholder = $plugin->getCustomHead();
+        $placeholder->append("\r\n<meta itemprop='name' content='Unnamed'>\r\n"); // must be sey from db
+        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."'>\r\n");
         $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
         $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
 
         /**
-         * @var Zend\View\Helper\HeadMeta
+         * @var Zend\View\Helper\HeadMeta $vhm
          */
-        $vhm = $this->headMeta;
+        $vhm = $plugin->getHeadMeta();
         // $vhm->appendName('robots', 'index, follow');
         // $vhm->appendName('Googlebot', 'index, follow');
         // $vhm->appendName('revisit-after', '3 Days');
         $vhm->appendName('keywords', $keywords);
         $vhm->appendName('description', $description);
         $vhm->appendName('viewport', 'width=device-width, initial-scale=1.0');
+        $vhm->appendName('generator', 'Unnamed');
         $vhm->appendName('apple-mobile-web-app-capable', 'yes');
+        $vhm->appendName('application-name', 'Unnamed');
+        $vhm->appendName('msapplication-TileColor', '#000000');
         $vhm->appendName('mobile-web-app-capable', 'yes');
         $vhm->appendName('HandheldFriendly', 'True');
         $vhm->appendName('MobileOptimized', '320');
         $vhm->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
         $vhm->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
         $vhm->appendProperty('og:image', $preview);
+        $vhm->appendProperty('og:locale', $this->language());
+        // $vhm->appendProperty('article:published_time', date("Y-m-d H:i:s", time()));
         $vhm->appendProperty("og:title", $title);
         $vhm->appendProperty("og:description", $description);
         $vhm->appendProperty("og:type", 'article');
         $vhm->appendProperty("og:url", $this->getRequest()->getUri()->getHost().$this->getRequest()->getRequestUri());
         $vhm->appendHttpEquiv('cleartype', 'on');
         $vhm->appendHttpEquiv('x-dns-prefetch-control', 'on');
+
+        /**
+         * Other things that can be activated
+         * Maybe allow full html tag input via a textarea. TODO: see if this is safe enough.
+         */
+        // <link href="https://plus.google.com/" rel="publisher" />
+        // <meta name="google-site-verification" content="" />
     }
 
 /****************************************************
@@ -285,22 +222,28 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * Definitely not the best way, but for now I can't think for a better way.
+     * Get an instance of a database table of the desired model
      *
-     * @todo  call this via a factory
-     * @param null $name
-     * @return ObjectTable
+     * @param string $name
+     * @return object
      */
     protected function getTable($name = null)
     {
-        if (!is_string($name) || empty($name)) {
-            throw new \InvalidArgumentException(__METHOD__ . ' must be string and must not be empty');
-        }
-        return $this->getServiceLocator()->get($name . "Table");
+        $plugin = $this->IndexPlugin();
+        return $plugin->getTable($name);
     }
 
     /**
      * See if user is logged in.
+     *
+     * First we check to see if there is an identity stored.
+     * If there is, we need to check for two parameters role and logged.
+     * Those 2 parameters MUST always be of types int and bool.
+     *
+     * The redirect serves parameter is used to determinated
+     * if we need to redirect the user to somewhere
+     * else or just leave him access the desired area
+     *
      * @param bool $redirect
      * @param string $url
      * @throws AuthorizationException
@@ -312,11 +255,11 @@ class IndexController extends AbstractActionController
         if ($auth->hasIdentity()) {
             if (!empty($auth->getIdentity()->role) &&
               ((int) $auth->getIdentity()->role === 1 || (int) $auth->getIdentity()->role === 10) &&
-              !empty($auth->getIdentity()->logged) && (bool) $auth->getIdentity()->logged === true) {
+              isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
                 /**
                  * If everything went fine, just return true and let the user access the desired area or make a redirect
                  */
-                if ((bool) $redirect === false) {
+                if ($redirect === false) {
                     return true;
                 }
                 return $this->redirect()->toUrl($url);
@@ -327,24 +270,25 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * Clear all session data and identities.
+     * Throw an exception, which will be captured by the event manager and logged.
+     *
      * @param AuthenticationService $auth
      * @throws AuthorizationException
      */
     private function clearUserData(AuthenticationService $auth = null)
     {
-        $this->cache->getManager()->getStorage()->clear();
         $this->translation->getManager()->getStorage()->clear();
         $auth->clearIdentity();
-        $this->cache = null;
-        $this->translation = null;
-        throw new \Custom\Error\AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
+        $this->translation = new Container("zpc");
+        throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
     }
 
     /**
      * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code
      *
      * @param String $paramName
-     * @param null $default
+     * @param mixed $default
      * @return mixed
      */
     protected function getParam($paramName = null, $default = null)
@@ -360,6 +304,12 @@ class IndexController extends AbstractActionController
         if (!$param) {
             $param = $this->params()->fromFiles($paramName, null);
         }
+        /**
+         * If this is array it MUST comes from fromFiles()
+         */
+        if (is_array($param) && !empty($param)) {
+            return $param;
+        }
         if (!$param) {
             return $default;
         }
@@ -367,34 +317,49 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * This method will iterate over an array and show its contents as separated strings
+     * The method will accept an array with unlimited depth.
      *
-     * @param null|string $message
-     * @param null|string $namespace
+     * <code>
+     *     $myArray = [
+     *         0 => 'A',
+     *         1 => ['subA','subB',
+     *                  [0 => 'subsubA', 1 => 'subsubB',
+     *                      2 => [0 => 'subsubsubA', 1 => 'subsubsubB']
+     *                  ]
+     *              ],
+     *         2 => 'B',
+     *         3 => ['subA','subB','subC'],
+     *         4 => 'C'
+     *     ];
+     *     $this->setLayoutMessages($myArray, "default");
+     * </code>
+     *
+     * @param array|arrayobject|string $message
+     * @param string $namespace determinates the message layout and color. It's also used for the flashMessenger namespace
+     * @return ViewModel
      */
-    protected function setLayoutMessages($message = null, $namespace = 'default')
+    protected function setLayoutMessages($message = [], $namespace = 'default')
     {
         $flashMessenger = $this->flashMessenger();
-        $messages = [];
-        $arrayMessages = [];
 
         if (!in_array($namespace, ["success", "error", "warning", 'info', 'default'])) {
             $namespace = 'default';
         }
 
         $flashMessenger->setNamespace($namespace);
-        if (is_array($message)) {
-            foreach ($message as $msg) {
-                if (is_array($msg)) {
-                    foreach ($msg as $text) {
-                        $flashMessenger->addMessage($text, $namespace);
-                    }
-                } else {
-                    $flashMessenger->addMessage($msg, $namespace);
-                }
+
+        $iterator = new \RecursiveArrayIterator((array) $message);
+
+        while ($iterator->valid()) {
+            if ($iterator->hasChildren()) {
+                $this->setLayoutMessages($iterator->getChildren(), $namespace);
+            } else {
+                $flashMessenger->addMessage($iterator->current(), $namespace);
             }
-        } else {
-            $flashMessenger->addMessage($message, $namespace);
+            $iterator->next();
         }
+
         $this->view->flashMessages = $flashMessenger;
         return $this->view;
     }
@@ -406,18 +371,43 @@ class IndexController extends AbstractActionController
     protected function setErrorCode($code = 404)
     {
         $this->getResponse()->setStatusCode($code);
-        $this->view->setTemplate('error/index.phtml');
+        $this->view->setVariables([
+            'message' => '404 Not found',
+            'reason' => 'The link you have requested doesn\'t exists',
+            'exception' => "",
+        ]);
+        $this->view->setTemplate('error/index');
         return $this->view;
     }
 
     /**
-     * Show translated message
-     * @param  null|string $str the constant name from the database. It should always be upper case.
+     * Show translated message. ERROR will be used as a default constant.
+     *
+     * If the given offset doesn't exist
+     * the object will automatically return empty string
+     *
+     * @param string $str the constant name from the database. It should always be upper case.
+     * @return string
      */
-    protected function translate($str = null)
+    public function translate($str = "ERROR")
     {
-        $str = strtoupper($str);
-        return (string) $this->translation->{$str};
+        if (!empty($this->translation)) {
+            return (string) $this->translation->offsetGet($str);
+        }
+        return "";
+    }
+
+    /**
+     * Get Language id
+     * @return int
+     */
+    protected function language()
+    {
+        if (isset($this->translation->language) && (int) $this->translation->language > 0) {
+            return $this->translation->language;
+        }
+        $this->translation->language = 1;
+        return $this->translation->language;
     }
 
 /****************************************************
@@ -425,60 +415,31 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * Init everything
+     * Main websites view
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
+        $this->view->setTemplate("application/index/index");
         return $this->view;
     }
 
-
     /**
-     * Select new language and reload all text
+     * Select new language
+     *
+     * This will reload the translations every time the method is being called
      */
     public function languageAction()
     {
-        $this->translation->languageObject = $this->getTable("Language")->getLanguage($this->getParam("id"));
-        $this->view->langName = $this->translation->languageObject->getName();
+        $terms = $this->getTable("term")->fetchJoin(false, "termtranslation", ["name"], ["translation"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => (int) $this->getParam("id")]);
 
-        /**
-         * This will reload the translations every time the method is being called
-         */
-        $this->translation = Functions::initTranslations($this->translation->languageObject->getId(), true);
-        $this->langTranslation = $this->translation->language = $this->translation->languageObject->getId();
-
-        return $this->redirect()->toUrl("/");
-    }
-
-    /**
-     * Simple contact form
-     */
-    public function contactAction()
-    {
-        $form = $this->contactForm;
-        $form->get("email")->setLabel($this->translate("EMAIL"));
-        $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));
-        $form->get("subject")->setLabel($this->translate("SUBJECT"))->setAttribute("placeholder", $this->translate("SUBJECT"));
-        $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
-        $form->get("message")->setLabel($this->translate("MESSAGE"))->setAttribute("placeholder", $this->translate("ENTER_MESSAGE"));
-
-        $this->view->form = $form;
-        if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($form->getInputFilter());
-            $form->setData($this->getRequest()->getPost());
-            if ($form->isValid()) {
-                $formData = $form->getData();
-                $to = "psyxopat@gmail.com"; // must be set from db
-                try {
-                    $result = Mailing::sendMail($to, '', $formData['subject'], $formData['message'], $formData['email'], $formData['name']);
-                    $this->setLayoutMessages($this->translat("CONTACT_SUCCESS"), 'success');
-                } catch (\Exception $e) {
-                    $this->setLayoutMessages($this->translat("CONTACT_ERROR"), 'error');
-                }
-            } else {
-                $this->setLayoutMessages($form->getMessages(), 'error');
+        if ($terms) {
+            foreach ($terms->getDataSource() as $term) {
+                $this->translation->offsetSet($term['name'], $term['translation']);
             }
+            $this->translation->language = (int) $this->getParam("id");
         }
-        return $this->view;
+        return $this->redirect()->toUrl("/");
     }
 }

@@ -23,7 +23,6 @@
 
             /**
              * AJAX image upload
-             * TODO add loading image
              */
             $("#imgajax").change(function (e) {
                 e.preventDefault();
@@ -38,8 +37,8 @@
                     cache: false,
                 }).done(function (result, request, headers) {
                     var $resp = $.parseJSON(result);
-                    ajaxImageUpload.getAjaxResponse($resp["successFiles"], "p", "header", "image-upload-message successFiles");
-                    ajaxImageUpload.getAjaxResponse($resp["errorFiles"], "p", "header", "image-upload-message errorFiles");
+                    ajaxImageUpload.setAjaxResponse($resp["successFiles"], "p", "header", "image-upload-message successFiles");
+                    ajaxImageUpload.setAjaxResponse($resp["errorFiles"], "p", "header", "image-upload-message errorFiles");
                     ajaxImageUpload.showFiles();
                 }).fail(function (result, request, headers) {
                     console.error("Error:", result); //TODO must create a dialog popup
@@ -72,7 +71,7 @@
         /**
          * Show AJAX reponse
          */
-        getAjaxResponse: function (response, elementCreate, elementAppend, className) {
+        setAjaxResponse: function (response, elementCreate, elementAppend, className) {
             if (typeof response !== "undefined" && typeof response !== undefined) {
                 $(elementAppend).append($("<div class='dinamicly-div-append-wrapper'></div>"));
                 $.each(response, function(key, text) {
@@ -147,11 +146,10 @@
         }
 
         $("#seo-caption").on("keyup select change", function () {
-            var $seolink = fixSEOCaption($("#seo-caption").val());
             if ($("#menulink").val() !== undefined) {
-                $("#titleLink").val($seolink);
+                $("#menulink").val(fixSEOCaption($("#seo-caption").val()));
             } else {
-                $("#menulink").val($seolink);
+                $("#titleLink").val(fixSEOCaption($("#seo-caption").val()));
             }
         });
 
@@ -179,10 +177,9 @@
                             for (var property in $val) {
                                 if ($val.hasOwnProperty(property)) {
                                     if ($val[property] === null || $val[property] === undefined || $val[property] === '') {
-                                        // $ul.append("<li class='table-cell'>&nbsp;</li>");
                                         continue;
                                     } else {
-                                        $ul.append("<li data-id ='"+$val["_id"]+"' class='table-cell'>"+$val[property]+"</li>");
+                                        $ul.append("<li data-id ='"+$val["id"]+"' class='table-cell'>"+$val[property]+"</li>");
                                     }
                                 }
                             }

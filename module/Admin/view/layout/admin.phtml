@@ -1,13 +1,13 @@
 <?php
-if ($this->viewModel()->getCurrent()->getChildren() != null) {
-    $view = $this->viewModel()->getCurrent()->getChildren()[0];
+    if ($this->viewModel()->getCurrent()->getChildren() != null) {
+        $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
-        <?php
+<?php
             echo $this->headMeta()
                 ->appendName('robots', 'noindex, nofollow')
                 ->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com')
@@ -25,35 +25,41 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 ->prependStylesheet($this->basePath('/back/css/style.css'), 'screen')
                 ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
 
-        ?>
+?>
     </head>
     <body>
         <div class="breadcrumbs">
             <ul>
-            <?php
+<?php
                 foreach($view->breadcrumbs as $bread) {
-                    echo "<li><a itemprop='url' title='".$this->escapeHtmlAttr($bread['name'])."' href='".$this->escapeUrl($bread['reference'])."'>".$this->escapeHtml($bread['name'])."</a></li>&nbsp;&sol;&nbsp;";
+                    if ($bread['name'] != null) {
+                        echo "<li><a itemprop='url' title='".$bread['name']."' href='".$this->escapeUrl($bread['reference'])."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
+                    }
                 }
-            ?>
+?>
             </ul>
         </div>
 <?php
         if ($view->flashMessages) {
-            foreach ($view->flashMessages->getMessages() as $context => $message) {
-                echo '<div class="alert alert-' . $this->escapeHtmlAttr($view->flashMessages->getNamespace()) . '">';
-                echo '<button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>';
-                echo '<i class="fa-fw fa fa-'.$this->escapeHtmlAttr($view->flashMessages->getNamespace()).'"></i>' . $this->escapeHtml($message) . '</li>';
-                echo '</div>';
+            foreach ($view->flashMessages->getCurrentMessages() as $context => $message) {
+                echo '<div class="alert alert-' . $this->escapeHtmlAttr($view->flashMessages->getNamespace()) . '">
+                        <ul>
+                            <li>
+                                <i class="fa-fw fa fa-'.$this->escapeHtmlAttr($view->flashMessages->getNamespace()).'"></i>' . $this->escapeHtml($message) . '
+                                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                            </li>
+                        </ul>
+                      </div>
+                ';
             }
         }
         echo $this->layout()->content;
 
         echo $this->headScript()
-            ->prependFile($this->basePath('/back/js/custom.js'), 'defer')
+            ->prependFile($this->basePath('/back/js/custom.js'))
             ->prependFile($this->basePath('/front/js/jquery.min.js'));
 ?>
     </body>
 </html>
 <?php
-}
-?>
+    }

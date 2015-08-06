@@ -24,31 +24,12 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   index
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
-
-/**
- * Set default php.ini settings.
- *
- * Below lines includes security|error fixes
- */
-ini_set('cgi.fix_pathinfo', 0);
-ini_set('register_globals', 0);
-error_reporting(0);
-ini_set("display_errors", 0);
-ini_set("display_startup_errors", 0);
-ini_set("track_errors", 0);
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-if (ini_get('date.timezone') == '') {
-    date_default_timezone_set('UTC');
-}
 
 /**
  * Set global ENV. Used for debugging
@@ -60,30 +41,84 @@ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER["APPLICATION_ENV"] === 'devel
 }
 
 /**
- * Display all errors when APPLICATION_ENV is set to development.
+ * Set default php.ini settings.
+ *
+ * Below lines includes security|error fixes
  */
-if (APP_ENV === 'development') {
-    /**
-     * Needed for ZendDeveloperTools
-     */
-    if (version_compare(PHP_VERSION, '5.4', '<')) {
-        define('REQUEST_MICROTIME', microtime(true));
-    }
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
-    ini_set("display_startup_errors", 1);
-    ini_set("track_errors", 1);
+
+/**
+ * Handle reporting level
+ */
+error_reporting((APP_ENV === 'development' ? E_ALL : 0));
+
+/**
+ * Log errors into a file
+ */
+ini_set("log_errors", (APP_ENV === 'development'));
+
+/**
+ * Display of all other errors
+ */
+ini_set("display_errors", APP_ENV === 'development');
+
+/**
+ * Display of all startup errors
+ */
+ini_set("display_startup_errors", APP_ENV === 'development');
+
+/**
+ * Catch an error message emitted from PHP
+ */
+ini_set("track_errors", APP_ENV === 'development');
+
+/**
+ * Avoid serving non .php files as .php files
+ */
+ini_set('cgi.fix_pathinfo', 0);
+
+/**
+ * Helps mitigate xss
+ */
+ini_set('session.cookie_httponly', 1);
+
+/**
+ * Prevents session fixation
+ */
+ini_set('session.use_only_cookies', 1);
+
+/**
+ * Fixes files and server encoding
+ */
+mb_internal_encoding('UTF-8');
+
+/**
+ * Some server configurations are missing a date timezone
+ */
+if (ini_get('date.timezone') == '') {
+    date_default_timezone_set('UTC');
 }
 
 /**
  * Check PHP and MySQL versions
  */
-define("MIN_PHP_VER", "5.4");
-define("ZEND_PRESS_VER", "0.03");
+define("MIN_PHP_VERSION", "5.4");
 
-if (version_compare(MIN_PHP_VER, PHP_VERSION, '>' )) {
+/**
+ * Used for ZendDeveloperTools
+ */
+define('REQUEST_MICROTIME', microtime(true));
+
+/**
+ * Current CMS version
+ */
+define("CMS_VER", "0.0.4");
+
+/**
+ * Check requiarments
+ */
+if (version_compare(MIN_PHP_VERSION, PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, ZEND_PRESS_VER, MIN_PHP_VER));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, CMS_VER, MIN_PHP_VERSION));
 }
 
 /**
@@ -174,6 +209,10 @@ if (strpos($_SERVER['SCRIPT_NAME'], 'php.cgi') !== false) {
 if (empty($_SERVER['PHP_SELF'])) {
     $_SERVER['PHP_SELF'] = $PHP_SELF = preg_replace( '/(\?.*)?$/', '', $_SERVER["REQUEST_URI"]);
 }
+
+/*================================================================================
+    End of Wordpress $_SERVER fixes
+ =================================================================================*/
 
 /**
  * Hack CGI https://github.com/sitrunlab/LearnZF2/pull/128#issuecomment-98054110

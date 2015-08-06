@@ -24,14 +24,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Factory
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
@@ -42,12 +41,12 @@ class AdapterServiceFactory implements FactoryInterface
 {
 
     /**
-     * @var array|\Zend\Config\Config $config
+     * @var array $config
      */
     private $config = [];
 
     /**
-     * @param array|\Zend\Config\Config $config
+     * @param array $config
      */
     public function __construct(array $config = [])
     {
@@ -55,9 +54,9 @@ class AdapterServiceFactory implements FactoryInterface
     }
 
     /**
-     * @param \Zend\ServiceManager\ServiceLocatorInterface $serviceLocator
+     * {@inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function createService(ServiceLocatorInterface $serviceLocator = null)
     {
         if (empty($this->config)) {
             $this->config = $serviceLocator->get('Config');

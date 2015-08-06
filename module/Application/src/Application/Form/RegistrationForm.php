@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Login
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -126,9 +124,9 @@ class RegistrationForm extends Form implements InputFilterProviderInterface
             'name' => 's',
             'options' => [
                 'csrf_options' => [
-                    'timeout' => 320
-                ]
-            ]
+                    'timeout' => 320,
+                ],
+            ],
         ]);
 
         $this->add([

@@ -1,30 +1,60 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
+
 namespace Admin\Controller;
 
 use Admin\Model\User;
 use Admin\Form\UserForm;
-use Admin\Form\UserSearchForm;
-
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
-
 use Custom\Error\AuthorizationException;
 
 class UserController extends IndexController
 {
     /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
+     * @var Admin\Form\UserForm $userForm
      */
-    private $MAX_COUNT = 200;
+    private $userForm = null;
 
     /**
-     * @param string $NO_ID
-     * @return string
+     * @param Admin\Form\UserForm $userForm
      */
-    protected $NO_ID = "no_id"; // const!!!
+    public function __construct(UserForm $userForm = null)
+    {
+        parent::__construct();
+
+        $this->userForm = $userForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -33,22 +63,21 @@ class UserController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>"Users"]);
+        $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>$this->translate("USERS")]);
         parent::onDispatch($e);
     }
 
     /**
-     * This action shows the list of all (or filtered) User objects
+     * This action shows the list with all users
      */
     public function indexAction()
+    public function indexAction()
     {
-        $search = $this->getParam("search", null);
-        $where = "deleted = '0'";
-        if ($search!=null) {
-            $where = "(deleted = '0') AND (`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%')";
-        }
-        $order = "id DESC";
-        $this->customPages(true, $where, $order, 50, $search);
+        $this->view->setTemplate("admin/user/index");
+        $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 0], null, null, "id DESC");
+        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        $paginator->setItemCountPerPage(50);
+        $this->view->paginator = $paginator;
         return $this->view;
     }
 
@@ -58,20 +87,11 @@ class UserController extends IndexController
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam("id", 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
-        try {
-            $user = $this->getTable("user")->getUser($id);
-            $this->view->user = $user;
-            $this->addBreadcrumb(["reference"=>"/admin/user/modify/id/{$user->id}", "name"=>"Modify user &laquo;".$user->toString()."&raquo;"]);
-            $this->showForm("Modify", $user);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
+        $this->view->setTemplate("admin/user/modify");
+        $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
+        $this->view->user = $user;
+        $this->addBreadcrumb(["reference"=>"/admin/user/modify/{$user->getId()}", "name"=> $this->translate("MODIFY_USER")." &laquo;".$user->getName()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY_USER"), $user);
         return $this->view;
     }
 
@@ -79,175 +99,118 @@ class UserController extends IndexController
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label
-     * @param null|User $user
+     * @param User $user
      */
-    public function showForm($label='', $user=null)
+    public function initForm($label= '' , User $user = null)
     {
-        if ($user==null) {
-            throw new AuthorizationException($this->session->ERROR_AUTHORIZATION);
+        if (!$user instanceof User) {
+            throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
         }
 
-        $form = new UserForm($user, $this->getTable("language")->fetchList(false, "active = '1'", "name ASC"), $this->getTable("currency")->fetchList(false, "active = '1'", "name ASC"));
+        $form = $this->userForm;
         $form->get("submit")->setValue($label);
+        $form->bind($user);
         $this->view->form = $form;
-        $this->view->id = $user->id;
+
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $name = str_replace(" ", "_", $formData["name"]);
-                $existingUser = $this->getTable("user")->fetchList(false, "name = '{$name}' AND id != '{$user->id}'");
-                $existingEmail = $this->getTable("user")->fetchList(false, "email = '".$formData['email']."' AND id != '{$user->id}'");
-                (sizeof($existingUser) > 0 ? $this->setErrorNoParam($this->session->USERNAME_EXIST." <b>{$name}</b> ".$this->session->ALREADY_EXIST) : "");
-                (sizeof($existingEmail) > 0 ? $this->setErrorNoParam($this->session->EMAIL_EXIST." <b>".$formData["email"]."</b> ".$this->session->ALREADY_EXIST) : "");
-
-                if (sizeof($existingEmail) == 0 && sizeof($existingUser) == 0) {
-                    $user->setName($name);
-                    $user->setSurname($formData['surname']);
-                    $user->setEmail($formData['email']);
-                    // $user->setLanguage($formData["language"]);
-                    $user->setAdmin($user->admin);
-                    $user->setDeleted($formData["deleted"]);
-                    $user->setBirthDate($formData["birthDate"]);
+                $existingEmail = $this->getTable("user")->fetchList(false, ["email"], ["email" => $formData->email]);
+                if (count($existingEmail) > 1) {
+                    $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info');
+                    return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+                } else {
                     $this->getTable("user")->saveUser($user);
+                    $this->setLayoutMessages("&laquo;".$user->getFullName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
+                    return $this->redirect()->toRoute('admin', ['controller' => 'user']);
                 }
-                $this->translation->success ="User &laquo;".$user->toString()."&raquo; was successfully saved";
-                $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             } else {
-                $error = '';
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+                $this->setLayoutMessages($form->getMessages(), 'error');
                 return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             }
         }
     }
 
-    /**
-     * this action deletes a user object with a provided id
-     */
-    public function deleteAction()
-    {
-        $id = (int) $this->getParam('id', 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
-        try {
-            $this->getTable("user")->deleteUser($id);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
-        $this->translation->success = "User was successfully deleted";
-        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-    }
-
     public function disabledAction()
     {
-        $search = $this->getParam("search", null);
-        $where = "deleted = '1'";
-        if ($search!=null) {
-            $where = "(deleted = '1') AND (`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%')";
-        }
-        $order = "id DESC";
-        $this->customPages(true, $where, $order, 50, $search);
+        $this->view->setTemplate("admin/user/disabled");
+        $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 1], null, null, "id DESC");
+        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        $paginator->setItemCountPerPage(50);
+        $this->view->paginator = $paginator;
         return $this->view;
     }
 
+    public function enableAction()
+    {
+        $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 0);
+        $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+    }
+
+    public function disableAction()
+    {
+        $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 1);
+        $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+    }
+
+    /**
+     * this action shows user details from the provided id
+     */
     public function detailAction()
     {
-        $id = (int) $this->getParam('id', 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
-        try {
-            $user = $this->getTable("user")->getUser($id);
-            $this->view->user = $user;
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("User not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
-        }
-        $this->addBreadcrumb(["reference"=>"/admin/user/detail/id/{$user->id}", "name"=>"User &laquo;". $user->toString()."&raquo; details"]);
+        $this->view->setTemplate("admin/user/detail");
+        $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
+        $this->view->user = $user;
+        $this->addBreadcrumb(["reference"=>"/admin/user/detail/".$user->getId()."", "name"=>"&laquo;". $user->getFullName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->view;
     }
 
     /**
      * return the list of users that match a given criteria
+     *
      * @return \Zend\View\Model\JsonModel
      */
     protected function searchAction()
     {
-        $search = $this->getParam('usersearch');
+        $search = (string) $this->getParam('usersearch', null);
         if (isset($search)) {
             if ($this->getRequest()->isXmlHttpRequest()) {
                 $this->view->setTerminal(true);
-                $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%' OR `lastLogin` LIKE '%{$search}%'";
-                $results = $this->getTable("user")->fetchList(false, $where, "id DESC");
+                $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%'";
+                $results = $this->getTable("user")->fetchList(false, [], $where, "OR", null, "id DESC");
                 $json = [];
                 foreach ($results as $result) {
                     $json[] = Json::encode($result);
                 }
                 return new JsonModel([
                     'usersearch' => $json,
-                    'cancel' => "Cancel",
-                    'deleteuser' => "delete",
-                    'modify' => "modify",
-                    'details' => "details",
-                    'delete_text' => "Are you sure you would like to delete this user",
+                    'cancel' => $this->translate("CANCEL"),
+                    'deleteuser' => $this->translate("DELETE"),
+                    'modify' => $this->translate("MODIFY_USER"),
+                    'details' => $this->translate("DETAILS"),
+                    'delete_text' => $this->translate("DELETE_CONFIRM_TEXT"),
                 ]);
             }
         }
     }
 
     /**
-     * 1 is there so we can get a proper user Object
-     * instead we get a call to undefined function get() in User model
+     * This method exports all users from the database in excel format
      *
-     * @var $users \Admin\Model\User
+     * @see  Admin\Model\User::export for more info
      */
     protected function exportAction()
     {
-        $filesPath = $_SERVER['DOCUMENT_ROOT']."/zend/public/userfiles/userExports/";
-        if (!file_exists($filesPath)) {
+        $filesPath = "public/userfiles/userExports/";
+        if (!is_dir($filesPath)) {
             mkdir($filesPath);
         }
-        $users = $this->getTable("User")->getUser($this->cache->user->id);
-        $fileName = $users->export($filesPath);
-        $this->redirect()->toUrl("/userfiles/userExports/".$fileName);
-    }
-
-    protected function cloneAction()
-    {
-        $id = $this->getParam("id");
-        $user = $this->getTable("user")->duplicate($id);
-        $this->translation->success = "User &laquo;".$user->toString()."&raquo; was successfully cloned";
-        $this->redirect()->toUrl("/admin/user");
-        return $this->view;
-    }
-
-    /**
-     * @param null $where
-     * @param null order
-     * @param Int $itemPerPage
-     * @param String $search
-     * @return void
-     */
-    private function customPages($isPagination = true, $where = null, $order = null, $itemPerPage = 50, $search)
-    {
-        $paginator = $this->getTable("user")->fetchList($isPagination, $where, $order);
-        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
-        $paginator->setItemCountPerPage(50);
-        $this->view->paginator = $paginator;
-        $form = new UserSearchForm();
-        $form->remove("submit");
-        $form->get("search")->setValue($search);
-        $this->view->form = $form;
+        $user = new User([], $this->getServiceLocator());
+        $fileName = $user->export($filesPath);
+        return $this->redirect()->toUrl("/userfiles/userExports/".$fileName);
     }
 }

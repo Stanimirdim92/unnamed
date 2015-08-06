@@ -24,53 +24,26 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Administrator
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ServiceManager\ServiceManager;
-
-class Administrator implements InputFilterAwareInterface
+class Administrator
 {
     /**
-     * @var null $inputFilter inputFilter
-     */
-    private $inputFilter = null;
-
-    /**
-     * @var null $serviceManager ServiceManager
-     */
-    private $serviceManager = null;
-
-    /**
      * @var Int $id
-     * @return int
      */
     private $id = 0;
 
     /**
      * @param Int $user
-     * @return Int
      */
-    private $user;
-
-    /**
-     * @param null $sm ServiceManager
-     * @return ServiceManager|null
-     */
-    public function setServiceLocator(ServiceManager $sm = null)
-    {
-        $this->serviceManager = $sm;
-    }
+    private $user = null;
 
     /**
      * @var array $data
@@ -78,24 +51,31 @@ class Administrator implements InputFilterAwareInterface
      */
     public function exchangeArray(array $data = [])
     {
-        $this->id = (isset($data['id'])) ? $data['id'] : $this->id;
-        $this->user = (isset($data['user'])) ? $data['user'] : $this->user;
+        $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
+        $this->user = (isset($data['user'])) ? $data['user'] : $this->getUser();
+    }
+
+    /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
     }
 
     /**
      * constructor
      *
      * @param array $options
-     * @param ServiceManager|null $sm
      */
-    public function __construct(array $options = [], ServiceManager $sm = null)
+    public function __construct(array $options = [])
     {
         $this->exchangeArray($options);
-        $this->serviceManager = $sm;
     }
 
     /**
      * Get id
+     * @return int
      */
     public function getId()
     {
@@ -130,18 +110,6 @@ class Administrator implements InputFilterAwareInterface
     }
 
     /**
-     * Get the related object from the DB
-     */
-    public function getUserObject()
-    {
-        try {
-            return $this->serviceManager->get('UserTable')->getUser($this->user);
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
      * magic getter
      */
     public function __get($property)
@@ -154,7 +122,7 @@ class Administrator implements InputFilterAwareInterface
      */
     public function __set($property, $value)
     {
-        (property_exists($this, $property) ? $this->{$property} = $value : null);
+        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**
@@ -166,30 +134,11 @@ class Administrator implements InputFilterAwareInterface
     }
 
     /**
-     * magic serializer
-     */
-    public function __sleep()
-    {
-        $skip = ["serviceManager"];
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[] = $key;
-            }
-        }
-        return $returnValue;
-    }
-
-    /**
-     * magic unserializer (ideally we should recreate the connection to service manager)
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
-     * this is a handy function for encoding the object to json for transfer purposes
+     * Serialize object or return it as an array
+     *
+     * @param  array $skip Remove the unnecessary objects from the array
+     * @param  bool $serializable Should the function return a serialized object
+     * @return array|string
      */
     public function getProperties(array $skip = [], $serializable = false)
     {
@@ -197,49 +146,13 @@ class Administrator implements InputFilterAwareInterface
         $data = get_class_vars(get_class($this));
         foreach ($data as $key => $value) {
             if (!in_array($key, $skip)) {
-                $returnValue[$key] = $this->$key;
+                $returnValue[$key] = $this->{$key};
             }
         }
         if ((bool) $serializable === true) {
             return serialize($returnValue);
         }
         return $returnValue;
-    }
-
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new \Exception("Not used");
-    }
-
-    public function getInputFilter()
-    {
-        if (!$this->inputFilter) {
-            $inputFilter = new InputFilter();
-            $inputFilter->add([
-                'name'     => 'id',
-                'required' => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-            ]);
-            $inputFilter->add([
-                "name"=>"user",
-                "required" => true,
-                'filters' => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ]);
-            $this->inputFilter = $inputFilter;
-        }
-        return $this->inputFilter;
     }
 
     /**
@@ -249,7 +162,7 @@ class Administrator implements InputFilterAwareInterface
     public function getCopy()
     {
         $clone = new self();
-        $clone->setUser($this->user);
+        $clone->setUser($this->getUser());
         return $clone;
     }
 }

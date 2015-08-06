@@ -1,4 +1,36 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
+
 namespace Admin\Controller;
 
 use Admin\Model\TermTranslation;
@@ -8,35 +40,20 @@ use Admin\Form\TermTranslationForm;
 class TermTranslationController extends IndexController
 {
     /**
-     * Used to control the maximum number of the related objects in the forms
-     *
-     * @param Int $MAX_COUNT
-     * @return Int
-     */
-    private $MAX_COUNT = 200;
-
-    /**
-     * @param string $NO_ID
-     * @return string
-     */
-    protected $NO_ID = "no_id"; // const!!!
-
-    /**
      * Initialize any variables before controller actions
      *
      * @param MvcEvent $e
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference" => "/admin/termtranslation", "name" => "Term translations"]);
+        $this->addBreadcrumb(["reference" => "/admin/termtranslation", "name" => $this->translate("TERM_TRANSLATIONS")]);
         parent::onDispatch($e);
     }
 
     public function indexAction()
     {
-        $order = "id ASC";
-        $termCategories = $this->getTable("termcategory")->fetchList(false, null, $order);
-        $this->view->termCategories = $termCategories;
+        $this->view->setTemplate("admin/term-translation/index");
+        $this->view->termCategories = $this->getTable("termcategory")->fetchList();
         return $this->view;
     }
 
@@ -45,8 +62,9 @@ class TermTranslationController extends IndexController
      */
     public function addAction()
     {
-        $this->showForm("Add", null);
-        $this->addBreadcrumb(["reference" => "/admin/termtranslation/add", "name" => "Add new termtranslation"]);
+        $this->view->setTemplate("admin/term-translation/add");
+        $this->initForm($this->translate("ADD_NEW_TERM_TRANSLATION"), null);
+        $this->addBreadcrumb(["reference" => "/admin/termtranslation/add", "name" => $this->translate("ADD_NEW_TERM_TRANSLATION")]);
         return $this->view;
     }
 
@@ -56,20 +74,11 @@ class TermTranslationController extends IndexController
      */
     public function modifyAction()
     {
-        $id = (int) $this->getParam('id', 0);
-        if (!$id) {
-            $this->setErrorNoParam($this->NO_ID);
-            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
-        }
-        try {
-            $termcategory = $this->getTable("termcategory")->getTermCategory($id);
-            $this->view->termcategory = $termcategory;
-            $this->addBreadcrumb(["reference" => "/admin/termtranslation/modify/id/{$termcategory->id}", "name" => "Modify term translation &laquo;{$termcategory->name}&raquo;"]);
-            $this->showForm("Modify", $termcategory);
-        } catch (\Exception $ex) {
-            $this->setErrorNoParam("Term translation not found");
-            return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
-        }
+        $this->view->setTemplate("admin/term-translation/modify");
+        $termcategory = $this->getTable("termcategory")->getTermCategory((int) $this->getParam('id', 0))->current();
+        $this->view->termcategory = $termcategory;
+        $this->addBreadcrumb(["reference" => "/admin/termtranslation/modify/{$termcategory->getId()}", "name" => $this->translate("MODIFY_TERM_TRANSLATION")." &laquo".$termcategory->getName()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY"), $termcategory);
         return $this->view;
     }
 
@@ -79,19 +88,15 @@ class TermTranslationController extends IndexController
      * @param String $label
      * @param null|TermTranslation $termtranslation
      */
-    public function showForm($label = '', $termtranslation = null)
+    private function initForm($label = '', $termtranslation = null)
     {
-        if ($termtranslation == null) {
-            $termtranslation = new TermTranslation();
-        }
-
         $termTranslations = [];
-        $categoryId = (int) $this->getParam("id", 0);
-        $terms = $this->getTable("term")->fetchList(false, "termcategory='{$categoryId}'");
-        foreach ($this->getTable("termtranslation")->fetchJoin("term", "term.id=termtranslation.term", "language='{$this->session->language}' AND termcategory='{$categoryId}'") as $t) {
-            $termTranslations[$t->term] = $t;
+        $tt = $this->getTable("termtranslation")->fetchJoin(false, "term", ["translation", "term", "id"], ["termcategory", "name"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => $this->language(), "term.termcategory" => (int) $this->getParam("id", 0)]);
+        foreach ($tt->getDataSource() as $t) {
+            $termTranslations[$t["term"]] = $t;
         }
-        $form = new TermTranslationForm($termtranslation, $terms, $termTranslations);
+        $form = new TermTranslationForm();
+        $form->bind($termTranslations);
         $form->get("submit")->setValue($label);
 
         $this->view->form = $form;
@@ -99,35 +104,31 @@ class TermTranslationController extends IndexController
             // $form->setInputFilter($termtranslation->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $formData = $this->getRequest()->getPost()->toArray();
-                $keys = array_keys($formData);
-                for ($i = 0; $i < sizeof($keys) - 2; $i++) {
-                    if (strstr($keys[$i], "translation")!==false) {
-                        $termId = substr($keys[$i], 11);
-                        $existing = $this->getTable("termtranslation")->fetchList(false, "term='{$termId}' AND language='{$this->session->language}'");
-                        if (sizeof($existing) != 0) {
-                            $model = $existing->current();
-                        } else {
-                            $model = new TermTranslation();
-                        }
-                        $model->setLanguage($this->session->language);
-                        $model->setTerm($termId);
-                        $model->setTranslation($formData[$keys[$i]]);
-                        $this->getTable("termtranslation")->saveTermTranslation($model);
-                    }
-                }
+                echo \Zend\Debug\Debug::dump($form->getData(), null, false);
+                exit;
+                // $formData = $this->getRequest()->getPost()->toArray();
+                // $keys = array_keys($formData);
+                // for ($i = 0; $i < sizeof($keys) - 2; $i++) {
+                //     if (strstr($keys[$i], "translation")!==false) {
+                //         $termId = substr($keys[$i], 11);
+                //         $existing = $this->getTable("termtranslation")->fetchList(false, "term='{$termId}' AND language='{$this->session->language}'");
+                //         if (sizeof($existing) != 0) {
+                //             $model = $existing->current();
+                //         } else {
+                //             $model = new TermTranslation();
+                //         }
+                //         $model->setLanguage($this->session->language);
+                //         $model->setTerm($termId);
+                //         $model->setTranslation($formData[$keys[$i]]);
+                //         $this->getTable("termtranslation")->saveTermTranslation($model);
+                //     }
+                // }
 
-                $this->translation->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
-                $this->view->setTerminal(true);
-                return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
+                // $this->translation->success = "Term translation &laquo;".$termtranslation->toString()."&raquo; was successfully saved";
+                // $this->view->setTerminal(true);
+                // return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
             } else {
-                $error = '';
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
+                $this->setLayoutMessages($form->getMessages(), "error");
                 return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
             }
         }
@@ -157,8 +158,8 @@ class TermTranslationController extends IndexController
     // if duplicate terms are found remove all but one and notify the user
     public function importAction()
     {
-        require_once($_SERVER["DOCUMENT_ROOT"]."/zend/vendor/CodePlex/PHPExcel.php");
-        require_once($_SERVER["DOCUMENT_ROOT"]."/zend/vendor/CodePlex/PHPExcel/PHPExcel_IOFactory.php");
+        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
+        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel/PHPExcel_IOFactory.php");
         $error = "";
         // first of all pick a random category and use its id
         // in case the excel for some weird reason doesn't have categories
@@ -233,9 +234,9 @@ class TermTranslationController extends IndexController
             }
         }
         if ($error != "") {
-            $this->cache->warning = $error;
+            $this->setErrorNoParam($error);
         } else {
-            $this->translation->success = "Export was successfull";
+            $this->setErrorNoParam("Export was successfull");
         }
         $this->view->setTerminal(true);
         return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
@@ -243,11 +244,11 @@ class TermTranslationController extends IndexController
 
     public function exportAction()
     {
-        require_once($_SERVER["DOCUMENT_ROOT"]."/zend/vendor/CodePlex/PHPExcel.php");
+        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
         // create excel file
         $id = rand(10000, 99999999);
         $file = md5($id) . ".xlsx";
-        $filename = $_SERVER['DOCUMENT_ROOT'] . "/zend/public/userfiles/exports/" . $file;
+        $filename = $_SERVER['DOCUMENT_ROOT'] . "/public/userfiles/exports/" . $file;
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getProperties()
             ->setCreator("Xtreme-Jumps Excel Export Plugin")

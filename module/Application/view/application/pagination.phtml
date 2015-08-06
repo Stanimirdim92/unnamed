@@ -1,55 +1,57 @@
-<?php
-$urlParams = array();
-foreach ($this->params()->fromPost() as $urlParamsKey=>$urlParamsVal)
-{
-    if (!in_array($urlParamsKey, array('module', 'controller', 'action', 'page', 'submit', 'param')))
-    {
-        $urlParams[$urlParamsKey] = $urlParamsVal;
-    }
-}
-?>
     <div class="pagination">
         <ul>
-        <!-- <li class="pagination-text">Showing <?= $this->current; ?> of <?= $this->last; ?> pages</li> -->
-          <?php if (isset($this->previous)): ?>
-          <li class="first">
-            <a href="<?=$this->url('news', array_merge(array('page' => $this->first),$urlParams), false, true); ?>">First</a>
-          </li>
-          <?php else: ?>
-          <li class="first disabled">
-            <a href="#">First</a>
-          </li>
-          <?php endif; ?>
-          <?php if (isset($this->previous)): ?>
-          <li class="prev">
-            <a href="<?=$this->url('news', array_merge(array('page' => $this->previous),$urlParams), false, true); ?>">Previous</a>
-          </li>
-          <?php else: ?>
-          <li class="prev disabled">
-            <a href="#">Previous</a>
-          </li>
-          <?php endif; ?>
-          <?php foreach ($this->pagesInRange as $page): ?>
-            <?php if ($page != $this->current): ?>
-            <li><a href="<?=$this->url('news', array_merge(array('page' => $page),$urlParams), false, true); ?>"><?= $page; ?></a></li>
-            <?php else: ?>
-            <li  class="active"><a href="<?=$this->url('news', array_merge(array('page' => $page),$urlParams), false, true); ?>"><?= $page; ?></a></li>
-           <?php endif; ?>
-          <?php endforeach; ?>
-          <!-- Next page link -->
-          <?php if (isset($this->next)): ?>
-          <li class="next">
-            <a href="<?=$this->url('news', array_merge(array('page' => $this->next), $urlParams), false, true); ?>">Next</a>
-          </li>
-          <?php else: ?>
-          <li class="next disabled"><a href="#">Next</a></li>
-          <?php endif; ?>
-          <?php if (isset($this->next)): ?>
-          <li class="last">
-            <a href="<?=$this->url('news', array_merge(array('page' => $this->last),$urlParams), false, true); ?>">Last</a>
-          </li>
-          <?php else: ?>
-          <li class="last disabled"><a href="#">Last</a></li>
-          <?php endif; ?>
+<?php if (isset($this->previous)) { ?>
+            <li class="first">
+                <a href="<?=$this->url($this->route, ['page' => $this->first], false, true); ?>"><?=$this->translate("PAGINATION_FIRST")?></a>
+            </li>
+<?php } else { ?>
+            <li class="first disabled">
+                <span><?=$this->translate("PAGINATION_FIRST")?></span>
+            </li>
+<?php }
+      if (isset($this->previous)) {
+?>
+            <li class="prev">
+                <a href="<?=$this->url($this->route, ['page' => $this->previous], false, true); ?>"><?=$this->translate("PAGINATION_PREV")?></a>
+            </li>
+<?php } else { ?>
+            <li class="prev disabled">
+                <span><?=$this->translate("PAGINATION_PREV")?></span>
+            </li>
+<?php } ?>
+
+<?php foreach ($this->pagesInRange as $page) {
+    if ($page != $this->current) {
+?>
+            <li>
+                <a href="<?=$this->url($this->route, ['page' => $page], false, true); ?>"><?= $page; ?></a>
+            </li>
+    <?php } else { ?>
+            <li  class="active">
+                <a href="<?=$this->url($this->route, ['page' => $page], false, true); ?>"><?= $page; ?></a>
+            </li>
+<?php   }
+    }
+      if (isset($this->next)) {
+?>
+            <li class="next">
+                <a href="<?=$this->url($this->route, ['page' => $this->next], false, true); ?>"><?=$this->translate("PAGINATION_NEXT")?></a>
+            </li>
+<?php } else { ?>
+            <li class="next disabled">
+                <span><?=$this->translate("PAGINATION_NEXT")?></span>
+            </li>
+<?php
+      }
+      if (isset($this->next)) {
+?>
+            <li class="last">
+                <a href="<?=$this->url($this->route, ['page' => $this->last], false, true); ?>"><?=$this->translate("PAGINATION_LAST")?></a>
+            </li>
+<?php } else { ?>
+            <li class="last disabled">
+                <span><?=$this->translate("PAGINATION_LAST")?></span>
+            </li>
+<?php } ?>
         </ul>
     </div>

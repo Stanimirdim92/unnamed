@@ -1,0 +1,79 @@
+<?php
+if(!empty($this->news)) {
+   /**
+    * @var $new Admin\Model\Content
+    */
+    foreach($this->news as $new) {
+        $dateTime = date("Y-m-d", strtotime($new->getDate()));
+        $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
+?>
+            <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
+<?php
+                if ($new->getPreview() != null) {
+?>
+                    <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                        <a itemprop="url" href="/userfiles/preview/<?=$new->getPreview();?>" id="news_image" title="<?=$new->getTitle();?>">
+                            <img itemprop="image" src="/userfiles/preview/<?=$new->getPreview();?>" title="<?=$new->getTitle()?>" alt="<?=$new->getTitle();?>" />
+                        </a>
+                    </figure>
+<?php
+                }
+?>
+                <h2 itemscope itemprop="name" class="post-title">
+                    <a itemprop="url" href="/news/post/<?=$new->getTitleLink()?>"><?=$new->getTitle();?></a>
+                </h2>
+
+                <time datetime="<?=$dateTime?>" class="post-date">
+                    <?=$this->translate("POSTED_ON");?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow?>
+                </time>
+
+                <p itemscope itemprop="text" class="post-text"><?=substr(strip_tags($new->getText()), 0, 300)."...";?></p>
+                <br>
+<?php
+                if (mb_strlen($new->getText()) > 0) {
+?>
+                    <p class="read-more">
+                        <a itemscope itemprop="url" title="<?=$this->translate("READ_MORE")?>" class="read-more-link" href="<?=$this->url('news', ['post' => $new->getTitleLink()]);?>"><?=$this->translate("READ_MORE")?></a>
+                    </p>
+<?php
+                }
+?>
+            </article>
+<?php
+    }
+    echo $this->paginationControl($this->news, 'Sliding', ['application/pagination', "Application"], ['route' => 'news', 'action' => 'post']);
+} elseif(!empty($this->new)) {
+   /**
+    * @var $newsPost Admin\Model\Content
+    */
+    $newsPost = $this->new;
+    $dateTime = date("Y-m-d", strtotime($newsPost["date"]));
+    $dateTimeShow = date("M d, Y", strtotime($newsPost["date"]));
+?>
+    <article class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
+        <h2 itemprop="name" class="post-title"><?=$newsPost["title"];?></h2>
+
+<?php
+        if ($newsPost["preview"] != null) {
+?>
+            <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                <a itemprop="url" href="/userfiles/preview/<?=$newsPost["preview"];?>" id="news_image" title="<?=$newsPost["title"];?>">
+                    <img itemprop="image" src="/userfiles/preview/<?=$newsPost["preview"];?>" title="<?=$newsPost["title"];?>" alt="<?=$newsPost["title"];?>" />
+                </a>
+            </figure>
+<?php
+        }
+?>
+        <time datetime="<?=$dateTime?>" class="post-date">
+            <?=$this->translate("POSTED_ON");?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow;?>
+        </time>
+
+        <div itemprop="text" class="post-text"><?=$newsPost["text"];?></div>
+        <p class="back-to-news">
+            <a itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
+        </p>
+    </article>
+<?php
+} else {
+    echo "<h3 itemscope itemprop='name' class='c no-content'>".$this->translate("NO_CONTENT")."</h3>";
+}

@@ -24,21 +24,19 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Factory
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Application\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Stdlib\Hydrator\ObjectProperty;
 use Application\Model\ResetPassword;
 use Application\Model\ResetPasswordTable;
 
@@ -46,10 +44,13 @@ class ResetPasswordTableFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $sm = null)
     {
-        $resultSetPrototype = new HydratingResultSet();
-        $resultSetPrototype->setHydrator(new ObjectProperty());
-        $resultSetPrototype->setObjectPrototype(new ResetPassword([], $sm));
-        $tg = new TableGateway('resetpassword', $sm->getServiceLocator()->get('Zend\Db\Adapter\Adapter'), null, $resultSetPrototype);
-        return new ResetPasswordTable(null, $tg);
+        $resultSetPrototype = new ResultSet();
+        $resultSetPrototype->setArrayObjectPrototype(new ResetPassword());
+        $db = $sm->get('Zend\Db\Adapter\Adapter');
+
+        $tableGateway = new TableGateway('resetpassword', $db, null, $resultSetPrototype);
+        $table = new ResetPasswordTable($tableGateway);
+
+        return $table;
     }
 }

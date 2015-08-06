@@ -5,14 +5,14 @@
             <div class="media-frame-menu">
                 <div class="media-frame-router">
                     <div class="media-router">
-                        <button type="button" class="upload media-menu-item"><?=$this->translation->UPLOAD_FILES?></button>
-                        <button type="button" class="gallery media-menu-item"><?=$this->translation->GALLERY?></button>
+                        <button type="button" class="upload media-menu-item"><?=$this->translate("UPLOAD_FILES")?></button>
+                        <button type="button" class="gallery media-menu-item"><?=$this->translate("GALLERY")?></button>
                     </div>
                 </div>
                 <div class="media-frame-content">
                     <div class="uploader-inline">
                         <label for="imgajax" class="media-file-upload">
-                            <?=$this->translation->FILE_UPLOAD; ?>
+                            <?=$this->translate("FILE_UPLOAD"); ?>
                             <?php
                                 echo $this->formFile($form->get('imageUpload'));
                             ?>

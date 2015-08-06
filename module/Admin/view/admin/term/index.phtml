@@ -1,44 +1,40 @@
 <div>
-<?
-$form = $this->form;
-$form->setAttribute('action', $this->url('admin',array('controller' =>'term')));
-$form->prepare();
-echo $this->form()->openTag($form);
-echo $this->formCollection($form);
-echo $this->form()->closeTag();
-?>
-
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->session->NAME?></li>
-			<li class="table-cell"><?=$this->session->MODIFY?></li>
-            <li class="table-cell"><?=$this->session->DELETE?></li>
+            <li class="table-cell"><?=$this->translate("NAME");?></li>
+			<li class="table-cell"><?=$this->translate("MODIFY");?></li>
+            <li class="table-cell"><?=$this->translate("DELETE");?></li>
         </ul>
-        <?php
-        foreach($this->paginator as $item)
-        {
-        ?>
+<?php
+       /**
+        * @var $term Admin\Model\Tern
+        */
+        foreach($this->paginator as $term) {
+?>
         <ul>
-            <li class="table-cell"><?=$item->name?></li>
-            <li class="table-cell"><a title='<?=$this->session->DETAILS?>' href='/admin/term/modify/id/<?=$item->id?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a></li>
+            <li class="table-cell"><?=$term->getName()?></li>
             <li class="table-cell">
-                <a id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete' title='<?=$this->session->DELETE?>'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-                <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
-                    <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getName()?>&raquo;&quest;</p>
+                <a title='<?=$this->translate("DETAILS");?>' href='<?=$this->url("admin", ['controller' => "term", "action" => "modify", "id" => $term->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+            </li>
+            <li class="table-cell">
+                <button id='delete_<?=$term->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE");?>'><i class='fa fa-trash-o'></i></button>
+                <div id='delete_delete_<?=$term->getId()?>' class='dialog_hide'>
+                    <p><?=$this->translate("DELETE_CONFIRM_TEXT");?> &laquo;<?=$term->getName()?>&raquo;</p>
                     <ul>
-                      <li><a class='btn delete' href='/admin/term/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
-                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
+                        <li>
+                            <a class='btn delete' href='<?=$this->url("admin", ['controller' => "term", "action" => "delete", "id" => $term->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE");?></a>
+                        </li>
+                        <li>
+                            <a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->translate("CANCEL");?></a>
+                        </li>
                     </ul>
                 </div>
             </li>
         </ul>
-        <?
+<?php
         }
-        ?>
+    echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin']);
+?>
     </div>
 </section>
-<?
-echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
-?>
-</div>

@@ -1,115 +1,296 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
+
 namespace Admin\Form;
 
 use Zend\Form\Form;
-use Zend\Form\Element;
+use Zend\InputFilter\InputFilterProviderInterface;
 
-class UserForm extends Form
+class UserForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct($options = null, $languages = [], $currency = [])
+    public function __construct()
     {
         parent::__construct("user");
-        $elements = [];
+    }
 
-        $elements[0] = new Element\Text('name');
-        $elements[0]->setLabel('Name');
-        $elements[0]->setAttributes([
-            'required'   => false,
-            'size'        => 40,
-            'class'      => 'user-name',
-            'placeholder' => 'Name',
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'name',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
+                'placeholder' => 'Name',
+            ],
+            'options' => [
+                'label' => 'Name',
+            ],
         ]);
 
-        if ($options!=null and $options->name) {
-            $elements[0]->setValue($options->name);
-        }
-
-        $elements[1] = new Element\Text('surname');
-        $elements[1]->setLabel('Surname');
-        $elements[1]->setAttributes([
-            'required'   => false,
-            'size'        => 40,
-            'class'      => 'user-surname',
-            'placeholder' => 'Surname',
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'surname',
+            'attributes' => [
+                'required'   => false,
+                'size'        => 40,
+                'placeholder' => 'Surname',
+            ],
+            'options' => [
+                'label' => 'Surname',
+            ],
         ]);
 
-        if ($options!=null and $options->surname) {
-            $elements[1]->setValue($options->surname);
-        }
-
-        $elements[3] = new Element\Text('email');
-        $elements[3]->setLabel('Email');
-        $elements[3]->setAttributes([
-            'required'   => true,
-            'size'        => 40,
-            'class'      => 'user-email',
-            'placeholder' => 'Email',
+        $this->add([
+            'type' => 'Zend\Form\Element\Email',
+            'name' => 'email',
+            'attributes' => [
+                'required' => true,
+                'min' => 3,
+                'size' => 30,
+                'placeholder' => 'johnsmith@example.com',
+            ],
+            'options' => [
+                'label' => 'Email',
+            ],
         ]);
 
-        if ($options!=null and $options->email) {
-            $elements[3]->setValue($options->email);
-        }
-
-        $elements[4] = new Element\Text('birthDate');
-        $elements[4]->setLabel('Birthday');
-        $elements[4]->setAttributes([
-            'required'   => false,
-            'size'        => 40,
-            'class'      => 'datetimepicker',
-            'placeholder' => 'YYYY-MM-DD',
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'birthDate',
+            'attributes' => [
+                'required'    => false,
+                'size'        => 40,
+                'class'       => 'datetimepicker',
+                'placeholder' => 'YYYY-MM-DD',
+            ],
+            'options' => [
+                'label' => 'Birthdate',
+            ],
         ]);
-        if ($options!=null and $options->birthDate) {
-            $elements[4]->setValue($options->birthDate);
-        } else {
-            $elements[4]->setValue("0000-00-00");
-        }
 
-        // $elements[6] = new Element\Checkbox('admin');
-        // $elements[6]->setLabel('Admin');
-        // if($options!=null and $options->admin)
-        //     $elements[6]->setValue($options->admin);
+        $this->add([
+            'type' => 'Zend\Form\Element\Checkbox',
+            'name' => 'deleted',
+            'options' => [
+                'label' => 'Disabled',
+            ],
+        ]);
 
-        $elements[7] = new Element\Checkbox('deleted');
-        $elements[7]->setLabel('Disabled');
-        if ($options!=null and $options->deleted) {
-            $elements[7]->setValue($options->deleted);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Checkbox',
+            'name' => 'hideEmail',
+            'options' => [
+                'label' => 'Hide email',
+            ],
+        ]);
 
-        $elements[8] = new Element\Select('language');
-        $elements[8]->setLabel('Language');
-        $valueOptions = [];
-       
-        foreach ($languages as $item) {
-            $valueOptions[$item->id] = $item->toString();
-        }
-        $elements[8]->setValueOptions($valueOptions);
-        if ($options!=null and $options->language) {
-            $elements[8]->setValue($options->language);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 1400,
+                ],
+            ],
+        ]);
 
-        $elements[9] = new Element\Select('currency');
-        $elements[9]->setLabel('Currency');
-        $valueOptions = [];
-        foreach ($currency as $item) {
-            $valueOptions[$item->id] = $item->toString();
-        }
-        $elements[9]->setValueOptions($valueOptions);
-        if ($options!=null and $options->currency) {
-            $elements[9]->setValue($options->currency);
-        }
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
 
-        $elements[11] = new Element\Submit('submit');
-        $elements[11]->setAttribute('id', 'submitbutton');
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
+    }
 
-        if ($options!=null) {
-            $elements[12] = new Element\Hidden('id');
-            $elements[12]->setValue($options->id);
-        }
-        
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
-        $this->remove("language");
-        $this->remove("currency");
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name'     => 'id',
+                'required' => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"name",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 100,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"surname",
+                "required" => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 100,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"email",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                "validators" => [
+                    [
+                        'name' => 'EmailAddress',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'messages' => ['emailAddressInvalidFormat' => "Email address doesn't appear to be valid."],
+                        ],
+                    ],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min'      => 5,
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ],
+            [
+                "name"=>"birthDate",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 100,
+                        ],
+                    ],
+                ],
+            ],
+            [
+                "name"=>"deleted",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-1]+$/',
+                        ],
+                    ],
+                ],
+            ],
+            // [
+            //     "name"=>"image",
+            //     "required" => false,
+            //     'validators' => [
+            //         [
+            //             'name' => 'Zend\Validator\File\Size',
+            //             'options' => [
+            //                 'min' => '10kB',
+            //                 'max' => '5MB',
+            //                 'useByteString' => true,
+            //             ],
+            //         ],
+            //         [
+            //             'name' => 'Zend\Validator\File\Extension',
+            //             'options' => [
+            //                 'extension' => [
+            //                     'jpg',
+            //                     'gif',
+            //                     'png',
+            //                     'jpeg',
+            //                     'bmp',
+            //                     'webp',
+            //                 ],
+            //                 'case' => true,
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            [
+                "name"=>"hideEmail",
+                "required" => false,
+                'filters'  => [
+                    ['name' => 'Int'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Regex',
+                        'options' => [
+                            'pattern' => '/^[0-1]+$/',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

@@ -1,53 +1,139 @@
 <?php
-namespace Admin\Form;
-use Zend\Form\Form;
-use Zend\Form\Element;
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.4
+ * @link       TBA
+ */
 
-class TermForm extends Form
+namespace Admin\Form;
+
+use Zend\Form\Form;
+use Zend\InputFilter\InputFilterProviderInterface;
+
+class TermForm extends Form implements InputFilterProviderInterface
 {
 
-    public function __construct($options = null, $termcategories = [])
+    public function __construct()
     {
         parent::__construct("term");
+    }
 
-        $elements = [];
+    public function init()
+    {
+        $this->setAttribute('method', 'post');
 
-        $elements[0] = new Element\Text('name');
-        $elements[0]->setLabel("Name");
-        $elements[0]->setAttributes([
-            'required'   => true,
-            'size'        => 40,
-            'class'      => 'term-name',
-            'placeholder' => 'Name',
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'name',
+            'attributes' => [
+                'required'   => true,
+                'size'        => 40,
+                'class'      => 'term-name',
+                'placeholder' => 'Name',
+            ],
+            'options' => [
+                'label' => 'Name',
+            ],
         ]);
-        if ($options != null) {
-            $elements[0]->setValue($options->name);
-        }
 
-        $elements[1] = new Element\Select('termcategory');
-        $elements[1]->setLabel('TermCategory');
-        $valueOptions = [];
-
-        foreach ($termcategories as $item) {
-            $valueOptions[$item->id] = $item->toString();
-        }
-        $elements[1]->setValueOptions($valueOptions);
-        if ($options != null) {
-            $elements[1]->setValue($options->termcategory);
-        }
-
-        $elements[2] = new Element\Submit('submit');
-        $elements[2]->setAttributes([
-            'id' => 'submitbutton',
-            'class' => 'term-button',
+        $this->add([
+            'type' => 'Zend\Form\Element\Select',
+            'name' => 'termcategory',
+            'options' => [
+                'label' => 'Type',
+                'empty_option' => 'Please choose your category',
+            ],
         ]);
-        if ($options != null) {
-            $elements[3] = new Element\Hidden('id');
-            $elements[3]->setValue($options->id);
-        }
 
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
+        $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 600,
+                ],
+            ],
+        ]);
+
+        $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Hidden',
+            'name' => 'id',
+        ]);
+    }
+
+    public function getInputFilterSpecification()
+    {
+        return [
+            [
+                'name' => 'id',
+                'required' => false,
+                'filters' => [
+                    ['name' => 'Int'],
+                ],
+            ],
+            [
+                "name"=>"name",
+                'required' => true,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                    ['name' => 'StringToUpper'],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                        ],
+                    ],
+                    ['name' => 'NotEmpty'],
+                ],
+            ],
+            [
+                "name"=>"termcategory",
+                'required' => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                ],
+            ],
+        ];
     }
 }

@@ -1,41 +1,43 @@
+<?php
+    /**
+    * @var $user Admin\Model\User
+    */
+    $user = $this->user;
+?>
 <section>
     <p>
-        <a href="/admin/user" class="btn btn-default">
-            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+        <a href="<?=$this->url("admin", ['controller' => "user"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
     <div class='table-style'>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->NAME?></li>
-            <li class="table-cell"><?=$this->user->getName()."&nbsp;".$this->user->getSurname()?></li>
+            <li class="table-cell"><?=$this->translate("NAME")?></li>
+            <li class="table-cell"><?=$user->getFullName()?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->USERNAME?></li>
-            <li class="table-cell"><?=$this->user->getUsername()?></li>
+            <li class="table-cell"><?=$this->translate("EMAIL")?></li>
+            <li class="table-cell"><?=$user->getEmail()?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->EMAIL?></li>
-            <li class="table-cell"><?=$this->user->getEmail()?></li>
+            <li class="table-cell"><?=$this->translate("LAST_LOGIN")?></li>
+            <li class="table-cell"><?=$user->getLastLogin()?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->LAST_LOGIN?></li>
-            <li class="table-cell"><?=$this->user->getLastLogin()?></li>
+            <li class="table-cell"><?=$this->translate("DISABLED")?></li>
+            <li class="table-cell"><?php if ($user->getDeleted()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->DISABLED?></li>
-            <li class="table-cell"><? if ($this->user->getDeleted()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?></li>
+            <li class="table-cell"><?=$this->translate("REGISTERED")?></li>
+            <li class="table-cell"><?=$user->getRegistered()?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->BAN?></li>
-            <li class="table-cell"><? if ($this->user->getBan()) { ?> <i class='fa fa-check'></i> <? } else {  ?> <i class='fa fa-times'></i> <?}?></li>
+            <li class="table-cell"><?=$this->translate("BIRTHDATE")?></li>
+            <li class="table-cell"><?=$user->getBirthDate()?></li>
         </ul>
         <ul class="table-row">
-            <li class="table-cell"><?=$this->session->REGISTERED?></li>
-            <li class="table-cell"><?=$this->user->getRegistered()?></li>
-        </ul>
-        <ul class="table-row">
-            <li class="table-cell"><?=$this->session->USER_CLASSES?></li>
-            <li class="table-cell"><?=$this->user->getUserClassNames()?></li>
+            <li class="table-cell"><?=$this->translate("ADMINISTRATOR")?></li>
+            <li class="table-cell"><?php if ($user->getAdmin()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
         </ul>
     </div>
 </section>

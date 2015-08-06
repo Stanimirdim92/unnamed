@@ -1,43 +1,46 @@
-<div>
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->translation->NAME?></li>
-            <li class="table-cell"><?=$this->translation->JOB?></li>
-            <li class="table-cell"><?=$this->translation->DESCRIPTION?></li>
-            <li class="table-cell"><?=$this->translation->DETAILS?></li>
-            <li class="table-cell"><?=$this->translation->MODIFY?></li>
-            <li class="table-cell"><?=$this->translation->DELETE?></li>
+            <li class="table-cell"><?=$this->translate("NAME")?></li>
+            <li class="table-cell"><?=$this->translate("DETAILS")?></li>
+            <li class="table-cell"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell"><?=$this->translate("DELETE")?></li>
         </ul>
 <?php
-/* @var $item Admin\Model\Administrator */
-foreach($this->paginator as $item)
-{
+        /**
+         * @var $administrator Admin\Model\Administrator
+         */
+        foreach($this->paginator as $administrator) {
 ?>
         <ul class="table-row">
             <li class="table-cell">
-                <a title='<?=$this->translation->DETAILS?>' class='btn blue btn-sm' href='/admin/user/detail/id/<?=$item->getUser()?>'><?=$item->getUserObject()->getName()?> <i class='fa fa-info'></i></a>
+                add user name here
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translation->MODIFY?>' href='/admin/administrator/modify/id/<?=$item->user?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "user", "action" => "detail", "id" => $administrator->getUser()])?>'> <i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translation->DELETE?>' id='delete_<?=$item->user?>' href='#' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a>
-                <div id='delete_delete_<?=$item->user?>' class='dialog_hide'>
-                    <p><?=$this->translation->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getUserObject()->getName()?>&raquo;&quest;</p>
+                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin", ['controller' => "administrator", "action" => "modify", "id" => $administrator->getUser()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+            </li>
+            <li class="table-cell">
+                <button type="button" title='<?=$this->translate("DELETE")?>' id='delete_<?=$administrator->getUser()?>' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
+                <div id='delete_delete_<?=$administrator->getUser()?>' class='dialog_hide'>
+                    <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> add user name here</p>
                     <ul>
-                      <li><a class='btn delete' href='/admin/administrator/delete/id/<?=$item->user?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->translation->DELETE?></a></li>
-                      <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->translation->CANCEL?></a></li>
+                        <li>
+                            <a class='btn delete' href='<?=$this->url("admin", ['controller' => "administrator", "action" => "delete", "id" => $administrator->getUser()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
+                        </li>
+                        <li>
+                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                        </li>
                     </ul>
                 </div>
             </li>
         </ul>
 <?php
-}
+        }
 ?>
     </div>
 </section>
 <?php
-echo $this->paginationControl($this->paginator, 'sliding', '/admin/pagination.phtml', array('route' => 'admin'));
-?>
-</div>
+echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin']);

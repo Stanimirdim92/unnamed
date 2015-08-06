@@ -1,30 +1,38 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->session->NAME?></li>
-            <li class="table-cell"><?=$this->session->MODIFY?></li>
-            <li class="table-cell"><?=$this->session->DELETE?></li>
+            <li class="table-cell"><?=$this->translate("NAME");?></li>
+            <li class="table-cell"><?=$this->translate("MODIFY");?></li>
+            <li class="table-cell"><?=$this->translate("DELETE");?></li>
         </ul>
-        <?php
-        foreach($this->paginator as $item)
-        {
-        ?>
+<?php
+       /**
+        * @var $termcategory Admin\Model\TermCategory
+        */
+        foreach($this->paginator as $termcategory) {
+?>
             <ul class="table-row">
-                <li class="table-cell"><?=$item->getName()?></li>
-                <li class="table-cell"><a title='<?=$this->session->MODIFY?>' href='/admin/termcategory/modify/id/<?=$item->id?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a></li>
+                <li class="table-cell"><?=$termcategory->getName()?></li>
                 <li class="table-cell">
-                <a id='delete_<?=$item->id?>' href='#' class='btn btn-sm delete dialog_delete' title='<?=$this->session->DELETE?>'><i class='fa fa-icon-fix fa-trash-o'></i></a>
-                <div id='delete_delete_<?=$item->id?>' class='dialog_hide'>
-                    <p><?=$this->session->DELETE_CONFIRM_TEXT?>&nbsp;&laquo;<?=$item->getName()?>&raquo;&quest;</p>
-                    <ul>
-                        <li><a class='btn delete' href='/admin/termcategory/delete/id/<?=$item->id?>'><i class='fa fa-trash-o'></i>&nbsp;<?=$this->session->DELETE?></a></li>
-                        <li><a class='btn btn-default cancel'><i class='fa fa-times'></i>&nbsp;<?=$this->session->CANCEL?></a></li>
-                    </ul>
-                </div>
+                    <a title='<?=$this->translate("MODIFY");?>' href='<?=$this->url("admin", ['controller' => "termcategory", "action" => "modify", "id" => $termcategory->getId()])?>' class='btn btn-sm orange'><i class='fa fa-icon-fix fa-pencil'></i></a>
+                </li>
+                <li class="table-cell">
+                    <button id='delete_<?=$termcategory->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE");?>'><i class='fa fa-icon-fix fa-trash-o'></i></button>
+                    <div id='delete_delete_<?=$termcategory->getId()?>' class='dialog_hide'>
+                        <p><?=$this->translate("DELETE_CONFIRM_TEXT");?> &laquo;<?=$termcategory->getName()?>&raquo;</p>
+                        <ul>
+                            <li>
+                                <a class='btn delete' href='<?=$this->url("admin", ['controller' => "termcategory", "action" => "delete", "id" => $termcategory->getId()])?>'><i class='fa fa-trash-o'></i><?=$this->translate("DELETE");?></a>
+                            </li>
+                            <li>
+                                <a class='btn btn-default cancel'><i class='fa fa-times'></i><?=$this->translate("CANCEL");?></a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
-        <?
+<?php
         }
-        ?>
+?>
     </div>
 </section>

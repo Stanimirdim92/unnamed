@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Content
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -40,20 +38,9 @@ use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
-use Admin\Controller\IndexController;
 
 class ContentController extends IndexController
 {
-    /**
-     * Controller name to which will redirect
-     */
-    const CONTROLLER_NAME = "content";
-
-    /**
-     * Route name to which will redirect
-     */
-    const ADMIN_ROUTE = "admin";
-
     /**
      * @var Admin\Form\ContentForm $contentForm
      */
@@ -76,21 +63,20 @@ class ContentController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>"Contents"]);
+        $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>$this->translate("CONTENTS")]);
         parent::onDispatch($e);
     }
 
     /**
-     * This action shows the list of all (or filtered) Content objects
+     * This action shows the list of all contents
      */
     public function indexAction()
     {
-        $type = (int) $this->getParam("type", 0);
-        if ($type === 1) {
-            $this->view->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->langTranslation."'", null, null,  "content.date DESC");
-        }
-        if ($type === 0) {
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->langTranslation."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+        $this->view->setTemplate("admin/content/index");
+        if ((int) $this->getParam("type", 0) === 1) {
+            $this->view->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
+        } else {
+            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
         return $this->view;
     }
@@ -100,8 +86,9 @@ class ContentController extends IndexController
      */
     public function addAction()
     {
-        $this->showForm($this->translate("ADD"), null);
-        $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>"Add a new content"]);
+        $this->view->setTemplate("admin/content/add");
+        $this->initForm($this->translate("ADD_NEW_CONTENT"), null);
+        $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>$this->translate("ADD_NEW_CONTENT")]);
         return $this->view;
     }
 
@@ -111,10 +98,11 @@ class ContentController extends IndexController
      */
     public function modifyAction()
     {
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
+        $this->view->setTemplate("admin/content/modify");
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/modify/id/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
-        $this->showForm($this->translate("MODIFY"), $content);
+        $this->addBreadcrumb(["reference"=>"/admin/content/modify/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY"), $content);
         return $this->view;
     }
 
@@ -123,9 +111,9 @@ class ContentController extends IndexController
      */
     public function deleteAction()
     {
-        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->setLayoutMessages("Content was successfully deleted", "success");
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->language());
+        $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'content']);
     }
 
     /**
@@ -133,9 +121,10 @@ class ContentController extends IndexController
      */
     public function detailAction()
     {
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->langTranslation)->current();
+        $this->view->setTemplate("admin/content/detail");
+        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
         $this->view->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/detail/id/".$content->getId()."", "name"=>"Content &laquo;". $content->getTitle()."&raquo; details"]);
+        $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
         return $this->view;
     }
 
@@ -144,39 +133,18 @@ class ContentController extends IndexController
      */
     public function cloneAction()
     {
-        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->langTranslation)->current();
-        $this->setLayoutMessages("Content &laquo;".$content->getTitle()."&raquo; was successfully cloned", "success");
-        $this->redirect()->toUrl("/admin/content");
-        return $this->view;
-    }
-
-    public function prepareMenusData()
-    {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->langTranslation], "AND", null, "id, menuOrder");
-        if (count($menu) > 0) {
-            $menus = [];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $menus["submenus"][$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus["menus"][$submenu->getId()] = $submenu;
-                }
-            }
-            return $menus;
-        }
-        return [];
+        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->language())->current();
+        $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
+            return $this->redirect()->toRoute('admin', ['controller' => 'content']);
     }
 
     /**
      * This is common function used by add and edit actions
      *
      * @param string $label button title
-     * @param  Content|null $menu menu object
+     * @param  Content|null $content
      */
-    private function showForm($label = 'Add', Content $content = null)
+    private function initForm($label = '', Content $content = null)
     {
         if (!$content instanceof Content) {
             $content = new Content([], null);
@@ -188,17 +156,18 @@ class ContentController extends IndexController
         $menus = $this->prepareMenusData();
         $valueOptions = [];
         foreach ($menus["menus"] as $key => $menu) {
-            $menu->setServiceLocator(null);
             $valueOptions[$menu->getId()] = $menu->getCaption();
 
-            if(!empty($menus["submenus"][$key])) {
-                foreach($menus["submenus"][$key] as $sub) {
-                    $sub->setServiceLocator(null);
+            if (!empty($menus["submenus"][$key])) {
+                foreach ($menus["submenus"][$key] as $sub) {
                     $valueOptions[$sub->getId()] = "--".$sub->getCaption();
                 }
             }
         }
 
+        /**
+         * @var $form Admin\Form\ContentForm
+         */
         $form = $this->contentForm;
         $form->get("menu")->setValueOptions($valueOptions);
 
@@ -213,31 +182,28 @@ class ContentController extends IndexController
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
 
-        if ($this->getRequest()->isPost()) {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $data = array_merge_recursive(
-                $this->getRequest()->getPost()->toArray(),
-                $this->getRequest()->getFiles()->toArray()
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
             );
 
             $form->setData($data);
             if ($form->isValid()) {
-                if (!empty($data["imageUpload"]) && $this->getRequest()->isXmlHttpRequest()) {
+                if (!empty($data["imageUpload"]) && $request->isXmlHttpRequest()) {
                     return $this->uploadImages();
                 } else {
-                    try {
-                        $formData = $form->getData();
-                        $formData->preview = $content->preview["name"];
-                        $this->getTable("content")->saveContent($content);
-                        $this->setLayoutMessages("Content &laquo;".$content->getTitle()."&raquo; was successfully saved", "success");
-                        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
-                    } catch (\Exception $e) {
-                        return;
-                    }
+                    $formData = $form->getData();
+                    $formData->preview = $content->preview["name"];
+                    $this->getTable("content")->saveContent($content);
+                    $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
+                    return $this->redirect()->toRoute('admin', ['controller' => 'content']);
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                return $this->redirect()->toRoute('admin', ['controller' => 'content']);
             }
         }
     }
@@ -250,11 +216,14 @@ class ContentController extends IndexController
         $this->view->setTerminal(true);
         $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
         $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
-        $it->setMaxDepth(3);
+        $it->setMaxDepth(99);
         $files = [];
         $i = 0;
         foreach ($it as $file) {
             if ($file->isFile()) {
+                /**
+                 * TODO: use pathinfo()
+                 */
                 $filepath = explode("public", $file->getRealPath()); // ugly workaround :(
                 $files[$i]["link"] = Json::encode($filepath[1]);
                 $files[$i]["filename"] = Json::encode($file->getFilename());
@@ -284,7 +253,6 @@ class ContentController extends IndexController
     /**
      * Upload all images async
      *
-     * @param  array $files
      * @return Response containing headers with information about each image
      */
     private function uploadImages()
@@ -299,6 +267,7 @@ class ContentController extends IndexController
 
     /**
      * @param  Zend\File\Transfer\Adapter\Http $adapter
+     * @return Json
      */
     private function upload($adapter)
     {
@@ -314,22 +283,19 @@ class ContentController extends IndexController
                 }
 
                 if ($adapter->receive($file["name"])) {
-                    $uploadStatus["successFiles"][] = $file["name"]." was uploaded successfully";
+                    $uploadStatus["successFiles"][] = $file["name"]." ".$this->translate("UPLOAD_SUCCESS");
                 } else {
-                    $uploadStatus["errorFiles"][] = $file["name"]. " was not uploaded";
+                    $uploadStatus["errorFiles"][] = $file["name"]." ".$this->translate("UPLOAD_FAIL");
                 }
             }
-            echo Json::encode($uploadStatus);
-            exit;
-            // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
         } else {
             $this->view->setTerminal(true);
             foreach ($adapter->getMessages() as $key => $error) {
                 $uploadStatus["errorFiles"][] = $error;
             }
-            echo Json::encode($uploadStatus);
-            exit;
-            // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
         }
+        echo Json::encode($uploadStatus);
+        exit;
+        // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
     }
 }

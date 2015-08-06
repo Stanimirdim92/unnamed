@@ -1,52 +1,77 @@
 <?php
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.03
+ * @link       TBA
+ */
+
 namespace Admin\Form;
-use Zend\Form\Form;
-use Zend\Form\Element;
 
-class TermTranslationForm extends Form
-{
-    public function __construct($options = null, $terms = [], $termTranslations = [])
-    {
-        parent::__construct("termTranslation");
-        $elements = [];
+ use Zend\Form\Form;
+ use Zend\InputFilter\InputFilter;
+ use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 
-        $i = 0;
-        foreach ($terms as $a) {
-            if (isset($termTranslations[$a->id])) {
-                $translation = $termTranslations[$a->id]->translation;
-            } else {
-                $translation = '';
-            }
-            if (strrpos(strtolower($a->name), '_text') > 0) {
-                $elements[$i] = new Element\Textarea('translation' . $a->id);
-                $elements[$i]->setLabel($a->name . ": ");
-                $elements[$i]->setAttributes([
-                    'rows'        => 3,
-                    'cols'        => 80,
-                    'class'      => 'termtranslation-name',
-                    'placeholder' => 'Term translation',
-                ]);
-            } else {
-                $elements[$i] = new Element\Text('translation' . $a->id);
-                $elements[$i]->setLabel($a->name . ": ");
-                $elements[0]->setAttributes([
-                    'size'        => 40,
-                    'class'      => 'termtranslation-name',
-                    'placeholder' => 'Term translation',
-                ]);
-            }
-            $elements[$i++]->setValue($translation);
-        }
-        $elements[$i] = new Element\Submit('submit');
-        $elements[$i++]->setAttribute('id', 'submitbutton')->setAttributes([
-            'id' => 'submitbutton',
-            'class' => 'termtranslation-button',
+ class TermTranslationForm extends Form
+ {
+     public function __construct()
+     {
+         parent::__construct('termtranslation');
+
+         $this
+             ->setAttribute('method', 'post')
+             ->setHydrator(new ClassMethodsHydrator(false))
+             ->setInputFilter(new InputFilter())
+         ;
+
+         $this->add([
+             'type' => 'Admin\Form\TermTranslationFieldset',
+             'options' => [
+                 'use_as_base_fieldset' => true,
+             ],
+         ]);
+
+         $this->add([
+            'type' => 'Zend\Form\Element\Csrf',
+            'name' => 's',
+            'options' => [
+                'csrf_options' => [
+                    'timeout' => 600,
+                ],
+            ],
         ]);
-        ;
-        $elements[$i] = new Element\Hidden('id');
-        $elements[$i]->setValue($options->id);
-        foreach ($elements as $e) {
-            $this->add($e);
-        }
-    }
-}
+
+         $this->add([
+            'name' => 'submit',
+            'attributes' => [
+                'type'  => 'submit',
+                'id' => 'submitbutton',
+            ],
+        ]);
+     }
+ }

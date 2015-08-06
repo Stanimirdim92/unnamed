@@ -24,14 +24,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Admin\Content
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Form;
 
 use Zend\Form\Form;
@@ -153,7 +152,6 @@ class ContentForm extends Form implements InputFilterProviderInterface
             ],
         ]);
 
-
         $this->add([
             'type' => 'Zend\Form\Element\Select',
             'name' => 'language',
@@ -168,9 +166,9 @@ class ContentForm extends Form implements InputFilterProviderInterface
             'name' => 's',
             'options' => [
                 'csrf_options' => [
-                    'timeout' => 3600
-                ]
-            ]
+                    'timeout' => 3600,
+                ],
+            ],
         ]);
 
         $this->add([
@@ -191,7 +189,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
             'name' => 'titleLink',
             'attributes' => [
                 'id' => 'titleLink',
-            ]
+            ],
         ]);
     }
 

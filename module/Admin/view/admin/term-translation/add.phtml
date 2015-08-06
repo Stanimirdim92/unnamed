@@ -1,13 +1,13 @@
 <div>
     <p>
         <a href="/admin/termtranslation" class="btn btn-default">
-            <i class="fa fa-chevron-left"></i>&nbsp;<?=$this->session->BACK?>
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK");?>
         </a>
     </p>
     <div class='form-inputs'>
     <?php
         $form = $this->form;
-        $form->setAttribute('action', $this->url('admin',array('controller' =>'termtranslation','action' => 'add','id' => $this->id)));
+        $form->setAttribute('action', $this->url('admin', ['controller' =>'termtranslation','action' => 'add']));
         $form->prepare();
         echo $this->form()->openTag($form);
         echo $this->formCollection($form);

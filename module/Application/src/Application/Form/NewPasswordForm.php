@@ -24,12 +24,10 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category   Application\Login
- * @package    Unnamed
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
 
@@ -57,7 +55,7 @@ class NewPasswordForm extends Form implements InputFilterProviderInterface
                 'required' => true,
                 'min' => 8,
                 'size' => 30,
-                'placeholder' => '1234567890'
+                'placeholder' => '1234567890',
             ],
         ]);
 
@@ -67,7 +65,10 @@ class NewPasswordForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'required' => true,
                 'size' => 30,
-                'placeholder' => '1234567890'
+                'placeholder' => '1234567890',
+            ],
+            'options' => [
+                'label' => "Password",
             ],
         ]);
 
@@ -76,9 +77,12 @@ class NewPasswordForm extends Form implements InputFilterProviderInterface
             'name' => 's',
             'options' => [
                 'csrf_options' => [
-                    'timeout' => 320
-                ]
-            ]
+                    'timeout' => 320,
+                ],
+            ],
+            'options' => [
+                'label' => "Repeat password",
+            ],
         ]);
 
         $this->add([

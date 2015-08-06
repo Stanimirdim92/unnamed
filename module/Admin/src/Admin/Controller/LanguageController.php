@@ -24,35 +24,34 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * @category
- * @package
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.3
+ * @version    0.0.4
  * @link       TBA
  */
+
 namespace Admin\Controller;
 
 use Admin\Model\Language;
+use Admin\Form\LanguageForm;
 
-class LanguageController extends \Admin\Controller\IndexController
+class LanguageController extends IndexController
 {
     /**
-     * Controller name to which will redirect
+     * @var Admin\Form\LanguageForm $languageForm
      */
-    const CONTROLLER_NAME = "language";
+    private $languageForm = null;
 
     /**
-     * Route name to which will redirect
+     * @param Admin\Form\LanguageForm $languageForm
      */
-    const ADMIN_ROUTE = "admin";
+    public function __construct(LanguageForm $languageForm = null)
+    {
+        parent::__construct();
 
-    /**
-     * Initialize any variables before controller actions
-     *
-     * @param MvcEvent $e
-     */
+        $this->languageForm = $languageForm;
+    }
 
     /**
      * Initialize any variables before controller actions
@@ -61,7 +60,7 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>"Languages"]);
+        $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
         parent::onDispatch($e);
     }
 
@@ -70,9 +69,10 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function indexAction()
     {
-        $paginator = $this->getTable("language")->fetchList(true, [], [], null, null, "name ASC");
-        $paginator->setCurrentPageNumber((int)$this->params("page", 1));
-        $paginator->setItemCountPerPage(50);
+        $this->view->setTemplate("admin/language/index");
+        $paginator = $this->getTable("language")->fetchList(true);
+        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        $paginator->setItemCountPerPage(20);
         $this->view->paginator = $paginator;
         return $this->view;
     }
@@ -82,8 +82,9 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function addAction()
     {
-        $this->showForm("Add language", null);
-        $this->addBreadcrumb(["reference"=>"/admin/language/add", "name"=>"Add new language"]);
+        $this->view->setTemplate("admin/language/add");
+        $this->initForm($this->translate("ADD_LANGUAGE"), null);
+        $this->addBreadcrumb(["reference"=>"/admin/language/add", "name"=>$this->translate("ADD_LANGUAGE")]);
         return $this->view;
     }
 
@@ -93,10 +94,11 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function modifyAction()
     {
+        $this->view->setTemplate("admin/language/modify");
         $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
         $this->view->language = $language;
-        $this->addBreadcrumb(["reference"=>"/admin/language/modify/id/{$language->id}", "name"=>"Modify language &laquo;".$language->toString()."&raquo;"]);
-        $this->showForm("Modify language", $language);
+        $this->addBreadcrumb(["reference"=>"/admin/language/modify/{$language->getId()}", "name"=>$this->translate("MODIFY_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
+        $this->initForm($this->translate("MODIFY_LANGUAGE"), $language);
         return $this->view;
     }
 
@@ -106,8 +108,8 @@ class LanguageController extends \Admin\Controller\IndexController
     public function deleteAction()
     {
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
-        $this->translation->success = "Language was successfully deleted";
-        return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+        $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin', ['controller' => 'language']);
     }
 
     /**
@@ -115,9 +117,10 @@ class LanguageController extends \Admin\Controller\IndexController
      */
     public function detailAction()
     {
+        $this->view->setTemplate("admin/language/detail");
         $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
         $this->view->lang = $lang;
-        $this->addBreadcrumb(["reference"=>"/admin/language/detail/id/{$lang->id}", "name"=>"language &laquo;". $lang->toString()."&raquo; details"]);
+        $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->view;
     }
 
@@ -127,34 +130,29 @@ class LanguageController extends \Admin\Controller\IndexController
      * @param String $label button title
      * @param null|Language $language object
      */
-    public function showForm($label = '', Language $language = null)
+    private function initForm($label = '', Language $language = null)
     {
-        if ($language == null) {
+        if (!$language instanceof Language) {
             $language = new Language([], null);
         }
 
-        $language->setServiceLocator(null);
-        $form = new \Admin\Form\LanguageForm($language);
+        /**
+         * @var $form Admin\Form\LanguageForm
+         */
+        $form = $this->languageForm;
         $form->get("submit")->setValue($label);
+        $form->bind($language);
         $this->view->form = $form;
         if ($this->getRequest()->isPost()) {
-            $form->setInputFilter($language->getInputFilter());
+            $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $language->exchangeArray($form->getData());
                 $this->getTable("language")->saveLanguage($language);
-                $this->translation->success = $this->translation->LANGUAGE."&nbsp;&laquo;".$language->toString()."&raquo; ".$this->translation->SAVE_SUCCESS;
-                $this->view->setTerminal(true);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
+                return $this->redirect()->toRoute('admin', ['controller' => 'language']);
             } else {
-                $error = [];
-                foreach ($form->getMessages() as $msg) {
-                    foreach ($msg as $key => $value) {
-                        $error[] = $value;
-                    }
-                }
-                $this->setErrorNoParam($error);
-                return $this->redirect()->toRoute(self::ADMIN_ROUTE, ['controller' => self::CONTROLLER_NAME]);
+                $this->setLayoutMessages($form->getMessages(), 'error');
+                return $this->redirect()->toRoute('admin', ['controller' => 'language']);
             }
         }
     }
