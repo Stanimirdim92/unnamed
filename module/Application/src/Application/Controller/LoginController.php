@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -69,15 +69,16 @@ class LoginController extends IndexController
     private $loginForm = null;
 
     /**
-     * @param Application\Form\LoginForm $contactForm
+     * @param LoginForm $contactForm
      * @param Zend\Db\Adapter\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
-     * @param Application\Form\ResetPasswordForm $resetPasswordForm
-     * @param Application\Form\NewPasswordForm $newPasswordForm
+     * @param ResetPasswordForm $resetPasswordForm
+     * @param NewPasswordForm $newPasswordForm
      */
-    public function __construct(LoginForm $loginForm = null,
-                                $adapter = null,
-                                ResetPasswordForm $resetPasswordForm = null,
-                                NewPasswordForm $newPasswordForm = null
+    public function __construct(
+        LoginForm $loginForm = null,
+        $adapter = null,
+        ResetPasswordForm $resetPasswordForm = null,
+        NewPasswordForm $newPasswordForm = null
     ) {
         parent::__construct();
         $this->loginForm = $loginForm;
@@ -201,6 +202,8 @@ class LoginController extends IndexController
 
             $data->role = (int) $role;
             $data->logged = true;
+            Container::getDefaultManager()->regenerateId();
+
             $auth->getStorage()->write($data);
             return $this->redirect()->toUrl($url);
         }
@@ -211,7 +214,7 @@ class LoginController extends IndexController
      * In order to reset the account password, we need to take that token and validate it first.
      * If everything is fine, we let the user to reset his password
      */
-    public function newpasswordAction()
+    protected function newpasswordAction()
     {
         $this->view->setTemplate("application/login/newpassword");
 
@@ -285,7 +288,7 @@ class LoginController extends IndexController
      * Show the reset password form. After that see if there is a user with the entered email
      * if there is one, send him an email with a new password reset link and a token, else show error messages
      */
-    public function resetpasswordAction()
+    protected function resetpasswordAction()
     {
         $this->view->setTemplate("application/login/resetpassword");
         /**
@@ -332,16 +335,14 @@ class LoginController extends IndexController
     }
 
     /**
-     * Create new instance of $cache and set it to empty|null
+     * Clear all sessions
      *
-     * Clear all sessions (cache, translations etc.)
      * @param string $redirectTo
-     * @return void
      */
     protected function logoutAction($redirectTo = "/")
     {
         $this->translation->getManager()->getStorage()->clear();
-        $this->translation = new Container("zpc");
+        $this->translation = [];
         $auth = new AuthenticationService();
         $auth->clearIdentity();
         return $this->redirect()->toUrl($redirectTo);

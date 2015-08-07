@@ -27,12 +27,14 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
 namespace Admin;
 
+use Zend\Mvc\MvcEvent;
+use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -40,20 +42,18 @@ use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
-use Zend\Mvc\MvcEvent;
-use Zend\EventManager\EventInterface;
 
 class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
-     * @param  $mm ModuleManager
+     * @param  $moduleManager ModuleManager
      */
-    public function init(ModuleManagerInterface $mm)
+    public function init(ModuleManagerInterface $moduleManager)
     {
         /**
          * Setup module layout
          */
-        $mm->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
             $e->getTarget()->layout('layout/admin');
         });
     }
@@ -67,7 +67,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     {
         $app = $e->getTarget();
 
-        if (!($app->getRequest() instanceof HttpRequest)) {
+        if (!$app->getRequest() instanceof HttpRequest) {
             return;
         }
 
@@ -84,10 +84,22 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         /**
          * Atach event listener for all types of errors, warnings, exceptions etc.
          */
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
-            $service = $sm->get('AdminErrorHandling');
-            $service->logError($event, $sm);
-        });
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
+    }
+
+    /**
+     * Log errors
+     *
+     * @param EventInterface $e
+     * @return void
+     */
+    public function onError(EventInterface $e)
+    {
+        $sm = $e->getApplication()->getServiceManager();
+        $service = $sm->get('AdminErrorHandling');
+        $service->logError($e, $sm);
+        $e->stopPropagation();
+        return;
     }
 
     /**

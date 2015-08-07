@@ -25,32 +25,33 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 (c) Stanimir Dimitrov.
+ * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.5
  * @link       TBA
  */
 
-namespace Admin\Factory;
+namespace Application\Controller\Plugin;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Admin\Model\TermCategory;
-use Admin\Model\TermCategoryTable;
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\View\Model\ViewModel;
 
-class TermCategoryTableFactory implements FactoryInterface
+class ErrorCodes extends AbstractPlugin
 {
-    public function createService(ServiceLocatorInterface $sm = null)
+    /**
+     * @param  int $code error code
+     */
+    protected function __invoke($code = 404)
     {
-        $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $layout = $this->getController()->layout();
+        $response = $this->getController()->getResponse();
 
-        $tableGateway = new TableGateway('termcategory', $db, null, $resultSetPrototype);
-        $table = new TermCategoryTable($tableGateway);
-
-        return $table;
+        $response->setStatusCode($code);
+        $layout->setVariables([
+            'message' => '404 Not found',
+            'reason' => 'The link you have requested doesn\'t exists',
+            'exception' => "",
+        ]);
+        $layout->setTemplate('error/index');
     }
 }

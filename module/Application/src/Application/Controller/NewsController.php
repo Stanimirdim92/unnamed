@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -46,9 +46,9 @@ class NewsController extends IndexController
     /**
      * Get the contents for all the news or only one newspost
      *
-     * @return Content
+     * @return Admin\Model\Content
      */
-    public function postAction()
+    protected function postAction()
     {
         $this->view->setTemplate("application/news/post");
         $escaper = new \Zend\Escaper\Escaper('utf-8');

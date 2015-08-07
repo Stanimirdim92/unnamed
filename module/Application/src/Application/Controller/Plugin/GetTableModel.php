@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.03
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -35,34 +35,15 @@ namespace Application\Controller\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
-class IndexPlugin extends AbstractPlugin
+class GetTableModel extends AbstractPlugin
 {
-
     /**
      * @param string $name
      * @return object
      */
-    public function getTable($tableName = null)
+    protected function __invoke($tableName = null)
     {
         $serviceLocator = $this->getController()->getServiceLocator();
         return $serviceLocator->get($tableName . "Table");
-    }
-
-    /**
-     * @return object
-     */
-    public function getCustomHead()
-    {
-        $serviceLocator = $this->getController()->getServiceLocator();
-        return $serviceLocator->get('ViewHelperManager')->get("placeholder")->getContainer("customHead");
-    }
-
-    /**
-     * @return object
-     */
-    public function getHeadMeta()
-    {
-        $serviceLocator = $this->getController()->getServiceLocator();
-        return $serviceLocator->get('ViewHelperManager')->get('headMeta');
     }
 }

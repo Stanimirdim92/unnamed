@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -81,7 +81,7 @@ class MenuController extends IndexController
     /**
      * This action serves for adding a new menu
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/menu/add");
         $this->initForm($this->translate("ADD_NEW_MENU"), null);
@@ -93,7 +93,7 @@ class MenuController extends IndexController
      * This action presents a modify form for Menu object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/menu/modify");
         $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
@@ -106,7 +106,7 @@ class MenuController extends IndexController
     /**
      * this action deletes a menu object with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $this->getTable("menu")->deleteMenu($this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_MENU_SUCCESS"), "success");
@@ -116,7 +116,7 @@ class MenuController extends IndexController
     /**
      * this action shows menu details from the provided id and session language
      */
-    public function detailAction()
+    protected function detailAction()
     {
         $this->view->setTemplate("admin/menu/detail");
         $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
@@ -128,7 +128,7 @@ class MenuController extends IndexController
     /**
      * This action will clone the object with the provided id and return to the index view
      */
-    public function cloneAction()
+    protected function cloneAction()
     {
         $menu = $this->getTable("menu")->duplicate($this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");

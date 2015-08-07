@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -111,7 +111,7 @@ define('REQUEST_MICROTIME', microtime(true));
 /**
  * Current CMS version
  */
-define("CMS_VER", "0.0.4");
+define("CMS_VER", "0.0.5");
 
 /**
  * Check requiarments

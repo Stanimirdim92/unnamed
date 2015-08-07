@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -82,7 +82,7 @@ class AdministratorController extends IndexController
     /**
      * This action serves for adding a new users as administrators
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/administrator/add");
         $this->initForm($this->translate("ADD_ADMINISTRATOR"), null);
@@ -94,7 +94,7 @@ class AdministratorController extends IndexController
      * This action presents a modify form for Administrator object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/administrator/modify");
         $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0))->current();
@@ -107,7 +107,7 @@ class AdministratorController extends IndexController
     /**
      * this action deletes a administrator object with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $id = $this->getParam('id', 0);
         $userTable = $this->getTable("user");

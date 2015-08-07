@@ -24,15 +24,15 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             <ul>
                 <li><a itemprop='url' href="&sol;"><?=$this->translate("HOME");?></a></li>
 <?php
-                if(!empty($view->menus)) {
-                    foreach($view->menus as $key => $menu) {
+                if (!empty($view->menus)) {
+                    foreach ($view->menus as $key => $menu) {
 
                         echo "<li><a itemprop='url' href='".$this->url('application', ['controller' => 'menu', 'action' => 'title', 'title' => $this->escapeHtml($menu->getMenuLink())])."'>".$menu->getCaption()."</a>";
 
-                        if(!empty($view->submenus[$key])) {
+                        if (!empty($view->submenus[$key])) {
 
                             echo "<ul class='sub-menu'>";
-                                foreach($view->submenus[$key] as $sub) {
+                                foreach ($view->submenus[$key] as $sub) {
                                     echo "<li><a itemprop='url' href='".$this->url('application', ['controller' => 'menu', 'action' => 'title', 'title' => $this->escapeHtml($sub->getMenuLink())])."'>".$sub->getCaption()."</a></li>";
                                 }
                             echo "</ul>";
@@ -47,12 +47,12 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
         </ul>
     </nav>
 <?php
-        if ($view->flashMessages) {
-            foreach ($view->flashMessages->getCurrentMessages() as $context => $message) {
-                echo '<div class="alert alert-' . $view->flashMessages->getNamespace() . '">
+        if ($this->layout()->flashMessages) {
+            foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
+                echo '<div class="alert alert-' . $this->layout()->flashMessages->getNamespace() . '">
                         <ul>
                             <li>
-                                <i class="fa-fw fa fa-'.$view->flashMessages->getNamespace().'"></i>' . $message . '
+                                <i class="fa-fw fa fa-'.$this->layout()->flashMessages->getNamespace().'"></i>' . $message . '
                                 <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
                             </li>
                         </ul>
@@ -71,4 +71,3 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 </html>
 <?php
 }
-?>

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -84,7 +84,7 @@ class ContentController extends IndexController
     /**
      * This action serves for adding a new object of type Content
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/content/add");
         $this->initForm($this->translate("ADD_NEW_CONTENT"), null);
@@ -96,7 +96,7 @@ class ContentController extends IndexController
      * This action presents a modify form for Content object with a given id and session language
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/content/modify");
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
@@ -109,7 +109,7 @@ class ContentController extends IndexController
     /**
      * this action deletes a content object with a provided id and session language
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
@@ -119,7 +119,7 @@ class ContentController extends IndexController
     /**
      * this action shows content details from the provided id and session language
      */
-    public function detailAction()
+    protected function detailAction()
     {
         $this->view->setTemplate("admin/content/detail");
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
@@ -131,7 +131,7 @@ class ContentController extends IndexController
     /**
      * This action will clone the object with the provided id and return to the index view
      */
-    public function cloneAction()
+    protected function cloneAction()
     {
         $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
@@ -211,7 +211,7 @@ class ContentController extends IndexController
     /**
      * Get all files from all folders and list them in the gallery
      */
-    public function filesAction()
+    protected function filesAction()
     {
         $this->view->setTerminal(true);
         $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
@@ -266,10 +266,10 @@ class ContentController extends IndexController
     }
 
     /**
-     * @param  Zend\File\Transfer\Adapter\Http $adapter
+     * @param  Http $adapter
      * @return Json
      */
-    private function upload($adapter)
+    private function upload(Http $adapter = null)
     {
         $this->view->setTerminal(true);
         $uploadStatus = [];

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -80,7 +80,7 @@ class TermCategoryController extends IndexController
     /**
      * This action serves for adding a new term category
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/term-category/add");
         $this->initForm($this->translate("ADD_NEW_TERMCATEGORY"), null);
@@ -92,7 +92,7 @@ class TermCategoryController extends IndexController
      * This action presents a modify form for TermCategory object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/term-category/modify");
         $termcategory = $this->getTable("termcategory")->getTermCategory($this->getParam("id", 0))->current();
@@ -105,14 +105,14 @@ class TermCategoryController extends IndexController
     /**
      * this action deletes a TermCategory object with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $this->getTable("termcategory")->deleteTermCategory($this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_TERMCATEGORY_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
     }
 
-    public function cloneAction()
+    protected function cloneAction()
     {
         $termcategory = $this->getTable("termcategory")->duplicate($this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$termcategory->getName()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
@@ -124,7 +124,7 @@ class TermCategoryController extends IndexController
      * @param String $label
      * @param null|TermCategory $termcategory
      */
-    public function initForm($label = '', $termcategory = null)
+    private function initForm($label = '', $termcategory = null)
     {
         if (!$termcategory instanceof TermCategory) {
             $termcategory = new TermCategory([], null);

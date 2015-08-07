@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -80,7 +80,7 @@ class TermController extends IndexController
     /**
      * This action serves for adding a new term
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/term/add");
         $this->initForm($this->translate("ADD_NEW_TERM"), null);
@@ -92,7 +92,7 @@ class TermController extends IndexController
      * This action presents a modify form for Term object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/term/modify");
         $term = $this->getTable("term")->getTerm($this->getParam("id", 0))->current();
@@ -105,14 +105,14 @@ class TermController extends IndexController
     /**
      * this action deletes a Term object with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $this->getTable("term")->deleteTerm($this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_TERM_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin', ['controller' => 'term']);
     }
 
-    public function cloneAction()
+    protected function cloneAction()
     {
         $term = $this->getTable("term")->duplicate($this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$term->getName()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");

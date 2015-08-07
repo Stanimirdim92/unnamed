@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -80,7 +80,7 @@ class LanguageController extends IndexController
     /**
      * This action serves for adding a new object of type Language
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/language/add");
         $this->initForm($this->translate("ADD_LANGUAGE"), null);
@@ -92,7 +92,7 @@ class LanguageController extends IndexController
      * This action presents a modify form for Language object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/language/modify");
         $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
@@ -105,7 +105,7 @@ class LanguageController extends IndexController
     /**
      * this action deletes a language object with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
@@ -115,7 +115,7 @@ class LanguageController extends IndexController
     /**
      * this action shows language details from the provided id
      */
-    public function detailAction()
+    protected function detailAction()
     {
         $this->view->setTemplate("admin/language/detail");
         $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));

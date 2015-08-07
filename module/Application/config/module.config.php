@@ -43,7 +43,6 @@ return [
     'service_manager' => [
         'abstract_factories' => [
             'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'LoggerAbstractFactory' => 'Zend\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
             'Application\Cache'       =>  'Zend\Cache\Service\StorageCacheFactory',
@@ -66,7 +65,13 @@ return [
     ],
     'controller_plugins' => [
         'invokables' => [
-            'IndexPlugin' => 'Application\Controller\Plugin\IndexPlugin',
+            'InitMetaTags'         => 'Application\Controller\Plugin\InitMetaTags',
+            'getTable'             => 'Application\Controller\Plugin\GetTableModel',
+            'setLayoutMessages'    => 'Application\Controller\Plugin\LayoutMessages',
+            'setErrorCode'         => 'Application\Controller\Plugin\ErrorCodes',
+            'getParam'             => 'Application\Controller\Plugin\GetUrlParams',
+            'UserData'             => 'Application\Controller\Plugin\UserData',
+            'translate'            => 'Application\Controller\Plugin\TranslateMessage',
         ],
     ],
     'view_helpers' => [

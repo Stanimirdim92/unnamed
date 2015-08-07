@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -46,9 +46,9 @@ class MenuController extends IndexController
     /**
      * Get the contents for the menu/submenu.
      *
-     * @return Content
+     * @return Admin\Model\Content
      */
-    public function titleAction()
+    protected function titleAction()
     {
         $this->view->setTemplate("application/menu/title");
         $escaper = new \Zend\Escaper\Escaper('utf-8');

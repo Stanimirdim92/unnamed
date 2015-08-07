@@ -55,7 +55,7 @@
                         <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin", ['controller' => "menu", "action" => "modify", "id" => $subMenu->getId()])?>' class='btn btn-default btn-sm orange'><i class='fa fa-pencil'></i></a>
                     </li>
                     <li class="table-cell">
-                        <a id='delete_<?=$subMenu->getId()?>' href='#' class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></a>
+                        <button id='delete_<?=$subMenu->getId()?>'type="button" class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
                         <div id='delete_delete_<?=$subMenu->getId()?>' class='dialog_hide'>
                            <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$subMenu->getCaption()?>&raquo;</p>
                             <ul>

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -47,18 +47,17 @@ use Zend\Http\PhpEnvironment\Request as HttpRequest;
 class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
-     * @param  $mm ModuleManager
+     * @param  $moduleManager ModuleManager
      */
-    public function init(ModuleManagerInterface $mm)
+    public function init(ModuleManagerInterface $moduleManager)
     {
         /**
          * Setup module layout
          */
-        $mm->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
             $e->getTarget()->layout('layout/layout');
         });
     }
-
     /**
      * Listen to the bootstrap event
      *
@@ -68,7 +67,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     {
         $app = $e->getTarget();
 
-        if (!($app->getRequest() instanceof HttpRequest)) {
+        if (!$app->getRequest() instanceof HttpRequest) {
             return;
         }
 
@@ -102,29 +101,37 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         /**
          * Atach event listener for all types of errors, warnings, exceptions etc.
          */
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, function (MvcEvent $event) use ($sm) {
-            $service = $sm->get('ApplicationErrorHandling');
-            $service->logError($event, $sm);
-            $event->stopPropagation();
-        });
+        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
 
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($em);
     }
 
+    /**
+     * Log errors
+     *
+     * @param EventInterface $e
+     * @return void
+     */
+    public function onError(EventInterface $e)
+    {
+        $sm = $e->getApplication()->getServiceManager();
+        $service = $sm->get('AdminErrorHandling');
+        $service->logError($e, $sm);
+        $e->stopPropagation();
+        return;
+    }
 
     /**
      * Handle layout titles onDispatch
      *
-     * @param Zend\Mvc\MvcEvent $e
+     * @param EventInterface $e
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(EventInterface $e)
     {
-        /**
-         * Setup module layouts
-         */
         $sm = $e->getApplication()->getServiceManager();
         $route = $e->getRouteMatch();
+        $viewHelper = $sm->get('ViewHelperManager');
 
         /**
          * Title param comes from MenuController
@@ -140,9 +147,10 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
                 $action .= ($route->getParam("post") ? $route->getParam("post") : "");
             }
         }
-        $headTitleHelper = $sm->get('ViewHelperManager')->get('headTitle');
-        $headTitleHelper->append('Unnamed - '.$action); // must be set from db
+        $headTitleHelper = $viewHelper->get('headTitle');
+        $headTitleHelper->append('Unnamed - '.ucfirst($action)); // must be set from db
         $e->stopPropagation();
+        return;
     }
 
     /**

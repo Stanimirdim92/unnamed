@@ -27,13 +27,17 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Zend\Http\PhpEnvironment\RemoteAddress;
+use Custom\Error\AuthorizationException;
+use Zend\Log\Logger;
+use Zend\Log\Writer\Stream;
+use Zend\Mvc\MvcEvent;
 
 class ErrorHandling
 {
@@ -93,11 +97,12 @@ class ErrorHandling
      *
      * @return MvcEvent
      */
-    public function logError($e, $sm)
+    public function logError(MvcEvent $e = null, $sm = null)
     {
         $exception = $e->getParam("exception");
-        if ($exception instanceof \Custom\Error\AuthorizationException) {
+        if ($exception instanceof AuthorizationException) {
             $this->logAuthorisationError($e, $sm);
+            $this->logException($exception);
         } elseif ($exception != null) {
             $this->logException($exception);
         }
@@ -120,7 +125,7 @@ class ErrorHandling
      * @param string $userRole
      * @todo add user data like id and name
      */
-    private function logAuthorisationError($e, $sm)
+    private function logAuthorisationError(MvcEvent $e = null, $sm = null)
     {
         $remote = new RemoteAddress();
 

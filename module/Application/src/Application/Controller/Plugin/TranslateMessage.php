@@ -25,32 +25,30 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 (c) Stanimir Dimitrov.
+ * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.5
  * @link       TBA
  */
 
-namespace Admin\Factory;
+namespace Application\Controller\Plugin;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Admin\Model\TermCategory;
-use Admin\Model\TermCategoryTable;
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
-class TermCategoryTableFactory implements FactoryInterface
+class TranslateMessage extends AbstractPlugin
 {
-    public function createService(ServiceLocatorInterface $sm = null)
+    /**
+     * Show translated message. ERROR will be used as a default constant.
+     *
+     * If the given offset doesn't exist
+     * the object will automatically return empty string
+     *
+     * @param string $str the constant name from the database. It should always be upper case.
+     * @return string
+     * @todo  finish this and implement db access and I18n
+     */
+    protected function __invoke($message = "ERROR")
     {
-        $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new TermCategory());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
-
-        $tableGateway = new TableGateway('termcategory', $db, null, $resultSetPrototype);
-        $table = new TermCategoryTable($tableGateway);
-
-        return $table;
+        return (string) $str;
     }
 }

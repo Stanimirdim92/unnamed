@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -92,7 +92,7 @@ class AdminMenuController extends IndexController
     /**
      * This action serves for adding a new admin menus
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/admin-menu/add");
         $this->initForm($this->translate("ADD_ADMINMENU"), null);
@@ -104,7 +104,7 @@ class AdminMenuController extends IndexController
      * This action presents a modify form for AdminMenu with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/admin-menu/modify");
         $adminMenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0))->current();
@@ -117,14 +117,14 @@ class AdminMenuController extends IndexController
     /**
      * this action deletes a admin menu with a provided id
      */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $this->getTable("adminmenu")->deleteAdminMenu($this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
     }
 
-    public function detailAction()
+    protected function detailAction()
     {
         $this->view->setTemplate("admin/admin-menu/detail");
         $adminmenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0), $this->language())->current();
@@ -133,7 +133,7 @@ class AdminMenuController extends IndexController
         return $this->view;
     }
 
-    public function cloneAction()
+    protected function cloneAction()
     {
         $adminmenu = $this->getTable("adminmenu")->duplicate($this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
@@ -146,7 +146,7 @@ class AdminMenuController extends IndexController
      * @param String $label
      * @param null|AdminMenu $adminMenu
      */
-    public function initForm($label = '', AdminMenu $adminMenu = null)
+    private function initForm($label = '', AdminMenu $adminMenu = null)
     {
         if (!$adminMenu instanceof AdminMenu) {
             $adminMenu = new AdminMenu([], null);

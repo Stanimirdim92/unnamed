@@ -917,9 +917,5 @@ FileETag None
     # Block cookie access via js. This might be already set via php.ini
     php_value session.cookie_httponly on
     php_value session.use_only_cookies on
-    # 1. If your cart only allows you to add one item at a time, it is possible register_globals is on. This may work to disable it:
-    php_flag register_globals off
-    # 2. If your cart has magic quotes enabled, This may work to disable it:
-    php_flag magic_quotes_gpc off
-    php_flag magic_quotes_sybase off
+    php_value cgi.fix_pathinfo off
 </IfModule>

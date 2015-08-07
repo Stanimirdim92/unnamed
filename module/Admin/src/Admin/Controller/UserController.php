@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -71,7 +71,6 @@ class UserController extends IndexController
      * This action shows the list with all users
      */
     public function indexAction()
-    public function indexAction()
     {
         $this->view->setTemplate("admin/user/index");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 0], null, null, "id DESC");
@@ -85,7 +84,7 @@ class UserController extends IndexController
      * This action presents a modify form for User object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/user/modify");
         $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
@@ -101,7 +100,7 @@ class UserController extends IndexController
      * @param String $label
      * @param User $user
      */
-    public function initForm($label= '' , User $user = null)
+    private function initForm($label= '' , User $user = null)
     {
         if (!$user instanceof User) {
             throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
@@ -133,7 +132,7 @@ class UserController extends IndexController
         }
     }
 
-    public function disabledAction()
+    protected function disabledAction()
     {
         $this->view->setTemplate("admin/user/disabled");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 1], null, null, "id DESC");
@@ -143,14 +142,20 @@ class UserController extends IndexController
         return $this->view;
     }
 
-    public function enableAction()
+    /**
+     * In case that a user account has been disabled and it needs to be enabled call this action
+     */
+    protected function enableAction()
     {
         $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin', ['controller' => 'user']);
     }
 
-    public function disableAction()
+    /**
+     * Instead if deleting a user account from the database, we simply disabled it
+     */
+    protected function disableAction()
     {
         $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
@@ -160,7 +165,7 @@ class UserController extends IndexController
     /**
      * this action shows user details from the provided id
      */
-    public function detailAction()
+    protected function detailAction()
     {
         $this->view->setTemplate("admin/user/detail");
         $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
@@ -201,7 +206,7 @@ class UserController extends IndexController
     /**
      * This method exports all users from the database in excel format
      *
-     * @see  Admin\Model\User::export for more info
+     * @see  Admin\Model\UserTable::export for more info
      */
     protected function exportAction()
     {
@@ -209,8 +214,7 @@ class UserController extends IndexController
         if (!is_dir($filesPath)) {
             mkdir($filesPath);
         }
-        $user = new User([], $this->getServiceLocator());
-        $fileName = $user->export($filesPath);
+        $fileName = $this->getTable("user")->export($filesPath);
         return $this->redirect()->toUrl("/userfiles/userExports/".$fileName);
     }
 }

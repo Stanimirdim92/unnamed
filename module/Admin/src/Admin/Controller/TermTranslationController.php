@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.4
+ * @version    0.0.5
  * @link       TBA
  */
 
@@ -60,7 +60,7 @@ class TermTranslationController extends IndexController
     /**
      * This action serves for adding a new object of type Term
      */
-    public function addAction()
+    protected function addAction()
     {
         $this->view->setTemplate("admin/term-translation/add");
         $this->initForm($this->translate("ADD_NEW_TERM_TRANSLATION"), null);
@@ -72,7 +72,7 @@ class TermTranslationController extends IndexController
      * This action presents a modify form for TermTranslation object with a given id
      * Upon POST the form is processed and saved
      */
-    public function modifyAction()
+    protected function modifyAction()
     {
         $this->view->setTemplate("admin/term-translation/modify");
         $termcategory = $this->getTable("termcategory")->getTermCategory((int) $this->getParam('id', 0))->current();
@@ -135,7 +135,7 @@ class TermTranslationController extends IndexController
     }
 
     /** this action deletes a TermTranslation object with a provided id */
-    public function deleteAction()
+    protected function deleteAction()
     {
         $id = (int) $this->getParam('id', 0);
         if (!$id) {
@@ -156,7 +156,7 @@ class TermTranslationController extends IndexController
     // simply read the term definitions and find that term
     // check if a translation exists and if not add one
     // if duplicate terms are found remove all but one and notify the user
-    public function importAction()
+    protected function importAction()
     {
         require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
         require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel/PHPExcel_IOFactory.php");
@@ -242,7 +242,7 @@ class TermTranslationController extends IndexController
         return $this->redirect()->toRoute('admin', ['controller' => 'termtranslation']);
     }
 
-    public function exportAction()
+    protected function exportAction()
     {
         require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
         // create excel file

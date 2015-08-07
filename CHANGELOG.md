@@ -1,6 +1,15 @@
 # CHANGELOG
+
 DD.MM.YYYY
-## 0.0.4 (18.07.2015) - Stable Alpha
+## 0.0.5 (07.08.2015) - Stable Alpha
+- Moved setLayoutMessages, getTable, setErrorCode, InitMetaTags, clearUserData to controller plugins
+- Completely disabled translations. At the moment the system returns the database term constant.
+- Removed san_Old
+- Removed some images used for testing
+- Bug fixes and optimizations as usual
+
+DD.MM.YYYY
+## 0.0.4 (06.08.2015) - Stable Alpha
  - Improved fetchList() and fetchJoin() functions
  - Created new translate function in IndexController and View Helper, which will handle all term translations
  - Improved|Refactored Admin\*\* - termtranslation - WIP
@@ -40,6 +49,7 @@ DD.MM.YYYY
  - Deactivated translations for now.
 
 # TODO
+ - Database translations in combination with I18n
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - WAI-ARIA Landmarks

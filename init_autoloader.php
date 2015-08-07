@@ -20,8 +20,8 @@ if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
 }
 
-if (class_exists('Zend\Loader\AutoloaderFactory')) {
-    return;
+if (!class_exists('Zend\Loader\AutoloaderFactory')) {
+    throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
 }
 
 $zf2Path = false;
@@ -41,14 +41,10 @@ if ($zf2Path !== false) {
         $loader->add('Zend', $zf2Path);
     } else {
         include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
-        Zend\Loader\AutoloaderFactory::factory(array(
-            'Zend\Loader\StandardAutoloader' => array(
+        Zend\Loader\AutoloaderFactory::factory([
+            'Zend\Loader\StandardAutoloader' => [
                 'autoregister_zf' => true
-            )
-        ));
+            ]
+        ]);
     }
-}
-
-if (!class_exists('Zend\Loader\AutoloaderFactory')) {
-    throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
 }

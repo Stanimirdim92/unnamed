@@ -40,7 +40,7 @@
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("PARENT")?></li>
             <li class="table-cell">
-                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin", ['controller' => "menu", 'action' => 'detail', 'id' => $parent->getId()])?>'><i class='fa fa-info'></i> <?=echo $parent->getCaption();?></a>
+                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin", ['controller' => "menu", 'action' => 'detail', 'id' => $parent->getId()])?>'><i class='fa fa-info'></i> <?=$parent->getCaption();?></a>
             </li>
         </ul>
 <?php
