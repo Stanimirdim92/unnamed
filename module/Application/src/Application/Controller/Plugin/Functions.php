@@ -25,59 +25,54 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 (c) Stanimir Dimitrov.
+ * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
-namespace Custom\Plugins;
+namespace Application\Controller\Plugin;
 
-use Zend\Db\Adapter\Adapter;
-use Zend\Session\Container;
 use Zend\Math\Rand;
-use Zend\Db\Adapter\Driver\Pdo\Statement;
+use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Db\Adapter\Adapter;
 
-class Functions
+class Functions extends AbstractPlugin
 {
     /**
-     * @var  Zend\Db\Adapter\Adapter
+     * @var Adapter $adapter
      */
-    private static $adapter = null;
+    private $adapter = null;
 
     /**
-     * Create Adapter instance and cache it
-     * @return  Adapter
+     * @param Adapter $adapter
      */
-    final private static function getAdapter() {
-        if (!static::$adapter) {
-            static::$adapter = include('config/autoload/local.php');
-        }
-        return new Adapter(static::$adapter['db']);
+    public function __construct(Adapter $adapter = null)
+    {
+        $this->adapter = $adapter;
     }
 
     /**
-     * Create plain mysql queries.
+     * Execute plain mysql queries.
      *
      * @param string $query
-     * @param array $params for the moment $params is optional
-     * @param bool $returnResults
-     * @return array
+     * @return ResultSet|null
      */
-    public static function createPlainQuery($query = null, array $params = [])
+    public function createPlainQuery($query = null)
     {
         if (empty($query)) {
             throw new \InvalidArgumentException('Query must not be empty');
         }
 
-        if (empty($params)) {
-            throw new \InvalidArgumentException('Query parameturs must not be empty');
+        $stmt = $this->adapter->query((string) $query);
+        $result = $stmt->execute();
+        $result->buffer();
+
+        if ($result->count() > 0 && $result->isQueryResult() && $result->isBuffered()) {
+            return $result;
         }
 
-        $db = static::getAdapter();
-        $stmt = $db->query($query, $params);
-        $stmt->buffer();
-        return $stmt->toArray();
+        return null;
     }
 
     /**
@@ -85,18 +80,18 @@ class Functions
      * @link http://blog.ircmaxell.com/2015/03/security-issue-combining-bcrypt-with.html
      * @see /vendor/Custom/Plugins/Password.php
      * @param null|string $password the user password in plain text
-     * @return  the encrypted password with tha salt. Salt comes from password_hash
+     * @return  the encrypted password with the salt. Salt comes from password_hash
      * @todo add default php password_hash implementation
      */
     public static function createPassword($password = null)
     {
-        require_once('/vendor/Custom/Plugins/Password.php');
+        require_once('/module/Application/src/Application/Entity/Password.php');
 
         if (empty($password)) {
             throw new \Exception("Password cannot be empty");
         }
 
-        if (self::strLength($password) < 8) {
+        if (static::strLength($password) < 8) {
             throw new \Exception("Password must be atleast 8 characters long");
         }
 

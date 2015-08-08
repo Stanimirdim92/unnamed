@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -63,12 +63,11 @@ class IndexController extends AbstractActionController
     public function onDispatch(MvcEvent $e)
     {
         $userData = $this->UserData();
-        if ($userData->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
+        if ($userData->checkIdentity(false)) {
             $this->view->identity = $userData->getIdentity();
         }
 
         parent::onDispatch($e);
-        // $this->initTranslation();
         $this->initMenus();
 
         /**

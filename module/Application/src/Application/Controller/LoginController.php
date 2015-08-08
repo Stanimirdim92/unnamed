@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -38,33 +38,31 @@ use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
 use Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter;
-use Custom\Plugins\Mailing;
-use Custom\Plugins\Functions;
 use Application\Model\ResetPassword;
 use Application\Form\LoginForm;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
-require '/vendor/Custom/Plugins/Password.php';
+require '/module/Application/src/Application/Entity/Password.php';
 
 class LoginController extends IndexController
 {
     /**
-     * @var Zend\Db\Adapter\Adapter $adapter
+     * @var Zend\Db\Adapter\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
      */
     private $adapter = null;
 
     /**
-     * @var Application\Form\ResetPasswordForm $resetPasswordForm
+     * @var ResetPasswordForm $resetPasswordForm
      */
     private $resetPasswordForm = null;
 
     /**
-     * @var Application\Form\NewPasswordForm $newPasswordForm
+     * @var NewPasswordForm $newPasswordForm
      */
     private $newPasswordForm = null;
 
     /**
-     * @var Application\Form\LoginForm $loginForm
+     * @var LoginForm $loginForm
      */
     private $loginForm = null;
 
@@ -100,7 +98,7 @@ class LoginController extends IndexController
          * For resetpassword and newpassword actions we assume that the user is not logged in.
          */
         if (APP_ENV !== 'development') {
-            $this->checkIdentity();
+            $this->UserData()->checkIdentity();
         }
     }
 
@@ -130,7 +128,7 @@ class LoginController extends IndexController
     {
         $this->view->setTemplate("application/login/index");
         /**
-         * @var  Application\Form\LoginForm $form
+         * @var  LoginForm $form
          */
         $form = $this->loginForm;
         $form->get("login")->setValue($this->translate("LOGIN"));
@@ -148,7 +146,7 @@ class LoginController extends IndexController
         }
 
         /**
-         * @var  Application\Form\LoginForm $form
+         * @var  LoginForm $form
          */
         $form = $this->loginForm;
         $form->setInputFilter($form->getInputFilter());
@@ -180,7 +178,7 @@ class LoginController extends IndexController
             $data = $adapter->getResultRowObject($includeRows, $excludeRows);
             $user = $this->getTable('user')->getUser($data->id)->current();
             /**
-             * If account is disabled (call it w/e you like) clear user data and redirect
+             * If account is disabled/banned (call it w/e you like) clear user data and redirect
              */
             if ((int) $user->getDeleted() === 1) {
                 $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
@@ -219,11 +217,11 @@ class LoginController extends IndexController
         $this->view->setTemplate("application/login/newpassword");
 
         $token = (string) $this->getParam('token', null);
-
+        $func = $this->getFunctions();
         /**
          * Check string bytes length
          */
-        if (Functions::strLength($token) !== 64) {
+        if ($func::strLength($token) !== 64) {
             throw new \Exception("Wrong token");
         }
 
@@ -237,7 +235,7 @@ class LoginController extends IndexController
         }
 
        /**
-        * @var Application\Form\NewPasswordForm $form
+        * @var NewPasswordForm $form
         */
 
         $form = $this->newPasswordForm;
@@ -256,8 +254,9 @@ class LoginController extends IndexController
 
     public function newpasswordprocessAction()
     {
+        $func = $this->getFunctions();
         /**
-         * @var  Application\Form\NewPasswordForm $form
+         * @var  NewPasswordForm $form
          */
         $form = $this->newPasswordForm;
         if ($this->getRequest()->isPost()) {
@@ -265,7 +264,7 @@ class LoginController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $pw = Functions::createPassword($formData->password);
+                $pw = $func::createPassword($formData->password);
                 if (!empty($pw)) {
                     $user = $this->getTable("user")->getUser($this->view->resetpwUserId)->current();
                     $remote = new RemoteAddress();
@@ -292,7 +291,7 @@ class LoginController extends IndexController
     {
         $this->view->setTemplate("application/login/resetpassword");
         /**
-         * @var  Application\Form\ResetPasswordForm $form
+         * @var  ResetPasswordForm $form
          */
         $form = $this->resetPasswordForm;
         $form->get("resetpw")->setValue($this->translate("RESET_PW"));
@@ -305,7 +304,8 @@ class LoginController extends IndexController
                 $formData = $form->getData();
                 $existingEmail = $this->getTable("User")->fetchList(false, [], ["email" => $formData["email"]])->current();
                 if (count($existingEmail) === 1) {
-                    $token = Functions::generateToken(48); // returns 64 characters long string
+                    $func = $this->getFunctions();
+                    $token = $func::generateToken(48); // returns 64 characters long string
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
                     $resetpw->setToken($token);
@@ -313,23 +313,19 @@ class LoginController extends IndexController
                     $resetpw->setDate(date("Y-m-d H:i:s", time()));
                     $resetpw->setIp($remote->getIpAddress());
                     $this->getTable("resetpassword")->saveResetPassword($resetpw);
-
                     $message = $this->translate("NEW_PW_TEXT")." ".$_SERVER["SERVER_NAME"]."/login/newpassword/token/{$token}";
-                    $result = Mailing::sendMail($formData["email"], $existingEmail->getFullName(),  $this->translate("NEW_PW_TITLE"), $message, "noreply@".$_SERVER["SERVER_NAME"], $_SERVER["SERVER_NAME"]);
+                    $result = $this->Mailing()->sendMail($formData["email"], $existingEmail->getFullName(),  $this->translate("NEW_PW_TITLE"), $message, "noreply@".$_SERVER["SERVER_NAME"], $_SERVER["SERVER_NAME"]);
                     if (!$result) {
                         $this->setLayoutMessages($this->translate("EMAIL_NOT_SENT"), 'error');
-                        return $this->redirect()->toUrl("/login/resetpassword");
+                    } else {
+                        $this->setLayoutMessages($this->translate("PW_SENT")." <b>".$formData["email"]."</b>", 'success');
                     }
-
-                    $this->setLayoutMessages($this->translate("PW_SENT")." ".$formData["email"], 'success');
-                    return $this->redirect()->toUrl("/login");
                 } else {
                     $this->setLayoutMessages($this->translate("EMAIL")." <b>".$formData["email"]."</b> ".$this->translate("NOT_FOUND"), 'warning');
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toUrl("/login/resetpassword");
         }
         return $this->view;
     }
@@ -341,7 +337,7 @@ class LoginController extends IndexController
      */
     protected function logoutAction($redirectTo = "/")
     {
-        $this->translation->getManager()->getStorage()->clear();
+        // $this->translation->getManager()->getStorage()->clear();
         $this->translation = [];
         $auth = new AuthenticationService();
         $auth->clearIdentity();

@@ -27,19 +27,38 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Application\Controller\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Escaper\Escaper;
-use Custom\Error\AuthorizationException;
+use Application\Exception\AuthorizationException;
+use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Authentication\AuthenticationService;
 
 class UserData extends AbstractPlugin
 {
+    /**
+     * @var AuthenticationService $auth
+     */
+    private $auth = null;
+
+    /**
+     * @var Redirect $redirect
+     */
+    private $redirect = null;
+
+    /**
+     * @param Redirect $redirect
+     */
+    public function __construct(Redirect $redirect = null)
+    {
+        $this->redirect = $redirect;
+        $this->auth = new AuthenticationService();
+    }
+
     /**
      * Clear all session data and identities.
      * Throw an exception, which will be captured by the event manager and logged.
@@ -49,8 +68,7 @@ class UserData extends AbstractPlugin
      */
     public function clearUserData($errorString = null)
     {
-        $auth = new AuthenticationService();
-        $auth->clearIdentity();
+        $this->auth->clearIdentity();
         throw new AuthorizationException($errorString);
     }
 
@@ -73,18 +91,17 @@ class UserData extends AbstractPlugin
      */
     public function checkIdentity($redirect = true, $errorString = null, $url = "/")
     {
-        $auth = new AuthenticationService();
-        if ($auth->hasIdentity()) {
-            if (!empty($auth->getIdentity()->role) &&
-              ((int) $auth->getIdentity()->role === 1 || (int) $auth->getIdentity()->role === 10) &&
-              isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
+        if ($this->auth->hasIdentity()) {
+            if (!empty($this->auth->getIdentity()->role) &&
+              ((int) $this->auth->getIdentity()->role === 1 || (int) $this->auth->getIdentity()->role === 10) &&
+              isset($this->auth->getIdentity()->logged) && $this->auth->getIdentity()->logged === true) {
                 /**
                  * If everything went fine, just return true and let the user access the desired area or make a redirect
                  */
                 if ($redirect === false) {
                     return true;
                 }
-                return $this->redirect()->toUrl($url);
+                return $this->redirect->toUrl($url);
             }
             return $this->clearUserData($errorString); // something is wrong, clear all user data
         }
@@ -96,7 +113,6 @@ class UserData extends AbstractPlugin
      */
     public function getIdentity()
     {
-        $auth = new AuthenticationService();
-        return $auth->getIdentity();
+        return $this->auth->getIdentity();
     }
 }

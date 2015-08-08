@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -42,12 +42,12 @@ use Zend\File\Transfer\Adapter\Http;
 class ContentController extends IndexController
 {
     /**
-     * @var Admin\Form\ContentForm $contentForm
+     * @var ContentForm $contentForm
      */
     private $contentForm = null;
 
     /**
-     * @param Admin\Form\ContentForm $contentForm
+     * @param ContentForm $contentForm
      */
     public function __construct(ContentForm $contentForm = null)
     {
@@ -102,12 +102,12 @@ class ContentController extends IndexController
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
         $this->view->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/modify/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY"), $content);
+        $this->initForm($this->translate("MODIFY_CONTENT"), $content);
         return $this->view;
     }
 
     /**
-     * this action deletes a content object with a provided id and session language
+     * this action deletes a content
      */
     protected function deleteAction()
     {
@@ -117,7 +117,7 @@ class ContentController extends IndexController
     }
 
     /**
-     * this action shows content details from the provided id and session language
+     * this action shows content details
      */
     protected function detailAction()
     {
@@ -129,13 +129,13 @@ class ContentController extends IndexController
     }
 
     /**
-     * This action will clone the object with the provided id and return to the index view
+     * This action will clone the object
      */
     protected function cloneAction()
     {
         $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-            return $this->redirect()->toRoute('admin', ['controller' => 'content']);
+        return $this->redirect()->toRoute('admin', ['controller' => 'content']);
     }
 
     /**
@@ -166,12 +166,12 @@ class ContentController extends IndexController
         }
 
         /**
-         * @var $form Admin\Form\ContentForm
+         * @var $form ContentForm
          */
         $form = $this->contentForm;
         $form->get("menu")->setValueOptions($valueOptions);
 
-        $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND", null, "id ASC");
+        $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND");
         $valueOptions = [];
         foreach ($languages as $language) {
             $valueOptions[$language->getId()] = $language->getName();
@@ -199,12 +199,11 @@ class ContentController extends IndexController
                     $formData->preview = $content->preview["name"];
                     $this->getTable("content")->saveContent($content);
                     $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                    return $this->redirect()->toRoute('admin', ['controller' => 'content']);
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
-                return $this->redirect()->toRoute('admin', ['controller' => 'content']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'content']);
         }
     }
 
@@ -289,7 +288,6 @@ class ContentController extends IndexController
                 }
             }
         } else {
-            $this->view->setTerminal(true);
             foreach ($adapter->getMessages() as $key => $error) {
                 $uploadStatus["errorFiles"][] = $error;
             }

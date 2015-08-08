@@ -5,7 +5,7 @@ This README would normally document whatever steps are necessary to get your app
 ### Unnamed CMS ###
 
 * Trying to rewrite Wordpess with Zend Framework 2
-* Version 0.0.5
+* Version 0.0.6
 * Huge thanks to (Abdul Malik Ikhsan)https://samsonasik.wordpress.com/ a.k.a (samsonasik)https://twitter.com/samsonasik?lang=en for being saw helpful and patient
 
 ### Requirements ###
@@ -29,6 +29,7 @@ This README would normally document whatever steps are necessary to get your app
 * ZendDeveloperTools (integrated into the system)
 * BjyProfiler (integrated into the system)
 * SanSessionToolbar (integrated into the system)
+* The PHP Coding Standards Fixer (integrated into the system)
 
 ### Contacts ###
 

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -37,22 +37,21 @@ use Admin\Model\User;
 use Admin\Form\UserForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
-use Custom\Error\AuthorizationException;
+use Admin\Exception\AuthorizationException;
 
 class UserController extends IndexController
 {
     /**
-     * @var Admin\Form\UserForm $userForm
+     * @var UserForm $userForm
      */
     private $userForm = null;
 
     /**
-     * @param Admin\Form\UserForm $userForm
+     * @param UserForm $userForm
      */
     public function __construct(UserForm $userForm = null)
     {
         parent::__construct();
-
         $this->userForm = $userForm;
     }
 
@@ -119,16 +118,14 @@ class UserController extends IndexController
                 $existingEmail = $this->getTable("user")->fetchList(false, ["email"], ["email" => $formData->email]);
                 if (count($existingEmail) > 1) {
                     $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info');
-                    return $this->redirect()->toRoute('admin', ['controller' => 'user']);
                 } else {
                     $this->getTable("user")->saveUser($user);
                     $this->setLayoutMessages("&laquo;".$user->getFullName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                    return $this->redirect()->toRoute('admin', ['controller' => 'user']);
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
-                return $this->redirect()->toRoute('admin', ['controller' => 'user']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
         }
     }
 
@@ -177,7 +174,7 @@ class UserController extends IndexController
     /**
      * return the list of users that match a given criteria
      *
-     * @return \Zend\View\Model\JsonModel
+     * @return JsonModel
      */
     protected function searchAction()
     {
@@ -187,10 +184,12 @@ class UserController extends IndexController
                 $this->view->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%'";
                 $results = $this->getTable("user")->fetchList(false, [], $where, "OR", null, "id DESC");
+
                 $json = [];
                 foreach ($results as $result) {
                     $json[] = Json::encode($result);
                 }
+
                 return new JsonModel([
                     'usersearch' => $json,
                     'cancel' => $this->translate("CANCEL"),

@@ -25,30 +25,30 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
-namespace Application\Controller\Plugin;
+namespace Application\Controller\Plugin\Factory;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Application\Controller\Plugin\Functions;
+use Zend\Mvc\Controller\PluginManager;
 
-class TranslateMessage extends AbstractPlugin
+class FunctionsFactory
 {
     /**
-     * Show translated message. ERROR will be used as a default constant.
-     *
-     * If the given offset doesn't exist
-     * the object will automatically return empty string
-     *
-     * @param string $str the constant name from the database. It should always be upper case.
-     * @return string
-     * @todo  finish this and implement db access and I18n
+     * @{inheritDoc}
      */
-    protected function __invoke($message = "ERROR")
+    public function __invoke(PluginManager $pluginManager)
     {
-        return (string) $str;
+        $serviceLocator = $pluginManager->getServiceLocator();
+
+        $plugin = new Functions(
+            $serviceLocator->get('Zend\Db\Adapter\Adapter')
+        );
+
+        return $plugin;
     }
 }

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -78,7 +78,7 @@ class TermTranslationController extends IndexController
         $termcategory = $this->getTable("termcategory")->getTermCategory((int) $this->getParam('id', 0))->current();
         $this->view->termcategory = $termcategory;
         $this->addBreadcrumb(["reference" => "/admin/termtranslation/modify/{$termcategory->getId()}", "name" => $this->translate("MODIFY_TERM_TRANSLATION")." &laquo".$termcategory->getName()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY"), $termcategory);
+        $this->initForm($this->translate("MODIFY_TERM_TRANSLATION"), $termcategory);
         return $this->view;
     }
 
@@ -108,11 +108,11 @@ class TermTranslationController extends IndexController
                 exit;
                 // $formData = $this->getRequest()->getPost()->toArray();
                 // $keys = array_keys($formData);
-                // for ($i = 0; $i < sizeof($keys) - 2; $i++) {
+                // for ($i = 0; $i < count($keys) - 2; $i++) {
                 //     if (strstr($keys[$i], "translation")!==false) {
                 //         $termId = substr($keys[$i], 11);
                 //         $existing = $this->getTable("termtranslation")->fetchList(false, "term='{$termId}' AND language='{$this->session->language}'");
-                //         if (sizeof($existing) != 0) {
+                //         if (count($existing) != 0) {
                 //             $model = $existing->current();
                 //         } else {
                 //             $model = new TermTranslation();
@@ -158,8 +158,8 @@ class TermTranslationController extends IndexController
     // if duplicate terms are found remove all but one and notify the user
     protected function importAction()
     {
-        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
-        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel/PHPExcel_IOFactory.php");
+        require_once("vendor/CodePlex/PHPExcel.php");
+        require_once("vendor/CodePlex/PHPExcel/PHPExcel_IOFactory.php");
         $error = "";
         // first of all pick a random category and use its id
         // in case the excel for some weird reason doesn't have categories
@@ -167,7 +167,7 @@ class TermTranslationController extends IndexController
         // cache the existing categories to check later
         $categories = $this->getTable("termcategory")->fetchList(false, null, "id ASC");
         $existingCategories = [];
-        if (sizeof($categories) == 0) {
+        if (count($categories) == 0) {
             $category = new TermCategory();
             $category->name = "all terms";
             $category->save();
@@ -192,7 +192,7 @@ class TermTranslationController extends IndexController
                             // find the term in the DB
                             $term = null;
                             $terms = $this->getTable("term")->fetchList(false, "name='{$termLabel}'");
-                            if (sizeof($terms) == 0) {
+                            if (count($terms) == 0) {
                                 // add the term
                                 $categoryId = $sheet->getCellByColumnAndRow(0, $row)->getCalculatedValue();
                                 // make sure category exists if not simply pick the first existing category
@@ -203,7 +203,7 @@ class TermTranslationController extends IndexController
                                 $term->setName($termLabel);
                                 $term->setTermCategory($categoryId);
                                 $term = $this->getTable("term")->saveTerm($term);
-                            } elseif (sizeof($terms) == 1) {
+                            } elseif (count($terms) == 1) {
                                 $term = $terms->current();
                             } else {
                                 $error = $this->session->TERM . $terms->current()->name . "term translation contains duplicates <br>" . $error;
@@ -216,7 +216,7 @@ class TermTranslationController extends IndexController
                             // so far we are sure the term exists now we add the translation
                             // first of all try to fetch the translation
                             $translations = $this->getTable("termtranslation")->fetchList(false, "term='{$term->id}' AND language='{$language}'");
-                            if (sizeof($translations) > 0) {
+                            if (count($translations) > 0) {
                                 $translation = $translations->current();
                             } else {
                                 $translation = new TermTranslation();
@@ -244,11 +244,11 @@ class TermTranslationController extends IndexController
 
     protected function exportAction()
     {
-        require_once($_SERVER["DOCUMENT_ROOT"]."/vendor/CodePlex/PHPExcel.php");
+        require_once("vendor/CodePlex/PHPExcel.php");
         // create excel file
         $id = rand(10000, 99999999);
         $file = md5($id) . ".xlsx";
-        $filename = $_SERVER['DOCUMENT_ROOT'] . "/public/userfiles/exports/" . $file;
+        $filename = "public/userfiles/exports/" . $file;
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getProperties()
             ->setCreator("Xtreme-Jumps Excel Export Plugin")
@@ -269,21 +269,21 @@ class TermTranslationController extends IndexController
             $sheet->setCellValueExplicitByColumnAndRow(1, 1, $l->id, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
             $sheet->setCellValueExplicitByColumnAndRow(0, 2, "language");
             $sheet->setCellValueExplicitByColumnAndRow(1, 2, $l->name);
-            $categories = $this->getTable("termcategory")->fetchList(false, null, "name ASC");
+            $categories = $this->getTable("termcategory")->fetchList();
             $sheet->setCellValueExplicitByColumnAndRow(0, 3, "id (internal)");
             $sheet->setCellValueExplicitByColumnAndRow(1, 3, "category name");
             $sheet->setCellValueExplicitByColumnAndRow(2, 3, "term definition (do not change)");
             $sheet->setCellValueExplicitByColumnAndRow(3, 3, "term translation");
             $row = 4;
             foreach ($categories as $c) {
-                $terms = $this->getTable("term")->fetchList(false, "termcategory='{$c->id}'", "name ASC");
+                $terms = $this->getTable("term")->fetchList(false, [], ["termcategory" => $c->id]);
                 foreach ($terms as $t) {
                     $sheet->setCellValueExplicitByColumnAndRow(0, $row, $c->id, \PHPExcel_Cell_DataType::TYPE_NUMERIC);
                     $sheet->setCellValueExplicitByColumnAndRow(1, $row, $c->name);
                     // $sheet->setCellValueExplicitByColumnAndRow(2, $row, $t->getId());
                     $sheet->setCellValueExplicitByColumnAndRow(2, $row, $t->name);
-                    $trs = $this->getTable("termtranslation")->fetchList(false, "term='{$t->id}' AND language='{$l->id}'");
-                    if (sizeof($trs) > 0) {
+                    $trs = $this->getTable("termtranslation")->fetchList(false, [], ["term" => $t->id, "language" =>$l->id], "AND");
+                    if (count($trs) > 0) {
                         $sheet->setCellValueExplicitByColumnAndRow(3, $row, $trs->current()->translation);
                     }
                     $row ++;

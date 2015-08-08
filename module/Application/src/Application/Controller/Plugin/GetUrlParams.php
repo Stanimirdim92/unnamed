@@ -40,6 +40,19 @@ use Zend\Mvc\Controller\Plugin\Params;
 class GetUrlParams extends AbstractPlugin
 {
     /**
+     * @var Params $param
+     */
+    private $params = null;
+
+    /**
+     * @param Params $param
+     */
+    public function __construct(Params $params = null)
+    {
+        $this->params = $params;
+    }
+
+    /**
      * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code
      *
      * @param String $paramName
@@ -49,21 +62,19 @@ class GetUrlParams extends AbstractPlugin
     protected function __invoke($paramName = null, $default = null)
     {
         $escaper = new Escaper('utf-8');
-        $controller = $this->getController()->getServiceLocator();
-        $paramMethod = $controller->get('ControllerPluginManager')->get("params");
 
-        $param = $paramMethod->fromPost($paramName, 0);
+        $param = $this->params->fromPost($paramName, 0);
         if (!$param) {
-            $param = $paramMethod->fromRoute($paramName, null);
+            $param = $this->params->fromRoute($paramName, null);
         }
         if (!$param) {
-            $param = $paramMethod->fromQuery($paramName, null);
+            $param = $this->params->fromQuery($paramName, null);
         }
         if (!$param) {
-            $param = $paramMethod->fromHeader($paramName, null);
+            $param = $this->params->fromHeader($paramName, null);
         }
         if (!$param) {
-            $param = $paramMethod->fromFiles($paramName, null);
+            $param = $this->params->fromFiles($paramName, null);
         }
 
         /**

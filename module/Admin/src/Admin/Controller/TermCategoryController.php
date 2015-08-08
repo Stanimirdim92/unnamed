@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -39,12 +39,12 @@ use Admin\Form\TermCategoryForm;
 class TermCategoryController extends IndexController
 {
     /**
-     * @var Admin\Form\TermCategoryForm $termCategoryForm
+     * @var TermCategoryForm $termCategoryForm
      */
     private $termCategoryForm = null;
 
     /**
-     * @param Admin\Form\TermCategoryForm $termCategoryForm
+     * @param TermCategoryForm $termCategoryForm
      */
     public function __construct(TermCategoryForm $termCategoryForm = null)
     {
@@ -131,7 +131,7 @@ class TermCategoryController extends IndexController
         }
 
         /**
-         * @var Admin\Form\TermCategoryForm $form
+         * @var TermCategoryForm $form
          */
         $form = $this->termCategoryForm;
         $form->bind($termcategory);
@@ -144,11 +144,10 @@ class TermCategoryController extends IndexController
             if ($form->isValid()) {
                 $this->getTable("termcategory")->saveTermCategory($termcategory);
                 $this->setLayoutMessages("&laquo;".$termcategory->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
-                return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'termcategory']);
         }
     }
 }

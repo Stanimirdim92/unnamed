@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -39,17 +39,16 @@ use Admin\Form\TermForm;
 class TermController extends IndexController
 {
     /**
-     * @var Admin\Form\TermForm $termForm
+     * @var TermForm $termForm
      */
     private $termForm = null;
 
     /**
-     * @param Admin\Form\TermForm $termForm
+     * @param TermForm $termForm
      */
     public function __construct(TermForm $termForm = null)
     {
         parent::__construct();
-
         $this->termForm = $termForm;
     }
 
@@ -98,7 +97,7 @@ class TermController extends IndexController
         $term = $this->getTable("term")->getTerm($this->getParam("id", 0))->current();
         $this->view->term = $term;
         $this->addBreadcrumb(["reference"=>"/admin/term/modify/{$term->getId()}", "name"=>$this->translate("MODIFY_TERM")." &laquo".$term->getName()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY"), $term);
+        $this->initForm($this->translate("MODIFY_TERM"), $term);
         return $this->view;
     }
 
@@ -139,7 +138,7 @@ class TermController extends IndexController
         }
 
         /**
-         * @var Admin\Form\TermForm $form
+         * @var TermForm $form
          */
         $form = $this->termForm;
         $form->bind($term);
@@ -154,11 +153,10 @@ class TermController extends IndexController
             if ($form->isValid()) {
                 $this->getTable("term")->saveTerm($term);
                 $this->setLayoutMessages("&laquo;".$term->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                return $this->redirect()->toRoute('admin', ['controller' => 'term']);
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
-                return $this->redirect()->toRoute('admin', ['controller' => 'term']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'term']);
         }
     }
 }

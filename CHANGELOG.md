@@ -1,6 +1,12 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.6 (08.08.2015) - Stable Alpha
+- Removed vendor/Custom folder. The code was moved to Application\Controller\Plugin and the exception to Exception folder
+- Added factories to controller plugins for better DI
+- Bug fixes and optimizations
+
+DD.MM.YYYY
 ## 0.0.5 (07.08.2015) - Stable Alpha
 - Moved setLayoutMessages, getTable, setErrorCode, InitMetaTags, clearUserData to controller plugins
 - Completely disabled translations. At the moment the system returns the database term constant.
@@ -47,6 +53,7 @@ DD.MM.YYYY
  - Fixed session not being initiated. translation session no longer exists. It was replaced by a global session named zpc
  - Created new controller plugin IndexPlugin
  - Deactivated translations for now.
+ - Most of the controller actions were made protected
 
 # TODO
  - Database translations in combination with I18n

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -39,12 +39,12 @@ use Admin\Form\AdminMenuForm;
 class AdminMenuController extends IndexController
 {
     /**
-     * @var Admin\Form\AdminMenuForm $adminMenuForm
+     * @var AdminMenuForm $adminMenuForm
      */
     private $adminMenuForm = null;
 
     /**
-     * @param Admin\Form\AdminMenuForm $adminMenuForm
+     * @param AdminMenuForm $adminMenuForm
      */
     public function __construct(AdminMenuForm $adminMenuForm = null)
     {
@@ -157,7 +157,7 @@ class AdminMenuController extends IndexController
          */
         $form = $this->adminMenuForm;
         $form->get("submit")->setValue($label);
-        $parents =         $this->getTable("adminmenu")->fetchList(false, [], ["parent" => 0]);
+        $parents = $this->getTable("adminmenu")->fetchList(false, [], ["parent" => 0]);
 
         $valueOptions = [];
         $valueOptions[0] = 'Parent menu';
@@ -175,11 +175,10 @@ class AdminMenuController extends IndexController
             if ($form->isValid()) {
                 $this->getTable("adminmenu")->saveAdminMenu($adminMenu);
                 $this->setLayoutMessages("&laquo;".$adminMenu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-                return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
-                return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
         }
     }
 }

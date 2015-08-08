@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -39,12 +39,12 @@ use Admin\Form\LanguageForm;
 class LanguageController extends IndexController
 {
     /**
-     * @var Admin\Form\LanguageForm $languageForm
+     * @var LanguageForm $languageForm
      */
     private $languageForm = null;
 
     /**
-     * @param Admin\Form\LanguageForm $languageForm
+     * @param LanguageForm $languageForm
      */
     public function __construct(LanguageForm $languageForm = null)
     {
@@ -137,7 +137,7 @@ class LanguageController extends IndexController
         }
 
         /**
-         * @var $form Admin\Form\LanguageForm
+         * @var $form LanguageForm
          */
         $form = $this->languageForm;
         $form->get("submit")->setValue($label);
@@ -149,11 +149,10 @@ class LanguageController extends IndexController
             if ($form->isValid()) {
                 $this->getTable("language")->saveLanguage($language);
                 $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-                return $this->redirect()->toRoute('admin', ['controller' => 'language']);
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
-                return $this->redirect()->toRoute('admin', ['controller' => 'language']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'language']);
         }
     }
 }

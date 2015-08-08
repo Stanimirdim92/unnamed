@@ -27,31 +27,49 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Application\Controller\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\ViewModel;
 
 class ErrorCodes extends AbstractPlugin
 {
     /**
-     * @param  int $code error code
+     * @var ViewModel $layout
+     */
+    private $layout = null;
+
+    /**
+     * @var Response $response
+     */
+    private $response = null;
+
+    /**
+     * @param ViewModel $layout
+     * @param Response $response
+     */
+    public function __construct(ViewModel $layout = null, Response $response = null)
+    {
+        $this->layout = $layout;
+        $this->response = $response;
+    }
+
+    /**
+     * @param int $code error code
      */
     protected function __invoke($code = 404)
     {
-        $layout = $this->getController()->layout();
-        $response = $this->getController()->getResponse();
-
-        $response->setStatusCode($code);
-        $layout->setVariables([
+        $this->response->setStatusCode((int) $code);
+        $this->layout->setVariables([
             'message' => '404 Not found',
             'reason' => 'The link you have requested doesn\'t exists',
             'exception' => "",
         ]);
-        $layout->setTemplate('error/index');
+        $this->layout->setTemplate('error/index');
     }
 }

@@ -27,16 +27,34 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Application\Controller\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\View\Model\ViewModel;
+use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
 class LayoutMessages extends AbstractPlugin
 {
+    /**
+     * @var FlashMessenger $flashMessenger
+     */
+    private $flashMessenger = null;
+
+    /**
+     * @var ViewModel $layout
+     */
+    private $layout = null;
+
+    public function __construct(ViewModel $layout = null, FlashMessenger $flashMessenger = null)
+    {
+        $this->layout = $layout;
+        $this->flashMessenger = $flashMessenger;
+    }
+
     /**
      * This method will iterate over an array and show its contents as separated strings
      * The method will accept an array with unlimited depth.
@@ -64,10 +82,7 @@ class LayoutMessages extends AbstractPlugin
      */
     protected function __invoke($message = [], $namespace = 'default')
     {
-        $serviceLocator = $this->getController()->getServiceLocator();
-        $flashMessenger = $serviceLocator->get('ControllerPluginManager')->get("flashmessenger");
-
-        $flashMessenger->setNamespace($namespace);
+        $this->flashMessenger->setNamespace($namespace);
 
         $iterator = new \RecursiveArrayIterator((array) $message);
 
@@ -75,11 +90,11 @@ class LayoutMessages extends AbstractPlugin
             if ($iterator->hasChildren()) {
                 $this->setLayoutMessages($iterator->getChildren(), $namespace);
             } else {
-                $flashMessenger->addMessage($iterator->current(), $namespace);
+                $this->flashMessenger->addMessage($iterator->current(), $namespace);
             }
             $iterator->next();
         }
 
-        $this->getController()->layout()->setVariable('flashMessages', $flashMessenger);
+        $this->layout->setVariable('flashMessages', $this->flashMessenger);
     }
 }

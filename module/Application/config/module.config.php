@@ -64,15 +64,16 @@ return [
         ],
     ],
     'controller_plugins' => [
-        'invokables' => [
-            'InitMetaTags'         => 'Application\Controller\Plugin\InitMetaTags',
-            'getTable'             => 'Application\Controller\Plugin\GetTableModel',
-            'setLayoutMessages'    => 'Application\Controller\Plugin\LayoutMessages',
-            'setErrorCode'         => 'Application\Controller\Plugin\ErrorCodes',
-            'getParam'             => 'Application\Controller\Plugin\GetUrlParams',
-            'UserData'             => 'Application\Controller\Plugin\UserData',
-            'translate'            => 'Application\Controller\Plugin\TranslateMessage',
-        ],
+        'factories' => [
+            'Mailing'               => 'Application\Controller\Plugin\Factory\MailingFactory',
+            'UserData'              => 'Application\Controller\Plugin\Factory\UserDataFactory',
+            'setLayoutMessages'     => 'Application\Controller\Plugin\Factory\LayoutMessagesFactory',
+            'InitMetaTags'          => 'Application\Controller\Plugin\Factory\InitMetaTagsFactory',
+            'getParam'              => 'Application\Controller\Plugin\Factory\GetUrlParamsFactory',
+            'getTable'              => 'Application\Controller\Plugin\Factory\GetTableModelFactory',
+            'getFunctions'          => 'Application\Controller\Plugin\Factory\FunctionsFactory',
+            'setErrorCode'          => 'Application\Controller\Plugin\Factory\ErrorCodesFactory'
+        ]
     ],
     'view_helpers' => [
         'invokables'=> [

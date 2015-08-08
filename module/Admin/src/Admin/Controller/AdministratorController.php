@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -41,12 +41,12 @@ use Zend\View\Model\JsonModel;
 class AdministratorController extends IndexController
 {
     /**
-     * @var Admin\Form\AdministratorForm $administratorForm
+     * @var AdministratorForm $administratorForm
      */
     private $administratorForm = null;
 
     /**
-     * @param Admin\Form\AdministratorForm $administratorForm
+     * @param AdministratorForm $administratorForm
      */
     public function __construct(AdministratorForm $administratorForm = null)
     {
@@ -105,7 +105,7 @@ class AdministratorController extends IndexController
     }
 
     /**
-     * this action deletes a administrator object with a provided id
+     * this action deletes a administrator
      */
     protected function deleteAction()
     {
@@ -122,6 +122,8 @@ class AdministratorController extends IndexController
     /**
      * This action is used in combination with the javascript ajax function
      * to search for existing users and add them as administrators
+     *
+     * @return JsonModel
      */
     protected function searchAction()
     {
@@ -130,10 +132,12 @@ class AdministratorController extends IndexController
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
             $results = $this->getTable("user")->fetchList(false, ["id", "name", "surname", "email"], $where)->getDataSource();
+
             $json = [];
             foreach ($results as $result) {
                 $json[] = Json::encode($result);
             }
+
             return new JsonModel([
                 'ajaxsearch' => $json,
             ]);
@@ -153,7 +157,7 @@ class AdministratorController extends IndexController
         }
 
         /**
-         * @var $form Admin\Form\AdministratorForm
+         * @var $form AdministratorForm
          */
         $form = $this->administratorForm;
         $form->get("submit")->setValue($label);
@@ -178,19 +182,16 @@ class AdministratorController extends IndexController
                         $this->getTable("user")->saveUser($user);
                         $this->getTable("administrator")->saveAdministrator($administrator);
                         $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-                        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
                     } else {
                         $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');
-                        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
                     }
                 } else {
                     $this->setLayoutMessages($this->translate("ERROR"), 'error');
-                    return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
-                return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
         }
     }
 }

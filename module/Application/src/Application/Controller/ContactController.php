@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -35,7 +35,6 @@ namespace Application\Controller;
 
 use Zend\Mvc\MvcEvent;
 use Application\Form\ContactForm;
-use Custom\Plugins\Mailing;
 
 class ContactController extends IndexController
 {
@@ -71,7 +70,7 @@ class ContactController extends IndexController
         $this->view->setTemplate("application/contact/index");
 
         /**
-         * @var $form Application\Form\ContactForm
+         * @var $form ContactForm
          */
         $form = $this->contactForm;
         $form->get("email")->setLabel($this->translate("EMAIL"));
@@ -88,7 +87,7 @@ class ContactController extends IndexController
                 $formData = $form->getData();
                 try {
                     // must be set from db
-                    $result = Mailing::sendMail("psyxopat@gmail.com", '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
+                    $result = $this->Mailing()->sendMail("psyxopat@gmail.com", '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
                     $this->setLayoutMessages($this->translate("CONTACT_SUCCESS"), 'success');
                 } catch (\Exception $e) {
                     $this->setLayoutMessages($this->translate("CONTACT_ERROR"), 'error');

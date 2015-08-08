@@ -27,16 +27,46 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Application\Controller\Plugin;
 
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\View\Helper\Placeholder\Container as Placeholder;
+use Zend\View\Helper\HeadMeta;
+use Zend\Http\PhpEnvironment\Request;
 
 class InitMetaTags extends AbstractPlugin
 {
+    /**
+     * @var Placeholder
+     */
+    private $placeholder = null;
+
+    /**
+     * @var HeadMeta
+     */
+    private $headMeta = null;
+
+    /**
+     * @var Request
+     */
+    private $request = null;
+
+    /**
+     * @param Placeholder $placeholder
+     * @param HeadMeta $headMeta
+     * @param Request $request
+     */
+    public function __construct(Placeholder $placeholder = null, HeadMeta $headMeta = null, Request $request = null)
+    {
+        $this->placeholder = $placeholder;
+        $this->headMeta = $headMeta;
+        $this->request = $request;
+    }
+
     /**
      * This function will generate all meta tags needed for SEO optimisation.
      *
@@ -44,63 +74,40 @@ class InitMetaTags extends AbstractPlugin
      */
     protected function __invoke(array $content = [])
     {
-        $serviceLocator = $this->getController()->getServiceLocator()->get('ViewHelperManager');
+        $description = (!empty($content["description"]) ? $content["description"] : "lorem ipsum dolar sit amet");
+        $keywords = (!empty($content["keywords"]) ? $content["keywords"] : "lorem, ipsum, dolar, sit, amet");
+        $text = (!empty($content["text"]) ? $content["text"] : "lorem ipsum dolar sit amet");
+        $preview = (!empty($content["preview"]) ? $content["preview"] : "");
+        $title = (!empty($content["title"]) ? $content["title"] : "");
 
-        /**
-         * @var Zend\View\Helper\Placeholder\Container $placeholder
-         */
-        $placeholder = $serviceLocator->get("placeholder")->getContainer("customHead");
+        $this->placeholder->append("\r\n<meta itemprop='name' content='Unnamed'>\r\n"); // must be sey from db
+        $this->placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."'>\r\n");
+        $this->placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
+        $this->placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
 
-        /**
-         * @var Zend\View\Helper\HeadMeta $vhm
-         */
-        $vhm = $serviceLocator->get("HeadMeta");
-
-        $description = $keywords = $text = $preview = $title = $time = null;
-        $request = $this->getController()->getRequest();
-
-        if (!empty($content)) {
-            $description = (isset($content["description"]) ? $content["description"] : "lorem ipsum dolar sit amet");
-            $keywords = (isset($content["keywords"]) ? $content["keywords"] : "lorem, ipsum, dolar, sit, amet");
-            $text = $content["text"];
-            $preview = $content["preview"];
-            $title = $content["title"];
-        } else {
-            $description = "lorem ipsum dolar sit amet";
-            $keywords = "lorem, ipsum, dolar, sit, amet";
-            $text = "lorem ipsum dolar sit amet";
-            $preview = "";
-            $title = "Unnamed";
-        }
-
-        $placeholder->append("\r\n<meta itemprop='name' content='Unnamed'>\r\n"); // must be sey from db
-        $placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."'>\r\n");
-        $placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
-        $placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
-
-        // $vhm->appendName('robots', 'index, follow');
-        // $vhm->appendName('Googlebot', 'index, follow');
-        // $vhm->appendName('revisit-after', '3 Days');
-        $vhm->appendName('keywords', $keywords);
-        $vhm->appendName('description', $description);
-        $vhm->appendName('viewport', 'width=device-width, initial-scale=1.0');
-        $vhm->appendName('generator', 'Unnamed');
-        $vhm->appendName('apple-mobile-web-app-capable', 'yes');
-        $vhm->appendName('application-name', 'Unnamed');
-        $vhm->appendName('msapplication-TileColor', '#000000');
-        $vhm->appendName('mobile-web-app-capable', 'yes');
-        $vhm->appendName('HandheldFriendly', 'True');
-        $vhm->appendName('MobileOptimized', '320');
-        $vhm->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
-        $vhm->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
-        $vhm->appendProperty('og:image', $preview);
-        // $vhm->appendProperty('article:published_time', date("Y-m-d H:i:s", time()));
-        $vhm->appendProperty("og:title", $title);
-        $vhm->appendProperty("og:description", $description);
-        $vhm->appendProperty("og:type", 'article');
-        $vhm->appendProperty("og:url", $request->getUri()->getHost().$request->getRequestUri());
-        $vhm->appendHttpEquiv('cleartype', 'on');
-        $vhm->appendHttpEquiv('x-dns-prefetch-control', 'on');
+        // $this->headMeta->appendName('robots', 'index, follow');
+        // $this->headMeta->appendName('Googlebot', 'index, follow');
+        // $this->headMeta->appendName('revisit-after', '3 Days');
+        $this->headMeta->appendName('keywords', $keywords);
+        $this->headMeta->appendName('description', $description);
+        $this->headMeta->appendName('viewport', 'width=device-width, initial-scale=1.0');
+        $this->headMeta->appendName('generator', 'Unnamed');
+        $this->headMeta->appendName('apple-mobile-web-app-capable', 'yes');
+        $this->headMeta->appendName('application-name', 'Unnamed');
+        $this->headMeta->appendName('msapplication-TileColor', '#000000');
+        $this->headMeta->appendName('mobile-web-app-capable', 'yes');
+        $this->headMeta->appendName('HandheldFriendly', 'True');
+        $this->headMeta->appendName('MobileOptimized', '320');
+        $this->headMeta->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
+        $this->headMeta->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
+        $this->headMeta->appendProperty('og:image', $preview);
+        // $this->headMeta->appendProperty('article:published_time', date("Y-m-d H:i:s", time()));
+        $this->headMeta->appendProperty("og:title", $title);
+        $this->headMeta->appendProperty("og:description", $description);
+        $this->headMeta->appendProperty("og:type", 'article');
+        $this->headMeta->appendProperty("og:url", $this->request->getUri()->getHost().$this->request->getRequestUri());
+        $this->headMeta->appendHttpEquiv('cleartype', 'on');
+        $this->headMeta->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
         /**
          * Other things that can be activated

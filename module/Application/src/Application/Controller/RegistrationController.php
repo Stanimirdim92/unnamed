@@ -27,13 +27,12 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Application\Controller;
 
-use Custom\Plugins\Functions;
 use Admin\Model\User;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
@@ -43,12 +42,12 @@ class RegistrationController extends IndexController
 {
 
     /**
-     * @var Application\Form\RegistrationForm $registrationForm
+     * @var RegistrationForm $registrationForm
      */
     private $registrationForm = null;
 
     /**
-     * @param Application\Form\RegistrationForm $registrationForm
+     * @param RegistrationForm $registrationForm
      */
     public function __construct(RegistrationForm $registrationForm = null)
     {
@@ -69,7 +68,7 @@ class RegistrationController extends IndexController
          * For resetpassword and newpassword actions we assume that the user is not logged in.
          */
         if (APP_ENV !== 'development') {
-            $this->checkIdentity();
+            $this->UserData()->checkIdentity();
         }
     }
 
@@ -80,7 +79,7 @@ class RegistrationController extends IndexController
         }
 
        /**
-        * @var Application\Form\RegistrationForm $form
+        * @var RegistrationForm $form
         */
         $form = $this->registrationForm;
         $form->setInputFilter($form->getInputFilter());
@@ -93,19 +92,22 @@ class RegistrationController extends IndexController
             /**
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("user")->fetchList(false, [], ["email" => $formData->email]);
-            (count($existingEmail) > 0 ? $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info') : "");
-
-            $registerUser = new User();
-            $registerUser->setName($formData->name);
-            $registerUser->setPassword(Functions::createPassword($formData->password));
-            $registerUser->setRegistered(date("Y-m-d H:i:s", time()));
-            $registerUser->setIp($remote->getIpAddress());
-            $registerUser->setEmail($formData->email);
-            $registerUser->setLanguage($this->language());
-            $this->getTable("user")->saveUser($registerUser);
-            $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
-            return $this->redirect()->toUrl("/login");
+            $existingEmail = $this->getTable("user")->fetchList(false, [], ["email" => $formData->email])->current();
+            if (count($existingEmail) > 0) {
+                return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info');
+            } else {
+                $func = $this->getFunctions();
+                $registerUser = new User();
+                $registerUser->setName($formData->name);
+                $registerUser->setPassword($func::createPassword($formData->password));
+                $registerUser->setRegistered(date("Y-m-d H:i:s", time()));
+                $registerUser->setIp($remote->getIpAddress());
+                $registerUser->setEmail($formData->email);
+                $registerUser->setLanguage($this->language());
+                $this->getTable("user")->saveUser($registerUser);
+                $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
+                return $this->redirect()->toUrl("/login");
+            }
         } else {
             $this->setLayoutMessages($form->getMessages(), 'error');
             return $this->redirect()->toUrl("/registration");
@@ -119,7 +121,7 @@ class RegistrationController extends IndexController
     {
         $this->view->setTemplate("application/registration/index");
        /**
-        * @var Application\Form\RegistrationForm $form
+        * @var RegistrationForm $form
         */
         $form = $this->registrationForm;
         $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));

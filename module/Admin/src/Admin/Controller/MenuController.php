@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -39,17 +39,16 @@ use Admin\Form\MenuForm;
 class MenuController extends IndexController
 {
     /**
-     * @var Admin\Form\MenuForm $menuForm
+     * @var MenuForm $menuForm
      */
     private $menuForm = null;
 
     /**
-     * @param Admin\Form\MenuForm $menuForm
+     * @param MenuForm $menuForm
      */
     public function __construct(MenuForm $menuForm = null)
     {
         parent::__construct();
-
         $this->menuForm = $menuForm;
     }
 
@@ -188,21 +187,19 @@ class MenuController extends IndexController
             if ($form->isValid()) {
                 $formData = $form->getData();
                 // see if we have menu with the exact same caption.
-                if ($this->params("action") == 'add') {
+                if ($this->getParam("action") == 'add') {
                     $existingMenu = $this->getTable('menu')->fetchList(false, ['menulink', 'menutype', 'language', 'parent'], ["parent" => 0, "language" => $this->language(), "menutype" => $formData->menutype, "menulink" => $formData->menulink], "AND", null);
                     if (count($existingMenu) > 0) {
                         $this->setLayoutMessages($this->translate("MENU_WITH_NAME")." &laquo; ".$formData->caption." &raquo; ".$this->translate("ALREADY_EXIST"), 'warning');
                         return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
                     }
                 }
-
                 $this->getTable("menu")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-                return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
-                return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
             }
+            return $this->redirect()->toRoute('admin', ['controller' => 'menu']);
         }
     }
 }

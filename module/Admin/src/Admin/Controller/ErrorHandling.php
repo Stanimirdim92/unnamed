@@ -27,15 +27,14 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
 namespace Admin\Controller;
 
 use Zend\Http\PhpEnvironment\RemoteAddress;
-use Custom\Error\AuthorizationException;
-use Zend\Log\Logger;
+use Admin\Exception\AuthorizationException;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\MvcEvent;
 
@@ -56,7 +55,7 @@ class ErrorHandling
     /**
      * @param Logger $logger
      */
-    public function __construct($logger = null)
+    public function __construct(Logger $logger = null)
     {
         $this->logger = $logger;
     }
@@ -69,9 +68,7 @@ class ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if (is_dir($destination)) {
-            $this->destination = $destination;
-        }
+        $this->destination = $destination;
     }
 
     /**
@@ -80,9 +77,9 @@ class ErrorHandling
     private function logException($e = null)
     {
         $i = 1;
-        do {
+        while ($e->getPrevious()) {
             $messages[] = $i++ . ": " . $e->getMessage();
-        } while ($e->getPrevious());
+        }
 
         $log =  PHP_EOL."Exception: ".implode("", $messages);
         $log .=  PHP_EOL."Code: ".$e->getCode();
@@ -140,10 +137,9 @@ class ErrorHandling
         Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
         Method used: ".$sm->get("Request")->getMethod()."\n";
 
-        $log = new Logger();
         $writer = new Stream($this->destination.date('F').'.txt');
-        $log->addWriter($writer);
-        $log->info($errorMsg);
-        return $log;
+        $this->logger->addWriter($writer);
+        $this->logger->info($errorMsg);
+        return $this->logger;
     }
 }

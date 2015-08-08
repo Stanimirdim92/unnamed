@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.5
+ * @version    0.0.6
  * @link       TBA
  */
 
@@ -77,7 +77,6 @@ class IndexController extends AbstractActionController
         }
         parent::onDispatch($e);
         $this->view->breadcrumbs = $this->breadcrumbs;
-        // $this->initTranslation();
     }
 
 /****************************************************
@@ -114,9 +113,13 @@ class IndexController extends AbstractActionController
     {
         $auth = $this->UserData();
         if ($auth->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
-            if (isset($auth->getIdentity()->role) &&
-                ((int) $auth->getIdentity()->role === 10) && isset($auth->getIdentity()->logged) && $auth->getIdentity()->logged === true) {
-                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id]);
+            if (
+                isset($auth->getIdentity()->role)         &&
+                ((int) $auth->getIdentity()->role === 10) &&
+                isset($auth->getIdentity()->logged)       &&
+                $auth->getIdentity()->logged === true
+            ) {
+                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id])->current();
                 if (count($checkAdminExistence) === 1) {
                     unset($checkAdminExistence);
                     return true;
@@ -130,7 +133,8 @@ class IndexController extends AbstractActionController
 
     /**
      * Copy of initMenus() used in Menus|Content controllers
-     * @return  array
+     *
+     * @return array
      */
     protected function prepareMenusData()
     {
