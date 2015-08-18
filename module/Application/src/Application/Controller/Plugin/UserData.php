@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,7 +38,7 @@ use Application\Exception\AuthorizationException;
 use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\Authentication\AuthenticationService;
 
-class UserData extends AbstractPlugin
+final class UserData extends AbstractPlugin
 {
     /**
      * @var AuthenticationService $auth

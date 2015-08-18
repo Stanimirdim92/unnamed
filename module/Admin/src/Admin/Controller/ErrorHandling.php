@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -53,9 +53,9 @@ class ErrorHandling
     private $logger = null;
 
     /**
-     * @param Logger $logger
+     * @param Zend\Log\Logger $logger
      */
-    public function __construct(Logger $logger = null)
+    public function __construct($logger = null)
     {
         $this->logger = $logger;
     }
@@ -77,6 +77,7 @@ class ErrorHandling
     private function logException($e = null)
     {
         $i = 1;
+        $messages = [];
         while ($e->getPrevious()) {
             $messages[] = $i++ . ": " . $e->getMessage();
         }

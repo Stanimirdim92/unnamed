@@ -20,7 +20,7 @@ if(!empty($this->news)) {
                 }
 ?>
                 <h2 itemscope itemprop="name" class="post-title">
-                    <a itemprop="url" href="/news/post/<?=$new->getTitleLink()?>"><?=$new->getTitle();?></a>
+                    <a itemprop="url" href="<?=$this->url('news', ['post' => $new->getTitleLink()]);?>"><?=$new->getTitle();?></a>
                 </h2>
 
                 <time datetime="<?=$dateTime?>" class="post-date">

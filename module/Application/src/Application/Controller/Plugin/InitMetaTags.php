@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,7 +38,7 @@ use Zend\View\Helper\Placeholder\Container as Placeholder;
 use Zend\View\Helper\HeadMeta;
 use Zend\Http\PhpEnvironment\Request;
 
-class InitMetaTags extends AbstractPlugin
+final class InitMetaTags extends AbstractPlugin
 {
     /**
      * @var Placeholder

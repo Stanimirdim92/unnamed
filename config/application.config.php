@@ -6,8 +6,8 @@ $modules = [
 
 if (APP_ENV === 'development') {
     $modules[] = 'ZendDeveloperTools';
-    $modules[] = 'SanSessionToolbar';
     $modules[] = 'BjyProfiler';
+    $modules[] = 'SanSessionToolbar';
 }
 
 return [

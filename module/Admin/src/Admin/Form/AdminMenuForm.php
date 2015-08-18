@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,8 +38,15 @@ use Zend\InputFilter\InputFilterProviderInterface;
 
 class AdminMenuForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct()
+    private $parent = [];
+
+    /**
+     * @param  array $parent
+     */
+    public function __construct(array $parent = [])
     {
+        $this->parent = $parent;
+
         parent::__construct("admin-menu");
     }
 
@@ -104,10 +111,10 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'required'   => false,
                 'size'        => 40,
                 'class'       => 'admin-menu-class',
-                'placeholder' => 'Class',
+                'placeholder' => 'CSS class',
             ],
             'options' => [
-                'label' => 'Class',
+                'label' => 'CSS class',
             ],
         ]);
 
@@ -143,7 +150,9 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Select',
             'name' => 'parent',
             'options' => [
-                'label' => 'Parent',
+                'label' => 'Parent admin menu',
+                'empty_option' => "Select parent admin menu"
+                'value_options' => $this->parent,
             ],
         ]);
 

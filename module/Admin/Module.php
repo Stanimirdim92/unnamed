@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -65,7 +65,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function onBootstrap(EventInterface $e)
     {
-        $app = $e->getTarget();
+        $app = $e->getApplication();
 
         if (!$app->getRequest() instanceof HttpRequest) {
             return;

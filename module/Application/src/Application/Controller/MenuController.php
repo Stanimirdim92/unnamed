@@ -27,13 +27,13 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
 namespace Application\Controller;
 
-class MenuController extends IndexController
+final class MenuController extends IndexController
 {
     /**
      * @param MvcEvent $e

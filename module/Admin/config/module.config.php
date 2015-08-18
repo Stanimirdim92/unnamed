@@ -3,20 +3,34 @@ return [
     'router' => [
         'routes' => [
             'admin' => [
-                'type'    => 'Segment',
+                'type'    => 'Literal',
                 'options' => [
-                    'route' => '/admin[/][:controller[/][:action[/:id][/page/:page][/search/:search]]]',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z0-9_-]*',
-                        'search'     => '[a-zA-Z0-9_-]*',
-                        'id'         => '[0-9]+',
-                        'page'       => '[0-9]+',
-                    ],
+                    'route' => '/admin',
                     'defaults' => [
                         '__NAMESPACE__' => 'Admin\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'default' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/[:controller[/][:action[/][:id][/page/:page][/search/:search]]]',
+                            'constraints' => [
+                                'controller' => '[a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z0-9_-]*',
+                                'search'     => '[a-zA-Z0-9_-]*',
+                                'id'         => '[0-9]+',
+                                'page'       => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'Admin\Controller',
+                                'controller'    => 'Index',
+                                'action'        => 'index',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -24,38 +38,38 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'Admin\AuthenticationAdapter' => 'Admin\Factory\AuthenticationAdapterFactory',
             'AdminErrorHandling'          => 'Admin\Factory\AdminErrorHandlingFactory',
-            'AdministratorTable'          => 'Admin\Factory\AdministratorTableFactory',
-            'ContentTable'                => 'Admin\Factory\ContentTableFactory',
-            'LanguageTable'               => 'Admin\Factory\LanguageTableFactory',
-            'MenuTable'                   => 'Admin\Factory\MenuTableFactory',
-            'UserTable'                   => 'Admin\Factory\UserTableFactory',
-            'TermTranslationTable'        => 'Admin\Factory\TermTranslationTableFactory',
-            'TermCategoryTable'           => 'Admin\Factory\TermCategoryTableFactory',
-            'TermTable'                   => 'Admin\Factory\TermTableFactory',
-            'AdminMenuTable'              => 'Admin\Factory\AdminMenuTableFactory',
+            'AdministratorTable'          => 'Admin\Factory\Model\AdministratorTableFactory',
+            'ContentTable'                => 'Admin\Factory\Model\ContentTableFactory',
+            'LanguageTable'               => 'Admin\Factory\Model\LanguageTableFactory',
+            'MenuTable'                   => 'Admin\Factory\Model\MenuTableFactory',
+            'UserTable'                   => 'Admin\Factory\Model\UserTableFactory',
+            'AdminMenuTable'              => 'Admin\Factory\Model\AdminMenuTableFactory',
         ],
     ],
     'controllers' => [
         'factories' => [
-            'Admin\Controller\Content'          => 'Admin\Factory\Controller\ContentFormFactory',
-            'Admin\Controller\Menu'             => 'Admin\Factory\Controller\MenuFormFactory',
-            'Admin\Controller\Term'             => 'Admin\Factory\Controller\TermFormFactory',
-            'Admin\Controller\TermCategory'     => 'Admin\Factory\Controller\TermCategoryFormFactory',
-            'Admin\Controller\Language'         => 'Admin\Factory\Controller\LanguageFormFactory',
-            'Admin\Controller\Administrator'    => 'Admin\Factory\Controller\AdministratorFormFactory',
-            'Admin\Controller\AdminMenu'        => 'Admin\Factory\Controller\AdminMenuFormFactory',
-            'Admin\Controller\User'             => 'Admin\Factory\Controller\UserFormFactory',
+            'Admin\Controller\Content'       => 'Admin\Factory\Controller\ContentControllerFactory',
+            'Admin\Controller\Menu'          => 'Admin\Factory\Controller\MenuControllerFactory',
+            'Admin\Controller\Language'      => 'Admin\Factory\Controller\LanguageControllerFactory',
+            'Admin\Controller\Administrator' => 'Admin\Factory\Controller\AdministratorControllerFactory',
+            'Admin\Controller\AdminMenu'     => 'Admin\Factory\Controller\AdminMenuControllerFactory',
+            'Admin\Controller\User'          => 'Admin\Factory\Controller\UserControllerFactory',
         ],
         'invokables' => [
-            'Admin\Controller\Index'            => 'Admin\Controller\IndexController',
-            'Admin\Controller\TermTranslation'  => 'Admin\Controller\TermTranslationController',
+            'Admin\Controller\Index' => 'Admin\Controller\IndexController',
+        ],
+    ],
+    'form_elements' => [
+        'factories' => [
+            'Admin\Form\ContentForm'      => 'Admin\Factory\Form\ContentFormFactory',
+            'Admin\Form\MenuForm'         => 'Admin\Factory\Form\MenuFormFactory',
+            'Admin\Form\AdminMenuForm'    => 'Admin\Factory\Form\AdminMenuFormFactory',
         ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
+        'display_not_found_reason' => (APP_ENV === "development"),
+        'display_exceptions'       => (APP_ENV === "development"),
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/index',
         'exception_template'       => 'error/index',

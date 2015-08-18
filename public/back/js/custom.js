@@ -1,123 +1,20 @@
 ;(function (win, doc, $, undefined) {
     'use strict';
 
-    var ajaxImageUpload = {
-
-        /**
-         * Attach event listeners
-         */
-        init: function () {
-
-            $("button.upload").on("click", function () {
-                $(".uploader-inline").show();
-                $(".gallery-view").hide().find("figure.centered").remove();
-            });
-
-            $(".gallery").on("click", function() {
-                ajaxImageUpload.showFiles();
-            });
-
-            $("button.media-modal-toggle").on("click", function () {
-                $("#modal-imgupload").fadeToggle(850);
-            });
-
-            /**
-             * AJAX image upload
-             */
-            $("#imgajax").change(function (e) {
-                e.preventDefault();
-                var $form = $("#content").submit();
-
-                $.ajax({
-                    url: $form.attr("action"),
-                    type: "POST",
-                    data: new FormData($form[0]),
-                    processData:false,
-                    contentType:  false,
-                    cache: false,
-                }).done(function (result, request, headers) {
-                    var $resp = $.parseJSON(result);
-                    ajaxImageUpload.setAjaxResponse($resp["successFiles"], "p", "header", "image-upload-message successFiles");
-                    ajaxImageUpload.setAjaxResponse($resp["errorFiles"], "p", "header", "image-upload-message errorFiles");
-                    ajaxImageUpload.showFiles();
-                }).fail(function (result, request, headers) {
-                    console.error("Error:", result); //TODO must create a dialog popup
-                });
-                // clear file input
-                $("#imgajax").replaceWith($("#imgajax").val('').clone(true));
-                return false;
-            });
-        },
-
-        /**
-         * Create DOM nodes with text, class and appends them to elementAppend
-         */
-        showMessages: function (text, elementCreate, elementAppend, className) {
-            var el = doc.createElement(elementCreate);
-            el.className += className;
-            el.innerHTML = text;
-
-            $(elementAppend).append(el).slideDown(1000, function () {
-                setTimeout(function() {
-                    $(elementCreate).slideUp(1000, function () {
-                        $(this).fadeOut("slow", function () {
-                            $(this).remove();
-                         });
-                    });
-                }, 6000);
-            });
-        },
-
-        /**
-         * Show AJAX reponse
-         */
-        setAjaxResponse: function (response, elementCreate, elementAppend, className) {
-            if (typeof response !== "undefined" && typeof response !== undefined) {
-                $(elementAppend).append($("<div class='dinamicly-div-append-wrapper'></div>"));
-                $.each(response, function(key, text) {
-                    ajaxImageUpload.showMessages(text, elementCreate, 'div.dinamicly-div-append-wrapper', className);
-                });
-            }
-        },
-
-        /**
-         * Gallery
-         */
-        showFiles: function () {
-                $(".uploader-inline, .large-image").hide();
-                $(".gallery-view").find("figure.centered").not(".large-image").remove();
-                $(".gallery-view, .ajax-loader").show();
-            $.get( "/admin/content/files", function (files) {
-                $(".ajax-loader").hide();
-                $(".large-image").show();
-                $.each(files, function (key, file) {
-                    $("div.image-grid").append("<figure class='centered'><img src='"+$.parseJSON(file["link"])+"' class='thumbnail' alt='"+$.parseJSON(file["filename"])+"' title='"+$.parseJSON(file["filename"])+"' /></figure>");
-                });
-                ajaxImageUpload.viewImage();
-            });
-        },
-
-        viewImage: function () {
-            $(".large-image").attr("src",$(".thumbnail").first().attr("src"));
-            $(".thumbnail").on("click", function () {
-                $(".large-image").attr("src",$(this).attr("src"));
-            });
-        }
-
-    };
-
-
     /**
      * Create SEO captions/URLs for menus and content.
      */
-    var fixSEOCaption = function (caption) {
+    function fixSEOCaption(caption) {
         return caption.toLowerCase().replace(/(^\s+|[^a-zA-Z0-9 ]+|\s+$)/g,"").replace(/\s+/g, "-");
-    };
+    }
+
+    function appendTranslationNode(elementAppend) {
+        var $constKey =$("#newTranslationsConstName").val().toUpperCase();
+        $(elementAppend).append($("<label><span>"+$constKey+"</span><input type='text' size='35' name='"+$constKey+"' placeholder='"+$constKey+"' required='required' value='"+$("#newTranslationsText").val()+"' /><button type='button' class='btn btn-sm delete translation_delete'><i class='fa fa-trash-o'></i></button></label><br>"));
+    }
 
     $(doc).ready(function ($) {
         'use strict';
-
-        ajaxImageUpload.init();
 
         /**
          * Custom dialog window for delete button
@@ -133,6 +30,21 @@
         $(".cancel").on("click", function (e) {
             e.preventDefault();
             $(".dialog_hide").fadeOut(650);
+        });
+
+        $(".add-translation").on("click", function (e) {
+            e.preventDefault();
+            appendTranslationNode("#translationsArray fieldset");
+        });
+
+        $(".add-new-translation").on("click", function (e) {
+            e.preventDefault();
+            $(".toggle-translation-box").fadeToggle("slow");
+        });
+
+        $(".translation_delete").on("click", function (e) {
+            e.preventDefault();
+            $(this).parent("label").remove();
         });
 
         /**
@@ -155,7 +67,6 @@
 
         /**
          * AJAX search form.
-         * TODO: make the for loop more flexible so it can work with all kind of data
          */
         var $urlSplit = win.location.href.toString().split(win.location.host)[1].split("/");
         $(".ajax-search").on("keyup", function () {
@@ -169,22 +80,21 @@
                     contentType: "application/json; charset=utf-8;",
                     cache: !1,
                 }).done(function (result, request, headers) {
-                    if (request === "success") {
+                    if (request === "success" && result.statusType === "success") {
                         $("#results").empty();
                         $.each(result.ajaxsearch, function (key, value) {
                             var $ul = $("<ul class='table-row'>");
                             var $val = $.parseJSON(value);
                             for (var property in $val) {
-                                if ($val.hasOwnProperty(property)) {
-                                    if ($val[property] === null || $val[property] === undefined || $val[property] === '') {
-                                        continue;
-                                    } else {
-                                        $ul.append("<li data-id ='"+$val["id"]+"' class='table-cell'>"+$val[property]+"</li>");
-                                    }
+                                if ($val.hasOwnProperty(property) && $val[property]) {
+                                    $ul.append("<li data-id ='"+$val["id"]+"' class='table-cell'>"+$val[property]+"</li>");
                                 }
                             }
                             $("#results").append($ul);
                         });
+                    } else {
+                        $("#results").empty();
+                        $("#results").append("<p>No matches</p>");
                     }
                 }).fail(function (error) {
                     console.log("Error:", error.responseText); //TODO must create a dialog popup

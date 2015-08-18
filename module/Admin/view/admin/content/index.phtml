@@ -19,12 +19,12 @@
             <li class="table-cell"><?=substr(strip_tags($content->getText()),0,300)?>...</li>
             <li class="table-cell"><?=$content->getDate()?></li>
             <li class="table-cell">
-                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-default btn-sm' href='<?=$this->url("admin", ["controller" => "content", "action" => "detail", "id" => $content->getId()])?>'>
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-default btn-sm' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "detail", "id" => $content->getId()])?>'>
                     <i class='fa fa-info'></i>
                 </a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-default btn-sm orange'>
+                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-default btn-sm orange'>
                     <i class='fa fa-pencil'></i>
                 </a>
             </li>
@@ -34,7 +34,7 @@
                     <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn btn-danger' href='<?=$this->url("admin", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
+                            <a class='btn btn-danger' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
                         </li>
                         <li>
                             <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>

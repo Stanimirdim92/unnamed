@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -44,7 +44,7 @@ use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 require '/module/Application/src/Application/Entity/Password.php';
 
-class LoginController extends IndexController
+final class LoginController extends IndexController
 {
     /**
      * @var Zend\Db\Adapter\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
@@ -131,7 +131,7 @@ class LoginController extends IndexController
          * @var  LoginForm $form
          */
         $form = $this->loginForm;
-        $form->get("login")->setValue($this->translate("LOGIN"));
+        $form->get("login")->setValue($this->translate("SIGN_IN"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
         $form->get("password")->setLabel($this->translate("PASSWORD"));
         $this->view->form = $form;
@@ -337,8 +337,8 @@ class LoginController extends IndexController
      */
     protected function logoutAction($redirectTo = "/")
     {
-        // $this->translation->getManager()->getStorage()->clear();
-        $this->translation = [];
+        $this->translation->getManager()->getStorage()->clear();
+        $this->translation = new Container("translations");
         $auth = new AuthenticationService();
         $auth->clearIdentity();
         return $this->redirect()->toUrl($redirectTo);

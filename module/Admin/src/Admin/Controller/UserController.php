@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -39,7 +39,7 @@ use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Admin\Exception\AuthorizationException;
 
-class UserController extends IndexController
+final class UserController extends IndexController
 {
     /**
      * @var UserForm $userForm
@@ -62,8 +62,8 @@ class UserController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>$this->translate("USERS")]);
         parent::onDispatch($e);
+        $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>$this->translate("USERS")]);
     }
 
     /**
@@ -125,7 +125,7 @@ class UserController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
         }
     }
 
@@ -146,7 +146,7 @@ class UserController extends IndexController
     {
         $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
 
     /**
@@ -156,7 +156,7 @@ class UserController extends IndexController
     {
         $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'user']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
 
     /**

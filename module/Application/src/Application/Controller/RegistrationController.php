@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,7 +38,7 @@ use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
 use Application\Form\RegistrationForm;
 
-class RegistrationController extends IndexController
+final class RegistrationController extends IndexController
 {
 
     /**
@@ -129,7 +129,7 @@ class RegistrationController extends IndexController
         $form->get("password")->setLabel($this->translate("PASSWORD"));
         $form->get("repeatpw")->setLabel($this->translate("REPEAT_PASSWORD"))->setAttribute("placeholder", $this->translate("REPEAT_PASSWORD"));
         $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
-        $form->get("register")->setValue($this->translate("CREATE_ACCOUNT"));
+        $form->get("register")->setValue($this->translate("SIGN_UP"));
 
         $this->view->form = $form;
         return $this->view;

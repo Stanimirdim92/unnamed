@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -37,7 +37,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
-class LayoutMessages extends AbstractPlugin
+final class LayoutMessages extends AbstractPlugin
 {
     /**
      * @var FlashMessenger $flashMessenger

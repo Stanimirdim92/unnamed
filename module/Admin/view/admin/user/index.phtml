@@ -23,10 +23,10 @@
             <li class="table-cell"><?=$user->getFullName()?></li>
             <li class="table-cell"><?=$user->getEmail()?></li>
             <li class="table-cell">
-                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "user", "action" => "detail", "id" => $user->getId()])?>'><i class='fa fa-info'></i></a>
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "detail", "id" => $user->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
                 <button id='delete_<?=$user->getId()?>' type="button" class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
@@ -34,7 +34,7 @@
                    <p><?=$this->translate("DISABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn delete' href='<?=$this->url("admin", ['controller' => "user", "action" => "disable", "id" => $user->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DISABLE")?></a>
+                            <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "disable", "id" => $user->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DISABLE")?></a>
                         </li>
                         <li>
                             <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
@@ -50,4 +50,4 @@
     <div id="results"></div>
 </section>
 <?php
-    echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin']);
+    echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin/default']);

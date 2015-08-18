@@ -1,6 +1,27 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.7 (18.08.2015) - Stable Alpha
+- Removed translations view helper
+- Removed Term* files
+- Updated autoload_classmap and template_map
+- Improved routes config, but the config is still slow (10s on 1st request)
+- New cache folders
+- New Translator factory
+- Moved the translations to a php file that returns an array. Enabled the cache. System loads x4 times faster
+- All controllers and plugins except IndexController and ErrorHandler were made final. They are never ment to be extended
+- Updated ZF2 to 2.4.7
+- new translationsaAction in language controller. The action is used to edit/remove the translations files
+- Improved main Javascript AJAX function
+- Fixed addBreadCrumb order
+- Removed Wordpress IIS $_SERVER fixes
+- Added intl extension to requiarments
+- Better folders and file structure. Fixed some namespaces, created form elements factories ho handle dependencies instead of doing it via the controller
+- Created composer file to install zend and it's required files via the browser with one click. Thanks to Abdul Malik for the idea
+- Removed vendor folder
+- Removed CodePlex (for now)
+
+DD.MM.YYYY
 ## 0.0.6 (08.08.2015) - Stable Alpha
 - Removed vendor/Custom folder. The code was moved to Application\Controller\Plugin and the exception to Exception folder
 - Added factories to controller plugins for better DI
@@ -18,7 +39,7 @@ DD.MM.YYYY
 ## 0.0.4 (06.08.2015) - Stable Alpha
  - Improved fetchList() and fetchJoin() functions
  - Created new translate function in IndexController and View Helper, which will handle all term translations
- - Improved|Refactored Admin\*\* - termtranslation - WIP
+ - Improved|Refactored Admin\*\*
  - Improved|Refactored Application\*\*
  - Enabled module config cache
  - Removed /id path from url
@@ -54,9 +75,9 @@ DD.MM.YYYY
  - Created new controller plugin IndexPlugin
  - Deactivated translations for now.
  - Most of the controller actions were made protected
+ - Run composer from the browser - WIP
 
 # TODO
- - Database translations in combination with I18n
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - WAI-ARIA Landmarks
@@ -65,7 +86,6 @@ DD.MM.YYYY
  - Options controller, which will handle all the options across the CMS
  - Destroyers for all cached variables and queries, when new data is set
  - Finish the AJAX gallery and implement it as LearnZF2 module
- - Improve main Javascript AJAX function
  - Better http://schema.org/
  - Twitter cards
  - Win 8 default png tile cms image

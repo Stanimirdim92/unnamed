@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,7 +38,7 @@ use Admin\Form\AdministratorForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
-class AdministratorController extends IndexController
+final class AdministratorController extends IndexController
 {
     /**
      * @var AdministratorForm $administratorForm
@@ -62,8 +62,8 @@ class AdministratorController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
         parent::onDispatch($e);
+        $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
     }
 
     /**
@@ -116,7 +116,7 @@ class AdministratorController extends IndexController
         $userTable->saveUser($user);
         $this->getTable("administrator")->deleteAdministrator($id);
         $this->setLayoutMessages($this->translate("DELETE_ADMINISTRATOR_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
     }
 
     /**
@@ -131,15 +131,21 @@ class AdministratorController extends IndexController
         $this->view->setTerminal(true);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
-            $results = $this->getTable("user")->fetchList(false, ["id", "name", "surname", "email"], $where)->getDataSource();
+            $results = $this->getTable("user")->fetchList(false, ["id", "name", "surname", "email"], $where);
 
             $json = [];
-            foreach ($results as $result) {
-                $json[] = Json::encode($result);
+            $success = false;
+            if ($results) {
+                $results = $results->getDataSource();
+                foreach ($results as $result) {
+                    $json[] = Json::encode($result);
+                }
+                $success = true;
             }
 
             return new JsonModel([
                 'ajaxsearch' => $json,
+                'statusType' => $success,
             ]);
         }
     }
@@ -191,7 +197,7 @@ class AdministratorController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin', ['controller' => 'administrator']);
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
         }
     }
 }

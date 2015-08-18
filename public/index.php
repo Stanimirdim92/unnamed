@@ -27,9 +27,47 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
+
+/**
+ * Check PHP and MySQL versions
+ */
+define("MIN_PHP_VERSION", "5.4");
+
+/**
+ * Used for ZendDeveloperTools
+ */
+define('REQUEST_MICROTIME', microtime(true));
+
+/**
+ * Current CMS version
+ */
+define("CMS_VER", "0.0.7");
+
+/**
+ * Check requiarments
+ */
+if (version_compare(MIN_PHP_VERSION, PHP_VERSION, '>' )) {
+    header( 'Content-Type: text/html; charset=utf-8' );
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, CMS_VER, MIN_PHP_VERSION));
+}
+
+/**
+ * Minimum required extensions
+ */
+if (!extension_loaded("PDO")        ||
+    !extension_loaded("mysql")      ||
+    !extension_loaded("mysqli")     ||
+    !extension_loaded("mcrypt")     ||
+    !extension_loaded("mbstring")   ||
+    !extension_loaded("pdo_mysql")  ||
+    !extension_loaded("intl")
+    ) {
+    header( 'Content-Type: text/html; charset=utf-8' );
+    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring", "intl"))));
+}
 
 /**
  * Set global ENV. Used for debugging
@@ -77,7 +115,7 @@ ini_set("track_errors", APP_ENV === 'development');
 ini_set('cgi.fix_pathinfo', 0);
 
 /**
- * Helps mitigate xss
+ * Helps mitigate XSS
  */
 ini_set('session.cookie_httponly', 1);
 
@@ -97,122 +135,6 @@ mb_internal_encoding('UTF-8');
 if (ini_get('date.timezone') == '') {
     date_default_timezone_set('UTC');
 }
-
-/**
- * Check PHP and MySQL versions
- */
-define("MIN_PHP_VERSION", "5.4");
-
-/**
- * Used for ZendDeveloperTools
- */
-define('REQUEST_MICROTIME', microtime(true));
-
-/**
- * Current CMS version
- */
-define("CMS_VER", "0.0.6");
-
-/**
- * Check requiarments
- */
-if (version_compare(MIN_PHP_VERSION, PHP_VERSION, '>' )) {
-    header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, CMS_VER, MIN_PHP_VERSION));
-}
-
-/**
- * Minimum required extensions
- */
-if (!extension_loaded("PDO")        &&
-    !extension_loaded("mysql")      &&
-    !extension_loaded("mysqli")     &&
-    !extension_loaded("mcrypt")     &&
-    !extension_loaded("mbstring")   &&
-    !extension_loaded("pdo_mysql")
-    ) {
-    header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring"))));
-}
-
-/*================================================================================
-    PHP $_SERVER fixes are taken from Wordpress wp_includes/load.php. Thanks guys!
- =================================================================================*/
-
-/**
- * Fix server differences
- */
-$_SERVER = array_merge(array('SERVER_SOFTWARE' => '','REQUEST_URI' => ''), $_SERVER);
-
-/**
- * Fix for IIS when running with PHP ISAPI
- */
-if (empty($_SERVER['REQUEST_URI']) ||
-   (php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE']))
-   ) {
-
-    /**
-     * IIS Mod-Rewrite
-     */
-    if (isset($_SERVER['HTTP_X_ORIGINAL_URL'])) {
-        $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'];
-    }
-    /**
-     * IIS Isapi_Rewrite
-     */
-    elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
-        $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_REWRITE_URL'];
-    } else {
-        /**
-         * Use ORIG_PATH_INFO if there is no PATH_INFO
-         */
-        if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO'])) {
-            $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
-        }
-
-        /**
-         * Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
-         */
-        if (isset($_SERVER['PATH_INFO'])) {
-            if ($_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME']) {
-                $_SERVER['REQUEST_URI'] = $_SERVER['PATH_INFO'];
-            } else {
-                $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
-            }
-        }
-        /**
-         * Append the query string if it exists and isn't null
-         */
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            $_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING'];
-        }
-    }
-}
-
-/**
- * Fix for PHP as CGI hosts that set SCRIPT_FILENAME to something ending in php.cgi for all requests
- */
-if (isset($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], 'php.cgi') == strlen($_SERVER['SCRIPT_FILENAME']) - 7 )) {
-    $_SERVER['SCRIPT_FILENAME'] = $_SERVER['PATH_TRANSLATED'];
-}
-
-/**
- * Fix for Dreamhost and other PHP as CGI hosts
- */
-if (strpos($_SERVER['SCRIPT_NAME'], 'php.cgi') !== false) {
-    unset($_SERVER['PATH_INFO']);
-}
-
-/**
- * Fix empty PHP_SELF
- */
-if (empty($_SERVER['PHP_SELF'])) {
-    $_SERVER['PHP_SELF'] = $PHP_SELF = preg_replace( '/(\?.*)?$/', '', $_SERVER["REQUEST_URI"]);
-}
-
-/*================================================================================
-    End of Wordpress $_SERVER fixes
- =================================================================================*/
 
 /**
  * Hack CGI https://github.com/sitrunlab/LearnZF2/pull/128#issuecomment-98054110

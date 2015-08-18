@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -38,9 +38,52 @@ use Zend\InputFilter\InputFilterProviderInterface;
 
 class ContentForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct()
+    /**
+     * @var array $menus
+     */
+    private $menus = [];
+
+    /**
+     * @var array $languages
+     */
+    private $languages = [];
+
+    /**
+     * @param Zend\Db\ResultSet\ResultSet $languages
+     * @param array $menus
+     */
+    public function __construct($languages, array $menus = [])
     {
+        $this->languages = $languages;
+        $this->menus = $menus;
+
         parent::__construct("content");
+    }
+
+    private function collectLanguageOptions()
+    {
+        $valueOptions = [];
+        foreach ($this->languages as $language) {
+            $valueOptions[$language->getId()] = $language->getName();
+        }
+
+        return $valueOptions;
+    }
+
+    private function collectMenuOptions()
+    {
+        $valueOptions = [];
+        foreach ($this->menus["menus"] as $key => $menu) {
+            $valueOptions[$menu->getId()] = $menu->getCaption();
+
+            if (!empty($this->menus["submenus"][$key])) {
+                foreach ($this->menus["submenus"][$key] as $sub) {
+                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
+                }
+            }
+        }
+
+        return $valueOptions;
     }
 
     public function init()
@@ -149,6 +192,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Menu',
                 'empty_option' => 'Please choose your menu',
+                'value_options' => $this->collectMenuOptions(),
             ],
         ]);
 
@@ -158,6 +202,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Language',
                 'empty_option' => 'Please choose a language',
+                'value_options' => $this->collectLanguageOptions(),
             ],
         ]);
 

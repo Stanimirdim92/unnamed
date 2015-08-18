@@ -21,11 +21,5 @@
         "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
         "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
         "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
-    },
-    "autoload": {
-        "classmap": ["vendor/CodePlex"]
-    },
-    "autoload-dev": {
-        "classmap": ["vendor/CodePlex"]
     }
 }

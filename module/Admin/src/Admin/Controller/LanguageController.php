@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -35,8 +35,11 @@ namespace Admin\Controller;
 
 use Admin\Model\Language;
 use Admin\Form\LanguageForm;
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Stdlib\Parameters;
 
-class LanguageController extends IndexController
+final class LanguageController extends IndexController
 {
     /**
      * @var LanguageForm $languageForm
@@ -60,8 +63,8 @@ class LanguageController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
         parent::onDispatch($e);
+        $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
     }
 
     /**
@@ -109,7 +112,7 @@ class LanguageController extends IndexController
     {
         $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'language']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
     }
 
     /**
@@ -121,6 +124,47 @@ class LanguageController extends IndexController
         $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
         $this->view->lang = $lang;
         $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
+        return $this->view;
+    }
+
+    /**
+     * This method will get the translation file based on the $_SESSION["languageName"] variable.
+     * If no such file is found, the system will try to return the backup file.
+     * If the backup file is not found for any reason, an exception will be thrown
+     *
+     * @throws RunTimeException if no file is found
+     */
+    protected function translationsAction()
+    {
+        $this->view->setTemplate("admin/language/translations");
+
+        $arr = "module/Application/languages/phpArray/".$this->language("languageName").".php";
+
+        if (!is_file($arr)) {
+            $arr = "module/Application/languages/phpArray/en.php";
+        }
+
+        if (!is_file($arr)) {
+            $arr = "data/translations/en_backup.php";
+        }
+
+        if (!is_file($arr)) {
+            throw new \RunTimeException($this->translate('NO_TRANSLATION_FILE'));
+        }
+
+        $this->view->translationsArray = include $arr;
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($request->getPost() instanceof Parameters) {
+                $filename = "module/Application/languages/phpArray/".$this->language("languageName").".php";
+                $arr2 = $request->getPost()->toArray();
+                unset($arr2["submit"]); // remove the submit button
+                file_put_contents($filename, '<?php return ' . var_export($arr2, true).';');
+                $this->setLayoutMessages($this->translate("TRANSLATIONS_SAVE_SUCCESS"), "success");
+            }
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
+        }
         return $this->view;
     }
 
@@ -152,7 +196,7 @@ class LanguageController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin', ['controller' => 'language']);
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
         }
     }
 }

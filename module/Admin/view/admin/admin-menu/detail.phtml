@@ -6,7 +6,7 @@
 ?>
 <section>
     <p>
-        <a href="<?=$this->url("admin", ['controller' => "adminmenu"])?>" class="btn btn-default">
+        <a href="<?=$this->url("admin/default", ['controller' => "adminmenu"])?>" class="btn btn-default">
             <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
@@ -46,7 +46,7 @@
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("PARENT")?></li>
             <li class="table-cell">
-                <a class='btn btn-default blue' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "detail", "id" => $adminmenu->getParent()])?>'><i class='fa fa-info'></i></a>
+                <a class='btn btn-default blue' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $adminmenu->getParent()])?>'><i class='fa fa-info'></i></a>
             </li>
         </ul>
 <?php

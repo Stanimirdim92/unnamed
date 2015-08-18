@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -39,7 +39,7 @@ use Zend\Json\Json;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
 
-class ContentController extends IndexController
+final class ContentController extends IndexController
 {
     /**
      * @var ContentForm $contentForm
@@ -63,8 +63,8 @@ class ContentController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>$this->translate("CONTENTS")]);
         parent::onDispatch($e);
+        $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>$this->translate("CONTENTS")]);
     }
 
     /**
@@ -113,7 +113,7 @@ class ContentController extends IndexController
     {
         $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'content']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -135,7 +135,7 @@ class ContentController extends IndexController
     {
         $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'content']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -151,33 +151,9 @@ class ContentController extends IndexController
         }
 
         /**
-         * Populate the form with menus and languages data
-         */
-        $menus = $this->prepareMenusData();
-        $valueOptions = [];
-        foreach ($menus["menus"] as $key => $menu) {
-            $valueOptions[$menu->getId()] = $menu->getCaption();
-
-            if (!empty($menus["submenus"][$key])) {
-                foreach ($menus["submenus"][$key] as $sub) {
-                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
-                }
-            }
-        }
-
-        /**
          * @var $form ContentForm
          */
         $form = $this->contentForm;
-        $form->get("menu")->setValueOptions($valueOptions);
-
-        $languages = $this->getTable("Language")->fetchList(false, [], ["active" => 1], "AND");
-        $valueOptions = [];
-        foreach ($languages as $language) {
-            $valueOptions[$language->getId()] = $language->getName();
-        }
-        $form->get("language")->setValueOptions($valueOptions);
-
         $form->bind($content);
         $form->get("submit")->setValue($label);
         $this->view->form = $form;
@@ -203,7 +179,7 @@ class ContentController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
             }
-            return $this->redirect()->toRoute('admin', ['controller' => 'content']);
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
         }
     }
 

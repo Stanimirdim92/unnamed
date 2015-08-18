@@ -3,17 +3,9 @@ return [
     'router' => [
         'routes' => [
             'application' => [
-                'type'    => 'Segment',
+                'type'    => 'Literal',
                 'options' => [
-                    'route'    => '/[:controller[/][:action[/[:id][token/:token][:title]][search/:search]]]',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z0-9_-]*',
-                        'token'      => '[[a-zA-Z-+_/&0-9]*',
-                        'title'      => '[a-zA-Z0-9_-]*',
-                        'search'     => '[a-zA-Z0-9_-]*',
-                        'id'         => '[0-9]+',
-                    ],
+                    'route'    => '/',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Index',
@@ -21,11 +13,32 @@ return [
                     ],
                 ],
                 'may_terminate' => true,
+                'child_routes' => [
+                    'default' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '[:controller[/][:action[/[:id][token/:token][:title]][search/:search]]]',
+                            'constraints' => [
+                                'controller' => '[a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z0-9_-]*',
+                                'token'      => '[a-zA-Z-+_/&0-9]*',
+                                'title'      => '[a-zA-Z0-9_-]*',
+                                'search'     => '[a-zA-Z0-9_-]*',
+                                'id'         => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'Application\Controller',
+                                'controller'    => 'Index',
+                                'action'        => 'index',
+                            ],
+                        ],
+                    ],
+                ],
             ],
             'news' => [
-                'type' => 'Segment',
+                'type' => 'Literal',
                 'options' => [
-                    'route'    => '/news[/][post/:post][page/:page]',
+                    'route'    => '/news',
                     'constraints' => [
                         'post' => '[a-zA-Z0-9_-]*',
                         'page' => '[0-9]+',
@@ -37,6 +50,23 @@ return [
                     ],
                 ],
                 'may_terminate' => true,
+                'child_routes' => [
+                    'default' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/[post/:post][page/:page]',
+                            'constraints' => [
+                                'post' => '[a-zA-Z0-9_-]*',
+                                'page' => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'Application\Controller',
+                                'controller'    => 'News',
+                                'action'        => 'post',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
@@ -45,17 +75,45 @@ return [
             'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
         ],
         'factories' => [
-            'Application\Cache'       =>  'Zend\Cache\Service\StorageCacheFactory',
             'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
-            'ResetPasswordTable'       => 'Application\Factory\ResetPasswordTableFactory',
+            'ResetPasswordTable'       => 'Application\Factory\Model\ResetPasswordTableFactory',
             'initSession'              => 'Application\Factory\ApplicationSessionFactory',
+            'translator'               => 'Zend\Mvc\Service\TranslatorServiceFactory',
+        ],
+    ],
+    'translator' => [
+        'locale' => 'en',
+        'translation_file_patterns' => [
+            [
+                'base_dir' => __DIR__.'/../languages/phpArray',
+                'type'     => 'phpArray',
+                'pattern'  => '%s.php',
+            ],
+        ],
+        'cache' => [
+            'adapter' => [
+                'name'    => 'Filesystem',
+                'options' => [
+                    'cache_dir' => __DIR__ . '/../../../data/cache/frontend',
+                    'ttl'       => '100',
+                ],
+            ],
+            'plugins' => [
+                [
+                    'name'    => 'serializer',
+                    'options' => [],
+                ],
+                'exception_handler' => [
+                    'throw_exceptions' => true,
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
-            'Application\Controller\Login'        => 'Application\Factory\Controller\LoginFormFactory',
+            'Application\Controller\Login'        => 'Application\Factory\Controller\LoginControllerFactory',
             'Application\Controller\Contact'      => 'Application\Factory\Controller\ContactControllerFactory',
-            'Application\Controller\Registration' => 'Application\Factory\Controller\RegistrationFormFactory',
+            'Application\Controller\Registration' => 'Application\Factory\Controller\RegistrationControllerFactory',
         ],
         'invokables' => [
             'Application\Controller\Index'        => 'Application\Controller\IndexController',
@@ -65,6 +123,7 @@ return [
     ],
     'controller_plugins' => [
         'factories' => [
+            'translate'             => 'Application\Controller\Plugin\Factory\TranslateFactory',
             'Mailing'               => 'Application\Controller\Plugin\Factory\MailingFactory',
             'UserData'              => 'Application\Controller\Plugin\Factory\UserDataFactory',
             'setLayoutMessages'     => 'Application\Controller\Plugin\Factory\LayoutMessagesFactory',
@@ -75,14 +134,9 @@ return [
             'setErrorCode'          => 'Application\Controller\Plugin\Factory\ErrorCodesFactory'
         ]
     ],
-    'view_helpers' => [
-        'invokables'=> [
-            'translate' => 'Application\View\Helper\TranslateHelper',
-        ],
-    ],
     'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
+        'display_not_found_reason' => (APP_ENV === "development"),
+        'display_exceptions'       => (APP_ENV === "development"),
         'doctype'                  => 'HTML5',
         'not_found_template'       => 'error/index',
         'exception_template'       => 'error/index',

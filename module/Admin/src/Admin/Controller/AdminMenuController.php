@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -36,7 +36,7 @@ namespace Admin\Controller;
 use Admin\Model\AdminMenu;
 use Admin\Form\AdminMenuForm;
 
-class AdminMenuController extends IndexController
+final class AdminMenuController extends IndexController
 {
     /**
      * @var AdminMenuForm $adminMenuForm
@@ -60,8 +60,8 @@ class AdminMenuController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
         parent::onDispatch($e);
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
     }
 
     /**
@@ -121,7 +121,7 @@ class AdminMenuController extends IndexController
     {
         $this->getTable("adminmenu")->deleteAdminMenu($this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
 
     protected function detailAction()
@@ -137,7 +137,7 @@ class AdminMenuController extends IndexController
     {
         $adminmenu = $this->getTable("adminmenu")->duplicate($this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
 
     /**
@@ -157,15 +157,6 @@ class AdminMenuController extends IndexController
          */
         $form = $this->adminMenuForm;
         $form->get("submit")->setValue($label);
-        $parents = $this->getTable("adminmenu")->fetchList(false, [], ["parent" => 0]);
-
-        $valueOptions = [];
-        $valueOptions[0] = 'Parent menu';
-        foreach ($parents as $parent) {
-            $valueOptions[$parent->getId()] = $parent->getCaption();
-        }
-
-        $form->get("parent")->setValueOptions($valueOptions);
         $form->bind($adminMenu);
         $this->view->form = $form;
 
@@ -178,7 +169,7 @@ class AdminMenuController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin', ['controller' => 'adminmenu']);
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
         }
     }
 }

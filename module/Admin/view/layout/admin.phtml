@@ -31,11 +31,13 @@
         <div class="breadcrumbs">
             <ul>
 <?php
+            if ($view->breadcrumbs) {
                 foreach($view->breadcrumbs as $bread) {
                     if ($bread['name'] != null) {
-                        echo "<li><a itemprop='url' title='".$bread['name']."' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
+                        echo "<li><a itemprop='url' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
                     }
                 }
+            }
 ?>
             </ul>
         </div>

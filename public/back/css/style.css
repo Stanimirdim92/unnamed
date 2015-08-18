@@ -562,6 +562,11 @@ textarea:focus {
     visibility: hidden;
 }
 
+.visible {
+    visibility: visible;
+    display: block !important;
+}
+
 /*
  * Hide only visually, but have it available for screenreaders: h5bp.com/v
  */
@@ -684,6 +689,15 @@ ul {
 .upload-file {
 
 }
+.toggle-translation-box {
+    display: none;
+  background: #eee;
+  width: 50%;
+  height: 25%;
+}
+button.add-new-translation {
+
+}
 .dinamicly-div-append-wrapper {
     position: fixed;
     top: 10px;
@@ -731,7 +745,7 @@ ul {
   bottom: 0;
 }
 .ajax-loader {
-      background: url("../img/ajax-loader.gif");
+  background: url("../img/ajax-loader.gif");
   width: 18px;
   height: 15px;
   text-align: center;
@@ -918,16 +932,11 @@ width: 100%;
 .dialog_hide p {
     border-bottom: 1px solid rgb(211, 211, 211);
     padding: 10px;
-    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),
-        to(rgb(255, 255, 255)));
-    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255));
-    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255));
-    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255));
-    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255));
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),to(rgb(255, 255, 255)));
+    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
 }
 
 .dialog_hide ul {
@@ -937,31 +946,31 @@ width: 100%;
 
 .btn-duplicate {
     color: #fff;
-    background-color: rgb(3, 83, 169) !important;
+    background-color: rgb(3, 83, 169);
     border-color: rgb(2, 76, 156)
 }
 
 .btn-archive {
     color: #fff;
-    background-color: rgb(224, 117, 1) !important;
+    background-color: rgb(224, 117, 1);
     border-color: rgb(202, 121, 0);
 }
 
 .btn-unarchive {
     color: #fff;
-    background-color: rgb(3, 162, 169) !important;
+    background-color: rgb(3, 162, 169);
     border-color: rgb(6, 130, 141);
 }
 
 .btn-sendmail {
     color: #fff;
-    background-color: rgb(23, 169, 3) !important;
+    background-color: rgb(23, 169, 3);
     border-color: rgb(26, 144, 3);
 }
 .blue {
     color: #fff;
-  background-color: #337ab7 !important;
-  border-color: #2e6da4 !important;
+  background-color: #337ab7;
+  border-color: #2e6da4;
 }
 
 
@@ -978,42 +987,37 @@ width: 100%;
 }
 
 .red:hover {
-    color: #fff !important;
+    color: #fff;
     background-color: #81021f;
     border-color: #540114
 }
 
 /* !Important is used an all properies , because in deadobjects deleteall action this css class .jarviswidget>div breaks the window... */
 .dialog_hide {
-    width: 355px !important;
-    height: 160px !important;
-    border: 1px solid rgb(209, 209, 209) !important;
-    z-index: 100 !important;
-    left: 50% !important;
-    top: 50% !important;
-    padding: 0 !important;
-    -webkit-transform: translate(-50%, -50%) !important;
-    -moz-transform: translate(-50%, -50%) !important;
-    -ms-transform: translate(-50%, -50%) !important;
-    -o-transform: translate(-50%, -50%) !important;
-    transform: translate(-50%, -50%) !important;
-    position: fixed !important;
-    border-radius: 5px !important;
-    background: #eee !important;
-    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),
-        to(rgb(255, 255, 255))) !important;
-    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
+    width: 355px;
+    height: 160px;
+    border: 1px solid rgb(209, 209, 209);
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    padding: 0;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: fixed;
+    border-radius: 5px;
+    background: #eee;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),to(rgb(255, 255, 255)));
+    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
 }
 .green {
     color: #fff;
-    background-color: #78BA60 !important;
+    background-color: #78BA60;
     border-color: rgb(26, 144, 3);
 }
 .delete {
@@ -1025,7 +1029,7 @@ width: 100%;
       width: 33.33333%;
 }
 .delete:hover {
-    color: #fff !important;
+    color: #fff;
     background-color: #81021f;
     border-color: #540114
 }
@@ -1337,7 +1341,7 @@ Begin Media Queries for different devices
     }
 
     img {
-        max-width: 100% !important;
+        max-width: 100%;
     }
 
     @page {

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -43,11 +43,12 @@ use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Validator\AbstractValidator;
 
 class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
-     * @param  $moduleManager ModuleManager
+     * @param $moduleManager ModuleManagerInterface
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
@@ -58,6 +59,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
             $e->getTarget()->layout('layout/layout');
         });
     }
+
     /**
      * Listen to the bootstrap event
      *
@@ -65,9 +67,10 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function onBootstrap(EventInterface $e)
     {
-        $app = $e->getTarget();
+        $app = $e->getApplication();
+        $moduleRouteListener = new ModuleRouteListener();
 
-        if (!$app->getRequest() instanceof HttpRequest) {
+        if (!$e->getRequest() instanceof HttpRequest) {
             return;
         }
 
@@ -75,6 +78,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         * @var $em Zend\EventManager\EventManager
         */
         $em = $app->getEventManager();
+        $moduleRouteListener->attach($em);
 
        /**
         * @var $sm Zend\ServiceManager\ServiceManager
@@ -102,9 +106,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
          * Atach event listener for all types of errors, warnings, exceptions etc.
          */
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
-
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($em);
     }
 
     /**
@@ -130,6 +131,19 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     public function onDispatch(EventInterface $e)
     {
         $sm = $e->getApplication()->getServiceManager();
+
+        /**
+         * Get translations
+         */
+        $lang = new Container("translations");
+        $translator = $sm->get('translator');
+
+        AbstractValidator::setDefaultTranslator($translator);
+        $translator->setLocale($lang->languageName)->setFallbackLocale('en');
+
+        /**
+         * Setup website title
+         */
         $route = $e->getRouteMatch();
         $viewHelper = $sm->get('ViewHelperManager');
 
@@ -149,8 +163,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         }
         $headTitleHelper = $viewHelper->get('headTitle');
         $headTitleHelper->append('Unnamed - '.ucfirst($action)); // must be set from db
-        $e->stopPropagation();
-        return;
+
     }
 
     /**

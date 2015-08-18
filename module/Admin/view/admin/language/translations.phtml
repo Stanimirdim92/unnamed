@@ -1,0 +1,49 @@
+<?php
+   /**
+    * @var $translations array
+    */
+    $translations = $this->translationsArray;
+?>
+<div>
+    <p>
+        <a href="<?=$this->url("admin/default", ["controller" => "language"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
+    <div class='form-inputs'>
+        <button class="add-new-translation" type="button">Add new field</button>
+        <div class="toggle-translation-box">
+            <input type="text" name="newTranslationsConstName" id="newTranslationsConstName" required="required" size="45" placeholder="Add a transaltions key, e.g. MY_TRANSLATION" value="">
+            <input type="text" name="newTranslationsText" id="newTranslationsText" required="required" size="45" placeholder="Add a transaltions, e.g. My translation" value="">
+            <button class="add-translation" type="button">add</button>
+        </div>
+
+        <br>
+        <br>
+        <hr>
+        <br>
+        <br>
+        <form name="translationsArray" action="&#x2F;admin&#x2F;language&#x2F;translations" id="translationsArray" method="post">
+            <fieldset>
+            <input type="submit" value="<?=$this->translate("MODIFY")?>" name="submit" id="submit">
+            <br>
+            <br>
+<?php
+            foreach ($translations as $constKey => $translation) {
+?>
+                <label>
+                    <span><?=$constKey?></span>
+                    <input type="text" name="<?=$constKey?>" required="required" size="35" placeholder="<?=$constKey?>" value="<?=$translation?>">
+                    <button type='button' class='btn btn-sm delete translation_delete'><i class='fa fa-trash-o'></i></button>
+                </label>
+                <br>
+<?php
+            }
+?>
+            </fieldset>
+        </form>
+<?php
+    // echo $this->paginationControl($this->translationsArray, 'sliding', 'admin/pagination', ['route' => 'admin/default']);
+?>
+    </div>
+</div>

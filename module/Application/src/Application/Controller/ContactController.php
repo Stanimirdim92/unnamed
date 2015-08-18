@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -36,7 +36,7 @@ namespace Application\Controller;
 use Zend\Mvc\MvcEvent;
 use Application\Form\ContactForm;
 
-class ContactController extends IndexController
+final class ContactController extends IndexController
 {
     /**
      * @var ContactForm $contactForm
@@ -74,8 +74,8 @@ class ContactController extends IndexController
          */
         $form = $this->contactForm;
         $form->get("email")->setLabel($this->translate("EMAIL"));
-        $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));
-        $form->get("subject")->setLabel($this->translate("SUBJECT"))->setAttribute("placeholder", $this->translate("SUBJECT"));
+        $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("ENTER_NAME"));
+        $form->get("subject")->setLabel($this->translate("SUBJECT"))->setAttribute("placeholder", $this->translate("ENTER_SUBJECT"));
         $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
         $form->get("message")->setLabel($this->translate("MESSAGE"))->setAttribute("placeholder", $this->translate("ENTER_MESSAGE"));
 

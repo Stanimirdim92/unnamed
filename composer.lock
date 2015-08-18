@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "50bd1bc3f601430d10e3640592b85f6e",
+    "hash": "e3ff4042b2886c7cd020bb23a3f90e2d",
     "packages": [
         {
             "name": "zendframework/zendframework",
-            "version": "2.4.6",
+            "version": "2.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "e0fc119111bace89e0ab7da57ab24d49713a17d1"
+                "reference": "b13b45e0baa609321ca6544abc7615414fcbf073"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/e0fc119111bace89e0ab7da57ab24d49713a17d1",
-                "reference": "e0fc119111bace89e0ab7da57ab24d49713a17d1",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/b13b45e0baa609321ca6544abc7615414fcbf073",
+                "reference": "b13b45e0baa609321ca6544abc7615414fcbf073",
                 "shasum": ""
             },
             "require": {
@@ -121,7 +121,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-08-03 15:03:22"
+            "time": "2015-08-11 16:22:28"
         },
         {
             "name": "zendframework/zendxml",

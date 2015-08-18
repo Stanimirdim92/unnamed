@@ -39,10 +39,10 @@
 ?>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "detail", "id" => $adminMenu->getId()])?>'><i class='fa fa-info'></i></a>
+                <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $adminMenu->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "modify", "id" => $adminMenu->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $adminMenu->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
                 <button id='delete_<?=$adminMenu->getId()?>' type="button" class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
@@ -50,7 +50,7 @@
                    <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$adminMenu->getCaption()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn delete' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "delete", "id" => $adminMenu->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
+                            <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "delete", "id" => $adminMenu->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
                         </li>
                         <li>
                             <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
@@ -87,10 +87,10 @@
 ?>
                     </li>
                     <li class="table-cell">
-                        <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "detail", "id" => $sub->getId()])?>'><i class='fa fa-info'></i></a>
+                        <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $sub->getId()])?>'><i class='fa fa-info'></i></a>
                     </li>
                     <li class="table-cell">
-                        <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "modify", "id" => $sub->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                        <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $sub->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
                     </li>
                     <li class="table-cell">
                         <button id='delete_<?=$sub->getId()?>' type="button" class='btn btn-default btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></a>
@@ -98,7 +98,7 @@
                            <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$sub->getCaption()?>&raquo;</p>
                             <ul>
                                 <li>
-                                    <a class='btn delete' href='<?=$this->url("admin", ['controller' => "adminmenu", "action" => "delete", "id" => $sub->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
+                                    <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "delete", "id" => $sub->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
                                 </li>
                                 <li>
                                     <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>

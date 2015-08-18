@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -41,14 +41,14 @@ use Zend\View\Model\ViewModel;
 class IndexController extends AbstractActionController
 {
     /**
-     * @var Zend\View\Model\ViewModel $view creates instance to view model
+     * @var ViewModel $view creates instance to view model
      */
     protected $view = null;
 
     /**
-     * @var array $translation holds language data as well as all translations
+     * @var Container $translation holds language id and name
      */
-    protected $translation = [];
+    protected $translation = null;
 
     /**
      * @var array $breadcrumbs returns an array with links with the current user position on the website
@@ -58,23 +58,27 @@ class IndexController extends AbstractActionController
     public function __construct()
     {
         $this->view = new ViewModel();
-        $this->breadcrumbs[] = ["reference" => "/admin", "name" => $this->translate("DASHBOARD")];
+        $this->translation = new Container("translations");
+
+        if (!$this->translation->offSetExists("language")) {
+            $this->translation->language = 1;
+            $this->translation->languageName = "en";
+        }
     }
 
     /**
      * Initialize any variables before controller actions
      *
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param MvcEvent $e
      * @method  IndexController::isAdmin()
      */
     public function onDispatch(MvcEvent $e)
     {
+        $this->addBreadcrumb(["reference" => "/admin", "name" => $this->translate("DASHBOARD")]);
         if (APP_ENV !== 'development') {
-            /**
-             * @see IndexController::isAdmin()
-             */
             $this->isAdmin();
         }
+
         parent::onDispatch($e);
         $this->view->breadcrumbs = $this->breadcrumbs;
     }
@@ -83,10 +87,38 @@ class IndexController extends AbstractActionController
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
 
+    /**
+     * initialize the admin menus
+     * @todo  rewrite
+     */
+    // private function initMenus()
+    // {
+    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
+    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
+    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
+    // }
 
 /****************************************************
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
+
+    /**
+     * Get Language id or name. Defaults to language - id
+     * If a different offset is passed (not-existing-offset) and it doesn't,
+     * it will ty to check for a language offset.
+     * If language offset is also not found 1 s being returned as the default language id where 1 == en
+     *
+     * @return  mixed
+     */
+    protected function language($offset = "language")
+    {
+        if ($this->translation->offSetExists($offset)) {
+            return $this->translation->offSetGet($offset);
+        } elseif ($this->translation->offSetExists("language")) {
+            return $this->translation->offSetExists("language");
+        }
+        return 1;
+    }
 
     /**
      * @param array $breadcrumbs
@@ -131,31 +163,6 @@ class IndexController extends AbstractActionController
         return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
     }
 
-    /**
-     * Copy of initMenus() used in Menus|Content controllers
-     *
-     * @return array
-     */
-    protected function prepareMenusData()
-    {
-        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder");
-        if (count($menu) > 0) {
-            $menus = ["menus" => null, "submenus" => null];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $menus["submenus"][$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus["menus"][$submenu->getId()] = $submenu;
-                }
-            }
-            return $menus;
-        }
-        return [];
-    }
-
 /****************************************************
  * START OF ALL ACTION METHODS
  ****************************************************/
@@ -169,79 +176,19 @@ class IndexController extends AbstractActionController
         return $this->view;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * initialize the admin menus
-     * @todo  rewrite
-     */
-    // private function initMenus()
-    // {
-    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
-    // }
-
-    /**
-     * Initialize translations.
-     *
-     * @return  void
-     */
-    private function initTranslation()
-    {
-        // if (empty($this->translation["language"])) {
-            /**
-             * Load English as default language.
-             */
-            // $terms = $this->getTable("term")->fetchJoin(false, "termtranslation", ["name"], ["translation"], "term.id=termtranslation.term", "inner", ["termtranslation.language" => $this->language()])->getDataSource();
-
-            // foreach ($terms as $term) {
-            //     $this->translation->$term['name'] = $term['translation'];
-            // }
-            // $this->translation["language"] = 1;
-        // }
-    }
-
     /**
      * Select new language
      *
      * This will reload the translations every time the method is being called
-     * @todo implement logic
      */
     protected function languageAction()
     {
-        return $this->redirect()->toUrl("/");
-    }
+        $id = $this->getParam("id", 1);
+        $language = $this->getTable("language")->getLanguage($id);
 
+        $this->translation->language = $language->getId();
+        $this->translation->languageName = $language->getName();
 
-    /**
-     * @todo implement logic
-     */
-    public function translate($a)
-    {
-        return $a;
-    }
-
-    /**
-     * Get Language id
-     * @return  int
-     * @todo implement logic
-     */
-    protected function language()
-    {
-        // if (isset($this->translation["language"]) && (int) $this->translation["language"] > 0) {
-        //     return $this->translation["language"];
-        // }
-        $this->translation["language"] = 1;
-        return $this->translation["language"];
+        return $this->redirect()->toUrl("/admin");
     }
 }

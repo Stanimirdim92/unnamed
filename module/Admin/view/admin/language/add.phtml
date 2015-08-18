@@ -1,6 +1,6 @@
 <div>
     <p>
-        <a href="<?=$this->url("admin", ["controller" => "language"])?>" class="btn btn-default">
+        <a href="<?=$this->url("admin/default", ["controller" => "language"])?>" class="btn btn-default">
             <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
@@ -10,7 +10,7 @@
              * @var Admin\Form\LanguageForm
              */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin', ['controller' =>'language','action' => 'add']));
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'language','action' => 'add']));
             $form->prepare();
             echo $this->form()->openTag($form);
             echo $this->formCollection($form);

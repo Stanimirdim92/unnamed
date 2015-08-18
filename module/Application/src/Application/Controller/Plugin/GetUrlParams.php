@@ -37,7 +37,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Escaper\Escaper;
 use Zend\Mvc\Controller\Plugin\Params;
 
-class GetUrlParams extends AbstractPlugin
+final class GetUrlParams extends AbstractPlugin
 {
     /**
      * @var Params $param

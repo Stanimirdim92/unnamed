@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.6
+ * @version    0.0.7
  * @link       TBA
  */
 
@@ -36,7 +36,7 @@ namespace Application\Controller\Plugin;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class GetTableModel extends AbstractPlugin
+final class GetTableModel extends AbstractPlugin
 {
     /**
      * @var ServiceLocatorInterface $serviceLocator
@@ -53,10 +53,13 @@ class GetTableModel extends AbstractPlugin
 
     /**
      * @param string $tableName
-     * @return object
+     * @return object|null
      */
     protected function __invoke($tableName = null)
     {
-        return $this->serviceLocator->get($tableName . "table");
+        if ($this->serviceLocator->has($tableName."table")) {
+            return $this->serviceLocator->get($tableName."table");
+        }
+        return null;
     }
 }

@@ -20,10 +20,6 @@ if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
 }
 
-if (!class_exists('Zend\Loader\AutoloaderFactory')) {
-    throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
-}
-
 $zf2Path = false;
 
 if (is_dir('vendor/zendframework/zendframework/library')) {
@@ -47,4 +43,29 @@ if ($zf2Path !== false) {
             ]
         ]);
     }
+}
+
+// Yes, for real :)
+$style = "
+    background-color: #56AA1C;
+    border-color: #56AA1C;
+    display: inline-block;
+    padding: 8px 14px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: 'DejaVu Sans', 'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
+";
+
+if (!class_exists('Zend\Loader\AutoloaderFactory')) {
+    die(sprintf('<p style="text-align: center;color: #737373; font-size: 14px;font-family: \'DejaVu Sans\', \'Trebuchet MS\', Verdana, \'Verdana Ref\', sans-serif;">Unable to load Zend Framework. <br> <br> <a style="'.$style.'" href="/install.php">Click to install it.</a></p>'));
 }
