@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.7
+ * @version    0.0.10
  * @link       TBA
  */
 
@@ -62,7 +62,7 @@ final class ErrorCodes extends AbstractPlugin
     /**
      * @param int $code error code
      */
-    protected function __invoke($code = 404)
+    public function __invoke($code = 404)
     {
         $this->response->setStatusCode((int) $code);
         $this->layout->setVariables([

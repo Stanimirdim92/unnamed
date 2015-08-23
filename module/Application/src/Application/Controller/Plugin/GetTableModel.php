@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.7
+ * @version    0.0.10
  * @link       TBA
  */
 
@@ -55,7 +55,7 @@ final class GetTableModel extends AbstractPlugin
      * @param string $tableName
      * @return object|null
      */
-    protected function __invoke($tableName = null)
+    public function __invoke($tableName = null)
     {
         if ($this->serviceLocator->has($tableName."table")) {
             return $this->serviceLocator->get($tableName."table");

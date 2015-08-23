@@ -1,3 +1,0 @@
-stanimir:admin:0885123
-ivan:admin:12345678
-petkan:admin:55555555

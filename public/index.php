@@ -27,14 +27,11 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.7
+ * @version    0.0.10
  * @link       TBA
  */
 
-/**
- * Check PHP and MySQL versions
- */
-define("MIN_PHP_VERSION", "5.4");
+header( 'Content-Type: text/html; charset=utf-8' );
 
 /**
  * Used for ZendDeveloperTools
@@ -42,31 +39,18 @@ define("MIN_PHP_VERSION", "5.4");
 define('REQUEST_MICROTIME', microtime(true));
 
 /**
- * Current CMS version
- */
-define("CMS_VER", "0.0.7");
-
-/**
  * Check requiarments
  */
-if (version_compare(MIN_PHP_VERSION, PHP_VERSION, '>' )) {
+if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, CMS_VER, MIN_PHP_VERSION));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.10", "5.5"));
 }
 
 /**
  * Minimum required extensions
  */
-if (!extension_loaded("PDO")        ||
-    !extension_loaded("mysql")      ||
-    !extension_loaded("mysqli")     ||
-    !extension_loaded("mcrypt")     ||
-    !extension_loaded("mbstring")   ||
-    !extension_loaded("pdo_mysql")  ||
-    !extension_loaded("intl")
-    ) {
-    header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", array("mysql", "mysqli", "PDO", "pdo_mysql", "mcrypt", "mbstring", "intl"))));
+if (!extension_loaded("mcrypt") || !extension_loaded("mbstring") || !extension_loaded("intl")) {
+    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", array("mcrypt", "mbstring", "intl"))));
 }
 
 /**
@@ -77,12 +61,6 @@ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER["APPLICATION_ENV"] === 'devel
 } else {
     define("APP_ENV", "production");
 }
-
-/**
- * Set default php.ini settings.
- *
- * Below lines includes security|error fixes
- */
 
 /**
  * Handle reporting level
@@ -97,17 +75,17 @@ ini_set("log_errors", (APP_ENV === 'development'));
 /**
  * Display of all other errors
  */
-ini_set("display_errors", APP_ENV === 'development');
+ini_set("display_errors", (APP_ENV === 'development'));
 
 /**
  * Display of all startup errors
  */
-ini_set("display_startup_errors", APP_ENV === 'development');
+ini_set("display_startup_errors", (APP_ENV === 'development'));
 
 /**
  * Catch an error message emitted from PHP
  */
-ini_set("track_errors", APP_ENV === 'development');
+ini_set("track_errors",  (APP_ENV === 'development'));
 
 /**
  * Avoid serving non .php files as .php files
@@ -125,9 +103,20 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 
 /**
+ * Enable strict session mode.
+ */
+ini_set('session.use_strict_mode', 1);
+
+/**
+ * Use SHA-1 instead of MD5
+ */
+ini_set('session.hash_function', 1);
+
+/**
  * Fixes files and server encoding
  */
-mb_internal_encoding('UTF-8');
+// mb_internal_encoding('UTF-8');
+ini_set('default_charset', 'UTF-8T');
 
 /**
  * Some server configurations are missing a date timezone

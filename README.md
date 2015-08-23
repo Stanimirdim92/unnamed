@@ -5,24 +5,20 @@ This README would normally document whatever steps are necessary to get your app
 ### Unnamed CMS ###
 
 * Building a new CMS on top of Zend Framework 2. Why? Because I can and because the internet needs something better.
-* Version 0.0.7
+* Version 0.0.10
 * Huge thanks to (Abdul Malik Ikhsan)https://samsonasik.wordpress.com/ a.k.a (samsonasik)https://twitter.com/samsonasik?lang=en for being saw helpful and patient
 
 ### Requirements ###
 
-* PHP 5.4.0+
+* PHP 5.5.0+
 * Extensions:
- - PDO
- - mysql
- - mysqli
  - mcrypt
  - mbstring
- - pdo_mysql
  - intl
 * ircmaxell password class (integrated into the system)
 * Apache 2.11+ or nginx (nginx setup will be proveded later)
-* Zend Framework 2.4+ (integrated into the system)
-* CodePlex (integrated into the system)
+* Zend Framework 2.5+ (integrated into the system)
+* CodePlex (integrated into the system)  -removed for now
 
 ### Requirements for development ###
 

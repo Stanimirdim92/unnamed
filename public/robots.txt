@@ -17,5 +17,7 @@ Crawl-delay: 3
 # Directories
 Disallow: /fileupload/
 Disallow: /userfiles/
-Disallow: /adminfiles/
 Disallow: /admin/
+Disallow: /vendor/
+Disallow: /data/
+Disallow: /config/

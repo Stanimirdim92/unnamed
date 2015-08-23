@@ -95,7 +95,7 @@ return [
                 'name'    => 'Filesystem',
                 'options' => [
                     'cache_dir' => __DIR__ . '/../../../data/cache/frontend',
-                    'ttl'       => '100',
+                    'ttl'       => '3600',
                 ],
             ],
             'plugins' => [

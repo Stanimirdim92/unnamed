@@ -8,8 +8,8 @@
         "Unnamed"
     ],
     "require": {
-        "php": ">=5.4",
-        "zendframework/zendframework": "2.4.*"
+        "php": ">=5.5",
+        "zendframework/zendframework": "~2.5"
     },
     "require-dev": {
         "zendframework/zend-developer-tools": "dev-master",
@@ -18,7 +18,6 @@
         "fabpot/php-cs-fixer": "1.*"
     },
     "suggest": {
-        "ext-intl": "ext/intl for i18n features (included in default builds of PHP)",
         "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
         "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
     }

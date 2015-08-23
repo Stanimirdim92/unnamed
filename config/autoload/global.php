@@ -2,7 +2,7 @@
 return [
     'service_manager' => [
         'factories' => [
-            'Zend\Db\Adapter\Adapter' => '\Admin\Factory\AdapterServiceFactory',
+            'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterServiceFactory',
         ],
     ],
 ];

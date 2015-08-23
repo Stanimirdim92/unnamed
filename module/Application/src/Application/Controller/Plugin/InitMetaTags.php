@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.7
+ * @version    0.0.10
  * @link       TBA
  */
 
@@ -72,7 +72,7 @@ final class InitMetaTags extends AbstractPlugin
      *
      * @param array $content
      */
-    protected function __invoke(array $content = [])
+    public function __invoke(array $content = [])
     {
         $description = (!empty($content["description"]) ? $content["description"] : "lorem ipsum dolar sit amet");
         $keywords = (!empty($content["keywords"]) ? $content["keywords"] : "lorem, ipsum, dolar, sit, amet");

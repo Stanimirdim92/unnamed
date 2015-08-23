@@ -1,14 +1,15 @@
 <?php
-$modules = [
-    'Application',
-    'Admin',
-];
+
+$modules = [];
 
 if (APP_ENV === 'development') {
     $modules[] = 'ZendDeveloperTools';
     $modules[] = 'BjyProfiler';
     $modules[] = 'SanSessionToolbar';
 }
+
+$modules[] = 'Application';
+$modules[] = 'Admin';
 
 return [
     // This should be an array of module namespaces used in the application.

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.7
+ * @version    0.0.10
  * @link       TBA
  */
 
@@ -80,7 +80,7 @@ final class LayoutMessages extends AbstractPlugin
      * @param array|arrayobject|string $message
      * @param string $namespace determinates the message layout and color. It's also used for the flashMessenger namespace
      */
-    protected function __invoke($message = [], $namespace = 'default')
+    public function __invoke($message = [], $namespace = 'default')
     {
         $this->flashMessenger->setNamespace($namespace);
 

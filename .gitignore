@@ -4,9 +4,13 @@ nbproject
 .buildpath
 .DS_Store
 .idea
+auth.json
 .project
 .settings
 composer.lock
 /config/autoload
 /data/logs
-/public/fileupload/files
+/public/fileupload
+/public/userfiles
+vendor
+composerInstalation

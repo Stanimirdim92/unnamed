@@ -1,7 +1,16 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.7 (18.08.2015) - Stable Alpha
+## 0.0.10 (23.08.2015) - Stable Alpha
+- Upgraded php version to 5.5
+- Upgraded Zend to version 2.5.2
+- Created instalation script
+- Refactored init_autoloader.php
+- Added Vagrant file
+- Bug and security fixes
+
+DD.MM.YYYY
+## 0.0.10 (18.08.2015) - Stable Alpha
 - Removed translations view helper
 - Removed Term* files
 - Updated autoload_classmap and template_map

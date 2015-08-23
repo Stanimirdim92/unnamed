@@ -59,7 +59,7 @@ final class GetUrlParams extends AbstractPlugin
      * @param mixed $default
      * @return mixed
      */
-    protected function __invoke($paramName = null, $default = null)
+    public function __invoke($paramName = null, $default = null)
     {
         $escaper = new Escaper('utf-8');
 

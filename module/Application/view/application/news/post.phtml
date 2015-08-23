@@ -20,7 +20,7 @@ if(!empty($this->news)) {
                 }
 ?>
                 <h2 itemscope itemprop="name" class="post-title">
-                    <a itemprop="url" href="<?=$this->url('news', ['post' => $new->getTitleLink()]);?>"><?=$new->getTitle();?></a>
+                    <a itemprop="url" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$new->getTitle();?></a>
                 </h2>
 
                 <time datetime="<?=$dateTime?>" class="post-date">
@@ -33,7 +33,7 @@ if(!empty($this->news)) {
                 if (mb_strlen($new->getText()) > 0) {
 ?>
                     <p class="read-more">
-                        <a itemscope itemprop="url" title="<?=$this->translate("READ_MORE")?>" class="read-more-link" href="<?=$this->url('news', ['post' => $new->getTitleLink()]);?>"><?=$this->translate("READ_MORE")?></a>
+                        <a itemscope itemprop="url" title="<?=$this->translate("READ_MORE")?>" class="read-more-link" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$this->translate("READ_MORE")?></a>
                     </p>
 <?php
                 }
