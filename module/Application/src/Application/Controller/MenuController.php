@@ -50,7 +50,7 @@ final class MenuController extends IndexController
      */
     protected function titleAction()
     {
-        $this->view->setTemplate("application/menu/title");
+        $this->getView()->setTemplate("application/menu/title");
         $escaper = new \Zend\Escaper\Escaper('utf-8');
 
         $contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("title")), "content.type" => 0, "content.language" => $this->language()], null, "menu.parent ASC, menu.menuOrder ASC");
@@ -59,8 +59,8 @@ final class MenuController extends IndexController
             return $this->setErrorCode(404);
         }
 
-        $this->view->contents = $contents->getDataSource()->current();
+        $this->getView()->contents = $contents->getDataSource()->current();
         $this->initMetaTags($contents->getDataSource()->current());
-        return $this->view;
+        return $this->getView();
     }
 }

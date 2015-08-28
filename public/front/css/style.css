@@ -623,79 +623,111 @@ All manually written styles should go from here on
 IDs should ONLY be used once and for main elements of the site
 Use classes for all other type of style!
 ============================================== */
-body {
-
-}
 a {
     text-decoration: none;
 }
+
 li {
     list-style: none;
 }
+
 ul {
     margin: 0;
     padding: 0;
 }
+
 /* Misc */
 .show-content {
     display: block !important;
     visibility: visible !important;
 }
+
 .hide-content {
     display: none !important;
     visibility: hidden !important;
 }
-/* Wrapper for main, left and right content */
-#content-wrapper {
 
-}
-/* Main content*/
-#main-content {
-
-}
-/* Header */
-#header {
-
-}
 /* Navigation */
 #nav {
     width: 100%;
 }
+
 #nav  ul {
     background: #eee;
     border-bottom: 1px solid #DBDBDB;
 }
+
 #nav  ul > li {
     display: inline-block;
-      padding: 7px;
+    padding: 7px;
 }
+
 #nav  ul  li  a {
   padding: 10px;
   color: red;
 }
+
 #nav  ul  li  a:hover {
   background: #fff;
 }
+
 #nav  ul  li  ul {
   position: absolute;
   background: #eee;
   min-width: 150px;
   display: none;
 }
+
 #nav  ul  li:hover  ul  {
     display: block;
 }
-#nav .sub-menu  li {
 
-}
 #nav  ul  li  ul  li  a:hover {
     background: #fff;
 }
+
 #nav  ul  li  ul  li  a {
-  /* padding: 10px; */
+  padding: 10px;
   display: block;
   border-bottom: 1px solid #Ccc;
 }
+
+#aside-menu-left {
+
+}
+
+#aside-menu-right {
+
+}
+
+#footer {
+
+}
+
+/* Dialog */
+.dialog_hide {
+    width: 355px;
+    height: 160px;
+    border: 1px solid rgb(209, 209, 209);
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    padding: 0;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: fixed;
+    border-radius: 5px;
+    background: #eee;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),to(rgb(255, 255, 255)));
+    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,rgb(255, 255, 255));
+}
+
 .dialog_hide li {
     float: right;
     list-style: none;
@@ -717,6 +749,7 @@ ul {
     position: relative;
 }
 
+/* Buttons Size */
 .btn-duplicate {
     color: #fff;
     background-color: rgb(3, 83, 169) !important;
@@ -740,12 +773,13 @@ ul {
     background-color: rgb(23, 169, 3) !important;
     border-color: rgb(26, 144, 3);
 }
+
+/* Buttons Colors */
 .blue {
     color: #fff;
   background-color: #337ab7 !important;
   border-color: #2e6da4 !important;
 }
-
 
 .orange {
     color: #fff;
@@ -754,72 +788,29 @@ ul {
 }
 
 .red {
-    color: #fff;
+  color: #fff;
   background-color: #d9534f;
   border-color: #d43f3a;
 }
 
-.red:hover {
-    color: #fff !important;
-    background-color: #81021f;
-    border-color: #540114
-}
-
-/* !Important is used an all properies , because in deadobjects deleteall action this css class .jarviswidget>div breaks the window... */
-.dialog_hide {
-    width: 355px !important;
-    height: 160px !important;
-    border: 1px solid rgb(209, 209, 209) !important;
-    z-index: 100 !important;
-    left: 50% !important;
-    top: 50% !important;
-    padding: 0 !important;
-    -webkit-transform: translate(-50%, -50%) !important;
-    -moz-transform: translate(-50%, -50%) !important;
-    -ms-transform: translate(-50%, -50%) !important;
-    -o-transform: translate(-50%, -50%) !important;
-    transform: translate(-50%, -50%) !important;
-    position: fixed !important;
-    border-radius: 5px !important;
-    background: #eee !important;
-    background-image: -webkit-gradient(linear, 0 100%, 0 0, color-stop(0.3, rgb(224, 224, 224)),
-        to(rgb(255, 255, 255))) !important;
-    background-image: -webkit-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: -moz-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: -o-linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-    background-image: linear-gradient(bottom, rgb(224, 224, 224) 30%,
-        rgb(255, 255, 255)) !important;
-}
-.green {
-    color: #fff;
-    background-color: #78BA60 !important;
-    border-color: rgb(26, 144, 3);
-}
 .delete {
     background-color: #a90329;
     color: #fff;
     border-color: #900323;
 }
-.delete:hover {
+
+.red:hover, .delete:hover {
     color: #fff !important;
     background-color: #81021f;
     border-color: #540114
 }
-/* Left content */
-#aside-menu-left {
 
+.green {
+    color: #fff;
+    background-color: #78BA60 !important;
+    border-color: rgb(26, 144, 3);
 }
-/* Right content */
-#aside-menu-right {
 
-}
-/* Footer */
-#footer {
-
-}
 /* =======================================
 Begin Media Queries for different devices
 ======================================= */
@@ -827,115 +818,55 @@ Begin Media Queries for different devices
 /* 1200px+ */
 @media screen and (min-width: 65.000em) {
 
-/******************************
-    Website element structure
-*******************************/
-    /* Wrapper for main, left, right content */
     #content-wrapper {
+        width: 100%;
+        min-height: 100%;
 
-    }
-    /* Header */
+}
     #header {
+    margin: 0;
+
+    padding: 0;
+}
+    #main {
 
     }
-    /* Navigation */
     #nav {
 
     }
-    /* Left content */
     #aside-menu-left {
 
     }
-    /* Right content */
     #aside-menu-right {
 
     }
-    /* Footer */
     #footer {
-
-    }
-/*************************************
-    Styles for each main element
-**************************************/
-    /* Wrapper for main, left, right content */
-    .content-wrapper {
-        width: 100%;
-        min-height: 100%;
-    }
-    /* Header */
-    .header {
-
-    }
-    /* Navigation */
-    .nav {
-
-    }
-    /* Left content */
-    .aside-menu-left {
-
-    }
-    /* Right content */
-    .aside-menu-right {
-
-    }
-    /* Footer */
-    .footer {
 
     }
 }
 
 /* smartphones, iPhone, portrait 480x320 phones 320px - 480px */
 @media screen and (min-width: 20.000em) and (max-width: 30.000em) {
-    /* Wrapper for main, left, right content */
     #content-wrapper {
-
-    }
-    /* Header */
-    #header {
-
-    }
-    /* Navigation */
-    #nav {
-
-    }
-    /* Left content */
-    #aside-menu-left {
-
-    }
-    /* Right content */
-    #aside-menu-right {
-
-    }
-    /* Footer */
-    #footer {
-
-    }
-/*************************************
-    Styles for each main element
-**************************************/
-    /* Wrapper for main, left, right content */
-    .content-wrapper {
         width: 100%;
         min-height: 100%;
     }
-    /* Header */
-    .header {
+    #header {
 
     }
-    /* Navigation */
-    .nav {
+    #main {
 
     }
-    /* Left content */
-    .aside-menu-left {
+    #nav {
 
     }
-    /* Right content */
-    .aside-menu-right {
+    #aside-menu-left {
 
     }
-    /* Footer */
-    .footer {
+    #aside-menu-right {
+
+    }
+    #footer {
 
     }
 }
@@ -969,112 +900,52 @@ Begin Media Queries for different devices
 }
 /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide.  480px - 640px */
 @media screen and (min-width: 30.000em) and (max-width: 40.000em) {
-    /* Wrapper for main, left, right content */
     #content-wrapper {
-
-    }
-    /* Header */
-    #header {
-
-    }
-    /* Navigation */
-    #nav {
-
-    }
-    /* Left content */
-    #aside-menu-left {
-
-    }
-    /* Right content */
-    #aside-menu-right {
-
-    }
-    /* Footer */
-    #footer {
-
-    }
-/*************************************
-    Styles for each main element
-**************************************/
-    /* Wrapper for main, left, right content */
-    .content-wrapper {
         width: 100%;
         min-height: 100%;
     }
-    /* Header */
-    .header {
+    #header {
 
     }
-    /* Navigation */
-    .nav {
+    #main {
 
     }
-    /* Left content */
-    .aside-menu-left {
+    #nav {
 
     }
-    /* Right content */
-    .aside-menu-right {
+    #aside-menu-left {
 
     }
-    /* Footer */
-    .footer {
+    #aside-menu-right {
+
+    }
+    #footer {
 
     }
 }
 
 /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones  640px - 1024 */
 @media screen and (min-width: 40.000em) and (max-width: 64.000em) {
-    /* Wrapper for main, left, right content */
     #content-wrapper {
-
-    }
-    /* Header */
-    #header {
-
-    }
-    /* Navigation */
-    #nav {
-
-    }
-    /* Left content */
-    #aside-menu-left {
-
-    }
-    /* Right content */
-    #aside-menu-right {
-
-    }
-    /* Footer */
-    #footer {
-
-    }
-/*************************************
-    Styles for each main element
-**************************************/
-    /* Wrapper for main, left, right content */
-    .content-wrapper {
         width: 100%;
         min-height: 100%;
     }
-    /* Header */
-    .header {
+    #header {
 
     }
-    /* Navigation */
-    .nav {
+    #main {
 
     }
-    /* Left content */
-    .aside-menu-left {
+    #nav {
 
     }
-    /* Right content */
-    .aside-menu-right {
+    #aside-menu-left {
 
     }
-    /* Footer */
-    .footer {
+    #aside-menu-right {
+
+    }
+    #footer {
 
     }
 }

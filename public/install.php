@@ -31,12 +31,14 @@
  * @link       TBA
  */
 
+use Symfony\Component\Process\Process;
+
+header('Content-Type: text/html; charset=utf-8');
+
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
     die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.10", "5.5"));
 }
-
-header('Content-Type: text/html; charset=utf-8');
 
 /**
  * Temporary increase execution time
@@ -55,20 +57,26 @@ chdir(dirname(__DIR__));
         <meta charset="utf-8">
         <title>System configuration file</title>
         <style type="text/css">
-         p {
-            color: green;
-         }
-         a {
-            text-decoration: none;
-         }
         </style>
     </head>
     <body>
 
 <?php
-(isset($_GET["page"]) ? $pageId = (int) $_GET["page"] : $pageId = 0);
+$pageId = (isset($_GET["page"]) ? $_GET["page"] : 0);
 
-switch ($pageId) {
+/**
+ * These directories are required
+ */
+$requiredDirs = ["data", "data/cache", 'data/cache/frontend', 'data/cache/modules', 'data/logs', 'data/translations', 'data/fonts', 'data/database'];
+
+foreach ($requiredDirs as $dir) {
+    if (!is_dir($dir)) {
+        mkdir($dir, 0750, true);
+    }
+    chmod($dir, 0750);
+}
+
+switch ((int) $pageId) {
     case 1:
         /**
          * Check composer install directory
@@ -78,6 +86,7 @@ switch ($pageId) {
             mkdir("composerInstalation/");
             $composerPhar = new Phar("Composer.phar");
             $composerPhar->extractTo("composerInstalation/");
+            chmod("composerInstalation/", 0750);
 
             echo "<p>Extraction was successful.</p>";
         } else {
@@ -96,11 +105,18 @@ switch ($pageId) {
             echo "<p>Validation was successful</p>";
             echo "<p>Installing composer packagelist.</p>";
 
-            /**
-             * This will return NULL even if installation is successful.
-             */
-            shell_exec("composer install");
+            require 'composerInstalation/vendor/autoload.php';
 
+            $install = new Process(sprintf('composer install'), getcwd(), null, null, 1000);
+            $install->run();
+
+            if (!$install->isSuccessful()) {
+                echo "<pre>".print_r($install->getErrorOutput(), true)."</pre>";
+            }
+
+            if (!is_file("vendor/autoload.php")) {
+                die(sprintf("<p>Something is wrong. File is still missing after installation. <a href='/install.php'>Reinstall</a></p>"));
+            }
             echo "<p>Installation done.</p>";
         } else {
             echo "<p>Your vendor folder already exists.</p>";
@@ -112,7 +128,7 @@ switch ($pageId) {
         if (!is_file('config/autoload/local.php')) {
             echo "<p><a href='/install.php?page=2'>Setup a database</a></p>";
         } else {
-            echo "<p>Your database configuration has already been setup</p>";
+            echo "<p>Your database configuration file has already been setup</p>";
             echo "<p><a href='/'>Back</a></p>";
         }
 

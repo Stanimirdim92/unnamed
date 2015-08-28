@@ -917,5 +917,8 @@ FileETag None
     # Block cookie access via js. This might be already set via php.ini
     php_value session.cookie_httponly on
     php_value session.use_only_cookies on
+    php_value session.use_strict_mode on
+    php_value session.hash_function 1
+    php_value default_charset utf-8
     php_value cgi.fix_pathinfo off
 </IfModule>

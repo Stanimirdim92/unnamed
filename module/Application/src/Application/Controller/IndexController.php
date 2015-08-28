@@ -70,7 +70,7 @@ class IndexController extends AbstractActionController
     {
         $userData = $this->UserData();
         if ($userData->checkIdentity(false)) {
-            $this->view->identity = $userData->getIdentity();
+            $this->getView()->identity = $userData->getIdentity();
         }
 
         parent::onDispatch($e);
@@ -82,6 +82,8 @@ class IndexController extends AbstractActionController
         if ($this->params('controller') != "Application\Controller\Menu" && $this->params('controller') != "Application\Controller\News") {
             $this->initMetaTags();
         }
+
+        return $this->getView();
     }
 
 /****************************************************
@@ -113,10 +115,10 @@ class IndexController extends AbstractActionController
                     $menus["menus"][$submenu->getId()] = $submenu;
                 }
             }
-            $this->view->menus = $menus["menus"];
-            $this->view->submenus = $menus["submenus"];
+            $this->getView()->menus = $menus["menus"];
+            $this->getView()->submenus = $menus["submenus"];
         }
-        return $this->view;
+        return $this->getView();
     }
 
 /****************************************************
@@ -141,6 +143,14 @@ class IndexController extends AbstractActionController
         return 1;
     }
 
+    /**
+     * @return ViewModel
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
 /****************************************************
  * START OF ALL ACTION METHODS
  ****************************************************/
@@ -152,8 +162,8 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("application/index/index");
-        return $this->view;
+        $this->getView()->setTemplate("application/index/index");
+        return $this->getView();
     }
 
     /**

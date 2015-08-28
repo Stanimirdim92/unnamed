@@ -50,14 +50,16 @@ class ApplicationSessionFactory implements FactoryInterface
         $sessionConfig = new SessionConfig();
         $func = $serviceLocator->get("ControllerPluginManager")->get("getfunctions");
         $sessionConfig->setOptions([
-            'cookie_lifetime'     => 7200, //2hrs
-            'remember_me_seconds' => 7200, //2hrs This is also set in the login controller
-            'use_cookies'         => true,
-            'cache_expire'        => 180,  //3hrs
-            'cookie_path'         => "/",
-            'cookie_secure'       => $func::isSSL(),
-            'cookie_httponly'     => true,
-            'name'                => '__zpc',
+            'cookie_lifetime'         => 7200, //2hrs
+            'remember_me_seconds'     => 7200, //2hrs This is also set in the login controller
+            'use_cookies'             => true,
+            'cache_expire'            => 180,  //3hrs
+            'cookie_path'             => "/",
+            'cookie_secure'           => $func::isSSL(),
+            'cookie_httponly'         => true,
+            'name'                    => '__zpc',
+            // 'gc_maxlifetime'          => 20,
+            'hash_bits_per_character' => 6,
         ]);
         $sessionManager = new SessionManager($sessionConfig);
         // $memCached = new StorageFactory::factory([

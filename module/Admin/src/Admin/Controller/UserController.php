@@ -71,12 +71,12 @@ final class UserController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/user/index");
+        $this->getView()->setTemplate("admin/user/index");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 0], null, null, "id DESC");
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage(50);
-        $this->view->paginator = $paginator;
-        return $this->view;
+        $this->getView()->paginator = $paginator;
+        return $this->getView();
     }
 
     /**
@@ -85,12 +85,12 @@ final class UserController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/user/modify");
+        $this->getView()->setTemplate("admin/user/modify");
         $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
-        $this->view->user = $user;
+        $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/modify/{$user->getId()}", "name"=> $this->translate("MODIFY_USER")." &laquo;".$user->getName()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_USER"), $user);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -108,7 +108,7 @@ final class UserController extends IndexController
         $form = $this->userForm;
         $form->get("submit")->setValue($label);
         $form->bind($user);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
@@ -131,12 +131,12 @@ final class UserController extends IndexController
 
     protected function disabledAction()
     {
-        $this->view->setTemplate("admin/user/disabled");
+        $this->getView()->setTemplate("admin/user/disabled");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 1], null, null, "id DESC");
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage(50);
-        $this->view->paginator = $paginator;
-        return $this->view;
+        $this->getView()->paginator = $paginator;
+        return $this->getView();
     }
 
     /**
@@ -164,11 +164,11 @@ final class UserController extends IndexController
      */
     protected function detailAction()
     {
-        $this->view->setTemplate("admin/user/detail");
+        $this->getView()->setTemplate("admin/user/detail");
         $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
-        $this->view->user = $user;
+        $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/detail/".$user->getId()."", "name"=>"&laquo;". $user->getFullName()."&raquo; ".$this->translate("DETAILS")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -181,7 +181,7 @@ final class UserController extends IndexController
         $search = (string) $this->getParam('usersearch', null);
         if (isset($search)) {
             if ($this->getRequest()->isXmlHttpRequest()) {
-                $this->view->setTerminal(true);
+                $this->getView()->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%'";
                 $results = $this->getTable("user")->fetchList(false, [], $where, "OR", null, "id DESC");
 

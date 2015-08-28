@@ -96,7 +96,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         if (!$sessionManager->sessionExists()) {
             $sessionManager->regenerateId();
         }
-
         /**
          * Attach event listener for page titles
          */

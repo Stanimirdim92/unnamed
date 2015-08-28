@@ -71,12 +71,12 @@ final class AdministratorController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/administrator/index");
+        $this->getView()->setTemplate("admin/administrator/index");
         $paginator = $this->getTable("administrator")->fetchJoin(true, "user", ["user"], ["name"], "administrator.user=user.id", "left");
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage(20);
-        $this->view->paginator = $paginator;
-        return $this->view;
+        $this->getView()->paginator = $paginator;
+        return $this->getView();
     }
 
     /**
@@ -84,10 +84,10 @@ final class AdministratorController extends IndexController
      */
     protected function addAction()
     {
-        $this->view->setTemplate("admin/administrator/add");
+        $this->getView()->setTemplate("admin/administrator/add");
         $this->initForm($this->translate("ADD_ADMINISTRATOR"), null);
         $this->addBreadcrumb(["reference"=>"/admin/administrator/add", "name"=>$this->translate("ADD_ADMINISTRATOR")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -96,12 +96,12 @@ final class AdministratorController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/administrator/modify");
+        $this->getView()->setTemplate("admin/administrator/modify");
         $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0))->current();
-        $this->view->administrator = $administrator;
+        $this->getView()->administrator = $administrator;
         $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/{$administrator->getUser()}", "name"=>$this->translate("MODIY_ADMINISTRATOR")]);
         $this->initForm($this->translate("MODIY_ADMINISTRATOR"), $administrator);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -128,7 +128,7 @@ final class AdministratorController extends IndexController
     protected function searchAction()
     {
         $search = (string) $this->getParam('ajaxsearch');
-        $this->view->setTerminal(true);
+        $this->getView()->setTerminal(true);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
             $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'";
             $results = $this->getTable("user")->fetchList(false, ["id", "name", "surname", "email"], $where);
@@ -168,7 +168,7 @@ final class AdministratorController extends IndexController
         $form = $this->administratorForm;
         $form->get("submit")->setValue($label);
         $form->bind($administrator);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());

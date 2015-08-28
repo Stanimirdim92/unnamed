@@ -71,42 +71,10 @@ return [
         ],
     ],
     'service_manager' => [
-        'abstract_factories' => [
-            'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-        ],
         'factories' => [
             'ApplicationErrorHandling' => 'Application\Factory\ApplicationErrorHandlingFactory',
             'ResetPasswordTable'       => 'Application\Factory\Model\ResetPasswordTableFactory',
             'initSession'              => 'Application\Factory\ApplicationSessionFactory',
-            'translator'               => 'Zend\Mvc\Service\TranslatorServiceFactory',
-        ],
-    ],
-    'translator' => [
-        'locale' => 'en',
-        'translation_file_patterns' => [
-            [
-                'base_dir' => __DIR__.'/../languages/phpArray',
-                'type'     => 'phpArray',
-                'pattern'  => '%s.php',
-            ],
-        ],
-        'cache' => [
-            'adapter' => [
-                'name'    => 'Filesystem',
-                'options' => [
-                    'cache_dir' => __DIR__ . '/../../../data/cache/frontend',
-                    'ttl'       => '3600',
-                ],
-            ],
-            'plugins' => [
-                [
-                    'name'    => 'serializer',
-                    'options' => [],
-                ],
-                'exception_handler' => [
-                    'throw_exceptions' => true,
-                ],
-            ],
         ],
     ],
     'controllers' => [
@@ -121,30 +89,7 @@ return [
             'Application\Controller\Menu'         => 'Application\Controller\MenuController',
         ],
     ],
-    'controller_plugins' => [
-        'factories' => [
-            'translate'             => 'Application\Controller\Plugin\Factory\TranslateFactory',
-            'Mailing'               => 'Application\Controller\Plugin\Factory\MailingFactory',
-            'UserData'              => 'Application\Controller\Plugin\Factory\UserDataFactory',
-            'setLayoutMessages'     => 'Application\Controller\Plugin\Factory\LayoutMessagesFactory',
-            'InitMetaTags'          => 'Application\Controller\Plugin\Factory\InitMetaTagsFactory',
-            'getParam'              => 'Application\Controller\Plugin\Factory\GetUrlParamsFactory',
-            'getTable'              => 'Application\Controller\Plugin\Factory\GetTableModelFactory',
-            'getFunctions'          => 'Application\Controller\Plugin\Factory\FunctionsFactory',
-            'setErrorCode'          => 'Application\Controller\Plugin\Factory\ErrorCodesFactory'
-        ]
-    ],
     'view_manager' => [
-        'display_not_found_reason' => (APP_ENV === "development"),
-        'display_exceptions'       => (APP_ENV === "development"),
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/index',
-        'exception_template'       => 'error/index',
-        // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
-        // 'default_template_suffix' => 'phtml',
         'template_map' => include __DIR__ . '/../template_map.php',
-        'strategies' => [
-            'ViewJsonStrategy',
-        ],
     ],
 ];

@@ -72,12 +72,12 @@ final class LanguageController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/language/index");
+        $this->getView()->setTemplate("admin/language/index");
         $paginator = $this->getTable("language")->fetchList(true);
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage(20);
-        $this->view->paginator = $paginator;
-        return $this->view;
+        $this->getView()->paginator = $paginator;
+        return $this->getView();
     }
 
     /**
@@ -85,10 +85,10 @@ final class LanguageController extends IndexController
      */
     protected function addAction()
     {
-        $this->view->setTemplate("admin/language/add");
+        $this->getView()->setTemplate("admin/language/add");
         $this->initForm($this->translate("ADD_LANGUAGE"), null);
         $this->addBreadcrumb(["reference"=>"/admin/language/add", "name"=>$this->translate("ADD_LANGUAGE")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -97,12 +97,12 @@ final class LanguageController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/language/modify");
+        $this->getView()->setTemplate("admin/language/modify");
         $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
-        $this->view->language = $language;
+        $this->getView()->language = $language;
         $this->addBreadcrumb(["reference"=>"/admin/language/modify/{$language->getId()}", "name"=>$this->translate("MODIFY_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_LANGUAGE"), $language);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -120,11 +120,11 @@ final class LanguageController extends IndexController
      */
     protected function detailAction()
     {
-        $this->view->setTemplate("admin/language/detail");
+        $this->getView()->setTemplate("admin/language/detail");
         $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
-        $this->view->lang = $lang;
+        $this->getView()->lang = $lang;
         $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -136,7 +136,7 @@ final class LanguageController extends IndexController
      */
     protected function translationsAction()
     {
-        $this->view->setTemplate("admin/language/translations");
+        $this->getView()->setTemplate("admin/language/translations");
 
         $arr = "module/Application/languages/phpArray/".$this->language("languageName").".php";
 
@@ -152,7 +152,7 @@ final class LanguageController extends IndexController
             throw new \RunTimeException($this->translate('NO_TRANSLATION_FILE'));
         }
 
-        $this->view->translationsArray = include $arr;
+        $this->getView()->translationsArray = include $arr;
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -165,7 +165,7 @@ final class LanguageController extends IndexController
             }
             return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
         }
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -186,7 +186,7 @@ final class LanguageController extends IndexController
         $form = $this->languageForm;
         $form->get("submit")->setValue($label);
         $form->bind($language);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());

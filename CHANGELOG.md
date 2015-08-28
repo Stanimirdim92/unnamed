@@ -1,6 +1,13 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.11 (27.08.2015) - Stable Alpha
+- Instalation script updates and bug fixes
+- layout.phtml and style.css fixes
+- $this->view was moved to a function getView()
+- global.php now holds all global config options for all modules
+
+DD.MM.YYYY
 ## 0.0.10 (23.08.2015) - Stable Alpha
 - Upgraded php version to 5.5
 - Upgraded Zend to version 2.5.2

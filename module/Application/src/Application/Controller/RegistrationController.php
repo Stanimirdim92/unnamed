@@ -119,7 +119,7 @@ final class RegistrationController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("application/registration/index");
+        $this->getView()->setTemplate("application/registration/index");
        /**
         * @var RegistrationForm $form
         */
@@ -131,7 +131,7 @@ final class RegistrationController extends IndexController
         $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
         $form->get("register")->setValue($this->translate("SIGN_UP"));
 
-        $this->view->form = $form;
-        return $this->view;
+        $this->getView()->form = $form;
+        return $this->getView();
     }
 }

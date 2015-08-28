@@ -88,7 +88,7 @@ final class LayoutMessages extends AbstractPlugin
 
         while ($iterator->valid()) {
             if ($iterator->hasChildren()) {
-                $this->setLayoutMessages($iterator->getChildren(), $namespace);
+                $this->__invoke($iterator->getChildren(), $namespace);
             } else {
                 $this->flashMessenger->addMessage($iterator->current(), $namespace);
             }

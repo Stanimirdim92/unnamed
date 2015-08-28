@@ -88,13 +88,13 @@ final class MenuController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/menu/index");
+        $this->getView()->setTemplate("admin/menu/index");
         $menus = $this->prepareMenusData();
         if (!empty($menus)) {
-            $this->view->menus = $menus["menus"];
-            $this->view->submenus = $menus["submenus"];
+            $this->getView()->menus = $menus["menus"];
+            $this->getView()->submenus = $menus["submenus"];
         }
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -102,10 +102,10 @@ final class MenuController extends IndexController
      */
     protected function addAction()
     {
-        $this->view->setTemplate("admin/menu/add");
+        $this->getView()->setTemplate("admin/menu/add");
         $this->initForm($this->translate("ADD_NEW_MENU"), null);
         $this->addBreadcrumb(["reference"=>"/admin/menu/add", "name"=>$this->translate("ADD_NEW_MENU")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -114,12 +114,12 @@ final class MenuController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/menu/modify");
+        $this->getView()->setTemplate("admin/menu/modify");
         $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
-        $this->view->menu = $menu;
+        $this->getView()->menu = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/modify/{$menu->getId()}", "name"=> $this->translate("MODIFY_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_MENU"), $menu);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -137,11 +137,11 @@ final class MenuController extends IndexController
      */
     protected function detailAction()
     {
-        $this->view->setTemplate("admin/menu/detail");
+        $this->getView()->setTemplate("admin/menu/detail");
         $menu = $this->getTable("menu")->getMenu($this->getParam("id", 0), $this->language())->current();
-        $this->view->menu = $menu;
+        $this->getView()->menu = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -172,7 +172,7 @@ final class MenuController extends IndexController
         $form = $this->menuForm;
         $form->bind($menu);
         $form->get("submit")->setValue($label);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());

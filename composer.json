@@ -1,5 +1,5 @@
 {
-    "name": "Unnamed",
+    "name": "unnamed",
     "description": "Flexible, strong and fast CMS built on top of Zend Framework 2",
     "license": "BSD-3-Clause",
     "keywords": [
@@ -16,9 +16,5 @@
         "bjyoungblood/bjy-profiler": "dev-master",
         "san/san-session-toolbar": "0.*",
         "fabpot/php-cs-fixer": "1.*"
-    },
-    "suggest": {
-        "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-        "zendframework/zendservice-recaptcha": "ZendService\\ReCaptcha for rendering ReCaptchas in Zend\\Captcha and/or Zend\\Form"
     }
 }

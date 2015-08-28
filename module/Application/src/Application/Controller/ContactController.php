@@ -67,7 +67,7 @@ final class ContactController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("application/contact/index");
+        $this->getView()->setTemplate("application/contact/index");
 
         /**
          * @var $form ContactForm
@@ -79,7 +79,7 @@ final class ContactController extends IndexController
         $form->get("captcha")->setLabel($this->translate("CAPTCHA"))->setAttribute("placeholder", $this->translate("ENTER_CAPTCHA"));
         $form->get("message")->setLabel($this->translate("MESSAGE"))->setAttribute("placeholder", $this->translate("ENTER_MESSAGE"));
 
-        $this->view->form = $form;
+        $this->getView()->form = $form;
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
@@ -96,6 +96,6 @@ final class ContactController extends IndexController
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
         }
-        return $this->view;
+        return $this->getView();
     }
 }

@@ -126,7 +126,7 @@ final class LoginController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("application/login/index");
+        $this->getView()->setTemplate("application/login/index");
         /**
          * @var  LoginForm $form
          */
@@ -134,15 +134,15 @@ final class LoginController extends IndexController
         $form->get("login")->setValue($this->translate("SIGN_IN"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
         $form->get("password")->setLabel($this->translate("PASSWORD"));
-        $this->view->form = $form;
-        return $this->view;
+        $this->getView()->form = $form;
+        return $this->getView();
     }
 
     public function processloginAction()
     {
         // Check if we have a POST request
         if (!$this->getRequest()->isPost()) {
-            return $this->logoutAction("/login");
+            // return $this->logoutAction("/login");
         }
 
         /**
@@ -168,7 +168,7 @@ final class LoginController extends IndexController
          * See if authentication is valid
          */
         if (!$result->isValid()) {
-            $this->setLayoutMessages($form->getMessages(), 'error');
+            $this->setLayoutMessages($result->getMessages(), 'error');
             return $this->redirect()->toUrl("/login");
         } else {
             $role = 1;
@@ -214,7 +214,7 @@ final class LoginController extends IndexController
      */
     protected function newpasswordAction()
     {
-        $this->view->setTemplate("application/login/newpassword");
+        $this->getView()->setTemplate("application/login/newpassword");
 
         $token = (string) $this->getParam('token', null);
         $func = $this->getFunctions();
@@ -247,9 +247,9 @@ final class LoginController extends IndexController
          * temporary create new view variable to hold the user id.
          * After the password is reset the variable is destroyed.
          */
-        $this->view->resetpwUserId = $tokenExist["user"];
-        $this->view->form = $form;
-        return $this->view;
+        $this->getView()->resetpwUserId = $tokenExist["user"];
+        $this->getView()->form = $form;
+        return $this->getView();
     }
 
     public function newpasswordprocessAction()
@@ -266,9 +266,9 @@ final class LoginController extends IndexController
                 $formData = $form->getData();
                 $pw = $func::createPassword($formData->password);
                 if (!empty($pw)) {
-                    $user = $this->getTable("user")->getUser($this->view->resetpwUserId)->current();
+                    $user = $this->getTable("user")->getUser($this->getView()->resetpwUserId)->current();
                     $remote = new RemoteAddress();
-                    unset($this->view->resetpwUserId);
+                    unset($this->getView()->resetpwUserId);
                     $user->setPassword($pw);
                     $user->setIp($remote->getIpAddress());
                     $this->getTable("user")->saveUser($user);
@@ -289,14 +289,14 @@ final class LoginController extends IndexController
      */
     protected function resetpasswordAction()
     {
-        $this->view->setTemplate("application/login/resetpassword");
+        $this->getView()->setTemplate("application/login/resetpassword");
         /**
          * @var  ResetPasswordForm $form
          */
         $form = $this->resetPasswordForm;
         $form->get("resetpw")->setValue($this->translate("RESET_PW"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
-        $this->view->form = $form;
+        $this->getView()->form = $form;
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
@@ -327,7 +327,7 @@ final class LoginController extends IndexController
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
         }
-        return $this->view;
+        return $this->getView();
     }
 
     /**

@@ -27,7 +27,14 @@
 
 ?>
     </head>
-    <body>
+    <body itemscope itemtype="http://schema.org/WebPage">
+        <header id="header" role="banner">
+            <nav id="nav" role="navigation">
+                <ul>
+                    <li><a itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
+                </ul>
+            </nav>
+        </header>
         <div class="breadcrumbs">
             <ul>
 <?php
@@ -42,22 +49,43 @@
             </ul>
         </div>
 <?php
+        /**
+         * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
+         */
         if ($this->layout()->flashMessages) {
             foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
                 echo '<div class="alert alert-' . $this->layout()->flashMessages->getNamespace() . '">
                         <ul>
                             <li>
                                 <i class="fa-fw fa fa-'.$this->layout()->flashMessages->getNamespace().'"></i>' . $message . '
-                                <button class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+                                <button type="button" class="close"><i class="fa fa-times"></i></button>
                             </li>
                         </ul>
                       </div>
                 ';
             }
         }
+?>
+    <div id="content-wrapper">
+        <main id="main" role="main">
+<?php
+            /**
+             * Every other html element must come from content variable
+             * or in other simple words: Do not put any other html element around this code!
+             */
+            echo $this->layout()->content;
+?>
+        </main>
+    </div>
 
-        echo $this->layout()->content;
+    <aside role="complementary">
 
+    </aside>
+
+    <footer role="contentinfo">
+        <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
+    </footer>
+<?php
         echo $this->headScript()
             ->prependFile($this->basePath('/back/js/custom.js'))
             ->prependFile($this->basePath('/front/js/jquery.min.js'));

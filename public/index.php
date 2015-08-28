@@ -85,38 +85,12 @@ ini_set("display_startup_errors", (APP_ENV === 'development'));
 /**
  * Catch an error message emitted from PHP
  */
-ini_set("track_errors",  (APP_ENV === 'development'));
-
-/**
- * Avoid serving non .php files as .php files
- */
-ini_set('cgi.fix_pathinfo', 0);
-
-/**
- * Helps mitigate XSS
- */
-ini_set('session.cookie_httponly', 1);
-
-/**
- * Prevents session fixation
- */
-ini_set('session.use_only_cookies', 1);
-
-/**
- * Enable strict session mode.
- */
-ini_set('session.use_strict_mode', 1);
-
-/**
- * Use SHA-1 instead of MD5
- */
-ini_set('session.hash_function', 1);
+ini_set("track_errors", (APP_ENV === 'development'));
 
 /**
  * Fixes files and server encoding
  */
-// mb_internal_encoding('UTF-8');
-ini_set('default_charset', 'UTF-8T');
+mb_internal_encoding('UTF-8');
 
 /**
  * Some server configurations are missing a date timezone

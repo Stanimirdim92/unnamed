@@ -36,17 +36,6 @@ return [
             ],
         ],
     ],
-    'service_manager' => [
-        'factories' => [
-            'AdminErrorHandling'          => 'Admin\Factory\AdminErrorHandlingFactory',
-            'AdministratorTable'          => 'Admin\Factory\Model\AdministratorTableFactory',
-            'ContentTable'                => 'Admin\Factory\Model\ContentTableFactory',
-            'LanguageTable'               => 'Admin\Factory\Model\LanguageTableFactory',
-            'MenuTable'                   => 'Admin\Factory\Model\MenuTableFactory',
-            'UserTable'                   => 'Admin\Factory\Model\UserTableFactory',
-            'AdminMenuTable'              => 'Admin\Factory\Model\AdminMenuTableFactory',
-        ],
-    ],
     'controllers' => [
         'factories' => [
             'Admin\Controller\Content'       => 'Admin\Factory\Controller\ContentControllerFactory',
@@ -68,16 +57,6 @@ return [
         ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => (APP_ENV === "development"),
-        'display_exceptions'       => (APP_ENV === "development"),
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/index',
-        'exception_template'       => 'error/index',
-        // This can be used as the default suffix for template scripts resolving, it defaults to 'phtml'.
-        // 'default_template_suffix' => 'phtml',
         'template_map' => include __DIR__ . '/../template_map.php',
-        'strategies' => [
-            'ViewJsonStrategy',
-        ],
     ],
 ];

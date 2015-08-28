@@ -69,7 +69,7 @@ final class AdminMenuController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/admin-menu/index");
+        $this->getView()->setTemplate("admin/admin-menu/index");
         $menu = $this->getTable("adminmenu")->fetchList(false, [], [], "AND", null, "advanced ASC, menuOrder ASC");
         if (count($menu) > 0) {
             $menus = ["menus" => null, "submenus" => null];
@@ -83,10 +83,10 @@ final class AdminMenuController extends IndexController
                     $menus["menus"][$submenu->getId()] = $submenu;
                 }
             }
-            $this->view->menus = $menus["menus"];
-            $this->view->submenus = $menus["submenus"];
+            $this->getView()->menus = $menus["menus"];
+            $this->getView()->submenus = $menus["submenus"];
         }
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -94,10 +94,10 @@ final class AdminMenuController extends IndexController
      */
     protected function addAction()
     {
-        $this->view->setTemplate("admin/admin-menu/add");
+        $this->getView()->setTemplate("admin/admin-menu/add");
         $this->initForm($this->translate("ADD_ADMINMENU"), null);
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/add", "name"=>$this->translate("ADD_ADMINMENU")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -106,12 +106,12 @@ final class AdminMenuController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/admin-menu/modify");
+        $this->getView()->setTemplate("admin/admin-menu/modify");
         $adminMenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0))->current();
-        $this->view->adminMenu = $adminMenu;
+        $this->getView()->adminMenu = $adminMenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/{$adminMenu->getId()}", "name"=>$this->translate("MODIFY_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_ADMINMENU"), $adminMenu);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -126,11 +126,11 @@ final class AdminMenuController extends IndexController
 
     protected function detailAction()
     {
-        $this->view->setTemplate("admin/admin-menu/detail");
+        $this->getView()->setTemplate("admin/admin-menu/detail");
         $adminmenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0), $this->language())->current();
-        $this->view->adminmenu = $adminmenu;
+        $this->getView()->adminmenu = $adminmenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/".$adminmenu->getId()."", "name"=>"&laquo;". $adminmenu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
-        return $this->view;
+        return $this->getView();
     }
 
     protected function cloneAction()
@@ -158,7 +158,7 @@ final class AdminMenuController extends IndexController
         $form = $this->adminMenuForm;
         $form->get("submit")->setValue($label);
         $form->bind($adminMenu);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());

@@ -72,13 +72,13 @@ final class ContentController extends IndexController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/content/index");
+        $this->getView()->setTemplate("admin/content/index");
         if ((int) $this->getParam("type", 0) === 1) {
-            $this->view->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
+            $this->getView()->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
         } else {
-            $this->view->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $this->getView()->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -86,10 +86,10 @@ final class ContentController extends IndexController
      */
     protected function addAction()
     {
-        $this->view->setTemplate("admin/content/add");
+        $this->getView()->setTemplate("admin/content/add");
         $this->initForm($this->translate("ADD_NEW_CONTENT"), null);
         $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>$this->translate("ADD_NEW_CONTENT")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -98,12 +98,12 @@ final class ContentController extends IndexController
      */
     protected function modifyAction()
     {
-        $this->view->setTemplate("admin/content/modify");
+        $this->getView()->setTemplate("admin/content/modify");
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
-        $this->view->content = $content;
+        $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/modify/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_CONTENT"), $content);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -121,11 +121,11 @@ final class ContentController extends IndexController
      */
     protected function detailAction()
     {
-        $this->view->setTemplate("admin/content/detail");
+        $this->getView()->setTemplate("admin/content/detail");
         $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
-        $this->view->content = $content;
+        $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
-        return $this->view;
+        return $this->getView();
     }
 
     /**
@@ -156,7 +156,7 @@ final class ContentController extends IndexController
         $form = $this->contentForm;
         $form->bind($content);
         $form->get("submit")->setValue($label);
-        $this->view->form = $form;
+        $this->getView()->form = $form;
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -188,7 +188,7 @@ final class ContentController extends IndexController
      */
     protected function filesAction()
     {
-        $this->view->setTerminal(true);
+        $this->getView()->setTerminal(true);
         $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
         $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
         $it->setMaxDepth(99);
@@ -232,7 +232,7 @@ final class ContentController extends IndexController
      */
     private function uploadImages()
     {
-        $this->view->setTerminal(true);
+        $this->getView()->setTerminal(true);
         $adapter = new Http();
 
         $this->createDirectories();
@@ -246,7 +246,7 @@ final class ContentController extends IndexController
      */
     private function upload(Http $adapter = null)
     {
-        $this->view->setTerminal(true);
+        $this->getView()->setTerminal(true);
         $uploadStatus = [];
         if ($adapter->isValid('imageUpload')) {
             foreach ($adapter->getFileInfo() as $key => $file) {

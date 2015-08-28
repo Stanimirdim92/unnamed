@@ -80,7 +80,7 @@ class IndexController extends AbstractActionController
         }
 
         parent::onDispatch($e);
-        $this->view->breadcrumbs = $this->breadcrumbs;
+        $this->getView()->breadcrumbs = $this->breadcrumbs;
     }
 
 /****************************************************
@@ -93,9 +93,9 @@ class IndexController extends AbstractActionController
      */
     // private function initMenus()
     // {
-    //     $this->view->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-    //     $this->view->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-    //     $this->view->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
+    //     $this->getView()->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
+    //     $this->getView()->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
+    //     $this->getView()->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
     // }
 
 /****************************************************
@@ -163,6 +163,14 @@ class IndexController extends AbstractActionController
         return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
     }
 
+    /**
+     * @return ViewModel
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
 /****************************************************
  * START OF ALL ACTION METHODS
  ****************************************************/
@@ -172,8 +180,8 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-        $this->view->setTemplate("admin/index/index");
-        return $this->view;
+        $this->getView()->setTemplate("admin/index/index");
+        return $this->getView();
     }
 
     /**
