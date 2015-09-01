@@ -32,7 +32,7 @@ return array(
     'Application\Factory\ApplicationSessionFactory'               => __DIR__ . '/src/Application/Factory/ApplicationSessionFactory.php',
     'Application\Factory\Controller\ContactControllerFactory'     => __DIR__ . '/src/Application/Factory/Controller/ContactControllerFactory.php',
     'Application\Factory\Controller\LoginControllerFactory'       => __DIR__ . '/src/Application/Factory/Controller/LoginControllerFactory.php',
-    'Admin\Factory\Controller\RegistrationFormFactory'            => __DIR__ . '/src/Application/Factory/Controller/RegistrationControllerFactory.php',
+    'Application\Factory\Controller\RegistrationControllerFactory'=> __DIR__ . '/src/Application/Factory/Controller/RegistrationControllerFactory.php',
     'Application\Factory\Model\ResetPasswordTableFactory'         => __DIR__ . '/src/Application/Factory/Model/ResetPasswordTableFactory.php',
     'Application\Form\ContactForm'                                => __DIR__ . '/src/Application/Form/ContactForm.php',
     'Application\Form\LoginForm'                                  => __DIR__ . '/src/Application/Form/LoginForm.php',

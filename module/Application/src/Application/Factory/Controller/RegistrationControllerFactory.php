@@ -31,12 +31,12 @@
  * @link       TBA
  */
 
-namespace Admin\Factory\Controller;
+namespace Application\Factory\Controller;
 
-use Admin\Controller\RegistrationController;
+use Application\Controller\RegistrationController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class RegistrationFormFactory
+class RegistrationControllerFactory
 {
     /**
      * @{inheritDoc}
@@ -46,7 +46,7 @@ class RegistrationFormFactory
         $serviceLocator = $controllerManager->getServiceLocator();
 
         $controller = new RegistrationController(
-            $serviceLocator->get('FormElementManager')->get('Admin\Form\RegistrationForm')
+            $serviceLocator->get('FormElementManager')->get('Application\Form\RegistrationForm')
         );
 
         return $controller;

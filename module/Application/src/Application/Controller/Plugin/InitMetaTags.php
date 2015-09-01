@@ -106,8 +106,6 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendProperty("og:description", $description);
         $this->headMeta->appendProperty("og:type", 'article');
         $this->headMeta->appendProperty("og:url", $this->request->getUri()->getHost().$this->request->getRequestUri());
-        $this->headMeta->appendHttpEquiv('cleartype', 'on');
-        $this->headMeta->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
         /**
          * Other things that can be activated

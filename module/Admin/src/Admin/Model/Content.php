@@ -86,6 +86,11 @@ class Content
     private $titleLink = null;
 
     /**
+     * @var bool $active
+     */
+    private $active = 1;
+
+    /**
      * @param array $data
      * @return void
      */
@@ -101,6 +106,7 @@ class Content
         $this->date = (isset($data['date'])) ? $data['date'] : $this->getDate();
         $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
         $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->getTitleLink();
+        $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
     }
 
     /**
@@ -191,6 +197,24 @@ class Content
     public function getTitleLink()
     {
         return $this->titleLink;
+    }
+
+    /**
+     * Set active
+     * @param Boolean $active
+     */
+    public function setActive($active = 0)
+    {
+        $this->active = $active;
+    }
+
+    /**
+     * Get active
+     * @return Boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 
     /**
@@ -302,22 +326,6 @@ class Content
     }
 
     /**
-     * magic getter
-     */
-    public function __get($property)
-    {
-        return (property_exists($this, $property) ? $this->{$property} : null);
-    }
-
-    /**
-     * magic setter
-     */
-    public function __set($property, $value)
-    {
-        return (property_exists($this, $property) ? $this->{$property} = $value : null);
-    }
-
-    /**
      * magic property exists (isset) checker
      */
     public function __isset($property)
@@ -363,6 +371,7 @@ class Content
         $clone->setDate($this->getDate());
         $clone->setLanguage($this->getLanguage());
         $clone->setTitleLink($this->getTitleLink());
+        $clone->setActive($this->getActive());
         return $clone;
     }
 }

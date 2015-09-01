@@ -46,6 +46,11 @@ class IndexController extends AbstractActionController
     protected $view = null;
 
     /**
+     * @var $menuIncrementHack Used increment the menu and stop the second show up of home, login and logout links...
+     */
+    private $menuIncrementHack = 0;
+
+    /**
      * @var Container $translation holds language id and name
      */
     protected $translation = null;
@@ -79,7 +84,7 @@ class IndexController extends AbstractActionController
         /**
          * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
          */
-        if ($this->params('controller') != "Application\Controller\Menu" && $this->params('controller') != "Application\Controller\News") {
+        if ($this->params('action') != "title" || $this->params('action') != "post") {
             $this->initMetaTags();
         }
 
@@ -93,32 +98,49 @@ class IndexController extends AbstractActionController
     /**
      * Initialize menus and their submenus. 1 query to rule them all!
      *
-     * First get all menus.
-     * Second, itterate over each object and determinate if it's a submenu or not
-     * Third separate each object based on it's type and prepare it for the view itteration
-     *
-     * @todo  make it dinamicly multilevel
      * @return void
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["language" => $this->language()], "AND", null, "id, menuOrder");
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder")->getDataSource();
         if (count($menu) > 0) {
-            $menus = ["menus" => null, "submenus" => null];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $menus["submenus"][$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus["menus"][$submenu->getId()] = $submenu;
-                }
+            $menus = ['menus' => [], 'submenus' => []];
+
+            foreach ($menu as $submenus) {
+                $menus['menus'][$submenus['id']] = $submenus;
+                $menus['submenus'][$submenus['parent']][] = $submenus['id'];
             }
-            $this->getView()->menus = $menus["menus"];
-            $this->getView()->submenus = $menus["submenus"];
+
+            $this->getView()->menu = $this->generateMenu(0, $menus);
         }
         return $this->getView();
+    }
+
+    private function generateMenu($parent, $menu)
+    {
+        $output = "";
+        if (isset($menu["submenus"][$parent])) {
+            $output .= "<ul>";
+
+            /**
+             * This is a really, really ugly hack
+             */
+            if ($this->menuIncrementHack === 0) {
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
+            }
+            $this->menuIncrementHack = 1;
+
+            foreach ($menu['submenus'][$parent] as $id) {
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]['menulink']}'>{$menu['menus'][$id]['caption']}</a>";
+                $output .= $this->generateMenu($id, $menu);
+                $output .= "</li>";
+            }
+            $output .= "</ul>";
+        }
+
+        return $output;
     }
 
 /****************************************************
@@ -173,8 +195,7 @@ class IndexController extends AbstractActionController
      */
     protected function languageAction()
     {
-        $id = $this->getParam("id", 1);
-        $language = $this->getTable("language")->getLanguage($id);
+        $language = $this->getTable("language")->getLanguage((int) $this->getParam("id", 1));
 
         $this->translation->language = $language->getId();
         $this->translation->languageName = $language->getName();

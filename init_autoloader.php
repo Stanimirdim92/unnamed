@@ -15,7 +15,7 @@ if (class_exists('Zend\Loader\AutoloaderFactory') && is_file('config/autoload/lo
 }
 
 /**
- * Try to load framework
+ * Load framework
  */
 if ((is_dir('vendor/zendframework') || is_dir('vendor/ZF2')) && is_file('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
@@ -26,9 +26,9 @@ if ((is_dir('vendor/zendframework') || is_dir('vendor/ZF2')) && is_file('vendor/
  * Check for Zend setup and database setup
  */
 if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/local.php')) {
-    if (is_file('public/install.php')) {
-        header('Location: /install.php');
-        die;
+    if (!is_file('public/install.php')) {
+        die(sprintf('Installation file is missing. Process cannot be started.'));
     }
-    die(sprintf('Installation file is missing. Process cannot be started.'));
+    header('Location: /install.php');
+    die;
 }

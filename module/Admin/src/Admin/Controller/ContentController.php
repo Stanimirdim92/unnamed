@@ -73,7 +73,7 @@ final class ContentController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/content/index");
-        if ((int) $this->getParam("type", 0) === 1) {
+        if ((int) $this->getParam("id", 0) === 1) {
             $this->getView()->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
         } else {
             $this->getView()->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
@@ -99,7 +99,7 @@ final class ContentController extends IndexController
     protected function modifyAction()
     {
         $this->getView()->setTemplate("admin/content/modify");
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
+        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/modify/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_CONTENT"), $content);
@@ -111,7 +111,7 @@ final class ContentController extends IndexController
      */
     protected function deleteAction()
     {
-        $content = $this->getTable("content")->deleteContent($this->getParam("id", 0), $this->language());
+        $content = $this->getTable("content")->deleteContent((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
@@ -122,10 +122,24 @@ final class ContentController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/content/detail");
-        $content = $this->getTable("content")->getContent($this->getParam("id", 0), $this->language())->current();
+        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
+    }
+
+    protected function deactivateAction()
+    {
+        $content = $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 0);
+        $this->setLayoutMessages($this->translate("CONTENT_DISABLE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
+    }
+
+    protected function activateAction()
+    {
+        $content = $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 1);
+        $this->setLayoutMessages($this->translate("CONTENT_ENABLE_SUCCESS"), "success");
+        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -133,7 +147,7 @@ final class ContentController extends IndexController
      */
     protected function cloneAction()
     {
-        $content = $this->getTable("content")->duplicate($this->getParam("id", 0), $this->language())->current();
+        $content = $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
@@ -172,14 +186,17 @@ final class ContentController extends IndexController
                     return $this->uploadImages();
                 } else {
                     $formData = $form->getData();
-                    $formData->preview = $content->preview["name"];
+                    /**
+                     * We only need the name. All images ar stored in the same folder, based on the month and year
+                     */
+                    $formData->setPreview($formData->getPreview()["name"]);
                     $this->getTable("content")->saveContent($content);
                     $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
+                    return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
         }
     }
 
@@ -191,7 +208,7 @@ final class ContentController extends IndexController
         $this->getView()->setTerminal(true);
         $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
         $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
-        $it->setMaxDepth(99);
+        $it->setMaxDepth(50);
         $files = [];
         $i = 0;
         foreach ($it as $file) {
@@ -210,18 +227,17 @@ final class ContentController extends IndexController
 
     /**
      * Create directories
-     * @return  void
      */
     private function createDirectories()
     {
-        if (!is_dir('public/userfiles/')) {
-            mkdir('public/userfiles/');
-        }
-        if (!is_dir('public/userfiles/'.date("Y_M"))) {
-            mkdir('public/userfiles/'.date("Y_M"));
-        }
+        // if (!is_dir('public/userfiles/')) {
+        //     mkdir('public/userfiles/');
+        // }
+        // if (!is_dir('public/userfiles/'.date("Y_M"))) {
+        //     mkdir('public/userfiles/'.date("Y_M"));
+        // }
         if (!is_dir('public/userfiles/'.date("Y_M").'/images/')) {
-            mkdir('public/userfiles/'.date("Y_M").'/images/');
+            mkdir('public/userfiles/'.date("Y_M").'/images/', 0750, true);
         }
     }
 

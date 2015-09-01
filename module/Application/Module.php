@@ -96,6 +96,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         if (!$sessionManager->sessionExists()) {
             $sessionManager->regenerateId();
         }
+
         /**
          * Attach event listener for page titles
          */
@@ -116,7 +117,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     public function onError(EventInterface $e)
     {
         $sm = $e->getApplication()->getServiceManager();
-        $service = $sm->get('AdminErrorHandling');
+        $service = $sm->get('ApplicationErrorHandling');
         $service->logError($e, $sm);
         $e->stopPropagation();
         return;
@@ -129,40 +130,34 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function onDispatch(EventInterface $e)
     {
-        $sm = $e->getApplication()->getServiceManager();
+        $app = $e->getApplication();
+        $sm = $app->getServiceManager();
+        $route = $e->getRouteMatch();
+        $viewHelper = $sm->get('ViewHelperManager');
+        $lang = new Container("translations");
+        $translator = $sm->get('translator');
 
         /**
          * Get translations
          */
-        $lang = new Container("translations");
-        $translator = $sm->get('translator');
-
         AbstractValidator::setDefaultTranslator($translator);
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
+        $viewModel = $app->getMvcEvent()->getViewModel();
+        $viewModel->lang = $translator->getLocale();
 
         /**
          * Setup website title
          */
-        $route = $e->getRouteMatch();
-        $viewHelper = $sm->get('ViewHelperManager');
-
-        /**
-         * Title param comes from MenuController
-         */
         $action = $route->getParam('title');
-
         if (empty($action)) {
             $action = strtolower($route->getParam('action'));
             if ($action != "index") {
-                /**
-                 * Post param means that the user is in NewsController
-                 */
-                $action .= ($route->getParam("post") ? $route->getParam("post") : "");
+                $action = ($route->getParam("post") ?: "");
             }
         }
+
         $headTitleHelper = $viewHelper->get('headTitle');
         $headTitleHelper->append('Unnamed - '.ucfirst($action)); // must be set from db
-
     }
 
     /**
@@ -182,12 +177,11 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     {
         return [
             'Zend\Loader\ClassMapAutoloader' => [
-                __DIR__ . '/autoload_classmap.php',
+                __DIR__.'/autoload_classmap.php',
             ],
             'Zend\Loader\StandardAutoloader' => [
                 'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                    'Custom' => __DIR__ . '/../../vendor/Custom',
+                    __NAMESPACE__ => __DIR__.'/src/'.__NAMESPACE__,
                 ],
             ],
         ];

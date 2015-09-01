@@ -211,12 +211,12 @@ class MenuTable
             'menutype'     => (int) $menu->getMenuType(),
             'footercolumn' => (int) $menu->getFooterColumn(),
             'menulink'     => (string) $menu->getMenuLink(),
+            'active'       => (int) $menu->getActive(),
         ];
         $id = (int) $menu->getId();
         $language = (int) $menu->getLanguage();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $menu->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getMenu($id, $language)) {
                 throw new \RuntimeException("Couldn't save menu");
@@ -225,6 +225,19 @@ class MenuTable
         }
         unset($id, $language, $data);
         return $menu;
+    }
+
+    /**
+     * This method can disable or enable menus
+     *
+     * @param int $id menu id
+     * @param  int $state 0 - deactivated, 1 - active
+     */
+    public function toggleActiveMenu($id = 0, $state = 0)
+    {
+        if ($this->getMenu($id)) {
+            $this->tableGateway->update(["active" => (int) $state], ['id' => (int) $id]);
+        }
     }
 
     /**

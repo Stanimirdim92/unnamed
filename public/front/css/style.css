@@ -692,6 +692,10 @@ ul {
   border-bottom: 1px solid #Ccc;
 }
 
+#aside {
+
+}
+
 #aside-menu-left {
 
 }
@@ -834,6 +838,9 @@ Begin Media Queries for different devices
     #nav {
 
     }
+    #aside {
+
+    }
     #aside-menu-left {
 
     }
@@ -858,6 +865,9 @@ Begin Media Queries for different devices
 
     }
     #nav {
+
+    }
+    #aside {
 
     }
     #aside-menu-left {
@@ -913,6 +923,9 @@ Begin Media Queries for different devices
     #nav {
 
     }
+    #aside {
+
+    }
     #aside-menu-left {
 
     }
@@ -937,6 +950,9 @@ Begin Media Queries for different devices
 
     }
     #nav {
+
+    }
+    #aside {
 
     }
     #aside-menu-left {

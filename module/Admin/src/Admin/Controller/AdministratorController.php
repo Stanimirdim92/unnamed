@@ -97,7 +97,7 @@ final class AdministratorController extends IndexController
     protected function modifyAction()
     {
         $this->getView()->setTemplate("admin/administrator/modify");
-        $administrator = $this->getTable("administrator")->getAdministrator($this->getParam("id", 0))->current();
+        $administrator = $this->getTable("administrator")->getAdministrator((int) $this->getParam("id", 0))->current();
         $this->getView()->administrator = $administrator;
         $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/{$administrator->getUser()}", "name"=>$this->translate("MODIY_ADMINISTRATOR")]);
         $this->initForm($this->translate("MODIY_ADMINISTRATOR"), $administrator);
@@ -109,7 +109,7 @@ final class AdministratorController extends IndexController
      */
     protected function deleteAction()
     {
-        $id = $this->getParam('id', 0);
+        $id = (int)$this->getParam('id', 0);
         $userTable = $this->getTable("user");
         $user = $userTable->getUser($id)->current();
         $user->setAdmin(0);

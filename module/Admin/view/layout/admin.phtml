@@ -3,7 +3,7 @@
         $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?=$this->layout()->lang?>">
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
@@ -21,7 +21,7 @@
                 ->appendHttpEquiv('cleartype', 'on')
                 ->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
-            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath() . '/favicon.ico'])
+            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
                 ->prependStylesheet($this->basePath('/back/css/style.css'), 'screen')
                 ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
 
@@ -31,17 +31,19 @@
         <header id="header" role="banner">
             <nav id="nav" role="navigation">
                 <ul>
-                    <li><a itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
+                    <li><a tabindex='1' hreflang='<?=$this->layout()->lang?>' itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
                 </ul>
             </nav>
         </header>
         <div class="breadcrumbs">
             <ul>
 <?php
-            if ($view->breadcrumbs) {
+            if (!empty($view->breadcrumbs)) {
+                $i = 2;
                 foreach($view->breadcrumbs as $bread) {
                     if ($bread['name'] != null) {
-                        echo "<li><a itemprop='url' href='".$bread['reference']."'>".$bread['name']."</a></li>&nbsp;&sol;&nbsp;";
+                        echo "<li><a tabindex='{$i}' hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
+                        $i = $i + 1;
                     }
                 }
             }
@@ -54,15 +56,15 @@
          */
         if ($this->layout()->flashMessages) {
             foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
-                echo '<div class="alert alert-' . $this->layout()->flashMessages->getNamespace() . '">
+                echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
                         <ul>
                             <li>
-                                <i class="fa-fw fa fa-'.$this->layout()->flashMessages->getNamespace().'"></i>' . $message . '
-                                <button type="button" class="close"><i class="fa fa-times"></i></button>
+                                <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
+                                <button type='button' class='close'><i class='fa fa-times'></i></button>
                             </li>
                         </ul>
                       </div>
-                ';
+                ";
             }
         }
 ?>
@@ -78,11 +80,11 @@
         </main>
     </div>
 
-    <aside role="complementary">
+    <aside id="aside" role="complementary">
 
     </aside>
 
-    <footer role="contentinfo">
+    <footer id="footer" role="contentinfo">
         <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
     </footer>
 <?php

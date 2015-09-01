@@ -39,9 +39,9 @@ use Zend\InputFilter\InputFilterProviderInterface;
 class MenuForm extends Form implements InputFilterProviderInterface
 {
     /**
-     * @var array $menus
+     * @var Zend\Db\ResultSet\ResultSet $menus
      */
-    private $menus = [];
+    private $menus = null;
 
     /**
      * @var array $languages
@@ -52,7 +52,7 @@ class MenuForm extends Form implements InputFilterProviderInterface
      * @param Zend\Db\ResultSet\ResultSet $languages
      * @param array $menus
      */
-    public function __construct($languages, array $menus = [])
+    public function __construct($languages, $menus = null)
     {
         $this->languages = $languages;
         $this->menus = $menus;
@@ -73,17 +73,13 @@ class MenuForm extends Form implements InputFilterProviderInterface
     private function collectMenuOptions()
     {
         $valueOptions = [];
-        foreach ($this->menus["menus"] as $key => $menu) {
-            $valueOptions[$menu->getId()] = $menu->getCaption();
-
-            if (!empty($this->menus["submenus"][$key])) {
-                foreach ($this->menus["submenus"][$key] as $sub) {
-                    $valueOptions[$sub->getId()] = "--".$sub->getCaption();
-                }
+        if ($this->menus) {
+            foreach ($this->menus as $submenus) {
+                $valueOptions[$submenus->getId()] = $submenus->getCaption();
             }
+            return $valueOptions;
         }
-
-        return $valueOptions;
+        return null;
     }
 
     public function init()
@@ -124,7 +120,7 @@ class MenuForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'required'   => false,
                 'size'        => 40,
-                'placeholder' => 'Keywords (max 15 words) seperate by commas',
+                'placeholder' => 'Keywords (max 15 words) seperated by commas',
             ],
             'options' => [
                 'label' => 'Keywords',
@@ -158,7 +154,7 @@ class MenuForm extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Select',
             'name' => 'parent',
             'options' => [
-                'label' => 'Parent',
+                'label' => 'Parent menu',
                 'empty_option' => 'Please choose your menu',
                 'value_options' => $this->collectMenuOptions(),
             ],

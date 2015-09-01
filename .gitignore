@@ -8,9 +8,8 @@ auth.json
 .project
 .settings
 composer.lock
-/config/autoload
-/data/logs
-/public/fileupload
-/public/userfiles
+config
+data
+public
 vendor
 composerInstalation

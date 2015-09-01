@@ -86,7 +86,7 @@ final class UserController extends IndexController
     protected function modifyAction()
     {
         $this->getView()->setTemplate("admin/user/modify");
-        $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
+        $user = $this->getTable("user")->getUser((int)$this->getParam("id", 0))->current();
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/modify/{$user->getId()}", "name"=> $this->translate("MODIFY_USER")." &laquo;".$user->getName()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_USER"), $user);
@@ -144,7 +144,7 @@ final class UserController extends IndexController
      */
     protected function enableAction()
     {
-        $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 0);
+        $user = $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
@@ -154,7 +154,7 @@ final class UserController extends IndexController
      */
     protected function disableAction()
     {
-        $user = $this->getTable("user")->toggleUserState($this->getParam("id", 0), 1);
+        $user = $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
@@ -165,7 +165,7 @@ final class UserController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/user/detail");
-        $user = $this->getTable("user")->getUser($this->getParam("id", 0))->current();
+        $user = $this->getTable("user")->getUser((int)$this->getParam("id", 0))->current();
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/detail/".$user->getId()."", "name"=>"&laquo;". $user->getFullName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -209,11 +209,11 @@ final class UserController extends IndexController
      */
     protected function exportAction()
     {
-        $filesPath = "public/userfiles/userExports/";
+        $filesPath = "public/userfiles/exports/";
         if (!is_dir($filesPath)) {
             mkdir($filesPath);
         }
         $fileName = $this->getTable("user")->export($filesPath);
-        return $this->redirect()->toUrl("/userfiles/userExports/".$fileName);
+        return $this->redirect()->toUrl("/userfiles/exports/".$fileName);
     }
 }

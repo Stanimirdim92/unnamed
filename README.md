@@ -5,7 +5,7 @@ This README would normally document whatever steps are necessary to get your app
 ### Unnamed CMS ###
 
 * Building a new CMS on top of Zend Framework 2. Why? Because I can and because the internet needs something better.
-* Version 0.0.10
+* Version 0.0.11
 * Huge thanks to (Abdul Malik Ikhsan)https://samsonasik.wordpress.com/ a.k.a (samsonasik)https://twitter.com/samsonasik?lang=en for being saw helpful and patient
 
 ### Requirements ###

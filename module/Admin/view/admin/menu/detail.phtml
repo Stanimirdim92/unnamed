@@ -34,17 +34,14 @@
 
 <?php
     if ($menu->getParent() > 0) {
-        $parent = $menu->getParentObject();
-        if ($parent instanceof \Admin\Model\Menu) {
 ?>
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("PARENT")?></li>
             <li class="table-cell">
-                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'detail', 'id' => $parent->getId()])?>'><i class='fa fa-info'></i> <?=$parent->getCaption();?></a>
+                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'detail', 'id' => $menu->getParent()])?>'><i class='fa fa-info'></i></a>
             </li>
         </ul>
 <?php
-        }
     }
 ?>
     </div>

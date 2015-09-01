@@ -107,7 +107,7 @@ final class AdminMenuController extends IndexController
     protected function modifyAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/modify");
-        $adminMenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0))->current();
+        $adminMenu = $this->getTable("adminmenu")->getAdminMenu((int) $this->getParam("id", 0))->current();
         $this->getView()->adminMenu = $adminMenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/{$adminMenu->getId()}", "name"=>$this->translate("MODIFY_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_ADMINMENU"), $adminMenu);
@@ -119,7 +119,7 @@ final class AdminMenuController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("adminmenu")->deleteAdminMenu($this->getParam("id", 0));
+        $this->getTable("adminmenu")->deleteAdminMenu((int)$this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
@@ -127,7 +127,7 @@ final class AdminMenuController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/detail");
-        $adminmenu = $this->getTable("adminmenu")->getAdminMenu($this->getParam("id", 0), $this->language())->current();
+        $adminmenu = $this->getTable("adminmenu")->getAdminMenu((int)$this->getParam("id", 0), $this->language())->current();
         $this->getView()->adminmenu = $adminmenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/".$adminmenu->getId()."", "name"=>"&laquo;". $adminmenu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -135,7 +135,7 @@ final class AdminMenuController extends IndexController
 
     protected function cloneAction()
     {
-        $adminmenu = $this->getTable("adminmenu")->duplicate($this->getParam("id", 0));
+        $adminmenu = $this->getTable("adminmenu")->duplicate((int)$this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }

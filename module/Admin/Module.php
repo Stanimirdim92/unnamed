@@ -96,7 +96,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     public function onError(EventInterface $e)
     {
         $sm = $e->getApplication()->getServiceManager();
-        $service = $sm->get('AdminErrorHandling');
+        $service = $sm->get('ApplicationErrorHandling');
         $service->logError($e, $sm);
         $e->stopPropagation();
         return;

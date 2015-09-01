@@ -6,6 +6,7 @@
               <li class="table-cell"><?=$this->translate("DATE")?></li>
               <li class="table-cell"><?=$this->translate("DETAILS")?></li>
               <li class="table-cell"><?=$this->translate("MODIFY")?></li>
+              <li class="table-cell"><?=$this->translate("ACTIVE")?></li>
               <li class="table-cell"><?=$this->translate("DELETE")?></li>
         </ul>
 <?php
@@ -28,6 +29,25 @@
                     <i class='fa fa-pencil'></i>
                 </a>
             </li>
+<?php
+        if ($content->getActive() == 0) {
+?>
+            <li class="table-cell">
+                <a title='<?=$this->translate("DEACTIVATED");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "activate", "id" => $content->getId()])?>' class='btn btn-default btn-sm deactivated'>
+                    <i class='fa fa-minus-square-o'></i>
+                </a>
+            </li>
+<?php
+        } else {
+?>
+            <li class="table-cell">
+                <a title='<?=$this->translate("ACTIVE");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "deactivate", "id" => $content->getId()])?>' class='btn btn-default btn-sm active'>
+                    <i class='fa fa-check-square-o'></i>
+                </a>
+            </li>
+<?php
+        }
+?>
             <li class="table-cell">
                 <button id='delete_<?=$content->getId()?>' type="button" class='btn btn-default btn-sm red delete dialog_delete'><i class='fa fa-trash-o'></i></button>
                 <div style='display: none' id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>

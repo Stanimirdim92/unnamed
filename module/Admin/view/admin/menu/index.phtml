@@ -3,77 +3,12 @@
         <ul class="table-header">
             <li class="table-cell"><?=$this->translate("CAPTION");?></li>
             <li class="table-cell"><?=$this->translate("DETAILS");?></li>
-            <li class="table-cell"><?=$this->translate("MENU_TYPE");?></li>
             <li class="table-cell"><?=$this->translate("MODIFY");?></li>
+            <li class="table-cell"><?=$this->translate("ACTIVE");?></li>
             <li class="table-cell"><?=$this->translate("DELETE");?></li>
         </ul>
 <?php
-        if (!empty($this->menus)) {
-            /**
-             * @var $menu Admin\Model\Menu
-             */
-            foreach($this->menus as $key => $menu) {
-?>
-                <ul class="table-row">
-                    <li class="table-cell"><?=$menu->getCaption()?></li>
-                    <li class="table-cell">
-                        <a title='<?=$this->translate("DETAILS")?>' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "detail", "id" => $menu->getId()])?>' class='btn btn-default btn-sm blue'><i class='fa fa-info'></i></a>
-                    </li>
-                    <li class="table-cell"><?=$menu->getMenuTypeAsName()?></li>
-                    <li class="table-cell">
-                        <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "modify", "id" => $menu->getId()])?>' class='btn btn-default btn-sm orange'><i class='fa fa-pencil'></i></a>
-                    </li>
-                    <li class="table-cell">
-                        <button id='delete_<?=$menu->getId()?>' type="button" class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                        <div id='delete_delete_<?=$menu->getId()?>' class='dialog_hide'>
-                           <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$menu->getCaption()?>&raquo;</p>
-                            <ul>
-                                <li>
-                                    <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "delete", "id" => $menu->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
-                                </li>
-                                <li>
-                                    <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-<?php
-        if(!empty($this->submenus[$key])) {
-            /**
-             * @var $subMenu Admin\Model\Menu
-             */
-            foreach($this->submenus[$key] as $subMenu) {
-?>
-                <ul class="table-row">
-                    <li class="table-cell"><?=$subMenu->getCaption()?></li>
-                    <li class="table-cell">
-                        <a title='<?=$this->translate("DETAILS")?>' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "detail", "id" => $subMenu->getId()])?>' class='btn btn-default btn-sm blue'><i class='fa fa-info'></i></a>
-                    </li>
-                    <li class="table-cell"><?=$subMenu->getMenuTypeAsName()?></li>
-                    <li class="table-cell">
-                        <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "modify", "id" => $subMenu->getId()])?>' class='btn btn-default btn-sm orange'><i class='fa fa-pencil'></i></a>
-                    </li>
-                    <li class="table-cell">
-                        <button id='delete_<?=$subMenu->getId()?>'type="button" class='btn btn-default btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                        <div id='delete_delete_<?=$subMenu->getId()?>' class='dialog_hide'>
-                           <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$subMenu->getCaption()?>&raquo;</p>
-                            <ul>
-                                <li>
-                                    <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "menu", "action" => "delete", "id" => $subMenu->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DELETE")?></a>
-                                </li>
-                                <li>
-                                    <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-<?php
-            }
-        }
-            }
-        }
+        echo $this->menus;
 ?>
     </div>
 </section>

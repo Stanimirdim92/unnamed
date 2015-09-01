@@ -87,17 +87,6 @@ class IndexController extends AbstractActionController
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
 
-    /**
-     * initialize the admin menus
-     * @todo  rewrite
-     */
-    // private function initMenus()
-    // {
-    //     $this->getView()->adminMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='0'", "menuOrder");
-    //     $this->getView()->advancedMenus = $this->getTable("AdminMenu")->fetchList(false, "parent='0' AND advanced='1'", "menuOrder");
-    //     $this->getView()->adminsubmenus = $this->getTable("AdminMenu")->fetchList(false, "parent !='0' AND controller='{$this->getParam('__CONTROLLER__')}'", "menuOrder");
-    // }
-
 /****************************************************
  * START OF ALL MAIN/SHARED FUNCTIONS
  ****************************************************/
@@ -191,8 +180,7 @@ class IndexController extends AbstractActionController
      */
     protected function languageAction()
     {
-        $id = $this->getParam("id", 1);
-        $language = $this->getTable("language")->getLanguage($id);
+        $language = $this->getTable("language")->getLanguage((int) $this->getParam("id", 1));
 
         $this->translation->language = $language->getId();
         $this->translation->languageName = $language->getName();

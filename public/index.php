@@ -27,23 +27,18 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.11
  * @link       TBA
  */
 
 header( 'Content-Type: text/html; charset=utf-8' );
 
 /**
- * Used for ZendDeveloperTools
- */
-define('REQUEST_MICROTIME', microtime(true));
-
-/**
  * Check requiarments
  */
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.10", "5.5"));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.11", "5.5"));
 }
 
 /**
@@ -115,7 +110,7 @@ chdir(dirname(__DIR__));
 /**
  * Decline static file requests back to the PHP built-in webserver
  */
-if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
+if (php_sapi_name() === 'cli-server' && is_file(__DIR__.parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {
     return false;
 }
 

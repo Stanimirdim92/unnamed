@@ -3,6 +3,7 @@ if(!empty($this->news)) {
    /**
     * @var $new Admin\Model\Content
     */
+    $i = 1;
     foreach($this->news as $new) {
         $dateTime = date("Y-m-d", strtotime($new->getDate()));
         $dateTimeShow = date("M d, Y", strtotime($new->getDate()));
@@ -20,7 +21,7 @@ if(!empty($this->news)) {
                 }
 ?>
                 <h2 itemscope itemprop="name" class="post-title">
-                    <a itemprop="url" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$new->getTitle();?></a>
+                    <a tabindex='{$i}' hreflang='<?=$this->layout()->lang?>' itemprop="url" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$new->getTitle();?></a>
                 </h2>
 
                 <time datetime="<?=$dateTime?>" class="post-date">
@@ -33,13 +34,14 @@ if(!empty($this->news)) {
                 if (mb_strlen($new->getText()) > 0) {
 ?>
                     <p class="read-more">
-                        <a itemscope itemprop="url" title="<?=$this->translate("READ_MORE")?>" class="read-more-link" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$this->translate("READ_MORE")?></a>
+                        <a tabindex='{$i}' hreflang='<?=$this->layout()->lang?>' itemscope itemprop="url" title="<?=$this->translate("READ_MORE")?>" class="read-more-link" href="<?=$this->url('news/default', ['post' => $new->getTitleLink()]);?>"><?=$this->translate("READ_MORE")?></a>
                     </p>
 <?php
                 }
 ?>
             </article>
 <?php
+    $i = $i + 1;
     }
     echo $this->paginationControl($this->news, 'Sliding', ['application/pagination', "Application"], ['route' => 'news', 'action' => 'post']);
 } elseif(!empty($this->new)) {
@@ -57,7 +59,7 @@ if(!empty($this->news)) {
         if ($newsPost["preview"] != null) {
 ?>
             <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
-                <a itemprop="url" href="/userfiles/preview/<?=$newsPost["preview"];?>" id="news_image" title="<?=$newsPost["title"];?>">
+                <a tabindex='1' hreflang='<?=$this->layout()->lang?>' itemprop="url" href="/userfiles/preview/<?=$newsPost["preview"];?>" id="news_image" title="<?=$newsPost["title"];?>">
                     <img itemprop="image" src="/userfiles/preview/<?=$newsPost["preview"];?>" title="<?=$newsPost["title"];?>" alt="<?=$newsPost["title"];?>" />
                 </a>
             </figure>
@@ -70,7 +72,7 @@ if(!empty($this->news)) {
 
         <div itemprop="text" class="post-text"><?=$newsPost["text"];?></div>
         <p class="back-to-news">
-            <a itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
+            <a tabindex='2' hreflang='<?=$this->layout()->lang?>' itemprop="url" href="<?=$this->url('news');?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
         </p>
     </article>
 <?php

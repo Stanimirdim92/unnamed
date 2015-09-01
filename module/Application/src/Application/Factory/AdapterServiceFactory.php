@@ -36,35 +36,21 @@ namespace Application\Factory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter;
+use BjyProfiler\Db\Adapter\ProfilingAdapter;
+use BjyProfiler\Db\Profiler\Profiler;
 
 class AdapterServiceFactory implements FactoryInterface
 {
-
-    /**
-     * @var array $config
-     */
-    private $config = [];
-
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config = [])
-    {
-        $this->config = $config;
-    }
-
     /**
      * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator = null)
     {
-        if (empty($this->config)) {
-            $this->config = $serviceLocator->get('Config');
-        }
+        $this->config = $serviceLocator->get('Config');
 
         if (APP_ENV === 'development') {
-            $adapter = new \BjyProfiler\Db\Adapter\ProfilingAdapter($this->config["db"]);
-            $adapter->setProfiler(new \BjyProfiler\Db\Profiler\Profiler);
+            $adapter = new ProfilingAdapter($this->config["db"]);
+            $adapter->setProfiler(new Profiler());
             $adapter->injectProfilingStatementPrototype();
             return $adapter;
         }

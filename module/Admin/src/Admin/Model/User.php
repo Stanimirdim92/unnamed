@@ -399,22 +399,6 @@ class User
     }
 
     /**
-     * magic getter
-     */
-    public function __get($property)
-    {
-        return (property_exists($this, $property) ? $this->{$property} : null);
-    }
-
-    /**
-     * magic setter
-     */
-    public function __set($property, $value)
-    {
-        return (property_exists($this, $property) ? $this->{$property} = $value : null);
-    }
-
-    /**
      * magic property exists (isset) checker
      */
     public function __isset($property)

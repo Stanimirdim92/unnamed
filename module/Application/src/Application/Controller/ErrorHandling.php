@@ -39,7 +39,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\MvcEvent;
 
-class ErrorHandling
+final class ErrorHandling
 {
     /**
      * Default destination
@@ -56,7 +56,7 @@ class ErrorHandling
     /**
      * @param Logger $logger
      */
-    public function __construct($logger = null)
+    public function __construct(Logger $logger = null)
     {
         $this->logger = $logger;
     }
@@ -69,7 +69,7 @@ class ErrorHandling
     public function setDestination($destination = null)
     {
         if (is_dir($destination) && is_writable($destination)) {
-            $this->destination = $destination;
+            $this->destination = (string) $destination;
         }
     }
 
@@ -88,6 +88,7 @@ class ErrorHandling
         $log .=  PHP_EOL."File: ".$e->getFile();
         $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
         $this->logger->err($log);
+        return $this->logger;
     }
 
     /**

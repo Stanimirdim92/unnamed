@@ -51,35 +51,13 @@ class MenuFormFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $this->services = $serviceLocator->getServiceLocator();
+        $lang = new Container("translations");
 
         $languages = $this->services->get("LanguageTable")->fetchList(false, [], ["active" => 1], "AND");
+        $menu = $this->services->get("MenuTable")->fetchList(false, ['id', 'language', 'caption'], ["active" => 1, "language" => $lang->language], "AND", null, "id, menuOrder");
 
-        $form = new MenuForm(
-            $languages,
-            $this->prepareMenusData()
-        );
+        $form = new MenuForm($languages, $menu);
 
         return $form;
-    }
-
-    private function prepareMenusData()
-    {
-        $lang = new Container("translations");
-        $menu = $this->services->get("MenuTable")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'parent'], ["language" => $lang->language], "AND", null, "id, menuOrder");
-        if (count($menu) > 0) {
-            $menus = ["menus" => null, "submenus" => null];
-            foreach ($menu as $submenu) {
-                if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
-                    $menus["submenus"][$submenu->getParent()][] = $submenu;
-                } else {
-                    $menus["menus"][$submenu->getId()] = $submenu;
-                }
-            }
-            return $menus;
-        }
-        return [];
     }
 }

@@ -84,9 +84,9 @@ return [
             'Application\Controller\Registration' => 'Application\Factory\Controller\RegistrationControllerFactory',
         ],
         'invokables' => [
-            'Application\Controller\Index'        => 'Application\Controller\IndexController',
-            'Application\Controller\News'         => 'Application\Controller\NewsController',
-            'Application\Controller\Menu'         => 'Application\Controller\MenuController',
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\News'  => 'Application\Controller\NewsController',
+            'Application\Controller\Menu'  => 'Application\Controller\MenuController',
         ],
     ],
     'view_manager' => [

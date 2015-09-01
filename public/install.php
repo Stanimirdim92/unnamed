@@ -67,7 +67,20 @@ $pageId = (isset($_GET["page"]) ? $_GET["page"] : 0);
 /**
  * These directories are required
  */
-$requiredDirs = ["data", "data/cache", 'data/cache/frontend', 'data/cache/modules', 'data/logs', 'data/translations', 'data/fonts', 'data/database'];
+$requiredDirs = [
+    'data',
+    'data/cache',
+    'data/cache/frontend',
+    'data/cache/modules',
+    'data/logs',
+    'data/translations',
+    'data/fonts',
+    'data/database',
+    'public/userfiles/captcha',
+    'public/userfiles/exports',
+    'public/userfiles/images',
+    'public/userfiles/preview',
+];
 
 foreach ($requiredDirs as $dir) {
     if (!is_dir($dir)) {
@@ -165,7 +178,7 @@ switch ((int) $pageId) {
                 <input type="submit" id="submit" name="submit" value="Configure database">
             </form>
 <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST["submit"])) {
+            if (!empty($_POST["submit"]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 /**
                  * htmlspecialchars fix|hack. Well done PHP, well done...
                  */

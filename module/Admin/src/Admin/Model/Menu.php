@@ -86,6 +86,11 @@ class Menu
     private $menulink = null;
 
     /**
+     * @var bool $active
+     */
+    private $active = 1;
+
+    /**
      * @var array $data
      * @return mixed
      */
@@ -101,6 +106,7 @@ class Menu
         $this->menutype = (isset($data['menutype'])) ? $data['menutype'] : $this->getMenuType();
         $this->footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->getFooterColumn();
         $this->menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->getMenuLink();
+        $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
     }
 
     /**
@@ -174,6 +180,24 @@ class Menu
     public function getMenuOrder()
     {
         return $this->menuOrder;
+    }
+
+    /**
+     * Set active
+     * @param Boolean $active
+     */
+    public function setActive($active = 0)
+    {
+        $this->active = $active;
+    }
+
+    /**
+     * Get active
+     * @return Boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 
     /**
@@ -320,22 +344,6 @@ class Menu
     }
 
     /**
-     * magic getter
-     */
-    public function __get($property)
-    {
-        return (property_exists($this, $property) ? $this->{$property} : null);
-    }
-
-    /**
-     * magic setter
-     */
-    public function __set($property, $value)
-    {
-        return (property_exists($this, $property) ? $this->{$property} = $value : null);
-    }
-
-    /**
      * magic property exists (isset) checker
      */
     public function __isset($property)
@@ -381,6 +389,7 @@ class Menu
         $clone->setMenuType($this->getMenuType());
         $clone->setFooterColumn($this->getFooterColumn());
         $clone->setMenuLink($this->getMenuLink());
+        $clone->setActive($this->getActive());
         return $clone;
     }
 }

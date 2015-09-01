@@ -221,7 +221,6 @@ class UserTable
         $id = (int) $user->getId();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $user->id = $this->tableGateway->lastInsertValue;
         } else {
             if (!$this->getUser($id)) {
                 throw new \Exception("Errror");
@@ -235,7 +234,7 @@ class UserTable
     /**
      * @param string $path
      */
-    public function export($path = "/userfiles/userExports")
+    public function export($path = "/userfiles/exports")
     {
         require_once("/vendor/CodePlex/PHPExcel.php");
         $filename = md5(rand(10, 2000000)).".xlsx";

@@ -12,7 +12,7 @@
       if (isset($this->previous)) {
 ?>
             <li class="prev">
-                <a href="<?=$this->url($this->route, ['page' => $this->previous], false, true); ?>"><?=$this->translate("PAGINATION_PREV")?></a>
+                <a rel="prev" href="<?=$this->url($this->route, ['page' => $this->previous], false, true); ?>"><?=$this->translate("PAGINATION_PREV")?></a>
             </li>
 <?php } else { ?>
             <li class="prev disabled">
@@ -35,7 +35,7 @@
       if (isset($this->next)) {
 ?>
             <li class="next">
-                <a href="<?=$this->url($this->route, ['page' => $this->next], false, true); ?>"><?=$this->translate("PAGINATION_NEXT")?></a>
+                <a rel="next" href="<?=$this->url($this->route, ['page' => $this->next], false, true); ?>"><?=$this->translate("PAGINATION_NEXT")?></a>
             </li>
 <?php } else { ?>
             <li class="next disabled">

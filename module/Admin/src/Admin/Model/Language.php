@@ -48,7 +48,7 @@ class Language
     /**
      * @var bool $active
      */
-    private $active = 0;
+    private $active = 1;
 
     /**
      * @var array $data
@@ -132,23 +132,6 @@ class Language
     public function getActive()
     {
         return $this->active;
-    }
-
-
-    /**
-     * magic getter
-     */
-    public function __get($property)
-    {
-        return (property_exists($this, $property) ? $this->{$property} : null);
-    }
-
-    /**
-     * magic setter
-     */
-    public function __set($property, $value)
-    {
-        return (property_exists($this, $property) ? $this->{$property} = $value : null);
     }
 
     /**

@@ -115,4 +115,9 @@ return [
     "SESSION_TRANSLATION_FILE_NOT_FOUND" => "Session translations file was not found",
     'TRANSLATIONS_SAVE_SUCCESS' => 'Translations were successfully saved',
     'NO_TRANSLATION_FILE' => 'No translation file was found',
+    'MENU_DISABLE_SUCCESS' => 'Menu was successfully deactivated',
+    'MENU_ENABLE_SUCCESS' => 'Menu was successfully activated',
+    'CONTENT_DISABLE_SUCCESS' => 'Content was successfully deactivated',
+    'CONTENT_ENABLE_SUCCESS' => 'Content was successfully activated',
+    'DEACTIVATED' => 'Deactivated',
 ];

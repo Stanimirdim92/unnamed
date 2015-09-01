@@ -105,7 +105,7 @@
   'NO_CONTENT' => 'No content was found',
   'POSTED_ON' => 'Posted on',
   'READ_MORE' => 'Read more...',
-  'BACK_TO_NEWS_OVERVIEW' => 'Back to new overview',
+  'BACK_TO_NEWS_OVERVIEW' => 'Back to news overview',
   'CREATE_ACCOUNT' => 'Registration',
   'HOME' => 'Home',
   'NEWS' => 'News',
@@ -113,4 +113,9 @@
   'SESSION_TRANSLATION_FILE_NOT_FOUND' => 'Session translations file was not found',
   'TRANSLATIONS_SAVE_SUCCESS' => 'Translations were successfully saved',
   'NO_TRANSLATION_FILE' => 'No translation file was found',
+  'MENU_DISABLE_SUCCESS' => 'Menu was successfully deactivated',
+  'MENU_ENABLE_SUCCESS' => 'Menu was successfully activated',
+  'CONTENT_DISABLE_SUCCESS' => 'Content was successfully deactivated',
+  'CONTENT_ENABLE_SUCCESS' => 'Content was successfully activated',
+  'DEACTIVATED' => 'Deactivated',
 );

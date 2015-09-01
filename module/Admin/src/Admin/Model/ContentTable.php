@@ -211,6 +211,7 @@ class ContentTable
             'date'      => (string) $content->getDate(),
             'language'  => (int) $content->getLanguage(),
             'titleLink' => (string) $content->getTitleLink(),
+            'active'    => (int) $content->getActive(),
         ];
         $id = (int) $content->getId();
         $language = (int) $content->getLanguage();
@@ -225,6 +226,19 @@ class ContentTable
         }
         unset($id, $language, $data);
         return $content;
+    }
+
+    /**
+     * This method can disable or enable contents
+     *
+     * @param int $id content id
+     * @param  int $state 0 - deactivated, 1 - active
+     */
+    public function toggleActiveContent($id = 0, $state = 0)
+    {
+        if ($this->getContent($id)) {
+            $this->tableGateway->update(["active" => (int) $state], ['id' => (int) $id]);
+        }
     }
 
     /**

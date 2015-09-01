@@ -173,24 +173,6 @@ class ResetPassword
     }
 
     /**
-     * magic getter
-     */
-    public function __get($property)
-    {
-        return (property_exists($this, $property) ? $this->{$property} : null);
-    }
-
-    /**
-     * magic setter
-     */
-    public function __set($property, $value)
-    {
-        if (property_exists($this, $property)) {
-            $this->{$property} = $value;
-        }
-    }
-
-    /**
      * magic property exists (isset) checker
      */
     public function __isset($property)

@@ -645,13 +645,30 @@ ul {
 /* Misc */
 .table-style {
     display: table;
+    /* width: 100%; */
 }
 .table-row {
-    display: table-row;
+    display: block;
+    width: 100%;
 }
+
+.table-row:nth-child(even) {
+  background: #eee;
+}
+
+.table-row .table-row  {
+     padding-left: 30px;
+}
+
+/*.table-row:nth-child(odd) .table-row {
+    background: #D6D6D6;
+    padding-left: 30px;
+}*/
+
 .table-cell {
     display: table-cell;
     padding: 10px;
+    width: inherit;
 }
 .table-header {
     display: table-caption;
@@ -726,11 +743,11 @@ button.add-new-translation {
   margin: 5px;
 }
 
-.successFiles {
+.successFiles, .success, .active {
   color: #FFF;
   background: #2ECC71;
 }
-.errorFiles {
+.errorFiles, .error, .deactivated {
     color: #FFF;
     background: #C0392B;
 }

@@ -98,7 +98,7 @@ final class LanguageController extends IndexController
     protected function modifyAction()
     {
         $this->getView()->setTemplate("admin/language/modify");
-        $language = $this->getTable("language")->getLanguage($this->getParam("id", 0));
+        $language = $this->getTable("language")->getLanguage((int)$this->getParam("id", 0));
         $this->getView()->language = $language;
         $this->addBreadcrumb(["reference"=>"/admin/language/modify/{$language->getId()}", "name"=>$this->translate("MODIFY_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_LANGUAGE"), $language);
@@ -110,7 +110,7 @@ final class LanguageController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("language")->deleteLanguage($this->getParam('id', 0));
+        $this->getTable("language")->deleteLanguage((int)$this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
     }
@@ -121,7 +121,7 @@ final class LanguageController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/language/detail");
-        $lang = $this->getTable("Language")->getLanguage($this->getParam('id', 0));
+        $lang = $this->getTable("Language")->getLanguage((int)$this->getParam('id', 0));
         $this->getView()->lang = $lang;
         $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
