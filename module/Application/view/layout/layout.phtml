@@ -7,70 +7,68 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
-
 <?php
             echo $this->headMeta();
             echo $this->placeholder('customHead');
             echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
-                ->prependStylesheet($this->basePath('/front/css/style.css'), 'screen')
-                ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
+                ->prependStylesheet($this->basePath('assets/prod/front/css/front.min.css'), 'all');
 ?>
-
         <meta property="og:site_name" content="<?=$this->escapeHtml($this->headTitle()->renderTitle());?>">
         <link rel="apple-touch-icon" href="<?=$this->basePath('/front/img/apple-touch-icon.png');?>">
         <link rel="canonical" href="<?=$this->serverUrl(true);?>">
         <link rel="shortlink" href="<?=$this->serverUrl(true);?>">
     </head>
     <body itemscope itemtype="http://schema.org/WebPage">
-        <header id="header" role="banner">
-            <nav id="nav" role="navigation">
-                <ul>
-<?php
-                    echo $view->menu;
-?>
-            </nav>
-        </header>
-<?php
-        /**
-         * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
-         */
-        if ($this->layout()->flashMessages) {
-            foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
-                echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
-                        <ul>
-                            <li>
-                                <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
-                                <button type='button' class='close'><i class='fa fa-times'></i></button>
-                            </li>
-                        </ul>
-                      </div>
-                ";
-            }
-        }
-?>
-    <div id="content-wrapper">
-        <main id="main" role="main">
-<?php
-            /**
-             * Every other html element must come from content variable
-             * or in other simple words: Do not put any other html element around this code!
-             */
-            echo $this->layout()->content;
-?>
-        </main>
-    </div>
 
-    <aside id="aside" role="complementary">
+        <div id="content-wrapper">
+            <!-- Header, banner, navigation menu -->
+            <header id="header" role="banner">
+                <nav id="nav" role="navigation">
+                    <?=$view->menu;?>
+                </nav>
+            </header>
 
-    </aside>
+            <aside id="aside" class="aside-menu-left" role="complementary">
 
-    <footer id="footer" role="contentinfo">
-        <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
-    </footer>
+            </aside>
+
+            <main id="main" role="main">
 <?php
-        echo $this->headScript()
-            ->prependFile($this->basePath('/front/js/custom.js'))
-            ->prependFile($this->basePath('/front/js/jquery.min.js'));
+                /**
+                 * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
+                 */
+                if ($this->layout()->flashMessages) {
+                    foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
+                        echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
+                                <ul>
+                                    <li>
+                                        <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
+                                        <button type='button' class='close'><i class='fa fa-times'></i></button>
+                                    </li>
+                                </ul>
+                              </div>
+                        ";
+                    }
+                }
+
+                /**
+                 * Every other html element must come from content variable
+                 * or in other simple words: Do not put any other html element around this code!
+                 */
+                echo $this->layout()->content;
+?>
+            </main>
+
+            <aside id="aside" class="aside-menu-right" role="complementary">
+
+            </aside>
+        </div>
+
+        <footer id="footer" role="contentinfo">
+            <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
+        </footer>
+<?php
+        echo $this->headScript()->prependFile($this->basePath('assets/prod/front/js/front.min.js'));
 ?>
     </body>
 </html>

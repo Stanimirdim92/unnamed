@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -356,7 +356,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
                     [
                         'name' => 'Zend\Validator\File\Size',
                         'options' => [
-                            'min' => '10kB',
+                            'min' => '5kB',
                             'max' => '5MB',
                             'useByteString' => true,
                         ],
@@ -380,30 +380,6 @@ class ContentForm extends Form implements InputFilterProviderInterface
             [
                 "name"=>"imageUpload",
                 "required" => false,
-                'validators' => [
-                    [
-                        'name' => 'Zend\Validator\File\Size',
-                        'options' => [
-                            'min' => '10kB',
-                            'max' => '5MB',
-                            'useByteString' => true,
-                        ],
-                    ],
-                    [
-                        'name' => 'Zend\Validator\File\Extension',
-                        'options' => [
-                            'extension' => [
-                                'jpg',
-                                'gif',
-                                'png',
-                                'jpeg',
-                                'bmp',
-                                'webp',
-                            ],
-                            'case' => true,
-                        ],
-                    ],
-                ],
             ],
             [
                 "name"=>"titleLink",

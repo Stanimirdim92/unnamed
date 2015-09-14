@@ -1,7 +1,18 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.11 (31.08.2015) - Stable Alpha
+## 0.0.12 (14.09.2015) - Stable Alpha
+ - SensioLabs reports 0 vulnerabilities
+ - AJAX image gallery updates
+ - Added Gulp
+ - Updated layouts
+ - New assets structure
+ - Devide css styles based on their view ports
+ - Add content author
+ - Image manipulation library - WIP
+
+DD.MM.YYYY
+## 0.0.11 (01.09.2015) - Stable Alpha
  - Instalation script updates and bug fixes
  - Refactored menu logic. Made it multidimensonal. - Needs more testing
  - layout.phtml and style.css fixes
@@ -101,7 +112,6 @@ DD.MM.YYYY
  - Run composer from the browser - WIP
 
 # TODO
- - Add content author
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - WAI-ARIA Landmarks

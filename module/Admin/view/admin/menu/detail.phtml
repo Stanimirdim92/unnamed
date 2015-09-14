@@ -38,7 +38,7 @@
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("PARENT")?></li>
             <li class="table-cell">
-                <a class='btn btn-labeled btn-default blue' title='Parent details' href='<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'detail', 'id' => $menu->getParent()])?>'><i class='fa fa-info'></i></a>
+                <a class='btn btn-default blue' title='Parent details' href='<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'detail', 'id' => $menu->getParent()])?>'><i class='fa fa-info'></i></a>
             </li>
         </ul>
 <?php
@@ -47,7 +47,7 @@
     </div>
     <br/>
 
-    <a href="<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'modify', 'id' => $menu->getId()])?>" class="btn btn-labeled btn-default">
+    <a href="<?=$this->url("admin/default", ['controller' => "menu", 'action' => 'modify', 'id' => $menu->getId()])?>" class="btn btn-default">
         <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("MODIFY")?>
     </a>
 </section>

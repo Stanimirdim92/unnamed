@@ -1,6 +1,6 @@
 <?php
-    if ($this->viewModel()->getCurrent()->getChildren() != null) {
-        $view = $this->viewModel()->getCurrent()->getChildren()[0];
+if ($this->viewModel()->getCurrent()->getChildren() != null) {
+    $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
 <html lang="<?=$this->layout()->lang?>">
@@ -22,75 +22,80 @@
                 ->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
             echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
-                ->prependStylesheet($this->basePath('/back/css/style.css'), 'screen')
-                ->prependStylesheet($this->basePath('/front/css/font-awesome.min.css'), 'screen');
+                ->prependStylesheet($this->basePath('/assets/prod/back/css/back.min.css'), 'screen');
 
 ?>
     </head>
     <body itemscope itemtype="http://schema.org/WebPage">
-        <header id="header" role="banner">
-            <nav id="nav" role="navigation">
-                <ul>
-                    <li><a tabindex='1' hreflang='<?=$this->layout()->lang?>' itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="breadcrumbs">
-            <ul>
+
+        <div id="content-wrapper">
+            <!-- Header, banner, navigation menu -->
+            <header id="header" role="banner">
+                <nav id="nav" role="navigation">
+                    <ul>
+                        <li><a tabindex='1' hreflang='<?=$this->layout()->lang?>' itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
+                        <?=$view->menu;?>
+                    </ul>
+                </nav>
+            </header>
+
+            <aside id="aside" role="complementary">
+
+            </aside>
+
+            <main id="main" role="main">
+                <!-- Breadcrumbs -->
+                <div class="breadcrumbs">
+                    <ul>
 <?php
-            if (!empty($view->breadcrumbs)) {
-                $i = 2;
-                foreach($view->breadcrumbs as $bread) {
-                    if ($bread['name'] != null) {
-                        echo "<li><a tabindex='{$i}' hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
-                        $i = $i + 1;
+                    if (!empty($view->breadcrumbs)) {
+                        $i = 2;
+                        foreach($view->breadcrumbs as $bread) {
+                            if ($bread['name'] != null) {
+                                echo "<li><a tabindex='{$i}' hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
+                                $i = $i + 1;
+                            }
+                        }
+                    }
+                echo "</ul>";
+            echo "</div>";
+
+                /**
+                 * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
+                 */
+                if ($this->layout()->flashMessages) {
+                    foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
+                        echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
+                                <ul>
+                                    <li>
+                                        <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
+                                        <button type='button' class='close'><i class='fa fa-times'></i></button>
+                                    </li>
+                                </ul>
+                              </div>
+                        ";
                     }
                 }
-            }
+
+                /**
+                 * Every other html element must come from content variable
+                 * or in other simple words: Do not put any other html element around this code!
+                 */
+                echo $this->layout()->content;
 ?>
-            </ul>
+            </main>
+
+            <aside id="aside" role="complementary">
+
+            </aside>
+
+            <footer id="footer" role="contentinfo">
+                <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
+            </footer>
         </div>
 <?php
-        /**
-         * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
-         */
-        if ($this->layout()->flashMessages) {
-            foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
-                echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
-                        <ul>
-                            <li>
-                                <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
-                                <button type='button' class='close'><i class='fa fa-times'></i></button>
-                            </li>
-                        </ul>
-                      </div>
-                ";
-            }
-        }
-?>
-    <div id="content-wrapper">
-        <main id="main" role="main">
-<?php
-            /**
-             * Every other html element must come from content variable
-             * or in other simple words: Do not put any other html element around this code!
-             */
-            echo $this->layout()->content;
-?>
-        </main>
-    </div>
-
-    <aside id="aside" role="complementary">
-
-    </aside>
-
-    <footer id="footer" role="contentinfo">
-        <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
-    </footer>
-<?php
         echo $this->headScript()
-            ->prependFile($this->basePath('/back/js/custom.js'))
-            ->prependFile($this->basePath('/front/js/jquery.min.js'));
+            ->prependFile($this->basePath('assets/prod/back/js/back.min.js'))
 ?>
     </body>
 </html>

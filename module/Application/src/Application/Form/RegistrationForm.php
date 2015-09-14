@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -94,7 +94,7 @@ class RegistrationForm extends Form implements InputFilterProviderInterface
         ]);
 
         $captchaImage = new CaptchaImage([
-            'font'           => './data/fonts/arial.ttf',
+            'font'           => 'public/assets/prod/front/fonts/arial.ttf',
             'width'          => 180,
             'height'         => 50,
             'size'           => 30,

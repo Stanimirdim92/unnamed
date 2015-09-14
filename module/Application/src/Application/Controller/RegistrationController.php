@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -92,17 +92,17 @@ final class RegistrationController extends IndexController
             /**
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("user")->fetchList(false, [], ["email" => $formData->email])->current();
+            $existingEmail = $this->getTable("user")->fetchList(false, [], ["email" => $formData["email"]]);
             if (count($existingEmail) > 0) {
-                return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info');
+                return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData["email"]."</b> ".$this->translate("ALREADY_EXIST"), 'info');
             } else {
                 $func = $this->getFunctions();
                 $registerUser = new User();
-                $registerUser->setName($formData->name);
-                $registerUser->setPassword($func::createPassword($formData->password));
+                $registerUser->setName($formData["name"]);
+                $registerUser->setPassword($func::createPassword($formData["password"]));
                 $registerUser->setRegistered(date("Y-m-d H:i:s", time()));
                 $registerUser->setIp($remote->getIpAddress());
-                $registerUser->setEmail($formData->email);
+                $registerUser->setEmail($formData["email"]);
                 $registerUser->setLanguage($this->language());
                 $this->getTable("user")->saveUser($registerUser);
                 $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');

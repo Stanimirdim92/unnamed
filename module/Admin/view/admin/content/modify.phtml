@@ -5,7 +5,7 @@
         </a>
     </p>
     <div class='form-inputs'>
-        <button type="button" class="media-modal-toggle"><i class="fa fa-upload"></i><?=$this->translate("UPLOAD_IMAGES")?></button>
+        <button type="button" class="button modal-toggle"><i class="fa fa-upload"></i><?=$this->translate("UPLOAD_IMAGES")?></button>
 <?php
             /**
              * @var Admin\Form\ContentForm
@@ -15,6 +15,8 @@
             $form->prepare();
 
             echo $this->form()->openTag($form);
+
+            echo $this->formFileSessionProgress(); // Must come before the file input!
 
             echo $this->formFile($form->get("preview"));
             echo $this->formText($form->get("title"));
@@ -29,7 +31,9 @@
             echo $this->formHidden($form->get("id"));
             echo $this->formRow($form->get("s"));
 
-            // echo $this->partial("imgupload.phtml");
+            include __DIR__."/imgupload.phtml";
+
+            echo "<label><span>".$this->translate("AUTHOR")."</span>".$this->content->getAuthor()."</label>";
 
             echo $this->form()->closeTag();
 ?>

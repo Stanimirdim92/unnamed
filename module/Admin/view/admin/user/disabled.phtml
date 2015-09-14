@@ -32,7 +32,7 @@
                 <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
-                <button id='delete_<?=$user->getId()?>' type="button" class='btn btn-default btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
+                <button id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
                 <div id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
                    <p><?=$this->translate("ENABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>

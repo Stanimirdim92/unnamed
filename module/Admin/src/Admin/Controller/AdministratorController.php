@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -159,7 +159,7 @@ final class AdministratorController extends IndexController
     private function initForm($label = '', Administrator $administrator = null)
     {
         if (!$administrator instanceof Administrator) {
-            $administrator = new Administrator([], null);
+            $administrator = new Administrator([]);
         }
 
         /**

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -92,16 +92,16 @@ final class MenuController extends IndexController
             foreach ($menu['submenus'][$parent] as $id) {
                 $output .= "<ul class='table-row'>";
                 $output .= "<li class='table-cell'>{$menu['menus'][$id]['caption']}</li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$menu['menus'][$id]['id']}' class='btn btn-default btn-sm blue'><i class='fa fa-info'></i></a></li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$menu['menus'][$id]['id']}' class='btn btn-default btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
+                $output .= "<li class='table-cell'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$menu['menus'][$id]['id']}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
+                $output .= "<li class='table-cell'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$menu['menus'][$id]['id']}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
                 if ($menu['menus'][$id]['active'] == 0) {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$menu['menus'][$id]['id']}' class='btn btn-default btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$menu['menus'][$id]['id']}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$menu['menus'][$id]['id']}' class='btn btn-default btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$menu['menus'][$id]['id']}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
                 }
                 $output .= "
                 <li class='table-cell'>
-                    <button id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-default btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
+                    <button id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
                         <div id='delete_delete_{$menu['menus'][$id]['id']}' class='dialog_hide'>
                            <p>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
                             <ul>
@@ -216,7 +216,7 @@ final class MenuController extends IndexController
     private function initForm($label = '', Menu $menu = null)
     {
         if (!$menu instanceof Menu) {
-            $menu = new Menu([], null);
+            $menu = new Menu([]);
         }
 
         /**

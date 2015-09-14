@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -151,7 +151,7 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
             'name' => 'parent',
             'options' => [
                 'label' => 'Parent admin menu',
-                'empty_option' => "Select parent admin menu"
+                'empty_option' => "Select parent admin menu",
                 'value_options' => $this->parent,
             ],
         ]);

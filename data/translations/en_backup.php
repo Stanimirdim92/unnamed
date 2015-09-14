@@ -120,4 +120,5 @@ return [
     'CONTENT_DISABLE_SUCCESS' => 'Content was successfully deactivated',
     'CONTENT_ENABLE_SUCCESS' => 'Content was successfully activated',
     'DEACTIVATED' => 'Deactivated',
+    'AUTHOR' => "Author",
 ];

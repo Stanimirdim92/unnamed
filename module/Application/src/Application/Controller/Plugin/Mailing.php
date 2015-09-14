@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -74,11 +74,11 @@ final class Mailing extends AbstractPlugin
             'name'              => 'Unnamed',
             'connection_class'  => 'login',
             'connection_config' => [
-                'username' => 'stanimirdim92@gmail',
-                'password' => 'Thug4life',
+                'username' => '',
+                'password' => '',
                 'ssl' => 'tls',
             ],
-            'port' => '587',
+            'port' => '465',
         ]);
         $htmlPart = new MimePart($message);
         $htmlPart->type = "text/html";
@@ -94,12 +94,13 @@ final class Mailing extends AbstractPlugin
         $mail->setBody($body);
         $mail->getHeaders()->addHeaderLine("MIME-Version: 1.0");
         $mail->getHeaders()->addHeaderLine('Content-Type', 'text/html; charset=UTF-8');
+
         try {
             $transport->setOptions($options);
             $transport->send($mail);
             return true;
         } catch (\Exception $e) {
-            return $this->flashMessenger->setLayoutMessages($e->getMessage(), "error");
+            return $this->flashMessenger->addMessage("Email not send", "error");
         }
     }
 }

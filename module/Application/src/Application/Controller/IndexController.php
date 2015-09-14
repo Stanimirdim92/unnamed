@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -116,7 +116,11 @@ class IndexController extends AbstractActionController
         return $this->getView();
     }
 
-    private function generateMenu($parent, $menu)
+    /**
+     * @param int $parent
+     * @param array $menu
+     */
+    private function generateMenu($parent = 0, array $menu = [])
     {
         $output = "";
         if (isset($menu["submenus"][$parent])) {
@@ -129,6 +133,7 @@ class IndexController extends AbstractActionController
                 $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
                 $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
                 $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
             }
             $this->menuIncrementHack = 1;
 

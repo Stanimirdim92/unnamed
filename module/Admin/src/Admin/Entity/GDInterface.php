@@ -25,30 +25,62 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 (c) Stanimir Dimitrov.
+ * @copyright  2015 Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.12
  * @link       TBA
  */
 
-namespace Application\Controller\Plugin\Factory;
+namespace Admin\Entity
 
-use Application\Controller\Plugin\Functions;
-use Zend\Mvc\Controller\PluginManager;
+interface GDInterface {
 
-class FunctionsFactory
-{
     /**
-     * @{inheritDoc}
+     * Check Free Type support
+     *
+     * @return bool
      */
-    public function __invoke(PluginManager $pluginManager)
-    {
-        $serviceLocator = $pluginManager->getServiceLocator();
+    public function hasFreeTypeSupport();
 
-        $plugin = new Functions(
-            $serviceLocator->get('Zend\Db\Adapter\Adapter')
-        );
+    /**
+     * Check Free Type Linkage support
+     *
+     * @return string|null
+     */
+    public function getFreeTypeLinkage();
 
-        return $plugin;
-    }
+    /**
+     * Check T1Lib support
+     *
+     * @return bool
+     */
+    public function hasT1LibSupport();
+
+    /**
+     * Check GIF file read support
+     *
+     * @return bool
+     */
+    public function hasGIFReadSupport();
+
+    /**
+     * Check GIF file creation support
+     *
+     * @return bool
+     */
+    public function hasGIFCreateSupport();
+
+    /**
+     * Check JPEG|JPG file support
+     *
+     * @return bool
+     */
+    public function hasJPEGSupport();
+
+    /**
+     * Check PNG file support
+     *
+     * @return bool
+     */
+    public function hasPNGSupport();
 }

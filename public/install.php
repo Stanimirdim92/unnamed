@@ -25,9 +25,9 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -37,7 +37,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.10", "5.5"));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.12", "5.5"));
 }
 
 /**
@@ -96,7 +96,9 @@ switch ((int) $pageId) {
          */
         if (!is_file("composerInstalation/vendor/autoload.php")) {
             echo "<p>Began extracting composer.</p>";
-            mkdir("composerInstalation/");
+            if (!is_dir("composerInstalation/")) {
+                mkdir("composerInstalation/", 0750, true);
+            }
             $composerPhar = new Phar("Composer.phar");
             $composerPhar->extractTo("composerInstalation/");
             chmod("composerInstalation/", 0750);

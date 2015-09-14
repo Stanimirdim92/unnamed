@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -80,12 +80,54 @@ class IndexController extends AbstractActionController
         }
 
         parent::onDispatch($e);
+        $this->initMenus();
         $this->getView()->breadcrumbs = $this->breadcrumbs;
     }
 
 /****************************************************
  * START OF ALL INIT FUNCTIONS
  ****************************************************/
+    /**
+     * Initialize menus and their submenus. 1 query to rule them all!
+     *
+     * @return void
+     */
+    private function initMenus()
+    {
+        $menu = $this->getTable("AdminMenu")->fetchList(false, [], [], "AND", null, "id, menuOrder")->getDataSource();
+        if (count($menu) > 0) {
+            $menus = ['menus' => [], 'submenus' => []];
+
+            foreach ($menu as $submenus) {
+                $menus['menus'][$submenus['id']] = $submenus;
+                $menus['submenus'][$submenus['parent']][] = $submenus['id'];
+            }
+
+            $this->getView()->menu = $this->generateMenu(0, $menus);
+        }
+        return $this->getView();
+    }
+
+    /**
+     * @param int $parent
+     * @param array $menu
+     */
+    private function generateMenu($parent = 0, array $menu = [])
+    {
+        $output = "";
+        if (isset($menu["submenus"][$parent])) {
+            $output .= "<ul>";
+
+            foreach ($menu['submenus'][$parent] as $id) {
+                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]['class']}' itemprop='url' href='/admin/{$menu['menus'][$id]['controller']}/{$menu['menus'][$id]['action']}'>{$menu['menus'][$id]['caption']}</a>";
+                $output .= $this->generateMenu($id, $menu);
+                $output .= "</li>";
+            }
+            $output .= "</ul>";
+        }
+
+        return $output;
+    }
 
 /****************************************************
  * START OF ALL MAIN/SHARED FUNCTIONS

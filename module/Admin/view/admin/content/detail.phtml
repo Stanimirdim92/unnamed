@@ -47,13 +47,17 @@
             <li class="table-cell"><?=$this->translate("DATE")?></li>
             <li class="table-cell"><?=$content->getDate()?></li>
         </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("AUTHOR")?></li>
+            <li class="table-cell"><?=$content->getAuthor()?></li>
+        </ul>
 <?php
         if($content->getMenu() > 0) {
 ?>
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("MENU")?></li>
             <li class="table-cell">
-                <a class="btn btn-labeled btn-default blue" title="<?=$this->translate("DETAILS")?>" href="<?=$this->url("admin/default", ["controller" => "menu", "action" => "details", "id" => $content->getMenu()])?>">
+                <a class="btn btn-default blue" title="<?=$this->translate("DETAILS")?>" href="<?=$this->url("admin/default", ["controller" => "menu", "action" => "details", "id" => $content->getMenu()])?>">
                     <i class="fa fa-info"></i>
                 </a>
             </li>
@@ -63,7 +67,7 @@
 ?>
     </div>
 
-    <a title="<?=$this->translate("MODIFY_CONTENT")?>" href="<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>" class="btn btn-labeled btn-default modify-btn">
+    <a title="<?=$this->translate("MODIFY_CONTENT")?>" href="<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>" class="btn btn-default modify-btn">
         <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("MODIFY_CONTENT")?>
     </a>
 </section>

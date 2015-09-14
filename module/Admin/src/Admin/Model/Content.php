@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -91,6 +91,11 @@ class Content
     private $active = 1;
 
     /**
+     * @var string $author
+     */
+    private $author = null;
+
+    /**
      * @param array $data
      * @return void
      */
@@ -107,6 +112,7 @@ class Content
         $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
         $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->getTitleLink();
         $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
+        $this->author = (isset($data['author'])) ? $data['author'] : $this->getAuthor();
     }
 
     /**
@@ -197,6 +203,24 @@ class Content
     public function getTitleLink()
     {
         return $this->titleLink;
+    }
+
+    /**
+     * Set author
+     * @param string $author
+     */
+    public function setAuthor($author = null)
+    {
+        $this->author = $author;
+    }
+
+    /**
+     * Get author
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 
     /**
@@ -372,6 +396,7 @@ class Content
         $clone->setLanguage($this->getLanguage());
         $clone->setTitleLink($this->getTitleLink());
         $clone->setActive($this->getActive());
+        $clone->setAuthor($this->getAuthor());
         return $clone;
     }
 }

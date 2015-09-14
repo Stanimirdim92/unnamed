@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -79,9 +79,10 @@ final class ErrorHandling
     private function logException($e = null)
     {
         $i = 1;
-        do {
+        $messages = [];
+        while ($e->getPrevious()) {
             $messages[] = $i++ . ": " . $e->getMessage();
-        } while ($e->getPrevious());
+        }
 
         $log =  PHP_EOL."Exception: ".implode("", $messages);
         $log .=  PHP_EOL."Code: ".$e->getCode();

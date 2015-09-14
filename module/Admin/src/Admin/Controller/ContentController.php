@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -38,6 +38,9 @@ use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
+use Zend\Validator\File\IsImage;
+use Zend\Validator\File\Size;
+use Zend\Validator\File\Extension;
 
 final class ContentController extends IndexController
 {
@@ -72,6 +75,8 @@ final class ContentController extends IndexController
      */
     public function indexAction()
     {
+        echo phpinfo();
+        exit;
         $this->getView()->setTemplate("admin/content/index");
         if ((int) $this->getParam("id", 0) === 1) {
             $this->getView()->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
@@ -161,7 +166,7 @@ final class ContentController extends IndexController
     private function initForm($label = '', Content $content = null)
     {
         if (!$content instanceof Content) {
-            $content = new Content([], null);
+            $content = new Content([]);
         }
 
         /**
@@ -174,29 +179,69 @@ final class ContentController extends IndexController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setInputFilter($form->getInputFilter());
-            $data = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $request->getFiles()->toArray()
-            );
-
-            $form->setData($data);
-            if ($form->isValid()) {
-                if (!empty($data["imageUpload"]) && $request->isXmlHttpRequest()) {
-                    return $this->uploadImages();
-                } else {
-                    $formData = $form->getData();
-                    /**
-                     * We only need the name. All images ar stored in the same folder, based on the month and year
-                     */
-                    $formData->setPreview($formData->getPreview()["name"]);
-                    $this->getTable("content")->saveContent($content);
-                    $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                    return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
-                }
+            if ($request->isXmlHttpRequest()) {
+                return $this->prepareImages();
             } else {
-                $this->setLayoutMessages($form->getMessages(), "error");
+                return $this->form($form, $content);
             }
+        }
+    }
+
+    protected function deleteimageAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost()->toArray();
+
+            if ($request->isXmlHttpRequest() && is_file("public".$data["img"])) {
+                unlink("public".$data["img"]);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function uploadProgressAction()
+    {
+        $id = $this->params()->fromQuery('id', null);
+        $progress = new \Zend\ProgressBar\Upload\SessionProgress();
+        return new \Zend\View\Model\JsonModel($progress->getProgress($id));
+    }
+
+    /**
+     * @param ContentForm $form
+     * @param Content $content
+     */
+    private function form(ContentForm $form, Content $content)
+    {
+        $request = $this->getRequest();
+        $form->setInputFilter($form->getInputFilter());
+        $data = array_merge_recursive(
+            $request->getPost()->toArray(),
+            $request->getFiles()->toArray()
+        );
+
+        $form->setData($data);
+        if ($form->isValid()) {
+            $formData = $form->getData();
+            $userData = $this->UserData();
+
+            if ($userData->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
+                $name = $userData->getIdentity()->name." ".$userData->getIdentity()->surname;
+            } else {
+                $name = "Admin";
+            }
+
+            /**
+             * We only need the name. All images ar stored in the same folder, based on the month and year
+             */
+            $formData->setPreview($formData->getPreview()["name"]);
+            $formData->setAuthor($name);
+            $this->getTable("content")->saveContent($content);
+            $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
+            return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
+        } else {
+            return $this->setLayoutMessages($form->getMessages(), "error");
         }
     }
 
@@ -205,87 +250,126 @@ final class ContentController extends IndexController
      */
     protected function filesAction()
     {
+        chdir(getcwd()."/public/");
+        if (!is_dir('userfiles/'.date("Y_M").'/images/')) {
+            mkdir('userfiles/'.date("Y_M").'/images/', 0750, true);
+        }
         $this->getView()->setTerminal(true);
-        $dir = new \RecursiveDirectoryIterator('public/userfiles/', \FilesystemIterator::SKIP_DOTS);
+        $dir = new \RecursiveDirectoryIterator('userfiles/', \FilesystemIterator::SKIP_DOTS);
         $it  = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::SELF_FIRST);
         $it->setMaxDepth(50);
         $files = [];
         $i = 0;
         foreach ($it as $file) {
             if ($file->isFile()) {
-                /**
-                 * TODO: use pathinfo()
-                 */
-                $filepath = explode("public", $file->getRealPath()); // ugly workaround :(
-                $files[$i]["link"] = Json::encode($filepath[1]);
-                $files[$i]["filename"] = Json::encode($file->getFilename());
+                $files[$i]["filelink"] = DIRECTORY_SEPARATOR.$file->getPath().DIRECTORY_SEPARATOR.$file->getFilename();
+                $files[$i]["filename"] = $file->getFilename();
                 $i++;
             }
         }
-        return new JsonModel($files);
-    }
-
-    /**
-     * Create directories
-     */
-    private function createDirectories()
-    {
-        // if (!is_dir('public/userfiles/')) {
-        //     mkdir('public/userfiles/');
-        // }
-        // if (!is_dir('public/userfiles/'.date("Y_M"))) {
-        //     mkdir('public/userfiles/'.date("Y_M"));
-        // }
-        if (!is_dir('public/userfiles/'.date("Y_M").'/images/')) {
-            mkdir('public/userfiles/'.date("Y_M").'/images/', 0750, true);
-        }
+        chdir(dirname(getcwd()));
+        $model = new JsonModel();
+        $model->setVariables(["files" => $files]);
+        return $model;
     }
 
     /**
      * Upload all images async
-     *
-     * @return Response containing headers with information about each image
      */
-    private function uploadImages()
+    private function prepareImages()
     {
         $this->getView()->setTerminal(true);
         $adapter = new Http();
+        /**
+         * If validators are in the form, the adapter error messages won't be showed to the client
+         */
+        $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
+        $extension = new Extension(['jpg', 'gif','png','jpeg','bmp','webp','svg'], true);
 
-        $this->createDirectories();
+        $adapter->setValidators([$size, new IsImage(), $extension]);
+
+        if (!is_dir('public/userfiles/'.date("Y_M").'/images/')) {
+            mkdir('public/userfiles/'.date("Y_M").'/images/', 0750, true);
+        }
+
         $adapter->setDestination('public/userfiles/'.date("Y_M").'/images/');
-        $this->upload($adapter);
+        return $this->upload($adapter);
     }
 
     /**
      * @param  Http $adapter
      * @return Json
      */
-    private function upload(Http $adapter = null)
+    private function upload(Http $adapter)
     {
         $this->getView()->setTerminal(true);
         $uploadStatus = [];
-        if ($adapter->isValid('imageUpload')) {
-            foreach ($adapter->getFileInfo() as $key => $file) {
-                /**
-                 * Skip the normal image upload input
-                 */
-                if ($key == "preview") {
-                    continue;
-                }
 
-                if ($adapter->receive($file["name"])) {
-                    $uploadStatus["successFiles"][] = $file["name"]." ".$this->translate("UPLOAD_SUCCESS");
+        foreach ($adapter->getFileInfo() as $key => $file) {
+            if ($key != "preview") {
+                if ($adapter->isValid($file["name"])) {
+                    $adapter->receive($file["name"]);
+                    if ($adapter->isReceived($file["name"]) && $adapter->isUploaded($file["name"])) {
+
+
+                        $this->createImageThumbnail($file["name"], 'public/userfiles/'.date("Y_M").'/images', 320, 320);
+
+
+                        $uploadStatus["successFiles"][] = $file["name"]." ".$this->translate("UPLOAD_SUCCESS");
+                    } else {
+                        $uploadStatus["errorFiles"][] = $file["name"]." ".$this->translate("UPLOAD_FAIL");
+                    }
                 } else {
-                    $uploadStatus["errorFiles"][] = $file["name"]." ".$this->translate("UPLOAD_FAIL");
+                    foreach ($adapter->getMessages() as $key => $msg) {
+                        $uploadStatus["errorFiles"][] = $file["name"]." ".strtolower($msg);
+                    }
                 }
-            }
-        } else {
-            foreach ($adapter->getMessages() as $key => $error) {
-                $uploadStatus["errorFiles"][] = $error;
             }
         }
+        // JsonModel doesn't work... It returns the page html even file upload s successful
         echo Json::encode($uploadStatus);
-        exit;
-        // return new JsonModel(["uploadStatus" => Json::encode($uploadStatus)]);
+        die();
+    }
+
+    private function createImageThumbnail($imageName = null, $thumbnailPath = null, $thumbnailWidth = 0, $thumbnailHeight = 0)
+    {
+        $imageFile = $thumbnailPath."/".$imageName;
+        $format = getimagesize($imageFile, $info);
+        echo \Zend\Debug\Debug::dump(gd_info(), null, false);
+        echo \Zend\Debug\Debug::dump(imagetypes(), null, false);
+        $imageSize = getimagesize($imageFile);
+        echo \Zend\Debug\Debug::dump(strtoupper(substr($imageSize["mime"], 6)), null, false);
+        $imageType = $imageSize[2];
+
+        switch ($imageType) {
+            case 1:
+                $image = "imagegif";
+                $imageCreate = "imagecreatefromgif";
+            break;
+
+            case 2:
+                $image = "imagejpeg";
+                $imageCreate = "imagecreatefromjpeg";
+            break;
+
+            case 3:
+                $image = "imagepng";
+                $imageCreate = "imagecreatefrompng";
+            break;
+
+            default:
+                $this->setLayoutMessages("ERROR", "error");
+            break;
+        }
+
+        $oldImage = $imageCreate($imageFile);
+
+        $newImage = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
+        imagecopyresampled($newImage, $oldImage, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $imageSize[0], $imageSize[1]);
+
+        $image($newImage, $imageFile);
+        imagedestroy($newImage);
+
+        return is_file($imageFile);
     }
 }

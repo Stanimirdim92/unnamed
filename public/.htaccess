@@ -851,11 +851,11 @@ FileETag None
 <IfModule mod_headers.c>
   #script-src https://apis.google.com https://platform.twitter.com; child-src https://youtube.com https://plusone.google.com https://facebook.com https://platform.twitter.com 'self' ;
 
-    Header set X-Content-Security-Policy "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+    Header set X-Content-Security-Policy "object-src 'self'; connect-src 'self'; font-src 'self';"
 
-    Header set Content-Security-Policy: "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+    Header set Content-Security-Policy: "object-src 'self'; connect-src 'self'; font-src 'self';"
 
-    Header set X-WebKit-CSP: "allow 'self'; object-src 'self'; connect-src 'self'; img-src data: 'self'; font-src 'self';"
+    Header set X-WebKit-CSP: "object-src 'self'; connect-src 'self'; font-src 'self';"
 
     Header set X-Permitted-Cross-Domain-Policies: "master-only"
     # `mod_headers` cannot match based on the content-type, however,

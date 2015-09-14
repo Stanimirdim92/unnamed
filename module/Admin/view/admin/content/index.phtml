@@ -25,7 +25,7 @@
                 </a>
             </li>
             <li class="table-cell">
-                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-default btn-sm orange'>
+                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-sm orange'>
                     <i class='fa fa-pencil'></i>
                 </a>
             </li>
@@ -33,7 +33,7 @@
         if ($content->getActive() == 0) {
 ?>
             <li class="table-cell">
-                <a title='<?=$this->translate("DEACTIVATED");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "activate", "id" => $content->getId()])?>' class='btn btn-default btn-sm deactivated'>
+                <a title='<?=$this->translate("DEACTIVATED");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "activate", "id" => $content->getId()])?>' class='btn btn-sm deactivated'>
                     <i class='fa fa-minus-square-o'></i>
                 </a>
             </li>
@@ -41,7 +41,7 @@
         } else {
 ?>
             <li class="table-cell">
-                <a title='<?=$this->translate("ACTIVE");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "deactivate", "id" => $content->getId()])?>' class='btn btn-default btn-sm active'>
+                <a title='<?=$this->translate("ACTIVE");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "deactivate", "id" => $content->getId()])?>' class='btn btn-sm active'>
                     <i class='fa fa-check-square-o'></i>
                 </a>
             </li>
@@ -49,12 +49,12 @@
         }
 ?>
             <li class="table-cell">
-                <button id='delete_<?=$content->getId()?>' type="button" class='btn btn-default btn-sm red delete dialog_delete'><i class='fa fa-trash-o'></i></button>
+                <button id='delete_<?=$content->getId()?>' type="button" class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
                 <div style='display: none' id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>
                     <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn btn-danger' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
+                            <a class='btn delete' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
                         </li>
                         <li>
                             <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>

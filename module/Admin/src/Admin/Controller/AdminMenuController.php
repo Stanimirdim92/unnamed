@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.10
+ * @version    0.0.12
  * @link       TBA
  */
 
@@ -149,7 +149,7 @@ final class AdminMenuController extends IndexController
     private function initForm($label = '', AdminMenu $adminMenu = null)
     {
         if (!$adminMenu instanceof AdminMenu) {
-            $adminMenu = new AdminMenu([], null);
+            $adminMenu = new AdminMenu([]);
         }
 
         /**

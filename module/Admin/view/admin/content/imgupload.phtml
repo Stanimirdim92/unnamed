@@ -1,27 +1,33 @@
 <div id="modal-imgupload">
-    <div class="media-modal">
-        <button type="button" class="media-modal-toggle media-modal-close"><i class="fa fa-close"></i></button>
-        <div class="media-modal-content">
-            <div class="media-frame-menu">
-                <div class="media-frame-router">
+    <div class="modal-window">
+        <button type="button" class="blue modal-toggle modal-close fa fa-times"></button>
+        <div class="modal-content">
+            <div class="menu-frame">
+                <div class="buttons-frame">
                     <div class="media-router">
-                        <button type="button" class="upload media-menu-item"><?=$this->translate("UPLOAD_FILES")?></button>
-                        <button type="button" class="gallery media-menu-item"><?=$this->translate("GALLERY")?></button>
+                        <button type="button" class="upload button"><?=$this->translate("FILE_UPLOAD")?></button>
+                        <button type="button" class="gallery button"><?=$this->translate("GALLERY")?></button>
                     </div>
                 </div>
-                <div class="media-frame-content">
+                <div class="content-window">
                     <div class="uploader-inline">
-                        <label for="imgajax" class="media-file-upload">
-                            <?=$this->translate("FILE_UPLOAD"); ?>
+                        <label for="imgajax" class="file-upload-label">
+                            <?=$this->translate("UPLOAD_FILES")?>
                             <?php
-                                echo $this->formFile($form->get('imageUpload'));
+                                echo $this->formFile($form->get("imageUpload"));
                             ?>
                         </label>
+                    </div>
+                    <div id="progress" class="help-block">
+                        <div class="progress progress-info progress-striped active">
+                            <div class="bar"></div>
+                        </div>
+                        <p></p>
                     </div>
                     <div class="gallery-view">
                         <div class="ajax-loader"></div>
                         <div class="view-large-image">
-                            <img src="/userfiles" class="large-image">
+                            <img src="assets/prod/front/img/default.png" class="large-image">
                         </div>
                         <div class="image-grid">
 
@@ -31,5 +37,4 @@
             </div>
         </div>
     </div>
-    <div class="media-modal-backdrop"></div>
 </div>
