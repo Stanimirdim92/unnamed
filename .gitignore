@@ -8,8 +8,9 @@ auth.json
 .project
 .settings
 composer.lock
-config
-data
+data/logs/
+data/cache/frontend
+data/cache/modules
 vendor
 composerInstalation
 node_modules
