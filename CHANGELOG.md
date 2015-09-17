@@ -1,6 +1,13 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.13 (20.09.2015) - Stable Alpha
+ - Encapsulated all exceptions
+ - Image library updates
+ - *ModelTable bug and doc fixes
+ - Removed isset magic property and getProperties() method from *Model classes
+
+DD.MM.YYYY
 ## 0.0.12 (14.09.2015) - Stable Alpha
  - SensioLabs reports 0 vulnerabilities
  - AJAX image gallery updates
@@ -112,6 +119,7 @@ DD.MM.YYYY
  - Run composer from the browser - WIP
 
 # TODO
+ - ElasticSearch
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - WAI-ARIA Landmarks

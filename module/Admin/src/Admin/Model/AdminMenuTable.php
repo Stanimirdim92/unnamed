@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class AdminMenuTable
 {
@@ -53,9 +54,9 @@ class AdminMenuTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class AdminMenuTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class AdminMenuTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -163,7 +164,7 @@ class AdminMenuTable
 
     /**
      * @param int $id adminmenu id
-     * @throws Exception If adminmenu is not found
+     * @throws RuntimeException If adminmenu is not found
      * @return AdminMenu
      */
     public function getAdminMenu($id = 0)
@@ -171,7 +172,7 @@ class AdminMenuTable
         $rowset = $this->tableGateway->select(['id' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find admin menu");
+            throw new RuntimeException("Couldn't find admin menu");
         }
         return $rowset;
     }
@@ -180,8 +181,6 @@ class AdminMenuTable
      * Delete a adminmenu based on the provided id and language
      *
      * @param int $id adminmenu id
-     * @param int $language user language
-     * @throws Exception If adminmenu is not found
      * @return AdminMenu
      */
     public function deleteAdminMenu($id = 0)
@@ -194,11 +193,10 @@ class AdminMenuTable
     /**
      * Save or update menu based on the provided id and language
      *
-     * @param  AdminMenu|null $adminMenu
-     * @throws Exception If adminmenu is not found
+     * @param  AdminMenu $adminMenu
      * @return AdminMenu
      */
-    public function saveAdminMenu(AdminMenu $adminMenu = null)
+    public function saveAdminMenu(AdminMenu $adminMenu)
     {
         $data = [
             'caption'     => (string) $adminMenu->getCaption(),
@@ -210,15 +208,13 @@ class AdminMenuTable
             'class'       => (string) $adminMenu->getClass(),
             'parent'      => (int) $adminMenu->getParent(),
         ];
-        $id = (int)$adminMenu->id;
+        $id = (int)$adminMenu->getId();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $adminMenu->id = $this->tableGateway->lastInsertValue;
         } else {
-            if (!$this->getAdminMenu($id)) {
-                throw new \RuntimeException("Couldn't save admin menu");
+            if ($this->getAdminMenu($id)) {
+                $this->tableGateway->update($data, ['id' => $id]);
             }
-            $this->tableGateway->update($data, ['id' => $id]);
         }
         unset($id, $data);
         return $adminMenu;

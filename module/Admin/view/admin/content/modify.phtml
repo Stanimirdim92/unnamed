@@ -16,8 +16,6 @@
 
             echo $this->form()->openTag($form);
 
-            echo $this->formFileSessionProgress(); // Must come before the file input!
-
             echo $this->formFile($form->get("preview"));
             echo $this->formText($form->get("title"));
             echo $this->formTextarea($form->get("text"));

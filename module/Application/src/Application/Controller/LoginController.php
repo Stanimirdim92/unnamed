@@ -42,6 +42,7 @@ use Application\Model\ResetPassword;
 use Application\Form\LoginForm;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
+use Application\Exception\RuntimeException;
 require '/module/Application/src/Application/Entity/Password.php';
 
 final class LoginController extends IndexController
@@ -142,7 +143,7 @@ final class LoginController extends IndexController
     {
         // Check if we have a POST request
         if (!$this->getRequest()->isPost()) {
-            // return $this->logoutAction("/login");
+            return $this->logoutAction("/login");
         }
 
         /**
@@ -222,7 +223,7 @@ final class LoginController extends IndexController
          * Check string bytes length
          */
         if ($func::strLength($token) !== 64) {
-            throw new \Exception("Wrong token");
+            throw new RuntimeException("Wrong token");
         }
 
         /**

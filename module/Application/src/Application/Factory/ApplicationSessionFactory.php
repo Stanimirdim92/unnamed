@@ -55,9 +55,9 @@ class ApplicationSessionFactory implements FactoryInterface
             'use_cookies'             => true,
             'cache_expire'            => 180,  //3hrs
             'cookie_path'             => "/",
-            'cookie_secure'           => $func::isSSL(),
             'cookie_httponly'         => true,
             'name'                    => '__zpc',
+            // 'cookie_secure'           => $func::isSSL(),
             // 'gc_maxlifetime'          => 20,
             'hash_bits_per_character' => 6,
         ]);

@@ -74,6 +74,14 @@ class ResetPassword
     }
 
     /**
+     * Used into form binding
+     */
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
+
+    /**
      * constructor
      * @param  array $options
      */
@@ -170,35 +178,5 @@ class ResetPassword
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * magic property exists (isset) checker
-     */
-    public function __isset($property)
-    {
-        return (property_exists($this, $property) ? isset($this->{$property}) : null);
-    }
-
-    /**
-     * Serialize object or return it as an array
-     *
-     * @param  array $skip Remove the unnecessary objects from the array
-     * @param  bool $serializable Should the function return a serialized object
-     * @return array|string
-     */
-    public function getProperties(array $skip = [], $serializable = false)
-    {
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[$key] = $this->{$key};
-            }
-        }
-        if ((bool) $serializable === true) {
-            return serialize($returnValue);
-        }
-        return $returnValue;
     }
 }

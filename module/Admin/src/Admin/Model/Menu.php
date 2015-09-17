@@ -344,36 +344,6 @@ class Menu
     }
 
     /**
-     * magic property exists (isset) checker
-     */
-    public function __isset($property)
-    {
-        return (property_exists($this, $property) ? isset($this->{$property}) : null);
-    }
-
-    /**
-     * Serialize object or return it as an array
-     *
-     * @param  array $skip Remove the unnecessary objects from the array
-     * @param  bool $serializable Should the function return a serialized object
-     * @return array|string
-     */
-    public function getProperties(array $skip = [], $serializable = false)
-    {
-        $returnValue = [];
-        $data = get_class_vars(get_class($this));
-        foreach ($data as $key => $value) {
-            if (!in_array($key, $skip)) {
-                $returnValue[$key] = $this->{$key};
-            }
-        }
-        if ((bool) $serializable === true) {
-            return serialize($returnValue);
-        }
-        return $returnValue;
-    }
-
-    /**
      * This method is a copy constructor that will return a copy object (except for the id field)
      * Note that this method will not save the object
      */

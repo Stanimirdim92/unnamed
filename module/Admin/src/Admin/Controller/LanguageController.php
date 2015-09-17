@@ -35,6 +35,7 @@ namespace Admin\Controller;
 
 use Admin\Model\Language;
 use Admin\Form\LanguageForm;
+use Admin\Exception\RunTimeException;
 use Zend\Paginator\Paginator;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Stdlib\Parameters;
@@ -133,6 +134,8 @@ final class LanguageController extends IndexController
      * If the backup file is not found for any reason, an exception will be thrown
      *
      * @throws RunTimeException if no file is found
+     *
+     * @return  ViewModel
      */
     protected function translationsAction()
     {
@@ -149,7 +152,7 @@ final class LanguageController extends IndexController
         }
 
         if (!is_file($arr)) {
-            throw new \RunTimeException($this->translate('NO_TRANSLATION_FILE'));
+            throw new RunTimeException($this->translate('NO_TRANSLATION_FILE'));
         }
 
         $this->getView()->translationsArray = include $arr;

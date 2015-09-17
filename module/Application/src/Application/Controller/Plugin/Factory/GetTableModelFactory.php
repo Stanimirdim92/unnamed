@@ -45,9 +45,7 @@ class GetTableModelFactory
     {
         $serviceLocator = $pluginManager->getController()->getServiceLocator();
 
-        $plugin = new GetTableModel(
-            $serviceLocator
-        );
+        $plugin = new GetTableModel($serviceLocator);
 
         return $plugin;
     }

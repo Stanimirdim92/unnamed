@@ -43,6 +43,9 @@ class InitMetaTagsFactory
      */
     public function __invoke(PluginManager $pluginManager)
     {
+        /**
+         * @var Zend\View\HelperPluginManager
+         */
         $viewHelper = $pluginManager->getController()->getServiceLocator()->get('ViewHelperManager');
 
         /**
@@ -55,12 +58,15 @@ class InitMetaTagsFactory
          */
         $headMeta = $viewHelper->get("HeadMeta");
 
+        /**
+         * @var Zend\Http\PhpEnvironment\Request $request
+         */
+        $request = $pluginManager->getController()->getRequest();
 
-        $plugin = new InitMetaTags(
-            $placeholderContainer,
-            $headMeta,
-            $pluginManager->getController()->getRequest()
-        );
+        /**
+         * @var InitMetaTags $plugin
+         */
+        $plugin = new InitMetaTags($placeholderContainer, $headMeta, $request);
 
         return $plugin;
     }

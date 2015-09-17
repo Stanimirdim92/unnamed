@@ -31,32 +31,10 @@
  * @link       TBA
  */
 
-namespace Application\Controller\Plugin;
+namespace Admin\Exception;
 
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\I18n\Translator\Translator;
+use InvalidArgumentException;
 
-final class Translate extends AbstractPlugin
+class InvalidArgumentException extends InvalidArgumentException implements ExceptionInterface
 {
-    /**
-     * @var Translator $translator
-     */
-    private $translator = null;
-
-    /**
-     * @param Translator $translator
-     */
-    public function __construct(Translator $translator = null)
-    {
-        $this->translator = $translator;
-    }
-
-    /**
-     * @param string $message
-     * @return Translator|string
-     */
-    public function __invoke($message = '')
-    {
-        return $this->translator->translate($message);
-    }
 }

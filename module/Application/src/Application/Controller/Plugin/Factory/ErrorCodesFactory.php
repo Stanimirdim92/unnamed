@@ -45,10 +45,11 @@ class ErrorCodesFactory
     {
         $controller = $pluginManager->getController();
 
-        $plugin = new ErrorCodes(
-            $controller->layout(),
-            $controller->getResponse()
-        );
+        $layout = $controller->layout();
+
+        $response = $controller->getResponse();
+
+        $plugin = new ErrorCodes($layout, $response);
 
         return $plugin;
     }

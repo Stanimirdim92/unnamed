@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class UserTable
 {
@@ -53,9 +54,9 @@ class UserTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class UserTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class UserTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -179,8 +180,7 @@ class UserTable
      * This method can disable or enable user accounts
      *
      * @param int $id user id
-     * @param  int $state 0 - enabled, 1 - disabled
-     * @return User|null
+     * @param int $state 0 - enabled, 1 - disabled
      */
     public function toggleUserState($id = 0, $state = 0)
     {
@@ -192,16 +192,12 @@ class UserTable
     /**
      * Update user based on the provided id
      *
-     * @param  Content|null $content
-     * @throws Exception If content is not found
-     * @return Content
+     * @param  User $use
+     * @throws RuntimeException
+     * @return User
      */
-    public function saveUser(User $user = null)
+    public function saveUser(User $user)
     {
-        if (!$user instanceof User) {
-            throw new \RuntimeException("User error");
-        }
-
         $data = [
             'name'       => (string) $user->getName(),
             'surname'    => (string) $user->getSurname(),
@@ -222,10 +218,10 @@ class UserTable
         if (!$id) {
             $this->tableGateway->insert($data);
         } else {
-            if (!$this->getUser($id)) {
-                throw new \Exception("Errror");
+            if ($this->getUser($id)) {
+                $this->tableGateway->update($data, ['id' =>(int)  $id]);
             }
-            $this->tableGateway->update($data, ['id' =>(int)  $id]);
+            throw new RuntimeException("User not saved");
         }
         unset($id, $data);
         return $user;
@@ -233,6 +229,7 @@ class UserTable
 
     /**
      * @param string $path
+     * not working due to codeplex missing
      */
     public function export($path = "/userfiles/exports")
     {

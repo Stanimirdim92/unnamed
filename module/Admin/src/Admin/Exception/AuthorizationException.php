@@ -33,6 +33,8 @@
 
 namespace Admin\Exception;
 
-class AuthorizationException extends \Exception
+use RuntimeException;
+
+class AuthorizationException extends RuntimeException  implements ExceptionInterface
 {
 }

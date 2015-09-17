@@ -45,9 +45,9 @@ class FunctionsFactory
     {
         $serviceLocator = $pluginManager->getServiceLocator();
 
-        $plugin = new Functions(
-            $serviceLocator->get('Zend\Db\Adapter\Adapter')
-        );
+        $adapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
+
+        $plugin = new Functions($adapter);
 
         return $plugin;
     }

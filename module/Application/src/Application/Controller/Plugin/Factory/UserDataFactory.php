@@ -43,9 +43,9 @@ class UserDataFactory
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $plugin = new UserData(
-            $pluginManager->get("redirect")
-        );
+        $redirect = $pluginManager->get("redirect");
+        
+        $plugin = new UserData($redirect);
 
         return $plugin;
     }

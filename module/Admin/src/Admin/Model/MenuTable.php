@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class MenuTable
 {
@@ -53,9 +54,9 @@ class MenuTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class MenuTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class MenuTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -164,7 +165,7 @@ class MenuTable
     /**
      * @param int $id menu id
      * @param int $language user language
-     * @throws Exception If menu is not found
+     * @throws RuntimeException If menu is not found
      * @return Menu
      */
     public function getMenu($id = 0, $language = 1)
@@ -172,7 +173,7 @@ class MenuTable
         $rowset = $this->tableGateway->select(['id' => (int) $id, 'language' => (int) $language]);
         $rowset->buffer();
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find menu");
+            throw new RuntimeException("Couldn't find menu");
         }
         return $rowset;
     }
@@ -182,7 +183,6 @@ class MenuTable
      *
      * @param int $id menu id
      * @param int $language user language
-     * @throws Exception If menu is not found
      * @return Menu
      */
     public function deleteMenu($id = 0, $language = 1)
@@ -195,11 +195,10 @@ class MenuTable
     /**
      * Save or update menu based on the provided id and language
      *
-     * @param  Menu|null $menu
-     * @throws Exception If menu is not found
+     * @param  Menu $menu
      * @return Menu
      */
-    public function saveMenu(Menu $menu = null)
+    public function saveMenu(Menu $menu)
     {
         $data = [
             'caption'      => (string) $menu->getCaption(),
@@ -218,10 +217,9 @@ class MenuTable
         if (!$id) {
             $this->tableGateway->insert($data);
         } else {
-            if (!$this->getMenu($id, $language)) {
-                throw new \RuntimeException("Couldn't save menu");
+            if ($this->getMenu($id, $language)) {
+                $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
             }
-            $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
         }
         unset($id, $language, $data);
         return $menu;
@@ -231,7 +229,7 @@ class MenuTable
      * This method can disable or enable menus
      *
      * @param int $id menu id
-     * @param  int $state 0 - deactivated, 1 - active
+     * @param int $state 0 - deactivated, 1 - active
      */
     public function toggleActiveMenu($id = 0, $state = 0)
     {

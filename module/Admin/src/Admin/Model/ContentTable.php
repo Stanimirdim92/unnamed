@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class ContentTable
 {
@@ -53,9 +54,9 @@ class ContentTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class ContentTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class ContentTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -164,7 +165,7 @@ class ContentTable
     /**
      * @param int $id content id
      * @param int $language user language
-     * @throws Exception If content is not found
+     * @throws RuntimeException If content is not found
      * @return Content
      */
     public function getContent($id = 0, $language = 1)
@@ -172,7 +173,7 @@ class ContentTable
         $rowset = $this->tableGateway->select(['id' => (int) $id, "language" => (int) $language]);
         $rowset->buffer();
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find content");
+            throw new RuntimeException("Couldn't find content");
         }
         return $rowset;
     }
@@ -182,7 +183,6 @@ class ContentTable
      *
      * @param int $id content id
      * @param int $language user language
-     * @throws Exception If content is not found
      * @return Content
      */
     public function deleteContent($id = 0, $language = 1)
@@ -195,11 +195,10 @@ class ContentTable
     /**
      * Save or update content based on the provided id and language
      *
-     * @param  Content|null $content
-     * @throws Exception If content is not found
+     * @param  Content $content
      * @return Content
      */
-    public function saveContent(Content $content = null)
+    public function saveContent(Content $content)
     {
         $data = [
             'menu'      => (int) $content->getMenu(),
@@ -218,12 +217,10 @@ class ContentTable
         $language = (int) $content->getLanguage();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $content->id = $this->tableGateway->lastInsertValue;
         } else {
-            if (!$this->getContent($id, $language)) {
-                throw new \RuntimeException("Couldn't save content");
+            if ($this->getContent($id, $language)) {
+                $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
             }
-            $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
         }
         unset($id, $language, $data);
         return $content;

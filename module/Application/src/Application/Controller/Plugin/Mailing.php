@@ -25,7 +25,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.12
  * @link       TBA
@@ -57,12 +57,12 @@ final class Mailing extends AbstractPlugin
     }
 
     /**
-     * @param String  $to
-     * @param String  $toName
-     * @param String  $subject
-     * @param String  $message
-     * @param String  $from
-     * @param String  $fromName
+     * @param string $to
+     * @param string $toName
+     * @param string $subject
+     * @param string $message
+     * @param string $from
+     * @param string $fromName
      * @return boolean
      * @todo  extend with more config methods
      */

@@ -35,6 +35,7 @@ namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Application\Exception\RuntimeException;
 
 class ResetPasswordTable
 {
@@ -51,9 +52,9 @@ class ResetPasswordTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -128,14 +129,14 @@ class ResetPasswordTable
      *
      * @param int $id password id
      * @param int $id user id
-     * @throws Exception If content is not found
+     * @throws RuntimeException If content is not found
      * @return ResetPassword
      */
     public function getResetPassword($id = 0, $user = 0)
     {
         $rowset = $this->tableGateway->select(['id' => (int) $id, 'user' => (int) $user]);
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find row");
+            throw new RuntimeException("Couldn't find row");
         }
         return $rowset->current();
     }
@@ -143,11 +144,10 @@ class ResetPasswordTable
     /**
      * Save or update password based on the provided id
      *
-     * @param  ResetPassword|null $resetpassword
-     * @throws Exception If resetpassword is not found
+     * @param  ResetPassword $resetpassword
      * @return ResetPassword
      */
-    public function saveResetPassword(ResetPassword $resetpw = null)
+    public function saveResetPassword(ResetPassword $resetpw)
     {
         $data = [
             'ip'    => (string) $resetpw->getIp(),
@@ -159,12 +159,10 @@ class ResetPasswordTable
         $user = (int) $resetpw->getUser();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $resetpw->id = $this->tableGateway->lastInsertValue;
         } else {
-            if (!$this->getResetPassword($id, $user)) {
-                throw new \RuntimeException("Couldn't find row");
+            if ($this->getResetPassword($id, $user)) {
+                $this->tableGateway->update($data, ['id' => (int) $id, 'user' => (int) $user]);
             }
-            $this->tableGateway->update($data, ['id' => (int) $id, 'user' => (int) $user]);
         }
         unset($id, $user, $data);
         return $resetpw;

@@ -25,15 +25,18 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.12
  * @link       TBA
  */
 
-namespace Admin\Entity
+namespace Admin\Entity;
 
 use Admin\Entity\GDInterface;
+use Admin\Exception\BadMethodCallException;
+use Admin\Exception\InvalidArgumentException;
+use Admin\Exception\RuntimeException;
 
 final class GD implements GDInterface {
 
@@ -44,21 +47,26 @@ final class GD implements GDInterface {
      */
     private $gd = null;
 
-    public function __construct()
+    /**
+     * @method __construct
+     *
+     * @param  string $version minimum GD version
+     */
+    public function __construct($version = '2.0.1')
     {
         $this->loadGDInfo();
-        $this->checkGDVersion('2.0.1');
+        $this->checkGDVersion($version);
     }
 
     /**
      * Load GD library
      *
-     * @throws RuntimeException if gd_info doesn't exists
+     * @throws BadMethodCallException if gd_info doesn't exists
      */
     private function loadGDInfo()
     {
         if (!function_exists('gd_info')) {
-            throw new \RuntimeException('GD library has not been installed');
+            throw new BadMethodCallException('GD library has not been installed');
         }
 
         $this->gd = gd_info();
@@ -68,12 +76,12 @@ final class GD implements GDInterface {
      * Check minimum needed GD version
      *
      * @param string $version
-     * @throws RuntimeException on invalid version
+     * @throws InvalidArgumentException on invalid version
      */
     private function checkGDVersion($version = "2.0.1")
     {
         if (version_compare(GD_VERSION, $version, '<')) {
-            throw new \RuntimeException(sprintf('GD2 version %s or higher is required', $version));
+            throw new InvalidArgumentException(sprintf('GD2 version %s or higher is required', $version));
         }
     }
 
@@ -97,7 +105,7 @@ final class GD implements GDInterface {
         if ($this->hasFreeTypeSupport()) {
             return $this->gd['FreeType Linkage'];
         }
-        return null
+        return null;
     }
 
     /**

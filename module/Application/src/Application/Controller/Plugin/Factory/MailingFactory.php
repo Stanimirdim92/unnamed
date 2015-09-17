@@ -43,9 +43,9 @@ class MailingFactory
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $plugin = new Mailing(
-            $pluginManager->get("flashmessenger")
-        );
+        $flashmessenger = $pluginManager->get("flashmessenger");
+        
+        $plugin = new Mailing($flashmessenger);
 
         return $plugin;
     }

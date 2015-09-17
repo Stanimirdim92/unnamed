@@ -43,10 +43,11 @@ class LayoutMessagesFactory
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $plugin = new LayoutMessages(
-            $pluginManager->getController()->layout(),
-            $pluginManager->get("flashmessenger")
-        );
+        $layout = $pluginManager->getController()->layout();
+        
+        $flashmessenger = $pluginManager->get("flashmessenger");
+
+        $plugin = new LayoutMessages($layout, $flashmessenger);
 
         return $plugin;
     }

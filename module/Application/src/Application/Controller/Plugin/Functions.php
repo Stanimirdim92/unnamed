@@ -25,7 +25,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
- * @copyright  2015 Stanimir Dimitrov.
+ * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  * @version    0.0.12
  * @link       TBA
@@ -36,6 +36,7 @@ namespace Application\Controller\Plugin;
 use Zend\Math\Rand;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Db\Adapter\Adapter;
+use Application\Exception\InvalidArgumentException;
 
 final class Functions extends AbstractPlugin
 {
@@ -47,7 +48,7 @@ final class Functions extends AbstractPlugin
     /**
      * @param Adapter $adapter
      */
-    public function __construct(Adapter $adapter = null)
+    public function __construct(Adapter $adapter)
     {
         $this->adapter = $adapter;
     }
@@ -56,12 +57,14 @@ final class Functions extends AbstractPlugin
      * Execute plain mysql queries.
      *
      * @param string $query
+     * @throws InvalidArgumentException
+     * 
      * @return ResultSet|null
      */
-    public function createPlainQuery($query = null)
+    public function createPlainQuery($query)
     {
         if (empty($query)) {
-            throw new \InvalidArgumentException('Query must not be empty');
+            throw new InvalidArgumentException('Query must not be empty');
         }
 
         $stmt = $this->adapter->query((string) $query);
@@ -78,27 +81,29 @@ final class Functions extends AbstractPlugin
     /**
      * @link https://github.com/ircmaxell/password_compat/
      * @link http://blog.ircmaxell.com/2015/03/security-issue-combining-bcrypt-with.html
-     * @see /vendor/Custom/Plugins/Password.php
-     * @param null|string $password the user password in plain text
-     * @return  the encrypted password with the salt. Salt comes from password_hash
      * @todo add default php password_hash implementation
+     * 
+     * @param string $password the user password in plain text
+     * @throws InvalidArgumentException
+     * 
+     * @return  the encrypted password with the salt. Salt comes from password_hash
      */
-    public static function createPassword($password = null)
+    public static function createPassword($password)
     {
         require_once('/module/Application/src/Application/Entity/Password.php');
 
         if (empty($password)) {
-            throw new \Exception("Password cannot be empty");
+            throw new InvalidArgumentException("Password cannot be empty");
         }
 
         if (static::strLength($password) < 8) {
-            throw new \Exception("Password must be atleast 8 characters long");
+            throw new InvalidArgumentException("Password must be atleast 8 characters long");
         }
 
         $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => 13));
 
         if (!$pw) {
-            throw new \Exception("Error while generating password");
+            throw new InvalidArgumentException("Error while generating password");
         }
 
         return $pw;
@@ -108,7 +113,7 @@ final class Functions extends AbstractPlugin
      * @param string $string The input string
      * @return int The number of bytes
      */
-    public static function strLength($string = null)
+    public static function strLength($string)
     {
         return mb_strlen($string, '8bit');
     }

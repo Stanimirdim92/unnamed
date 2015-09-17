@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class AdministratorTable
 {
@@ -53,9 +54,9 @@ class AdministratorTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class AdministratorTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class AdministratorTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -163,8 +164,7 @@ class AdministratorTable
 
     /**
      * @param int $id user id
-     * @throws Exception If administrator is not found
-     * @return Administrator
+     * @return Administrator|null
      */
     public function getAdministrator($id = 0)
     {
@@ -180,8 +180,6 @@ class AdministratorTable
      * Delete a administrator based on the provided user id
      *
      * @param int $id user id
-     * @throws Exception If administrator is not found
-     * @return Administrator
      */
     public function deleteAdministrator($id = 0)
     {
@@ -190,7 +188,13 @@ class AdministratorTable
         }
     }
 
-    public function saveAdministrator(Administrator $administrator = null)
+    /**
+     * Save or update administrator based on the provided id
+     *
+     * @param  Administrator $administrator
+     * @return Administrator
+     */
+    public function saveAdministrator(Administrator $administrator)
     {
         $data = [
             'user' => (int) $administrator->getUser(),
@@ -198,12 +202,10 @@ class AdministratorTable
         $id = (int)$administrator->getId();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $administrator->id = $this->tableGateway->lastInsertValue;
         } else {
-            if (!$this->getAdministrator($id)) {
-                throw new \RuntimeException("Couldn't save administrator");
+            if ($this->getAdministrator($id)) {
+                $this->tableGateway->update($data, ['user' => $id]);
             }
-            $this->tableGateway->update($data, ['user' => $id]);
         }
         unset($id, $data);
         return $administrator;

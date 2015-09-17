@@ -45,9 +45,7 @@ class TranslateFactory
     {
         $translator = $pluginManager->getController()->getServiceLocator()->get("translator")->getTranslator();
 
-        $plugin = new Translate(
-            $translator
-        );
+        $plugin = new Translate($translator);
 
         return $plugin;
     }

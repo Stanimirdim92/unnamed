@@ -37,6 +37,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
+use Admin\Exception\RuntimeException;
 
 class LanguageTable
 {
@@ -53,9 +54,9 @@ class LanguageTable
     const PRE_NULL = null;
 
     /**
-     * @param TableGateway|null   $tg
+     * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg = null)
+    public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -70,7 +71,7 @@ class LanguageTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -100,7 +101,7 @@ class LanguageTable
      * @param int $limit
      * @param int $offset
      *
-     * @return HydratingResultSet|Paginator|null
+     * @return ResultSet|Paginator|null
      */
     public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0)
     {
@@ -162,8 +163,8 @@ class LanguageTable
     }
 
     /**
-     * @param  int    $id language
-     * @throws Exception if language is not found
+     * @param  int $id language
+     * @throws RuntimeException
      * @return Language
      */
     public function getLanguage($id = 0)
@@ -171,14 +172,13 @@ class LanguageTable
         $rowset = $this->tableGateway->select(['id' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
-            throw new \RuntimeException("Couldn't find language");
+            throw new RuntimeException("Couldn't find language");
         }
         return $rowset->current();
     }
 
     /**
-     * @param  int    $id language
-     * @throws Exception if language is not found
+     * @param  int $id language
      * @return Language
      */
     public function deleteLanguage($id = 0)
@@ -188,22 +188,26 @@ class LanguageTable
         }
     }
 
-    public function saveLanguage(Language $language = null)
+    /**
+     * Save or update language based on the provided id
+     *
+     * @param  Language $language
+     * @return Language
+     */
+    public function saveLanguage(Language $language)
     {
         $data = [
             'name' => (string) $language->getName(),
             'active' => (int) $language->getActive(),
         ];
 
-        $id = (int) $language->id;
+        $id = (int) $language->getId();
         if (!$id) {
             $this->tableGateway->insert($data);
-            $language->id = $this->tableGateway->lastInsertValue;
         } else {
-            if (!$this->getLanguage($id)) {
-                throw new \RuntimeException("Couldn't save language");
+            if ($this->getLanguage($id)) {
+                $this->tableGateway->update($data, ['id' => $id]);
             }
-            $this->tableGateway->update($data, ['id' => $id]);
         }
         unset($id, $data);
         return $language;

@@ -42,6 +42,8 @@ use Zend\Validator\File\IsImage;
 use Zend\Validator\File\Size;
 use Zend\Validator\File\Extension;
 
+use Admin\Entity\Image;
+
 final class ContentController extends IndexController
 {
     /**
@@ -75,8 +77,6 @@ final class ContentController extends IndexController
      */
     public function indexAction()
     {
-        echo phpinfo();
-        exit;
         $this->getView()->setTemplate("admin/content/index");
         if ((int) $this->getParam("id", 0) === 1) {
             $this->getView()->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
@@ -180,7 +180,14 @@ final class ContentController extends IndexController
         $request = $this->getRequest();
         if ($request->isPost()) {
             if ($request->isXmlHttpRequest()) {
-                return $this->prepareImages();
+                /**
+                 * Silly hack, but I can't fix it.
+                 *
+                 * @var JsonModel $hack
+                 */
+               $hack = $this->prepareImages();
+               echo Json::encode($hack->getVariables());
+               die;
             } else {
                 return $this->form($form, $content);
             }
@@ -199,13 +206,6 @@ final class ContentController extends IndexController
             }
         }
         return false;
-    }
-
-    public function uploadProgressAction()
-    {
-        $id = $this->params()->fromQuery('id', null);
-        $progress = new \Zend\ProgressBar\Upload\SessionProgress();
-        return new \Zend\View\Model\JsonModel($progress->getProgress($id));
     }
 
     /**
@@ -302,7 +302,6 @@ final class ContentController extends IndexController
      */
     private function upload(Http $adapter)
     {
-        $this->getView()->setTerminal(true);
         $uploadStatus = [];
 
         foreach ($adapter->getFileInfo() as $key => $file) {
@@ -310,11 +309,6 @@ final class ContentController extends IndexController
                 if ($adapter->isValid($file["name"])) {
                     $adapter->receive($file["name"]);
                     if ($adapter->isReceived($file["name"]) && $adapter->isUploaded($file["name"])) {
-
-
-                        $this->createImageThumbnail($file["name"], 'public/userfiles/'.date("Y_M").'/images', 320, 320);
-
-
                         $uploadStatus["successFiles"][] = $file["name"]." ".$this->translate("UPLOAD_SUCCESS");
                     } else {
                         $uploadStatus["errorFiles"][] = $file["name"]." ".$this->translate("UPLOAD_FAIL");
@@ -326,50 +320,11 @@ final class ContentController extends IndexController
                 }
             }
         }
-        // JsonModel doesn't work... It returns the page html even file upload s successful
-        echo Json::encode($uploadStatus);
-        die();
-    }
 
-    private function createImageThumbnail($imageName = null, $thumbnailPath = null, $thumbnailWidth = 0, $thumbnailHeight = 0)
-    {
-        $imageFile = $thumbnailPath."/".$imageName;
-        $format = getimagesize($imageFile, $info);
-        echo \Zend\Debug\Debug::dump(gd_info(), null, false);
-        echo \Zend\Debug\Debug::dump(imagetypes(), null, false);
-        $imageSize = getimagesize($imageFile);
-        echo \Zend\Debug\Debug::dump(strtoupper(substr($imageSize["mime"], 6)), null, false);
-        $imageType = $imageSize[2];
-
-        switch ($imageType) {
-            case 1:
-                $image = "imagegif";
-                $imageCreate = "imagecreatefromgif";
-            break;
-
-            case 2:
-                $image = "imagejpeg";
-                $imageCreate = "imagecreatefromjpeg";
-            break;
-
-            case 3:
-                $image = "imagepng";
-                $imageCreate = "imagecreatefrompng";
-            break;
-
-            default:
-                $this->setLayoutMessages("ERROR", "error");
-            break;
-        }
-
-        $oldImage = $imageCreate($imageFile);
-
-        $newImage = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
-        imagecopyresampled($newImage, $oldImage, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $imageSize[0], $imageSize[1]);
-
-        $image($newImage, $imageFile);
-        imagedestroy($newImage);
-
-        return is_file($imageFile);
+        $this->getView()->setTerminal(true);
+        $this->getResponse()->getHeaders()->addHeaderLine('Accept', 'application/json');
+        $model = new JsonModel($uploadStatus);
+        $model->setTerminal(true);
+        return $model;
     }
 }

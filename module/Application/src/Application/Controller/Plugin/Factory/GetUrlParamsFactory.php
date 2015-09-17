@@ -43,9 +43,9 @@ class GetUrlParamsFactory
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $plugin = new GetUrlParams(
-            $pluginManager->get("params")
-        );
+        $params = $pluginManager->get("params");
+
+        $plugin = new GetUrlParams($params);
 
         return $plugin;
     }
