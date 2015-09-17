@@ -1,0 +1,299 @@
+/**
+ * MIT License
+ * ===========
+ *
+ * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ * @version    0.0.12
+ * @link       TBA
+ */
+
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background-color: #b3d4fc;
+    text-shadow: none;
+    color: #fff;
+}
+
+::selection {
+    background-color: #b3d4fc;
+    text-shadow: none;
+    color: #fff;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+    clear: both;
+}
+
+/**
+ * 1. Set default font family to sans-serif.
+ * 3. Make sure that the html is 100% width and height.
+ */
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font: .813em/1.4 "Helvetica", "Helvetica Neue", Helvetica, sans-serif, Arial; /* 1 */
+    min-width: 100%; /* 3 */
+    min-height: 100%; /* 3 */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+}
+
+/**
+ * 2. Make sure that the body is 100% width and height
+ */
+
+body {
+    min-width: 100%; /* 2 */
+    min-height: 100%; /* 2 */
+}
+
+/**
+ * Address variable `h1` font-size and margin within `section` and `article`
+ * contexts in Firefox 4+, Safari, and Chrome.
+ */
+
+h1 {
+    font-size: 2.125em;
+}
+
+h2 {
+    font-size: 1.700em;
+}
+
+h3 {
+    font-size: 1.559em;
+}
+
+h4,h5 {
+    font-size: 1.125em;
+}
+
+h6 {
+    font-size: 1em;
+}
+
+
+/* Using a css class instead of a HTML tag can sometimes save you some DOM Elements */
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
+ */
+
+.bold,
+b,
+strong {
+    font-weight: bold;
+    line-height: inherit;
+    color: #2c2c2c;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+.smalltext,
+small {
+    font-size: 80%;
+}
+
+.italic,
+em,
+i:not(.fa) {
+    color: #777;
+    font-style: italic;
+    line-height: inherit;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * A better looking default horizontal rule
+ */
+
+hr {
+    height: 0;
+    border-width: 1px 0 1px;
+    clear: both;
+    margin: 1.25em 0 1.1875em;
+    border-top-color: #000000;
+    border-bottom-color: #414141;
+}
+
+/**
+ * Address odd `em`-unit font size rendering in all browsers.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: Consolas, "Liberation Mono", Courier, monospace, serif;
+}
+
+/**
+ * Add proper quotes.
+ */
+
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+img,
+object,
+embed {
+  max-width: 100%;
+  height: auto;
+}
+
+p {
+    padding: 0 .7em;
+}
+
+/**
+ * Address Firefox 4+ setting `line-height` on `input`and `button` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+
+select[disabled] {
+    cursor: disabled;
+}
+
+input[type="search"] {
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
+
+input:focus,
+textarea:focus {
+    color: #000;
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
+/* ==================================
+            Helper classes
+=================================== */
+
+/*
+ * Hide from both screenreaders and browsers: h5bp.com/u
+ */
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+/*
+ * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element to be focusable
+ * when navigated to via the keyboard: h5bp.com/p
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+/*
+ * Hide visually and from screenreaders, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Avoid inline css style="text-align: left/right/center".
+ */
+
+.c {
+    text-align: center;
+}
+
+.r {
+    text-align: right;
+}
+
+.l {
+    text-align: left;
+}

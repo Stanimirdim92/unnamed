@@ -10,7 +10,6 @@ auth.json
 composer.lock
 config
 data
-public
 vendor
 composerInstalation
 node_modules
