@@ -131,8 +131,12 @@ class IndexController extends AbstractActionController
              */
             if ($this->menuIncrementHack === 0) {
                 $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
+                $userData = $this->UserData();
+                if ($userData->checkIdentity(false)) {
+                    $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
+                } else {
+                    $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
+                }
                 $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
             }
             $this->menuIncrementHack = 1;

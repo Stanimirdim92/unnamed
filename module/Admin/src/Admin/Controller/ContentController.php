@@ -298,7 +298,7 @@ final class ContentController extends IndexController
 
     /**
      * @param  Http $adapter
-     * @return Json
+     * @return JsonModel
      */
     private function upload(Http $adapter)
     {

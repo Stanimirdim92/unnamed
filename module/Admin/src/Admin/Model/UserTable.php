@@ -218,10 +218,10 @@ class UserTable
         if (!$id) {
             $this->tableGateway->insert($data);
         } else {
-            if ($this->getUser($id)) {
-                $this->tableGateway->update($data, ['id' =>(int)  $id]);
+            if (!$this->getUser($id)) {
+                throw new RuntimeException("User not saved");
             }
-            throw new RuntimeException("User not saved");
+            $this->tableGateway->update($data, ['id' =>(int)  $id]);
         }
         unset($id, $data);
         return $user;
