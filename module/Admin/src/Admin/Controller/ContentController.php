@@ -47,6 +47,14 @@ use Admin\Entity\Image;
 final class ContentController extends IndexController
 {
     /**
+     * @var array
+     */
+    protected $acceptCriteria = [
+        'Zend\View\Model\JsonModel' => ['application/json'],
+        'Zend\View\Model\ViewModel' => ['text/html'],
+    ];
+
+    /**
      * @var ContentForm $contentForm
      */
     private $contentForm = null;
@@ -103,6 +111,8 @@ final class ContentController extends IndexController
      */
     protected function modifyAction()
     {
+        $this->acceptableviewmodelselector($this->acceptCriteria);
+
         $this->getView()->setTemplate("admin/content/modify");
         $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
         $this->getView()->content = $content;
@@ -177,35 +187,7 @@ final class ContentController extends IndexController
         $form->get("submit")->setValue($label);
         $this->getView()->form = $form;
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($request->isXmlHttpRequest()) {
-                /**
-                 * Silly hack, but I can't fix it.
-                 *
-                 * @var JsonModel $hack
-                 */
-               $hack = $this->prepareImages();
-               echo Json::encode($hack->getVariables());
-               die;
-            } else {
-                return $this->form($form, $content);
-            }
-        }
-    }
-
-    protected function deleteimageAction()
-    {
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost()->toArray();
-
-            if ($request->isXmlHttpRequest() && is_file("public".$data["img"])) {
-                unlink("public".$data["img"]);
-                return true;
-            }
-        }
-        return false;
+        return $this->form($form, $content);
     }
 
     /**
@@ -215,38 +197,85 @@ final class ContentController extends IndexController
     private function form(ContentForm $form, Content $content)
     {
         $request = $this->getRequest();
-        $form->setInputFilter($form->getInputFilter());
-        $data = array_merge_recursive(
-            $request->getPost()->toArray(),
-            $request->getFiles()->toArray()
-        );
+        if ($request->isPost()) {
+            $form->setInputFilter($form->getInputFilter());
+            $data = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
 
-        $form->setData($data);
-        if ($form->isValid()) {
-            $formData = $form->getData();
-            $userData = $this->UserData();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $formData = $form->getData();
+                $userData = $this->UserData();
 
-            if ($userData->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
-                $name = $userData->getIdentity()->name." ".$userData->getIdentity()->surname;
+                if ($userData->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
+                    $name = $userData->getIdentity()->name." ".$userData->getIdentity()->surname;
+                } else {
+                    $name = "Admin";
+                }
+
+                /**
+                 * We only need the name. All images ar stored in the same folder, based on the month and year
+                 */
+                $formData->setPreview($formData->getPreview()["name"]);
+                $formData->setAuthor($name);
+                $this->getTable("content")->saveContent($content);
+                $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
+                return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
             } else {
-                $name = "Admin";
+                return $this->setLayoutMessages($form->getMessages(), "error");
             }
-
-            /**
-             * We only need the name. All images ar stored in the same folder, based on the month and year
-             */
-            $formData->setPreview($formData->getPreview()["name"]);
-            $formData->setAuthor($name);
-            $this->getTable("content")->saveContent($content);
-            $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
-        } else {
-            return $this->setLayoutMessages($form->getMessages(), "error");
         }
     }
 
     /**
+     * @return JsonModel
+     */
+    protected function uploadAction()
+    {
+        $request = $this->getRequest();
+        $data = [];
+        
+        if ($request->isXmlHttpRequest()) {
+            $data = $this->prepareImages();
+        }
+        
+        return new JsonModel($data);
+    }
+
+    /**
+     * Deleted image with from a given src
+     *
+     * @method deleteimageAction
+     *
+     * @return bool
+     */
+    protected function deleteimageAction()
+    {
+        $request = $this->getRequest();
+        $status = false;
+
+        if ($request->isPost()) {
+            $data = $request->getPost()->toArray();
+
+            if ($request->isXmlHttpRequest()) {
+                // @codeCoverageIgnoreStart
+                if (is_file("public".$data["img"])) {
+                    unlink("public".$data["img"]);
+                    $status = true;
+                }
+                // @codeCoverageIgnoreEnd
+            }
+        }
+        return $status;
+    }
+
+    /**
      * Get all files from all folders and list them in the gallery
+     * getcwd() is there to make the work with images path easier
+     * 
+     * @return JsonModel
      */
     protected function filesAction()
     {
@@ -275,14 +304,11 @@ final class ContentController extends IndexController
 
     /**
      * Upload all images async
+     * @return array
      */
     private function prepareImages()
     {
-        $this->getView()->setTerminal(true);
         $adapter = new Http();
-        /**
-         * If validators are in the form, the adapter error messages won't be showed to the client
-         */
         $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
         $extension = new Extension(['jpg', 'gif','png','jpeg','bmp','webp','svg'], true);
 
@@ -293,38 +319,35 @@ final class ContentController extends IndexController
         }
 
         $adapter->setDestination('public/userfiles/'.date("Y_M").'/images/');
-        return $this->upload($adapter);
+        return $this->uploadFiles($adapter);
     }
 
     /**
      * @param  Http $adapter
-     * @return JsonModel
+     * @return array
      */
-    private function upload(Http $adapter)
+    private function uploadFiles(Http $adapter)
     {
         $uploadStatus = [];
 
         foreach ($adapter->getFileInfo() as $key => $file) {
             if ($key != "preview") {
-                if ($adapter->isValid($file["name"])) {
-                    $adapter->receive($file["name"]);
-                    if ($adapter->isReceived($file["name"]) && $adapter->isUploaded($file["name"])) {
-                        $uploadStatus["successFiles"][] = $file["name"]." ".$this->translate("UPLOAD_SUCCESS");
-                    } else {
-                        $uploadStatus["errorFiles"][] = $file["name"]." ".$this->translate("UPLOAD_FAIL");
-                    }
-                } else {
+                if (!$adapter->isValid($file["name"])) {
                     foreach ($adapter->getMessages() as $key => $msg) {
                         $uploadStatus["errorFiles"][] = $file["name"]." ".strtolower($msg);
                     }
                 }
+                
+                // @codeCoverageIgnoreStart
+                $adapter->receive($file["name"]);
+                if (!$adapter->isReceived($file["name"]) && $adapter->isUploaded($file["name"])) {
+                    $uploadStatus["errorFiles"][] = $file["name"]." was not uploaded";
+                } else {
+                    $uploadStatus["successFiles"][] = $file["name"]." was successfully uploaded";
+                }
+                // @codeCoverageIgnoreEnd
             }
         }
-
-        $this->getView()->setTerminal(true);
-        $this->getResponse()->getHeaders()->addHeaderLine('Accept', 'application/json');
-        $model = new JsonModel($uploadStatus);
-        $model->setTerminal(true);
-        return $model;
+        return $uploadStatus;
     }
 }
