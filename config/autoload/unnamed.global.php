@@ -61,8 +61,8 @@ return [
             'getParam'          => 'Application\Controller\Plugin\Factory\GetUrlParamsFactory',
             'getTable'          => 'Application\Controller\Plugin\Factory\GetTableModelFactory',
             'getFunctions'      => 'Application\Controller\Plugin\Factory\FunctionsFactory',
-            'setErrorCode'      => 'Application\Controller\Plugin\Factory\ErrorCodesFactory'
-        ]
+            'setErrorCode'      => 'Application\Controller\Plugin\Factory\ErrorCodesFactory',
+        ],
     ],
     'translator' => [
         'locale' => 'en',

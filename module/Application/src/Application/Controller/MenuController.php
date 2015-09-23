@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -35,14 +35,6 @@ namespace Application\Controller;
 
 final class MenuController extends IndexController
 {
-    /**
-     * @param MvcEvent $e
-     */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
-    {
-        parent::onDispatch($e);
-    }
-
     /**
      * Get the contents for the menu/submenu.
      *

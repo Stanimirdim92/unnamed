@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -37,7 +37,6 @@ use Admin\Model\Language;
 use Admin\Form\LanguageForm;
 use Admin\Exception\RunTimeException;
 use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Stdlib\Parameters;
 
 final class LanguageController extends IndexController

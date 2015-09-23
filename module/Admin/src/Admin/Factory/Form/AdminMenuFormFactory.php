@@ -27,41 +27,33 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
 namespace Admin\Factory\Form;
 
 use Admin\Form\AdminMenuForm;
-use Zend\Session\Container;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class AdminMenuFormFactory implements FactoryInterface
 {
     /**
-     * @var ServiceManager
-     */
-    private $services = null;
-
-    /**
      * @{inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $this->services = $serviceLocator->getServiceLocator();
-
-        $parents = $this->services->get("AdminMenuTable")->fetchList(false, [], ["parent" => 0]);
+        $parents = $serviceLocator->getServiceLocator()->get("AdminMenuTable")->fetchList(false, ["caption", "id"], ["parent" => 0]);
 
         $valueOptions = [];
-        foreach ($parents as $parent) {
-            $valueOptions[$parent->getId()] = $parent->getCaption();
+        if (count($parents) > 0) {
+            foreach ($parents as $parent) {
+                $valueOptions[$parent->getId()] = $parent->getCaption();
+            }
         }
 
-        $form = new AdminMenuForm(
-            $valueOptions
-        );
+        $form = new AdminMenuForm($valueOptions);
 
         return $form;
     }

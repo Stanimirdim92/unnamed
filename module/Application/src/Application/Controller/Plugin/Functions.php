@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -58,7 +58,7 @@ final class Functions extends AbstractPlugin
      *
      * @param string $query
      * @throws InvalidArgumentException
-     * 
+     *
      * @return ResultSet|null
      */
     public function createPlainQuery($query)
@@ -82,10 +82,10 @@ final class Functions extends AbstractPlugin
      * @link https://github.com/ircmaxell/password_compat/
      * @link http://blog.ircmaxell.com/2015/03/security-issue-combining-bcrypt-with.html
      * @todo add default php password_hash implementation
-     * 
+     *
      * @param string $password the user password in plain text
      * @throws InvalidArgumentException
-     * 
+     *
      * @return  the encrypted password with the salt. Salt comes from password_hash
      */
     public static function createPassword($password)
@@ -100,7 +100,7 @@ final class Functions extends AbstractPlugin
             throw new InvalidArgumentException("Password must be atleast 8 characters long");
         }
 
-        $pw = password_hash($password, PASSWORD_BCRYPT, array("cost" => 13));
+        $pw = password_hash($password, PASSWORD_BCRYPT, ["cost" => 13]);
 
         if (!$pw) {
             throw new InvalidArgumentException("Error while generating password");

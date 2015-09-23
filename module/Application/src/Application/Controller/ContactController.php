@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -50,16 +50,6 @@ final class ContactController extends IndexController
     {
         parent::__construct();
         $this->contactForm = $contactForm;
-    }
-
-    /**
-     * Initialize any variables before controller actions
-     *
-     * @param \Zend\Mvc\MvcEvent $e
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        parent::onDispatch($e);
     }
 
     /**

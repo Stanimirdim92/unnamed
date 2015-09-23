@@ -1,4 +1,4 @@
-<?php return array (
+<?php return  [
   'ADMINISTRATORS' => 'Администратори',
   'ADD_ADMINISTRATOR' => 'Add administrator',
   'MODIY_ADMINISTRATOR' => 'Modify administrator',
@@ -113,4 +113,4 @@
   'SESSION_TRANSLATION_FILE_NOT_FOUND' => 'Session translations file was not found',
   'TRANSLATIONS_SAVE_SUCCESS' => 'Translations were successfully saved',
   'NO_TRANSLATION_FILE' => 'No translation file was found',
-);
+];

@@ -10,7 +10,7 @@
 /**
  * All good, skip the rest of the file
  */
-if (class_exists('Zend\Loader\AutoloaderFactory') && is_file('config/autoload/local.php')) {
+if (class_exists('Zend\Loader\AutoloaderFactory') && is_file('config/autoload/unnamed.local.php')) {
     return;
 }
 
@@ -25,7 +25,7 @@ if ((is_dir('vendor/zendframework') || is_dir('vendor/ZF2')) && is_file('vendor/
 /**
  * Check for Zend setup and database setup
  */
-if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/local.php')) {
+if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/unnamed.local.php')) {
     if (!is_file('public/install.php')) {
         die(sprintf('Installation file is missing. Process cannot be started.'));
     }

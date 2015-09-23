@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -274,7 +274,7 @@ final class ContentController extends IndexController
     /**
      * Get all files from all folders and list them in the gallery
      * getcwd() is there to make the work with images path easier
-     * 
+     *
      * @return JsonModel
      */
     protected function filesAction()
@@ -309,8 +309,8 @@ final class ContentController extends IndexController
     private function prepareImages()
     {
         $adapter = new Http();
-        $size = new Size(['min'=>'10kB', 'max'=>'5MB','useByteString' => true]);
-        $extension = new Extension(['jpg', 'gif','png','jpeg','bmp','webp','svg'], true);
+        $size = new Size(['min'=>'10kB', 'max'=>'5MB', 'useByteString' => true]);
+        $extension = new Extension(['jpg', 'gif', 'png', 'jpeg', 'bmp', 'webp', 'svg'], true);
 
         $adapter->setValidators([$size, new IsImage(), $extension]);
 

@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -40,19 +40,16 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
-use Zend\Session\Container;
-use Zend\Http\PhpEnvironment\Request as HttpRequest;
 
 class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
+     * Setup module layout
+     *
      * @param  $moduleManager ModuleManager
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
-        /**
-         * Setup module layout
-         */
         $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
             $e->getTarget()->layout('layout/admin');
         });
@@ -66,24 +63,8 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     public function onBootstrap(EventInterface $e)
     {
         $app = $e->getApplication();
-
-        if (!$app->getRequest() instanceof HttpRequest) {
-            return;
-        }
-
-       /**
-        * @var $em Zend\EventManager\EventManager
-        */
         $em = $app->getEventManager();
-
-       /**
-        * @var $sm Zend\ServiceManager\ServiceManager
-        */
         $sm = $app->getServiceManager();
-
-        /**
-         * Atach event listener for all types of errors, warnings, exceptions etc.
-         */
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
     }
 

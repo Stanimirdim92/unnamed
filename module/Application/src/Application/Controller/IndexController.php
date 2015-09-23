@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -102,13 +102,12 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder")->getDataSource();
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder");
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
-
             foreach ($menu as $submenus) {
-                $menus['menus'][$submenus['id']] = $submenus;
-                $menus['submenus'][$submenus['parent']][] = $submenus['id'];
+                $menus['menus'][$submenus->getId()] = $submenus;
+                $menus['submenus'][$submenus->getParent()][] = $submenus->getId();
             }
 
             $this->getView()->menu = $this->generateMenu(0, $menus);
@@ -142,7 +141,7 @@ class IndexController extends AbstractActionController
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]['menulink']}'>{$menu['menus'][$id]['caption']}</a>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]->getMenuLink()}'>{$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu);
                 $output .= "</li>";
             }

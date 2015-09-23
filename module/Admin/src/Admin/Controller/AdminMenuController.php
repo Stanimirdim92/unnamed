@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -60,8 +60,8 @@ final class AdminMenuController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
+        parent::onDispatch($e);
     }
 
     /**
@@ -75,9 +75,6 @@ final class AdminMenuController extends IndexController
             $menus = ["menus" => null, "submenus" => null];
             foreach ($menu as $submenu) {
                 if ($submenu->getParent() > 0) {
-                    /**
-                     * This needs to have a second empty array in order to work
-                     */
                     $menus["submenus"][$submenu->getParent()][] = $submenu;
                 } else {
                     $menus["menus"][$submenu->getId()] = $submenu;

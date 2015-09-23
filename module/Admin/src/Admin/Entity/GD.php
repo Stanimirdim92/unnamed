@@ -27,18 +27,17 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
 namespace Admin\Entity;
 
-use Admin\Entity\GDInterface;
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
-use Admin\Exception\RuntimeException;
 
-final class GD implements GDInterface {
+final class GD implements GDInterface
+{
 
     /**
      * The GD library

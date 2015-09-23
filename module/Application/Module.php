@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -42,19 +42,16 @@ use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Session\Container;
-use Zend\Http\PhpEnvironment\Request as HttpRequest;
-use Zend\Validator\AbstractValidator;
 
 class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
-     * @param $moduleManager ModuleManagerInterface
+     * Setup module layout
+     *
+     * @param  $moduleManager ModuleManager
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
-        /**
-         * Setup module layout
-         */
         $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
             $e->getTarget()->layout('layout/layout');
         });
@@ -69,42 +66,14 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     {
         $app = $e->getApplication();
         $moduleRouteListener = new ModuleRouteListener();
-
-        if (!$e->getRequest() instanceof HttpRequest) {
-            return;
-        }
-
-       /**
-        * @var $em Zend\EventManager\EventManager
-        */
         $em = $app->getEventManager();
         $moduleRouteListener->attach($em);
 
-       /**
-        * @var $sm Zend\ServiceManager\ServiceManager
-        */
-        $sm = $app->getServiceManager();
-
-        /**
-         * Init session
-         */
-        $sessionManager = $sm->get('initSession');
-        $sessionManager->setName("zpc");
-        $sessionManager->start();
+        $sessionManager = $app->getServiceManager()->get('initSession');
+        $sessionManager->setName("zpc")->start();
         Container::setDefaultManager($sessionManager);
 
-        if (!$sessionManager->sessionExists()) {
-            $sessionManager->regenerateId();
-        }
-
-        /**
-         * Attach event listener for page titles
-         */
         $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
-
-        /**
-         * Atach event listener for all types of errors, warnings, exceptions etc.
-         */
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
     }
 
@@ -140,7 +109,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         /**
          * Get translations
          */
-        AbstractValidator::setDefaultTranslator($translator);
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
         $viewModel = $app->getMvcEvent()->getViewModel();
         $viewModel->lang = $translator->getLocale();

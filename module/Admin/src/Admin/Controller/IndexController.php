@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -44,6 +44,11 @@ class IndexController extends AbstractActionController
      * @var ViewModel $view creates instance to view model
      */
     protected $view = null;
+
+    /**
+     * @var $menuIncrementHack Used increment the menu and stop the second show up of home, login and logout links...
+     */
+    private $menuIncrementHack = 0;
 
     /**
      * @var Container $translation holds language id and name
@@ -94,15 +99,13 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("AdminMenu")->fetchList(false, [], [], "AND", null, "id, menuOrder")->getDataSource();
+        $menu = $this->getTable("AdminMenu")->fetchList(false, [], []);
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
-
             foreach ($menu as $submenus) {
-                $menus['menus'][$submenus['id']] = $submenus;
-                $menus['submenus'][$submenus['parent']][] = $submenus['id'];
+                $menus['menus'][$submenus->getId()] = $submenus;
+                $menus['submenus'][$submenus->getParent()][] = $submenus->getId();
             }
-
             $this->getView()->menu = $this->generateMenu(0, $menus);
         }
         return $this->getView();
@@ -118,8 +121,16 @@ class IndexController extends AbstractActionController
         if (isset($menu["submenus"][$parent])) {
             $output .= "<ul>";
 
+            /**
+             * This is a really, really ugly hack
+             */
+            if ($this->menuIncrementHack === 0) {
+                $output .= "<li><a tabindex='1' hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'>{$this->translate("DASHBOARD")}</a></li>";
+            }
+            $this->menuIncrementHack = 1;
+            
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]['class']}' itemprop='url' href='/admin/{$menu['menus'][$id]['controller']}/{$menu['menus'][$id]['action']}'>{$menu['menus'][$id]['caption']}</a>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'>{$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu);
                 $output .= "</li>";
             }

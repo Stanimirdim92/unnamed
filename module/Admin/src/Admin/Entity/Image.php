@@ -27,14 +27,12 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
 namespace Admin\Entity;
 
-use Admin\Entity\GD;
-use Admin\Entity\ImageInterface;
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
 use Admin\Exception\RuntimeException;
@@ -145,8 +143,8 @@ final class Image implements ImageInterface
      *
      * @method open
      *
-     * @param  string $imageFile 
-     * @param  array $options 
+     * @param  string $imageFile
+     * @param  array $options
      *
      * @return ImageInteface
      */
@@ -182,7 +180,7 @@ final class Image implements ImageInterface
 
         $this->imageDimensions = [
             'width'  => imagesx($this->getImageFile()),
-            'height' => imagesy($this->getImageFile())
+            'height' => imagesy($this->getImageFile()),
         ];
 
         return $this;

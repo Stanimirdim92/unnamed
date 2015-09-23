@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -235,9 +235,9 @@ final class LoginController extends IndexController
             return $this->redirect()->toUrl("/login");
         }
 
-       /**
-        * @var NewPasswordForm $form
-        */
+        /**
+         * @var NewPasswordForm $form
+         */
 
         $form = $this->newPasswordForm;
         $form->get("password")->setLabel($this->translate("PASSWORD"))->setAttribute("placeholder", $this->translate("PASSWORD"));

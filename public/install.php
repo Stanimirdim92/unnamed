@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -37,7 +37,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.12", "5.5"));
+    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.13", "5.5"));
 }
 
 /**
@@ -140,7 +140,7 @@ switch ((int) $pageId) {
         /**
          * Check for database setup
          */
-        if (!is_file('config/autoload/local.php')) {
+        if (!is_file('config/autoload/unnamed.local.php')) {
             echo "<p><a href='/install.php?page=2'>Setup a database</a></p>";
         } else {
             echo "<p>Your database configuration file has already been setup</p>";
@@ -149,8 +149,8 @@ switch ((int) $pageId) {
 
         break;
     case 2:
-        if (!is_file('config/autoload/local.php')) {
-?>
+        if (!is_file('config/autoload/unnamed.local.php')) {
+            ?>
             <form id="databaseSetup" method="post" action="#">
                 <label for="name">Database &#42;
                     <input type="text" size="35" id="dbname" name="dbname" required="required" placeholder="The name of the database">

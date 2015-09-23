@@ -1,4 +1,4 @@
-<?php return array (
+<?php return  [
   'ADMINISTRATORS' => 'Administrators',
   'ADD_ADMINISTRATOR' => 'Add administrator',
   'MODIY_ADMINISTRATOR' => 'Modify administrator',
@@ -119,4 +119,4 @@
   'CONTENT_ENABLE_SUCCESS' => 'Content was successfully activated',
   'DEACTIVATED' => 'Deactivated',
   'AUTHOR' => "Author",
-);
+];

@@ -1,11 +1,16 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.13 (20.09.2015) - Stable Alpha
+## 0.0.13 (23.09.2015) - Stable Alpha
  - Encapsulated all exceptions
  - Image library updates
  - *ModelTable bug and doc fixes
  - Removed isset magic property and getProperties() method from *Model classes
+ - StyleCI fixes
+ - New classmaps
+ - Updated all composer packages
+ - Renamed local.php to unnamed.local.php and deleted global.php
+ - Fixed recursive menu not displaying all menus 
 
 DD.MM.YYYY
 ## 0.0.12 (14.09.2015) - Stable Alpha
@@ -127,7 +132,6 @@ DD.MM.YYYY
  - Social networks controller or module
  - Options controller, which will handle all the options across the CMS
  - Destroyers for all cached variables and queries, when new data is set
- - Finish the AJAX gallery and implement it as LearnZF2 module
  - Better http://schema.org/
  - Twitter cards
  - Win 8 default png tile cms image

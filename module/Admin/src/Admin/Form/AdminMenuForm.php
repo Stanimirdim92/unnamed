@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -77,6 +77,7 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
             'name' => 'menuOrder',
             'options' => [
                 'empty_option' => 'Please choose menu order (optional)',
+                'disable_inarray_validator' => true,
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
@@ -151,6 +152,7 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
             'name' => 'parent',
             'options' => [
                 'label' => 'Parent admin menu',
+                'disable_inarray_validator' => true,
                 'empty_option' => "Select parent admin menu",
                 'value_options' => $this->parent,
             ],

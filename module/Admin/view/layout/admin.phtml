@@ -33,7 +33,6 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             <header id="header" role="banner">
                 <nav id="nav" role="navigation">
                     <ul>
-                        <li><a tabindex='1' hreflang='<?=$this->layout()->lang?>' itemprop='url' href='&sol;admin'><?=$this->translate("DASHBOARD");?></a></li>
                         <?=$view->menu;?>
                     </ul>
                 </nav>
@@ -69,7 +68,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                                 <ul>
                                     <li>
                                         <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
-                                        <button type='button' class='close'><i class='fa fa-times'></i></button>
+                                        <button type='button' class='btn btn-default close close'><i class='fa fa-times'></i></button>
                                     </li>
                                 </ul>
                               </div>

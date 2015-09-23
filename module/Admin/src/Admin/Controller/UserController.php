@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -99,7 +99,7 @@ final class UserController extends IndexController
      * @param String $label
      * @param User $user
      */
-    private function initForm($label= '' , User $user = null)
+    private function initForm($label= '', User $user = null)
     {
         if (!$user instanceof User) {
             throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));

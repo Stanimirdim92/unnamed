@@ -27,7 +27,7 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.12
+ * @version    0.0.13
  * @link       TBA
  */
 
@@ -78,9 +78,9 @@ final class RegistrationController extends IndexController
             return $this->redirect()->toUrl("/registration");
         }
 
-       /**
-        * @var RegistrationForm $form
-        */
+        /**
+         * @var RegistrationForm $form
+         */
         $form = $this->registrationForm;
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
@@ -120,9 +120,9 @@ final class RegistrationController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("application/registration/index");
-       /**
-        * @var RegistrationForm $form
-        */
+        /**
+         * @var RegistrationForm $form
+         */
         $form = $this->registrationForm;
         $form->get("name")->setLabel($this->translate("NAME"))->setAttribute("placeholder", $this->translate("NAME"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
