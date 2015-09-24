@@ -70,6 +70,8 @@ class IndexController extends AbstractActionController
      * Initialize any variables before controller actions
      *
      * @param MvcEvent $e
+     *
+     * @return ViewModel
      */
     public function onDispatch(MvcEvent $e)
     {

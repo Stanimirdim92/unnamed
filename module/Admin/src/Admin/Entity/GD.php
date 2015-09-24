@@ -1,7 +1,7 @@
 <?php
+
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -27,7 +27,9 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ *
  * @version    0.0.13
+ *
  * @link       TBA
  */
 
@@ -35,12 +37,12 @@ namespace Admin\Entity;
 
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
+use Admin\Entity\GDInterface;
 
 final class GD implements GDInterface
 {
-
     /**
-     * The GD library
+     * The GD library.
      *
      * @var GD
      */
@@ -49,7 +51,7 @@ final class GD implements GDInterface
     /**
      * @method __construct
      *
-     * @param  string $version minimum GD version
+     * @param string $version minimum GD version
      */
     public function __construct($version = '2.0.1')
     {
@@ -58,34 +60,35 @@ final class GD implements GDInterface
     }
 
     /**
-     * Load GD library
+     * Load GD library.
      *
-     * @throws BadMethodCallException if gd_info doesn't exists
+     * @throws RuntimeException if gd_info doesn't exists
      */
     private function loadGDInfo()
     {
         if (!function_exists('gd_info')) {
-            throw new BadMethodCallException('GD library has not been installed');
+            throw new \RuntimeException('GD library has not been installed');
         }
 
         $this->gd = gd_info();
     }
 
     /**
-     * Check minimum needed GD version
+     * Check minimum needed GD version.
      *
      * @param string $version
-     * @throws InvalidArgumentException on invalid version
+     *
+     * @throws RuntimeException on invalid version
      */
-    private function checkGDVersion($version = "2.0.1")
+    private function checkGDVersion($version = '2.0.1')
     {
         if (version_compare(GD_VERSION, $version, '<')) {
-            throw new InvalidArgumentException(sprintf('GD2 version %s or higher is required', $version));
+            throw new \RuntimeException(sprintf('GD2 version %s or higher is required', $version));
         }
     }
 
     /**
-     * Check Free Type support
+     * Check Free Type support.
      *
      * @return bool
      */
@@ -95,7 +98,7 @@ final class GD implements GDInterface
     }
 
     /**
-     * Check Free Type Linkage support
+     * Check Free Type Linkage support.
      *
      * @return string|null
      */
@@ -104,56 +107,57 @@ final class GD implements GDInterface
         if ($this->hasFreeTypeSupport()) {
             return $this->gd['FreeType Linkage'];
         }
-        return null;
+
+        return;
     }
 
     /**
-     * Check T1Lib support
+     * Check T1Lib support.
      *
      * @return bool
      */
     public function hasT1LibSupport()
     {
-        return $this->gd["T1Lib Support"];
+        return $this->gd['T1Lib Support'];
     }
 
     /**
-     * Check GIF file read support
+     * Check GIF file read support.
      *
      * @return bool
      */
     public function hasGIFReadSupport()
     {
-        return $this->gd["GIF Read Support"];
+        return $this->gd['GIF Read Support'];
     }
 
     /**
-     * Check GIF file creation support
+     * Check GIF file creation support.
      *
      * @return bool
      */
     public function hasGIFCreateSupport()
     {
-        return $this->gd["GIF Create Support"];
+        return $this->gd['GIF Create Support'];
     }
 
     /**
-     * Check JPEG|JPG file support
+     * Check JPEG|JPG file support.
      *
      * @return bool
      */
     public function hasJPEGSupport()
     {
-        return $this->gd["JPEG Support"];
+        return $this->gd['JPEG Support'];
     }
 
     /**
-     * Check PNG file support
+     * Check PNG file support.
      *
      * @return bool
      */
     public function hasPNGSupport()
     {
-        return $this->gd["PNG Support"];
+        return $this->gd['PNG Support'];
     }
 }

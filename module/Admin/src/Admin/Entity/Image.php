@@ -1,13 +1,13 @@
 <?php
+
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
+ * 'Software'), to deal in the Software without restriction, including
  * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
@@ -16,7 +16,7 @@
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
@@ -27,7 +27,9 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ *
  * @version    0.0.13
+ *
  * @link       TBA
  */
 
@@ -36,37 +38,30 @@ namespace Admin\Entity;
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
 use Admin\Exception\RuntimeException;
+use Admin\Entity\ImageInterface;
 
-/**
- * TODO: improve interfaces
- * TODO: SOLID|GRASP
- * TODO: crop
- * TODO: copy
- * TODO: thumbnail
- * TODO: filters
- */
 final class Image implements ImageInterface
 {
     /**
-     * A valid image path /path/to/image.png
+     * A valid image path /path/to/image.png.
      *
      * @var string
      */
     private $imageFile = null;
 
     /**
-     * Image format, taken from the mime type
+     * Image format, taken from the mime type.
      *
      * @var string
      */
     private $format = null;
 
     /**
-     * The current dimensions of the image
+     * The current dimensions of the image.
      *
      * @var array
      */
-    private $imageDimensions = ["width" => 1, "height" => 1];
+    private $imageDimensions = ['width' => 1, 'height' => 1];
 
     /**
      * @var int
@@ -79,7 +74,7 @@ final class Image implements ImageInterface
     private $height = 270;
 
     /**
-     * All config options for different image formats
+     * All config options for different image formats.
      *
      * @var array
      */
@@ -88,7 +83,7 @@ final class Image implements ImageInterface
         'alpha_color_allocate'    => [255, 255, 255],
         'alpha_transperancy'      => 64,
         'png_compression_level'   => -1,
-        'png_compression_filter'  => "all",
+        'png_compression_filter'  => 'all',
         'jpeg_quality'            => 75,
         'foreground'              => [0, 0, 0],
 
@@ -98,21 +93,21 @@ final class Image implements ImageInterface
     ];
 
     /**
-     * All allowed mime types
+     * All allowed mime types.
      *
      * @var array
      */
     private $allowedMimeTypes = [
-        "image/gif",
-        "image/jpeg",
-        "image/png",
-        "image/bmp",
-        "image/webp",
+        'image/gif',
+        'image/jpeg',
+        'image/png',
+        'image/bmp',
+        'image/webp',
         'image/wbmp',
     ];
 
     /**
-     * PNG compression filters
+     * PNG compression filters.
      *
      * @var array
      */
@@ -127,7 +122,7 @@ final class Image implements ImageInterface
     ];
 
     /**
-     * The GD library
+     * The GD library.
      *
      * @var GD
      */
@@ -139,38 +134,38 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Try to open and read image
+     * Try to open and read image.
      *
      * @method open
      *
-     * @param  string $imageFile
-     * @param  array $options
+     * @param string $imageFile
+     * @param array  $options
      *
      * @return ImageInteface
      */
     public function open($imageFile, array $options = [])
     {
-        /**
+        /*
          * See if this really is a file
          */
         if (!is_file($imageFile)) {
-            throw new InvalidArgumentException("Invalid image");
+            throw new \InvalidArgumentException('Invalid image');
         }
 
-        /**
+        /*
          * Try reading its contents
          */
         $data = file_get_contents($imageFile);
         if (!$data) {
-            throw new RuntimeException('Cannot open file');
+            throw new \RuntimeException('Cannot open file');
         }
 
-        /**
+        /*
          * Try creating image from the read file
          */
         $resource = imagecreatefromstring($data);
         if (!is_resource($resource)) {
-            throw new RuntimeException('Unable to open image');
+            throw new \RuntimeException('Unable to open image');
         }
 
         $this->imageFile = $imageFile;
@@ -187,7 +182,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Free up memory
+     * Free up memory.
      */
     public function __destruct()
     {
@@ -205,7 +200,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Returns the format
+     * Returns the format.
      *
      * @return string
      */
@@ -215,7 +210,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * The current dimensions of the image
+     * The current dimensions of the image.
      *
      * @return array
      */
@@ -241,15 +236,16 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Holds all config data for all methods
+     * Holds all config data for all methods.
      *
      * @param array $options
+     *
      * @return ImageInteface
      */
     private function setOptions(array $options = [])
     {
-        if (!is_array($options) && !$options instanceof Traversable) {
-            throw new InvalidArgumentException(sprintf(
+        if (!is_array($options) && !$options instanceof \Traversable) {
+            throw new Exception\InvalidArgumentException(sprintf(
                 'Parameter provided to %s must be an array or Traversable',
                 __METHOD__
             ));
@@ -265,7 +261,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Get all options set
+     * Get all options set.
      *
      * @return array
      */
@@ -275,13 +271,14 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Get an individual option
+     * Get an individual option.
      *
      * Keys are normalized to lowercase.
      *
-     * Returns null for unfound options
+     * Returns null for unfound options.
      *
-     * @param  string $option
+     * @param string $option
+     *
      * @return mixed
      */
     public function getOption($option)
@@ -295,7 +292,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * The function will return false for invalid images
+     * The function will return false for invalid images.
      *
      * @return array|false
      */
@@ -305,7 +302,7 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Prepare new image size
+     * Prepare new image size.
      *
      * @param int $width
      * @param int $height
@@ -313,15 +310,15 @@ final class Image implements ImageInterface
     private function checkImageSizes($width = 1, $height = 1)
     {
         if ($height < 1 || $width < 1) {
-            throw new InvalidArgumentException('Image height and width must be at least 1 pixel');
+            throw new \InvalidArgumentException('Image height and width must be at least 1 pixel');
         }
 
-        $this->width  = (int) $width;
+        $this->width = (int) $width;
         $this->height = (int) $height;
     }
 
     /**
-     * Extract the file format by mime-type
+     * Extract the file format by mime-type.
      *
      * @throws Exception for invalid mime-types
      */
@@ -330,30 +327,30 @@ final class Image implements ImageInterface
         $format = $this->getImageInfo();
 
         if (!in_array($format['mime'], $this->allowedMimeTypes)) {
-            throw new RuntimeException("Unsupported image format");
+            throw new \RuntimeException('Unsupported image format');
         }
 
-        /**
+        /*
          * strip out image/ from string and make the rest upper cases
          */
-        $format = strtoupper(substr($format["mime"], 6));
+        $format = strtoupper(substr($format['mime'], 6));
 
-        /**
+        /*
          * Normalize formats
          */
         if ($format === 'JPG' || $format === 'PJPEG') {
-            $format = "JPEG";
+            $format = 'JPEG';
         }
 
-        if ($format === "VND.WAP.WBMP") {
-            $format = "WBMP";
+        if ($format === 'VND.WAP.WBMP') {
+            $format = 'WBMP';
         }
 
         $this->format = $format;
     }
 
     /**
-     * Try to create a new image from the supplied file
+     * Try to create a new image from the supplied file.
      *
      * @throws Exception on invalid image format
      */
@@ -377,13 +374,13 @@ final class Image implements ImageInterface
                 break;
 
             default:
-                throw new RuntimeException("Invalid image format");
+                throw new \RuntimeException('Invalid image format');
                 break;
         }
     }
 
     /**
-     * See if we can create GIF images
+     * See if we can create GIF images.
      *
      * @throws Exception on missing support
      */
@@ -393,11 +390,11 @@ final class Image implements ImageInterface
             return imagecreatefromgif($this->getImageFile());
         }
 
-        throw new BadMethodCallException("Missing GIF create support");
+        throw new \Exception('Missing GIF create support');
     }
 
     /**
-     * See if we can create JEPG|JPG images
+     * See if we can create JEPG|JPG images.
      *
      * @throws Exception on missing support
      */
@@ -407,11 +404,11 @@ final class Image implements ImageInterface
             return imagecreatefromjpeg($this->getImageFile());
         }
 
-        throw new BadMethodCallException("Missing JPEG support");
+        throw new \Exception('Missing JPEG support');
     }
 
     /**
-     * See if we can create PNG images
+     * See if we can create PNG images.
      *
      * @throws Exception on missing support
      */
@@ -421,11 +418,11 @@ final class Image implements ImageInterface
             return imagecreatefrompng($this->getImageFile());
         }
 
-        throw new BadMethodCallException("Missing PNG support");
+        throw new \Exception('Missing PNG support');
     }
 
     /**
-     * See if we can create WEBP images
+     * See if we can create WEBP images.
      *
      * @throws Exception on missing support
      */
@@ -437,11 +434,11 @@ final class Image implements ImageInterface
             }
         }
 
-        throw new BadMethodCallException("Missing WEBP support");
+        throw new \Exception('Missing WEBP support');
     }
 
     /**
-     * Generates a GD image
+     * Generates a GD image.
      *
      * @return resource
      */
@@ -449,23 +446,23 @@ final class Image implements ImageInterface
     {
         $resource = imagecreatetruecolor($this->getWidth(), $this->getHeight());
 
-        imagealphablending($resource, $this->getOption("preserve_alpha"));
+        imagealphablending($resource, $this->getOption('preserve_alpha'));
         imagesavealpha($resource, true);
 
         if (function_exists('imageantialias')) {
             imageantialias($resource, true);
         }
 
-        $color = $this->getOption("alpha_color_allocate");
+        $color = $this->getOption('alpha_color_allocate');
         if (!is_array($color)) {
             $color = [255, 255, 255];
-            $this->options["alpha_color_allocate"] = $color;
+            $this->options['alpha_color_allocate'] = $color;
         }
 
-        $alpha = $this->getOption("alpha_transperancy");
+        $alpha = $this->getOption('alpha_transperancy');
         if ($alpha < 1 || $alpha > 127) {
             $alpha = 64;
-            $this->options["alpha_transperancy"] = $alpha;
+            $this->options['alpha_transperancy'] = $alpha;
         }
 
         $transparentColor = imagecolorallocatealpha($resource, $color[0], $color[1], $color[2], $alpha);
@@ -476,10 +473,11 @@ final class Image implements ImageInterface
     }
 
     /**
-     * Create the image with the given width and height
+     * Create the image with the given width and height.
      *
      * @param int width
      * @param int height
+     *
      * @throws RuntimeException on invalid operation
      *
      * @return ImageInteface
@@ -494,8 +492,8 @@ final class Image implements ImageInterface
         imagealphablending($this->getImageFile(), true);
         imagealphablending($newImage, true);
 
-        if (!imagecopyresampled($newImage, $this->getImageFile(), 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $oldImageDimensions["width"], $oldImageDimensions["height"])) {
-            throw new RuntimeException('Image resizing has failed');
+        if (!imagecopyresampled($newImage, $this->getImageFile(), 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $oldImageDimensions['width'], $oldImageDimensions['height'])) {
+            throw new \RuntimeException('Image resizing has failed');
         }
 
         imagealphablending($this->getImageFile(), false);
@@ -510,33 +508,34 @@ final class Image implements ImageInterface
     /**
      * @param string $path
      * @param string $fileName
+     *
      * @throws RuntimeException
      */
     public function save($path, $fileName)
     {
         if (!$path || !is_dir($path)) {
-            throw new RuntimeException("Path is not set");
+            throw new \RuntimeException('Path is not set');
         }
 
         if (!is_writable($path)) {
-            throw new RuntimeException("Path is not writable");
+            throw new \RuntimeException('Path is not writable');
         }
 
         if (!$fileName) {
-            throw new RuntimeException("Image name is not set");
+            throw new \RuntimeException('Image name is not set');
         }
 
         $format = strtolower($this->getFormat());
         $imageSaveMethod = 'image'.$format;
         $options = [$this->getImageFile(), $path.DIRECTORY_SEPARATOR.$fileName];
-        
+
         $opt = $this->checkFormatOptions();
         foreach ($opt as $key => $option) {
             $options[] = $option;
         }
 
         if (!call_user_func_array($imageSaveMethod, $options)) {
-            throw new RuntimeException('Image save has failed');
+            throw new \RuntimeException('Image save has failed');
         }
     }
 
@@ -548,13 +547,13 @@ final class Image implements ImageInterface
         $params = [];
         $format = strtolower($this->getFormat());
 
-        if ($format === "png") {
+        if ($format === 'png') {
             $png = $this->pngOptions();
-            $params[] = $png["level"];
-            $params[] = $png["filter"];
+            $params[] = $png['level'];
+            $params[] = $png['filter'];
         } elseif ($format === 'jpeg') {
             $params[] = $this->jpegOptions();
-        } elseif ($format === "wbmp") {
+        } elseif ($format === 'wbmp') {
             $params[] = $this->wbmpOptions();
         }
 
@@ -567,23 +566,23 @@ final class Image implements ImageInterface
     private function pngOptions()
     {
         $params = [];
-        $params["level"] = $this->getOption('png_compression_level');
+        $params['level'] = $this->getOption('png_compression_level');
         $filter = $this->getOption('png_compression_filter');
 
-        if ($params["level"] < 0 || $params["level"] > 9) {
+        if ($params['level'] < 0 || $params['level'] > 9) {
             // http://www.zlib.net/manual.html
-            $params["level"] = -1; // Z_DEFAULT_COMPRESSION
-            $this->options['png_compression_level'] = $params["level"];
+            $params['level'] = -1; // Z_DEFAULT_COMPRESSION
+            $this->options['png_compression_level'] = $params['level'];
         }
 
         if (!is_string($filter)) {
-            throw new RuntimeException("png_compression_filter must be a string");
+            throw new \RuntimeException('png_compression_filter must be a string '.gettype($filter).' given');
         }
 
         if (!in_array($filter, array_keys($this->pngFilterTypes))) {
-            throw new RuntimeException(sprintf('png_compression_filter should be one or a combination of: "%s"', implode('", "', array_keys($this->pngFilterTypes))));
+            throw new \RuntimeException(sprintf('png_compression_filter should be one or a combination of: "%s"', implode('', '', array_keys($this->pngFilterTypes))));
         }
-        $params["filter"] = $this->pngFilterTypes[$filter];
+        $params['filter'] = $this->pngFilterTypes[$filter];
 
         return $params;
     }

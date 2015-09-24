@@ -66,7 +66,7 @@ final class MenuController extends IndexController
     /**
      * Initialize menus and their submenus. 1 query to rule them all!
      *
-     * @return void
+     * @return string|null
      */
     private function showMenus()
     {
@@ -85,6 +85,16 @@ final class MenuController extends IndexController
         return null;
     }
 
+    /**
+     * Builds menu HTML
+     *
+     * @method generateMenu
+     *
+     * @param  int $parent
+     * @param  array $menu
+     *
+     * @return string generated html code
+     */
     private function generateMenu($parent, $menu)
     {
         $output = "";
@@ -125,6 +135,8 @@ final class MenuController extends IndexController
 
     /**
      * This action shows the list with all menus
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -138,6 +150,8 @@ final class MenuController extends IndexController
 
     /**
      * This action serves for adding a new menu
+     *
+     * @return ViewModel
      */
     protected function addAction()
     {
@@ -150,6 +164,8 @@ final class MenuController extends IndexController
     /**
      * This action presents a modify form for Menu object with a given id
      * Upon POST the form is processed and saved
+     *
+     * @return ViewModel
      */
     protected function modifyAction()
     {
@@ -163,14 +179,14 @@ final class MenuController extends IndexController
 
     protected function deactivateAction()
     {
-        $menu = $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
+        $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("MENU_DISABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
 
     protected function activateAction()
     {
-        $menu = $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
+        $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("MENU_ENABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
@@ -187,6 +203,8 @@ final class MenuController extends IndexController
 
     /**
      * this action shows menu details from the provided id and session language
+     *
+     * @return ViewModel
      */
     protected function detailAction()
     {
@@ -211,7 +229,7 @@ final class MenuController extends IndexController
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param string $label button title
-     * @param  Menu|null $menu menu object
+     * @param  Menu $menu menu object
      */
     private function initForm($label = '', Menu $menu = null)
     {
@@ -220,7 +238,7 @@ final class MenuController extends IndexController
         }
 
         /**
-         * @var Admin\Form\MenuForm $form
+         * @var MenuForm $form
          */
         $form = $this->menuForm;
         $form->bind($menu);

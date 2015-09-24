@@ -33,7 +33,6 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\MvcEvent;
 use Application\Form\ContactForm;
 
 final class ContactController extends IndexController
@@ -77,7 +76,7 @@ final class ContactController extends IndexController
                 $formData = $form->getData();
                 try {
                     // must be set from db
-                    $result = $this->Mailing()->sendMail("psyxopat@gmail.com", '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
+                    $this->Mailing()->sendMail("psyxopat@gmail.com", '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
                     $this->setLayoutMessages($this->translate("CONTACT_SUCCESS"), 'success');
                 } catch (\Exception $e) {
                     $this->setLayoutMessages($this->translate("CONTACT_ERROR"), 'error');

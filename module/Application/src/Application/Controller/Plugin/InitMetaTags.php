@@ -85,9 +85,6 @@ final class InitMetaTags extends AbstractPlugin
         $this->placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
         $this->placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
 
-        // $this->headMeta->appendName('robots', 'index, follow');
-        // $this->headMeta->appendName('Googlebot', 'index, follow');
-        // $this->headMeta->appendName('revisit-after', '3 Days');
         $this->headMeta->appendName('keywords', $keywords);
         $this->headMeta->appendName('description', $description);
         $this->headMeta->appendName('viewport', 'width=device-width, initial-scale=1.0');
@@ -101,17 +98,9 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
         $this->headMeta->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
         $this->headMeta->appendProperty('og:image', $preview);
-        // $this->headMeta->appendProperty('article:published_time', date("Y-m-d H:i:s", time()));
         $this->headMeta->appendProperty("og:title", $title);
         $this->headMeta->appendProperty("og:description", $description);
         $this->headMeta->appendProperty("og:type", 'article');
         $this->headMeta->appendProperty("og:url", $this->request->getUri()->getHost().$this->request->getRequestUri());
-
-        /**
-         * Other things that can be activated
-         * Maybe allow full html tag input via a textarea. TODO: see if this is safe enough.
-         */
-        // <link href="https://plus.google.com/" rel="publisher" />
-        // <meta name="google-site-verification" content="" />
     }
 }

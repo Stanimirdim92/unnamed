@@ -95,7 +95,7 @@ class IndexController extends AbstractActionController
     /**
      * Initialize menus and their submenus. 1 query to rule them all!
      *
-     * @return void
+     * @return ViewModel
      */
     private function initMenus()
     {
@@ -128,7 +128,7 @@ class IndexController extends AbstractActionController
                 $output .= "<li><a tabindex='1' hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'>{$this->translate("DASHBOARD")}</a></li>";
             }
             $this->menuIncrementHack = 1;
-            
+
             foreach ($menu['submenus'][$parent] as $id) {
                 $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'>{$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu);
@@ -164,7 +164,6 @@ class IndexController extends AbstractActionController
 
     /**
      * @param array $breadcrumbs
-     * @return  ViewModel
      */
     protected function addBreadcrumb(array $breadcrumb = [])
     {

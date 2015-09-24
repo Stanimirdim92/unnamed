@@ -64,7 +64,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     {
         $app = $e->getApplication();
         $em = $app->getEventManager();
-        $sm = $app->getServiceManager();
         $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
     }
 

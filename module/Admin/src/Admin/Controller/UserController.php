@@ -144,7 +144,7 @@ final class UserController extends IndexController
      */
     protected function enableAction()
     {
-        $user = $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 0);
+        $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
@@ -154,7 +154,7 @@ final class UserController extends IndexController
      */
     protected function disableAction()
     {
-        $user = $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 1);
+        $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }

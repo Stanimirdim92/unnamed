@@ -35,14 +35,11 @@ namespace Admin\Controller;
 
 use Admin\Model\Content;
 use Zend\View\Model\JsonModel;
-use Zend\Json\Json;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
 use Zend\Validator\File\IsImage;
 use Zend\Validator\File\Size;
 use Zend\Validator\File\Extension;
-
-use Admin\Entity\Image;
 
 final class ContentController extends IndexController
 {
@@ -82,6 +79,8 @@ final class ContentController extends IndexController
 
     /**
      * This action shows the list of all contents
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -96,6 +95,8 @@ final class ContentController extends IndexController
 
     /**
      * This action serves for adding a new object of type Content
+     *
+     * @return ViewModel
      */
     protected function addAction()
     {
@@ -108,6 +109,8 @@ final class ContentController extends IndexController
     /**
      * This action presents a modify form for Content object with a given id and session language
      * Upon POST the form is processed and saved
+     *
+     * @return ViewModel
      */
     protected function modifyAction()
     {
@@ -126,13 +129,15 @@ final class ContentController extends IndexController
      */
     protected function deleteAction()
     {
-        $content = $this->getTable("content")->deleteContent((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("content")->deleteContent((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
      * this action shows content details
+     *
+     * @return ViewModel
      */
     protected function detailAction()
     {
@@ -145,14 +150,14 @@ final class ContentController extends IndexController
 
     protected function deactivateAction()
     {
-        $content = $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 0);
+        $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("CONTENT_DISABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     protected function activateAction()
     {
-        $content = $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 1);
+        $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("CONTENT_ENABLE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
@@ -162,7 +167,7 @@ final class ContentController extends IndexController
      */
     protected function cloneAction()
     {
-        $content = $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language())->current();
+        $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
         return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
@@ -171,7 +176,7 @@ final class ContentController extends IndexController
      * This is common function used by add and edit actions
      *
      * @param string $label button title
-     * @param  Content|null $content
+     * @param  Content $content
      */
     private function initForm($label = '', Content $content = null)
     {
@@ -236,11 +241,11 @@ final class ContentController extends IndexController
     {
         $request = $this->getRequest();
         $data = [];
-        
+
         if ($request->isXmlHttpRequest()) {
             $data = $this->prepareImages();
         }
-        
+
         return new JsonModel($data);
     }
 
@@ -337,7 +342,7 @@ final class ContentController extends IndexController
                         $uploadStatus["errorFiles"][] = $file["name"]." ".strtolower($msg);
                     }
                 }
-                
+
                 // @codeCoverageIgnoreStart
                 $adapter->receive($file["name"]);
                 if (!$adapter->isReceived($file["name"]) && $adapter->isUploaded($file["name"])) {

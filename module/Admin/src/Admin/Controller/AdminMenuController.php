@@ -66,6 +66,8 @@ final class AdminMenuController extends IndexController
 
     /**
      * This action shows the list of all admin menus
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -88,6 +90,8 @@ final class AdminMenuController extends IndexController
 
     /**
      * This action serves for adding a new admin menus
+     *
+     * @return ViewModel
      */
     protected function addAction()
     {
@@ -100,6 +104,8 @@ final class AdminMenuController extends IndexController
     /**
      * This action presents a modify form for AdminMenu with a given id
      * Upon POST the form is processed and saved
+     *
+     * @return ViewModel
      */
     protected function modifyAction()
     {
@@ -121,6 +127,9 @@ final class AdminMenuController extends IndexController
         return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
 
+    /**
+     * @return ViewModel
+     */
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/detail");
@@ -141,7 +150,7 @@ final class AdminMenuController extends IndexController
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label
-     * @param null|AdminMenu $adminMenu
+     * @param AdminMenu $adminMenu
      */
     private function initForm($label = '', AdminMenu $adminMenu = null)
     {

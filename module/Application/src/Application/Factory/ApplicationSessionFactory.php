@@ -57,34 +57,11 @@ class ApplicationSessionFactory implements FactoryInterface
             'cookie_path'             => "/",
             'cookie_httponly'         => true,
             'name'                    => '__zpc',
-            // 'cookie_secure'           => $func::isSSL(),
-            // 'gc_maxlifetime'          => 20,
+            'cookie_secure'           => $func::isSSL(),
             'hash_bits_per_character' => 6,
         ]);
         $sessionManager = new SessionManager($sessionConfig);
-        // $memCached = new StorageFactory::factory([
-        //     'adapter' => [
-        //        'name'     =>'memcached',
-        //         'lifetime' => 7200,
-        //         'options'  => [
-        //             'servers'   => [
-        //                 [
-        //                     '127.0.0.1',11211
-        //                 ],
-        //             ],
-        //             'namespace'  => 'MYMEMCACHEDNAMESPACE',
-        //             'liboptions' => [
-        //                 'COMPRESSION' => true,
-        //                 'binary_protocol' => true,
-        //                 'no_block' => true,
-        //                 'connect_timeout' => 100
-        //             ]
-        //         ],
-        //     ],
-        // ]);
 
-        // $saveHandler = new Cache($memCached);
-        // $sessionManager->setSaveHandler($saveHandler);
         return $sessionManager;
     }
 }

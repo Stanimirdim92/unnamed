@@ -36,7 +36,6 @@ namespace Admin\Controller;
 use Admin\Model\Language;
 use Admin\Form\LanguageForm;
 use Admin\Exception\RunTimeException;
-use Zend\Paginator\Paginator;
 use Zend\Stdlib\Parameters;
 
 final class LanguageController extends IndexController
@@ -69,6 +68,8 @@ final class LanguageController extends IndexController
 
     /**
      * This action shows the list of all (or filtered) Language objects
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -82,6 +83,8 @@ final class LanguageController extends IndexController
 
     /**
      * This action serves for adding a new object of type Language
+     *
+     * @return ViewModel
      */
     protected function addAction()
     {
@@ -94,6 +97,8 @@ final class LanguageController extends IndexController
     /**
      * This action presents a modify form for Language object with a given id
      * Upon POST the form is processed and saved
+     *
+     * @return ViewModel
      */
     protected function modifyAction()
     {
@@ -117,6 +122,8 @@ final class LanguageController extends IndexController
 
     /**
      * this action shows language details from the provided id
+     *
+     * @return ViewModel
      */
     protected function detailAction()
     {
@@ -174,7 +181,7 @@ final class LanguageController extends IndexController
      * This is common function used by add and modify actions (to avoid code duplication)
      *
      * @param String $label button title
-     * @param null|Language $language object
+     * @param Language $language object
      */
     private function initForm($label = '', Language $language = null)
     {
