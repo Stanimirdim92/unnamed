@@ -37,14 +37,14 @@ header( 'Content-Type: text/html; charset=utf-8' );
  */
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.13", "5.5"));
+    throw new \Exception(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.13", "5.5"));
 }
 
 /**
  * Minimum required extensions
  */
 if (!extension_loaded("mcrypt") || !extension_loaded("mbstring") || !extension_loaded("intl") || !extension_loaded("gd")) {
-    die(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", ["mcrypt", "mbstring", "intl", "gd"])));
+    throw new \Exception(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", ["mcrypt", "mbstring", "intl", "gd"])));
 }
 
 /**

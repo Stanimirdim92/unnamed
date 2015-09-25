@@ -106,7 +106,7 @@ final class ErrorHandling
         if ($exception instanceof AuthorizationException) {
             $this->logAuthorisationError($e, $sm);
             $this->logException($exception);
-        } elseif ($exception != null) {
+        } elseif ($exception !== null) {
             $this->logException($exception);
         }
 
@@ -114,7 +114,7 @@ final class ErrorHandling
         $e->getViewModel()->setVariables([
             'message' => '404 Not found',
             'reason' => 'The link you have requested doesn\'t exists',
-            'exception' => ($exception != null ? $exception->getMessage() : ""),
+            'exception' => ($exception !== null ? $exception->getMessage() : ""),
         ]);
         $e->getViewModel()->setTemplate('error/index');
         $e->stopPropagation();

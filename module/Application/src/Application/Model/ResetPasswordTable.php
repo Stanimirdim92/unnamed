@@ -44,7 +44,7 @@ class ResetPasswordTable
     private $tableGateway = null;
 
     /**
-     * Preducate contstants
+     * Preducate contstants.
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
@@ -84,7 +84,7 @@ class ResetPasswordTable
     /**
      * Prepare all statements before quering the database
      *
-     * @param  Select $select
+     * @param  Zend\Db\Sql\Select $select
      * @param  array $columns
      * @param  null|array|string $where
      * @param  null $group
@@ -95,7 +95,7 @@ class ResetPasswordTable
      *
      * @return Zend\Db\Sql\Select
      */
-    private function prepareQuery($select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery(\Zend\Db\Sql\Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if (!empty($columns)) {
             $select->columns($columns);
