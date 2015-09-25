@@ -142,19 +142,19 @@ class AdministratorTable
                 $predicate = self::PRE_NULL;
             }
             $select->where($where, $predicate);
-        } elseif ($where != null && is_string($where)) {
+        } elseif (!empty($where) && is_string($where)) {
             $select->where(new Expression($where));
         }
-        if ($group != null) {
+        if (!empty($group)) {
             $select->group($group);
         }
-        if ($order != null) {
+        if (!empty($order)) {
             $select->order($order);
         }
-        if ($limit != null) {
+        if (!empty($limit) && $limit > 0) {
             $select->limit($limit);
         }
-        if ($offset != null) {
+        if (!empty($offset) && $offset > 0) {
             $select->offset($offset);
         }
         return $select;
