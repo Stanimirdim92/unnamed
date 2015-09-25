@@ -1,5 +1,9 @@
 # README #
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b)
+
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Software License"></img></a>
+
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### Unnamed CMS ###
