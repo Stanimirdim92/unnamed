@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -44,7 +43,7 @@ class UserDataFactory
     public function __invoke(PluginManager $pluginManager)
     {
         $redirect = $pluginManager->get("redirect");
-        
+
         $plugin = new UserData($redirect);
 
         return $plugin;

@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -44,7 +43,7 @@ class LayoutMessagesFactory
     public function __invoke(PluginManager $pluginManager)
     {
         $layout = $pluginManager->getController()->layout();
-        
+
         $flashmessenger = $pluginManager->get("flashmessenger");
 
         $plugin = new LayoutMessages($layout, $flashmessenger);

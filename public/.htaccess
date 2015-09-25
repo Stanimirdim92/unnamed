@@ -858,10 +858,12 @@ FileETag None
     Header set X-WebKit-CSP: "object-src 'self'; connect-src 'self'; font-src 'self';"
 
     Header set X-Permitted-Cross-Domain-Policies: "master-only"
+
     # `mod_headers` cannot match based on the content-type, however,
     # the `Content-Security-Policy` response header should be send
     # only for HTML documents and not for the other resources.
-    <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|woff2?|xloc|xml|xpi)$">
+
+    <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
         Header unset Content-Security-Policy
     </FilesMatch>
 </IfModule>
@@ -915,10 +917,10 @@ FileETag None
 
 <IfModule mod_php5.c>
     # Block cookie access via js. This might be already set via php.ini
-    php_value session.cookie_httponly on
-    php_value session.use_only_cookies on
-    php_value session.use_strict_mode on
-    php_value session.hash_function 1
+    php_flag session.cookie_httponly on
+    php_flag session.use_only_cookies on
+    php_flag session.use_strict_mode on
+    php_flag session.hash_function 1
     php_value default_charset utf-8
-    php_value cgi.fix_pathinfo off
+    php_flag cgi.fix_pathinfo off
 </IfModule>

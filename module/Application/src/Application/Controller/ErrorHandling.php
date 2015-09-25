@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -27,7 +26,9 @@
  * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ *
  * @version    0.0.13
+ *
  * @link       TBA
  */
 
@@ -38,11 +39,12 @@ use Application\Exception\AuthorizationException;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 final class ErrorHandling
 {
     /**
-     * Default destination
+     * Default destination.
      *
      * @var string $destination
      */
@@ -64,7 +66,7 @@ final class ErrorHandling
     /**
      * Set log destination
      *
-     * @param string $destination set the destination where you want to save the log
+     * @param string $destination set the destination where you want to save the log.
      */
     public function setDestination($destination = null)
     {
@@ -74,9 +76,9 @@ final class ErrorHandling
     }
 
     /**
-     * @param Exception $e
+     * @param \Exception $e
      */
-    private function logException($e = null)
+    private function logException(\Exception $e = null)
     {
         $i = 1;
         $messages = [];
@@ -94,11 +96,11 @@ final class ErrorHandling
 
     /**
      * @param MvcEvent $e
-     * @param Zend\ServiceManager\ServiceManager $sm
+     * @param ServiceLocatorInterface $sm
      *
      * @return MvcEvent
      */
-    public function logError(MvcEvent $e = null, $sm = null)
+    public function logError(MvcEvent $e = null, ServiceLocatorInterface $sm = null)
     {
         $exception = $e->getParam("exception");
         if ($exception instanceof AuthorizationException) {
@@ -121,10 +123,10 @@ final class ErrorHandling
 
     /**
      * @param MvcEvent $e
-     * @param Zend\ServiceManager\ServiceManager $sm
+     * @param ServiceLocatorInterface $sm
      * @todo add user data such as id and name
      */
-    private function logAuthorisationError(MvcEvent $e = null, $sm = null)
+    private function logAuthorisationError(MvcEvent $e = null, ServiceLocatorInterface $sm = null)
     {
         $remote = new RemoteAddress();
 

@@ -1,6 +1,11 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.14 (25.09.2015) - Stable Alpha
+ - Bug fixes from sensiolabs
+ - Aded test favicon
+
+DD.MM.YYYY
 ## 0.0.13 (23.09.2015) - Stable Alpha
  - Encapsulated all exceptions
  - Image library updates
@@ -10,7 +15,7 @@ DD.MM.YYYY
  - New classmaps
  - Updated all composer packages
  - Renamed local.php to unnamed.local.php and deleted global.php
- - Fixed recursive menu not displaying all menus 
+ - Fixed recursive menu not displaying all menus
 
 DD.MM.YYYY
 ## 0.0.12 (14.09.2015) - Stable Alpha

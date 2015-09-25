@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -37,7 +36,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if (version_compare("5.5", PHP_VERSION, '>' )) {
     header( 'Content-Type: text/html; charset=utf-8' );
-    die(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.13", "5.5"));
+    throw new \RuntimeException('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.13", "5.5");
 }
 
 /**
@@ -115,7 +114,7 @@ switch ((int) $pageId) {
             echo "<p>Validating composer.json</p>";
 
             if (!json_decode(file_get_contents("composer.json"))) {
-                die(sprintf("<p>It looks like composer.json is invalid.<br> Terminating installation.</p>"));
+                throw new \RuntimeException("<p>It looks like composer.json is invalid.<br> Terminating installation.</p>");
             }
             echo "<p>Validation was successful</p>";
             echo "<p>Installing composer packagelist.</p>";
@@ -130,7 +129,7 @@ switch ((int) $pageId) {
             }
 
             if (!is_file("vendor/autoload.php")) {
-                die(sprintf("<p>Something is wrong. File is still missing after installation. <a href='/install.php'>Reinstall</a></p>"));
+                throw new \RuntimeException("<p>Something is wrong. File is still missing after installation. <a href='/install.php'>Reinstall</a></p>");
             }
             echo "<p>Installation done.</p>";
         } else {
@@ -208,10 +207,10 @@ switch ((int) $pageId) {
 
                 file_put_contents("config/autoload/local.php", '<?php return ' . var_export($dbSetup, true).';'.PHP_EOL);
                 header("Location: /");
-                die;
+                return;
             }
         } else {
-            die(sprintf("Your database configuration has already been setup"));
+            throw new \RuntimeException("Your database configuration has already been setup");
         }
         break;
     default:

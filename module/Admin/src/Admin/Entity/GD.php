@@ -67,7 +67,7 @@ final class GD implements GDInterface
     private function loadGDInfo()
     {
         if (!function_exists('gd_info')) {
-            throw new \RuntimeException('GD library has not been installed');
+            throw new BadMethodCallException('GD library has not been installed');
         }
 
         $this->gd = gd_info();
@@ -83,7 +83,7 @@ final class GD implements GDInterface
     private function checkGDVersion($version = '2.0.1')
     {
         if (version_compare(GD_VERSION, $version, '<')) {
-            throw new \RuntimeException(sprintf('GD2 version %s or higher is required', $version));
+            throw new InvalidArgumentException(sprintf('GD2 version %s or higher is required', $version));
         }
     }
 

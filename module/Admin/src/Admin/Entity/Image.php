@@ -149,7 +149,7 @@ final class Image implements ImageInterface
          * See if this really is a file
          */
         if (!is_file($imageFile)) {
-            throw new \InvalidArgumentException('Invalid image');
+            throw new InvalidArgumentException('Invalid image');
         }
 
         /*
@@ -157,7 +157,7 @@ final class Image implements ImageInterface
          */
         $data = file_get_contents($imageFile);
         if (!$data) {
-            throw new \RuntimeException('Cannot open file');
+            throw new RuntimeException('Cannot open file');
         }
 
         /*
@@ -165,7 +165,7 @@ final class Image implements ImageInterface
          */
         $resource = imagecreatefromstring($data);
         if (!is_resource($resource)) {
-            throw new \RuntimeException('Unable to open image');
+            throw new RuntimeException('Unable to open image');
         }
 
         $this->imageFile = $imageFile;
@@ -245,7 +245,7 @@ final class Image implements ImageInterface
     private function setOptions(array $options = [])
     {
         if (!is_array($options) && !$options instanceof \Traversable) {
-            throw new Exception\InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Parameter provided to %s must be an array or Traversable',
                 __METHOD__
             ));
@@ -310,7 +310,7 @@ final class Image implements ImageInterface
     private function checkImageSizes($width = 1, $height = 1)
     {
         if ($height < 1 || $width < 1) {
-            throw new \InvalidArgumentException('Image height and width must be at least 1 pixel');
+            throw new InvalidArgumentException('Image height and width must be at least 1 pixel');
         }
 
         $this->width = (int) $width;
@@ -320,14 +320,14 @@ final class Image implements ImageInterface
     /**
      * Extract the file format by mime-type.
      *
-     * @throws Exception for invalid mime-types
+     * @throws RuntimeException for invalid mime-types
      */
     private function extractImageFormat()
     {
         $format = $this->getImageInfo();
 
         if (!in_array($format['mime'], $this->allowedMimeTypes)) {
-            throw new \RuntimeException('Unsupported image format');
+            throw new RuntimeException('Unsupported image format');
         }
 
         /*
@@ -352,7 +352,7 @@ final class Image implements ImageInterface
     /**
      * Try to create a new image from the supplied file.
      *
-     * @throws Exception on invalid image format
+     * @throws RuntimeException on invalid image format
      */
     private function createImageFromFormat()
     {
@@ -374,7 +374,7 @@ final class Image implements ImageInterface
                 break;
 
             default:
-                throw new \RuntimeException('Invalid image format');
+                throw new RuntimeException('Invalid image format');
                 break;
         }
     }
@@ -382,7 +382,7 @@ final class Image implements ImageInterface
     /**
      * See if we can create GIF images.
      *
-     * @throws Exception on missing support
+     * @throws BadMethodCallException on missing support
      */
     private function imageCreateFromGIF()
     {
@@ -390,13 +390,13 @@ final class Image implements ImageInterface
             return imagecreatefromgif($this->getImageFile());
         }
 
-        throw new \Exception('Missing GIF create support');
+        throw new BadMethodCallException('Missing GIF create support');
     }
 
     /**
      * See if we can create JEPG|JPG images.
      *
-     * @throws Exception on missing support
+     * @throws BadMethodCallException on missing support
      */
     private function imageCreateFromJPEG()
     {
@@ -404,13 +404,13 @@ final class Image implements ImageInterface
             return imagecreatefromjpeg($this->getImageFile());
         }
 
-        throw new \Exception('Missing JPEG support');
+        throw new BadMethodCallException('Missing JPEG support');
     }
 
     /**
      * See if we can create PNG images.
      *
-     * @throws Exception on missing support
+     * @throws BadMethodCallException on missing support
      */
     private function imageCreateFromPNG()
     {
@@ -418,13 +418,13 @@ final class Image implements ImageInterface
             return imagecreatefrompng($this->getImageFile());
         }
 
-        throw new \Exception('Missing PNG support');
+        throw new BadMethodCallException('Missing PNG support');
     }
 
     /**
      * See if we can create WEBP images.
      *
-     * @throws Exception on missing support
+     * @throws BadMethodCallException on missing support
      */
     private function imageCreateFromWEBP()
     {
@@ -434,7 +434,7 @@ final class Image implements ImageInterface
             }
         }
 
-        throw new \Exception('Missing WEBP support');
+        throw new BadMethodCallException('Missing WEBP support');
     }
 
     /**
@@ -514,15 +514,15 @@ final class Image implements ImageInterface
     public function save($path, $fileName)
     {
         if (!$path || !is_dir($path)) {
-            throw new \RuntimeException('Path is not set');
+            throw new RuntimeException('Path is not set');
         }
 
         if (!is_writable($path)) {
-            throw new \RuntimeException('Path is not writable');
+            throw new RuntimeException('Path is not writable');
         }
 
         if (!$fileName) {
-            throw new \RuntimeException('Image name is not set');
+            throw new RuntimeException('Image name is not set');
         }
 
         $format = strtolower($this->getFormat());
@@ -535,7 +535,7 @@ final class Image implements ImageInterface
         }
 
         if (!call_user_func_array($imageSaveMethod, $options)) {
-            throw new \RuntimeException('Image save has failed');
+            throw new RuntimeException('Image save has failed');
         }
     }
 
@@ -576,11 +576,11 @@ final class Image implements ImageInterface
         }
 
         if (!is_string($filter)) {
-            throw new \RuntimeException('png_compression_filter must be a string '.gettype($filter).' given');
+            throw new RuntimeException('png_compression_filter must be a string '.gettype($filter).' given');
         }
 
         if (!in_array($filter, array_keys($this->pngFilterTypes))) {
-            throw new \RuntimeException(sprintf('png_compression_filter should be one or a combination of: "%s"', implode('', '', array_keys($this->pngFilterTypes))));
+            throw new RuntimeException(sprintf('png_compression_filter should be one or a combination of: "%s"', implode('', '', array_keys($this->pngFilterTypes))));
         }
         $params['filter'] = $this->pngFilterTypes[$filter];
 

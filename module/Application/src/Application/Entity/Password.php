@@ -108,7 +108,7 @@ namespace {
                         $buffer_valid = true;
                     }
                 }
-                if (!$buffer_valid && @is_readable('/dev/urandom')) {
+                if (!$buffer_valid && is_readable('/dev/urandom')) {
                     $f = fopen('/dev/urandom', 'r');
                     $read = PasswordCompat\binary\_strlen($buffer);
                     while ($read < $raw_salt_len) {

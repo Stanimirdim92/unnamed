@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -47,7 +46,7 @@ class LanguageTable
     private $tableGateway = null;
 
     /**
-     * Preducate contstants
+     * Preducate contstants.
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
@@ -62,15 +61,15 @@ class LanguageTable
     }
 
     /**
-     * Main function for handling MySQL queries
+     * Main function for handling MySQL queries.
      *
-     * @param  bool $paginated              should we use pagination or no
-     * @param  array $columns               substitute * with the columns you need
-     * @param  null|array|string $where     WHERE condition
-     * @param  null $group                  GROUP condition
-     * @param  null $order                  ORDER condition
-     * @param  int $limit                   LIMIT condition
-     * @param  int $offset                  OFFSET condition
+     * @param bool $paginated              should we use pagination or no
+     * @param array $columns               substitute * with the columns you need
+     * @param null|array|string $where     WHERE condition
+     * @param null $group                  GROUP condition
+     * @param null $order                  ORDER condition
+     * @param int $limit                   LIMIT condition
+     * @param int $offset                  OFFSET condition
      * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
@@ -121,20 +120,20 @@ class LanguageTable
     }
 
     /**
-     * Prepare all statements before quering the database
+     * Prepare all statements before quering the database.
      *
-     * @param  Select $select
-     * @param  array $columns
-     * @param  null|array|string $where
-     * @param  null $group
-     * @param  null $predicate
-     * @param  null $order
-     * @param  null $limit
-     * @param  null $offset
+     * @param Zend\Db\Sql\Select $select
+     * @param array $columns
+     * @param null|array|string $where
+     * @param null $group
+     * @param null $predicate
+     * @param null $order
+     * @param null $limit
+     * @param null $offset
      *
      * @return Zend\Db\Sql\Select
      */
-    private function prepareQuery($select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
+    private function prepareQuery(\Zend\Db\Sql\Select $select, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = null, $offset = null)
     {
         if (!empty($columns)) {
             $select->columns($columns);

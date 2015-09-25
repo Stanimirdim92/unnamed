@@ -1,7 +1,6 @@
 <?php
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -35,8 +34,6 @@ namespace Application\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Cache\StorageFactory;
-use Zend\Session\SaveHandler\Cache;
 use Zend\Session\SessionManager;
 use Zend\Session\Config\SessionConfig;
 

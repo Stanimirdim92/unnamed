@@ -14,7 +14,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 ->prependStylesheet($this->basePath('assets/prod/front/css/front.min.css'), 'all');
 ?>
         <meta property="og:site_name" content="<?=$this->escapeHtml($this->headTitle()->renderTitle());?>">
-        <link rel="apple-touch-icon" href="<?=$this->basePath('/front/img/apple-touch-icon.png');?>">
+        <link rel="apple-touch-icon" href="<?=$this->basePath('/apple-touch-icon.png');?>">
         <link rel="canonical" href="<?=$this->serverUrl(true);?>">
         <link rel="shortlink" href="<?=$this->serverUrl(true);?>">
     </head>

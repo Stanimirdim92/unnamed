@@ -1,6 +1,5 @@
 /**
- * MIT License
- * ===========
+ * MIT License.
  *
  * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
  *
@@ -32,7 +31,7 @@
 
 /**
  * This will create a local scope for all objects defined in this script.
- * 
+ *
  * @param  {Object} win
  * @param  {Object} doc
  * @param  {Object} $
@@ -131,7 +130,7 @@
                 event.preventDefault();
 
                 /**
-                 * Performe AJAX POST request 
+                 * Performe AJAX POST request
                  */
                 request = $.ajax({
                     url: "/admin/content/upload",
@@ -163,11 +162,11 @@
                  *
                  * @method $.ajax.fail
                  *
-                 * @param  {String} error 
-                 * @param  {Mixed} textStatus 
-                 * @param  {Mixed} errorThrown             } 
+                 * @param  {String} error
+                 * @param  {Mixed} textStatus
+                 * @param  {Mixed} errorThrown             }
                  *
-                 * @return {Mixed} 
+                 * @return {Mixed}
                  */
                 request.fail(function (error, textStatus, errorThrown) {
                     console.error(error, textStatus, errorThrown); //TODO must create a dialog popup
@@ -262,7 +261,7 @@
          * The big image on the right
          *
          * @method viewImage
-         * 
+         *
          * @return {void}
          */
         viewImage: function () {

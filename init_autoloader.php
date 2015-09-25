@@ -27,8 +27,8 @@ if ((is_dir('vendor/zendframework') || is_dir('vendor/ZF2')) && is_file('vendor/
  */
 if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/unnamed.local.php')) {
     if (!is_file('public/install.php')) {
-        die(sprintf('Installation file is missing. Process cannot be started.'));
+         throw new \RuntimeException('Installation file is missing. Process cannot be started.');
     }
     header('Location: /install.php');
-    die;
+    return;
 }
