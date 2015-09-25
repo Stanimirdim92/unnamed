@@ -96,6 +96,8 @@ ul {
     #nav ul li a {
         padding: 10px;
         color: green;
+        font-size: 1.1em;
+        text-rendering: auto;
     }
 
     #nav ul li a:hover {

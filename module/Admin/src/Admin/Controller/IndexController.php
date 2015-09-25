@@ -124,12 +124,12 @@ class IndexController extends AbstractActionController
              * This is a really, really ugly hack
              */
             if ($this->menuIncrementHack === 0) {
-                $output .= "<li><a tabindex='1' hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'>{$this->translate("DASHBOARD")}</a></li>";
+                $output .= "<li><a tabindex='1' hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'> {$this->translate("DASHBOARD")}</a></li>";
             }
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'>{$menu['menus'][$id]->getCaption()}</a>";
+                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'> {$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu);
                 $output .= "</li>";
             }
