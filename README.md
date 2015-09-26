@@ -1,7 +1,7 @@
 # README #
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b)
-[![Build Status](https://semaphoreci.com/api/v1/projects/8a018a83-65d3-46c3-bf32-6569b8940afb/552364/badge.svg)](https://semaphoreci.com/stanimir/zend-boilerplate)
+[![Build Status](https://semaphoreci.com/api/v1/projects/0613b317-95c1-4af3-8b73-4e1c99d7c8db/552367/shields_badge.svg)](https://semaphoreci.com/stanimir/unnamed)
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
