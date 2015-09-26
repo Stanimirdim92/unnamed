@@ -1,8 +1,7 @@
 # README #
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b)
-
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Software License"></img></a>
+[![Build Status](https://semaphoreci.com/api/v1/projects/8a018a83-65d3-46c3-bf32-6569b8940afb/552364/badge.svg)](https://semaphoreci.com/stanimir/zend-boilerplate)
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
@@ -33,6 +32,10 @@ This README would normally document whatever steps are necessary to get your app
 * SanSessionToolbar (integrated into the system)
 * The PHP Coding Standards Fixer (integrated into the system)
 * Gulp (requires NodeJS 0.12.7). node_modules folder is not included. You will have to run **npm install** from the app root directory
+
+### LICENSE ###
+
+The files in this project are released under the MIT license. You can find a copy of this license in LICENSE.md.
 
 ### Contacts ###
 

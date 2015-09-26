@@ -21,7 +21,6 @@ use Application\Form\LoginForm;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 use Application\Exception\RuntimeException;
-require '/module/Application/src/Application/Entity/Password.php';
 
 final class LoginController extends IndexController
 {
