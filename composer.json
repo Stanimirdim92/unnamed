@@ -26,5 +26,6 @@
         "bjyoungblood/bjy-profiler": "dev-master",
         "san/san-session-toolbar": "0.*",
         "fabpot/php-cs-fixer": "1.*"
-    }
+    },
+    "prefer-stable": true
 }

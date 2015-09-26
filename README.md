@@ -3,6 +3,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b)
 [![Build Status](https://semaphoreci.com/api/v1/projects/0613b317-95c1-4af3-8b73-4e1c99d7c8db/552367/shields_badge.svg)](https://semaphoreci.com/stanimir/unnamed)
 [![Dependency Status](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9)
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)](https://bitbucket.org/StanimirDim92/unnamed/overview)
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
