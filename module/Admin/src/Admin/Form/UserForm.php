@@ -150,7 +150,7 @@ class UserForm extends Form implements InputFilterProviderInterface
             ],
             [
                 "name"=>"surname",
-                "required" => true,
+                "required" => false,
                 'filters' => [
                     ['name' => 'StripTags'],
                     ['name' => 'StringTrim'],

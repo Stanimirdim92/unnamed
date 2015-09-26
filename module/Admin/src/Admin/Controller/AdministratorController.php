@@ -116,15 +116,16 @@ final class AdministratorController extends IndexController
             $json = [];
             $success = false;
             if ($results) {
-                $results = $results->getDataSource();
-                foreach ($results as $result) {
-                    $json[] = Json::encode($result);
+                foreach ($results as $key => $result) {
+                    $json[$key]["id"] = $result->getId();
+                    $json[$key]["name"] = $result->getName();
+                    $json[$key]["surname"] = $result->getSurname();
+                    $json[$key]["email"] = $result->getEmail();
                 }
                 $success = true;
             }
-
             return new JsonModel([
-                'ajaxsearch' => $json,
+                'ajaxsearch' =>  Json::encode($json),
                 'statusType' => $success,
             ]);
         }
@@ -155,13 +156,28 @@ final class AdministratorController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $user = $this->getTable("user")->getUser($formData->user)->current();
+                $user = $this->getTable("user")->getUser($formData->getUser())->current();
                 // valid user id
                 if (count($user) === 1) {
                     // should return false|null|0 etc.
-                    $adminExist = $this->getTable("administrator")->getAdministrator($user->getId())->current();
+                    $adminExist = $this->getTable("administrator")->getAdministrator($user->getId());
+
                     /*
-                     * See if user is already admin
+                     * See if user is in admin table, but admin column from user table is 0.
+                     * If this is the case remove all access
+                     */
+                    if ( ($adminExist && (int) $user->getAdmin() === 0) ||
+                         (!$adminExist && (int) $user->getAdmin() > 0 )
+                       ) {
+                        $user->setAdmin(0);
+                        $this->getTable("user")->saveUser($user);
+                        $this->getTable("administrator")->deleteAdministrator($user->getId());
+                        $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
+                        return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
+                    }
+
+                    /*
+                     * If user is not in admin table and user.admin column is 0
                      */
                     if (!$adminExist && (int) $user->getAdmin() === 0) {
                         $user->setAdmin(1);

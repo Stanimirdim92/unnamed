@@ -1,13 +1,14 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.14 (25.09.2015) - Stable Alpha
+## 0.0.14 (26.09.2015) - Stable Alpha
  - Bug fixes from sensiolabs
  - Aded test favicon
  - License
  - Removed ircmaxell password generator and replaced it with the built in from php. Updated createPassword()
  - CS fixes
  - removed user export functions
+ - Fixed admin controller and main ajax function logics
 
 DD.MM.YYYY
 ## 0.0.13 (23.09.2015) - Stable Alpha

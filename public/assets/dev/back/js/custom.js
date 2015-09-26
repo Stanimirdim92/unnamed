@@ -89,14 +89,13 @@
                     contentType: "application/json; charset=utf-8;",
                     cache: !1,
                 }).done(function (result, request, headers) {
-                    if (request === "success" && result.statusType === "success") {
+                    if (request === "success" && result.statusType === true) {
                         $("#results").empty();
-                        $.each(result.ajaxsearch, function (key, value) {
+                        $.each($.parseJSON(result.ajaxsearch), function (key, value) {
                             var $ul = $("<ul class='table-row'>");
-                            var $val = $.parseJSON(value);
-                            for (var property in $val) {
-                                if ($val.hasOwnProperty(property) && $val[property]) {
-                                    $ul.append("<li data-id ='"+$val["id"]+"' class='table-cell'>"+$val[property]+"</li>");
+                            for (var property in value) {
+                                if (value.hasOwnProperty(property) && value[property]) {
+                                    $ul.append("<li data-id ='"+value["id"]+"' class='table-cell'>"+value[property]+"</li>");
                                 }
                             }
                             $("#results").append($ul);

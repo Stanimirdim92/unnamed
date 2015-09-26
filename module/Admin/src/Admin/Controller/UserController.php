@@ -97,9 +97,9 @@ final class UserController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("user")->fetchList(false, ["email"], ["email" => $formData->email]);
+                $existingEmail = $this->getTable("user")->fetchList(false, ["email"], ["email" => $formData->getEmail()]);
                 if (count($existingEmail) > 1) {
-                    $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->email."</b> ".$this->translate("ALREADY_EXIST"), 'info');
+                    $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->getEmail()."</b> ".$this->translate("ALREADY_EXIST"), 'info');
                 } else {
                     $this->getTable("user")->saveUser($user);
                     $this->setLayoutMessages("&laquo;".$user->getFullName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
