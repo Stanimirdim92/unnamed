@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -35,7 +14,7 @@ namespace Application\Model;
 class ResetPassword
 {
     /**
-     * @var Int $id
+     * @var int $id
      */
     private $id = 0;
 
@@ -61,6 +40,7 @@ class ResetPassword
 
     /**
      * @param array $data
+     *
      * @return mixed
      */
     public function exchangeArray(array $data = [])
@@ -73,7 +53,7 @@ class ResetPassword
     }
 
     /**
-     * Used into form binding
+     * Used into form binding.
      */
     public function getArrayCopy()
     {
@@ -81,7 +61,8 @@ class ResetPassword
     }
 
     /**
-     * constructor
+     * constructor.
+     *
      * @param  array $options
      */
     public function __construct(array $options = [])
@@ -90,7 +71,8 @@ class ResetPassword
     }
 
     /**
-     * Get id
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -99,7 +81,8 @@ class ResetPassword
     }
 
     /**
-     * Set id
+     * Set id.
+     *
      * @param int
      */
     public function setId($id = 0)
@@ -108,7 +91,8 @@ class ResetPassword
     }
 
     /**
-     * Set token
+     * Set token.
+     *
      * @param String $token
      */
     public function setToken($token = null)
@@ -117,7 +101,8 @@ class ResetPassword
     }
 
     /**
-     * Get token
+     * Get token.
+     *
      * @return String
      */
     public function getToken()
@@ -126,7 +111,8 @@ class ResetPassword
     }
 
     /**
-     * Set ip
+     * Set ip.
+     *
      * @param String $ip
      */
     public function setIp($ip = null)
@@ -135,7 +121,8 @@ class ResetPassword
     }
 
     /**
-     * Get ip
+     * Get ip.
+     *
      * @return String
      */
     public function getIp()
@@ -144,8 +131,9 @@ class ResetPassword
     }
 
     /**
-     * Set date
-     * @param Int $date
+     * Set date.
+     *
+     * @param string $date
      */
     public function setDate($date = "0000-00-00 00:00:00")
     {
@@ -153,8 +141,9 @@ class ResetPassword
     }
 
     /**
-     * Get date
-     * @return Int
+     * Get date.
+     *
+     * @return string
      */
     public function getDate()
     {
@@ -162,7 +151,8 @@ class ResetPassword
     }
 
     /**
-     * Set user
+     * Set user.
+     *
      * @param Int $user
      */
     public function setUser($user = null)
@@ -171,7 +161,8 @@ class ResetPassword
     }
 
     /**
-     * Get user
+     * Get user.
+     *
      * @return Int
      */
     public function getUser()

@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -86,13 +65,13 @@ final class LoginController extends IndexController
     }
 
     /**
-     * @param  MvcEvent $e
+     * @param MvcEvent $e
      */
     public function onDispatch(MvcEvent $e)
     {
         parent::onDispatch($e);
 
-        /**
+        /*
          * If user is logged and tries to access one of the given actions
          * he will be redirected to the root url of the website.
          * For resetpassword and newpassword actions we assume that the user is not logged in.
@@ -106,6 +85,7 @@ final class LoginController extends IndexController
      * Get database and check if given email and password matches.
      *
      * @param array $options
+     *
      * @return DbTable|Adapter
      */
     private function getAuthAdapter(array $options = [])
@@ -127,10 +107,12 @@ final class LoginController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("application/login/index");
+
         /**
-         * @var  LoginForm $form
+         * @var LoginForm $form
          */
         $form = $this->loginForm;
+
         $form->get("login")->setValue($this->translate("SIGN_IN"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
         $form->get("password")->setLabel($this->translate("PASSWORD"));
@@ -146,13 +128,13 @@ final class LoginController extends IndexController
         }
 
         /**
-         * @var  LoginForm $form
+         * @var LoginForm $form
          */
         $form = $this->loginForm;
         $form->setInputFilter($form->getInputFilter());
         $form->setData($this->getRequest()->getPost());
 
-        /**
+        /*
          * See if form is valid
          */
         if (!$form->isValid()) {
@@ -164,7 +146,7 @@ final class LoginController extends IndexController
         $auth = new AuthenticationService();
         $result = $auth->authenticate($adapter);
 
-        /**
+        /*
          * See if authentication is valid
          */
         if (!$result->isValid()) {
@@ -177,7 +159,8 @@ final class LoginController extends IndexController
             $excludeRows = ['password', 'registered', 'lastLogin', 'birthDate', 'hideEmail', ];
             $data = $adapter->getResultRowObject($includeRows, $excludeRows);
             $user = $this->getTable('user')->getUser($data->id)->current();
-            /**
+
+            /*
              * If account is disabled/banned (call it w/e you like) clear user data and redirect
              */
             if ((int) $user->getDeleted() === 1) {
@@ -185,7 +168,7 @@ final class LoginController extends IndexController
                 return $this->logoutAction("/login");
             }
 
-            /**
+            /*
              * See if user is admin
              */
             if ((int) $user->getAdmin() === 1) {
@@ -210,7 +193,9 @@ final class LoginController extends IndexController
     /**
      * The resetpasswordAction has generated a random token string.
      * In order to reset the account password, we need to take that token and validate it first.
-     * If everything is fine, we let the user to reset his password
+     * If everything is fine, we let the user to reset his password.
+     *
+     * @throws RuntimeException
      */
     protected function newpasswordAction()
     {
@@ -218,7 +203,8 @@ final class LoginController extends IndexController
 
         $token = (string) $this->getParam('token', null);
         $func = $this->getFunctions();
-        /**
+
+        /*
          * Check string bytes length
          */
         if ($func::strLength($token) !== 64) {
@@ -243,7 +229,7 @@ final class LoginController extends IndexController
         $form->get("repeatpw")->setLabel($this->translate("REPEAT_PASSWORD"))->setAttribute("placeholder", $this->translate("REPEAT_PASSWORD"));
         $form->get("resetpw")->setValue($this->translate("RESET_PW"));
 
-        /**
+        /*
          * temporary create new view variable to hold the user id.
          * After the password is reset the variable is destroyed.
          */
@@ -255,10 +241,12 @@ final class LoginController extends IndexController
     public function newpasswordprocessAction()
     {
         $func = $this->getFunctions();
+
         /**
-         * @var  NewPasswordForm $form
+         * @var NewPasswordForm $form
          */
         $form = $this->newPasswordForm;
+
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
@@ -285,15 +273,17 @@ final class LoginController extends IndexController
 
     /**
      * Show the reset password form. After that see if there is a user with the entered email
-     * if there is one, send him an email with a new password reset link and a token, else show error messages
+     * if there is one, send him an email with a new password reset link and a token, else show error messages.
      */
     protected function resetpasswordAction()
     {
         $this->getView()->setTemplate("application/login/resetpassword");
+
         /**
          * @var  ResetPasswordForm $form
          */
         $form = $this->resetPasswordForm;
+
         $form->get("resetpw")->setValue($this->translate("RESET_PW"));
         $form->get("email")->setLabel($this->translate("EMAIL"));
         $this->getView()->form = $form;
@@ -305,7 +295,7 @@ final class LoginController extends IndexController
                 $existingEmail = $this->getTable("User")->fetchList(false, [], ["email" => $formData["email"]])->current();
                 if (count($existingEmail) === 1) {
                     $func = $this->getFunctions();
-                    $token = $func::generateToken(48); // returns 64 characters long string
+                    $token = $func::generateToken(48); // returns base64 string
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
                     $resetpw->setToken($token);
@@ -331,7 +321,7 @@ final class LoginController extends IndexController
     }
 
     /**
-     * Clear all sessions
+     * Clear all sessions.
      *
      * @param string $redirectTo
      */

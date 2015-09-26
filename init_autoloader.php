@@ -7,24 +7,15 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-/**
- * All good, skip the rest of the file
- */
+// Composer autoloading
+if (is_dir('vendor/zendframework') && is_file('vendor/autoload.php')) {
+    $loader = include 'vendor/autoload.php';
+}
+
 if (class_exists('Zend\Loader\AutoloaderFactory') && is_file('config/autoload/unnamed.local.php')) {
     return;
 }
 
-/**
- * Load framework
- */
-if ((is_dir('vendor/zendframework') || is_dir('vendor/ZF2')) && is_file('vendor/autoload.php')) {
-    $loader = include 'vendor/autoload.php';
-    $loader->add('Zend', 'vendor/zendframework');
-}
-
-/**
- * Check for Zend setup and database setup
- */
 if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/unnamed.local.php')) {
     if (!is_file('public/install.php')) {
          throw new \RuntimeException('Installation file is missing. Process cannot be started.');

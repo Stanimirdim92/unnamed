@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -71,10 +50,10 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Initialize any variables before controller actions
+     * Initialize any variables before controller actions.
      *
      * @param MvcEvent $e
-     * @method  IndexController::isAdmin()
+     * @see IndexController::isAdmin()
      */
     public function onDispatch(MvcEvent $e)
     {
@@ -113,6 +92,8 @@ class IndexController extends AbstractActionController
     /**
      * @param int $parent
      * @param array $menu
+     *
+     * @return string
      */
     private function generateMenu($parent = 0, array $menu = [])
     {
@@ -120,7 +101,7 @@ class IndexController extends AbstractActionController
         if (isset($menu["submenus"][$parent])) {
             $output .= "<ul>";
 
-            /**
+            /*
              * This is a really, really ugly hack
              */
             if ($this->menuIncrementHack === 0) {
@@ -144,12 +125,12 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * Get Language id or name. Defaults to language - id
+     * Get Language id or name. Defaults to language - id.
      * If a different offset is passed (not-existing-offset) and it doesn't,
      * it will ty to check for a language offset.
-     * If language offset is also not found 1 s being returned as the default language id where 1 == en
+     * If language offset is also not found 1 s being returned as the default language id where 1 == en.
      *
-     * @return  mixed
+     * @return mixed
      */
     protected function language($offset = "language")
     {
@@ -173,12 +154,14 @@ class IndexController extends AbstractActionController
      * Is the user admin? Lets check that.
      * 1. Run this function and see if we are logged in as admin.
      *    If all went fine show the admin area.
-     * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin. Just in case log every access to login controller
-     * 3. On success run this function. If all went fine, access admin else clear identity and create log
+     * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin. Just in case log every access to login controller.
+     * 3. On success run this function. If all went fine, access admin else clear identity and create log.
      *
      * @throws AuthorizationException If wrong credentials or not in administrator table
+     *
      * @todo create a bruteforce protection for failed login attempts.
      * @todo create a join query for admin column check via the user table.
+     *
      * @return mixed
      */
     private function isAdmin()
@@ -216,7 +199,7 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * @return  ViewModel
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -225,9 +208,9 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Select new language
+     * Select new language.
      *
-     * This will reload the translations every time the method is being called
+     * This will reload the translations every time the method is being called.
      */
     protected function languageAction()
     {

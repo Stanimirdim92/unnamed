@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHE`HER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -66,7 +45,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Initialize any variables before controller actions
+     * Initialize any variables before controller actions.
      *
      * @param MvcEvent $e
      *
@@ -82,7 +61,7 @@ class IndexController extends AbstractActionController
         parent::onDispatch($e);
         $this->initMenus();
 
-        /**
+        /*
          * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
          */
         if ($this->params('action') != "title" || $this->params('action') != "post") {
@@ -119,6 +98,8 @@ class IndexController extends AbstractActionController
     /**
      * @param int $parent
      * @param array $menu
+     *
+     * @return string
      */
     private function generateMenu($parent = 0, array $menu = [])
     {
@@ -157,12 +138,12 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * Get Language id or name. Defaults to language - id
+     * Get Language id or name. Defaults to language - id.
      * If a different offset is passed (not-existing-offset) and it doesn't,
      * it will ty to check for a language offset.
-     * If language offset is also not found 1 s being returned as the default language id where 1 == en
+     * If language offset is also not found 1 s being returned as the default language id where 1 == en.
      *
-     * @return  mixed
+     * @return mixed
      */
     protected function language($offset = "language")
     {
@@ -187,20 +168,21 @@ class IndexController extends AbstractActionController
  ****************************************************/
 
     /**
-     * Main websites view
+     * Main websites view.
      *
      * @return ViewModel
      */
     public function indexAction()
     {
         $this->getView()->setTemplate("application/index/index");
+
         return $this->getView();
     }
 
     /**
-     * Select new language
+     * Select new language.
      *
-     * This will reload the translations every time the method is being called
+     * This will reload the translations every time the method is being called.
      */
     protected function languageAction()
     {

@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -164,7 +143,9 @@ class ContentTable
     /**
      * @param int $id content id
      * @param int $language user language
+     *
      * @throws RuntimeException If content is not found
+     *
      * @return Content
      */
     public function getContent($id = 0, $language = 1)
@@ -178,10 +159,11 @@ class ContentTable
     }
 
     /**
-     * Delete content based on the provided id and language
+     * Delete content based on the provided id and language.
      *
      * @param int $id content id
      * @param int $language user language
+     *
      * @return Content
      */
     public function deleteContent($id = 0, $language = 1)
@@ -192,9 +174,10 @@ class ContentTable
     }
 
     /**
-     * Save or update content based on the provided id and language
+     * Save or update content based on the provided id and language.
      *
      * @param  Content $content
+     *
      * @return Content
      */
     public function saveContent(Content $content)
@@ -226,7 +209,7 @@ class ContentTable
     }
 
     /**
-     * This method can disable or enable contents
+     * This method can disable or enable contents.
      *
      * @param int $id content id
      * @param  int $state 0 - deactivated, 1 - active
@@ -239,10 +222,11 @@ class ContentTable
     }
 
     /**
-     * duplicate a content
+     * duplicate a content.
      *
      * @param  int    $id
      * @param  int    $language
+     *
      * @return Content
      */
     public function duplicate($id = 0, $language = 1)

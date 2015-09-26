@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -46,7 +25,6 @@ class Administrator
 
     /**
      * @var array $data
-     * @return mixed
      */
     public function exchangeArray(array $data = [])
     {
@@ -55,7 +33,7 @@ class Administrator
     }
 
     /**
-     * Used into form binding
+     * Used into form binding.
      */
     public function getArrayCopy()
     {
@@ -63,7 +41,7 @@ class Administrator
     }
 
     /**
-     * constructor
+     * constructor.
      *
      * @param array $options
      */
@@ -73,7 +51,8 @@ class Administrator
     }
 
     /**
-     * Get id
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -82,7 +61,8 @@ class Administrator
     }
 
     /**
-     * Set id
+     * Set id.
+     *
      * @param int
      */
     public function setId($id = 0)
@@ -91,7 +71,8 @@ class Administrator
     }
 
     /**
-     * Set User
+     * Set User.
+     *
      * @param String $user
      */
     public function setUser($user = 0)
@@ -100,7 +81,8 @@ class Administrator
     }
 
     /**
-     * Get user
+     * Get user.
+     *
      * @return String
      */
     public function getUser()
@@ -109,8 +91,8 @@ class Administrator
     }
 
     /**
-     * This method is a copy constructor that will return a copy object (except for the id field)
-     * Note that this method will not save the object
+     * This method is a copy constructor that will return a copy object (except for the id field).
+     * Note that this method will not save the object.
      */
     public function getCopy()
     {

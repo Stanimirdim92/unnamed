@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -106,7 +85,6 @@ class User
 
     /**
      * @param array $data
-     * @return void
      */
     public function exchangeArray(array $data = [])
     {
@@ -127,7 +105,7 @@ class User
     }
 
     /**
-     * Used into form binding
+     * Used into form binding.
      */
     public function getArrayCopy()
     {
@@ -135,7 +113,7 @@ class User
     }
 
     /**
-     * constructor
+     * constructor.
      *
      * @param array $options
      */
@@ -145,7 +123,8 @@ class User
     }
 
     /**
-     * Get id
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -154,7 +133,8 @@ class User
     }
 
     /**
-     * Set id
+     * Set id.
+     *
      * @param int
      */
     public function setId($id = 0)
@@ -164,7 +144,8 @@ class User
 
 
     /**
-     * Set name
+     * Set name.
+     *
      * @param String $name
      */
     public function setName($name = null)
@@ -173,7 +154,8 @@ class User
     }
 
     /**
-     * Get name
+     * Get name.
+     *
      * @return String
      */
     public function getName()
@@ -182,7 +164,8 @@ class User
     }
 
     /**
-     * Set surname
+     * Set surname.
+     *
      * @param String $surname
      */
     public function setSurname($surname = null)
@@ -191,7 +174,8 @@ class User
     }
 
     /**
-     * Get surname
+     * Get surname.
+     *
      * @return String
      */
     public function getSurname()
@@ -200,7 +184,8 @@ class User
     }
 
     /**
-     * Set password
+     * Set password.
+     *
      * @param String $password
      */
     public function setPassword($password = null)
@@ -209,7 +194,8 @@ class User
     }
 
     /**
-     * Get password
+     * Get password.
+     *
      * @return String
      */
     public function getPassword()
@@ -218,7 +204,8 @@ class User
     }
 
     /**
-     * Set email
+     * Set email.
+     *
      * @param String $email
      */
     public function setEmail($email = null)
@@ -227,7 +214,8 @@ class User
     }
 
     /**
-     * Get email
+     * Get email.
+     *
      * @return String
      */
     public function getEmail()
@@ -236,7 +224,8 @@ class User
     }
 
     /**
-     * Set BirthDate
+     * Set BirthDate.
+     *
      * @param String $birthDate
      */
     public function setBirthDate($birthDate = "0000-00-00")
@@ -245,7 +234,8 @@ class User
     }
 
     /**
-     * Get birthDate
+     * Get birthDate.
+     *
      * @return String
      */
     public function getBirthDate()
@@ -254,7 +244,8 @@ class User
     }
 
     /**
-     * Set lastLogin
+     * Set lastLogin.
+     *
      * @param String $lastLogin
      */
     public function setLastLogin($lastLogin = "0000-00-00 00:00:00")
@@ -263,7 +254,8 @@ class User
     }
 
     /**
-     * Get lastLogin
+     * Get lastLogin.
+     *
      * @return String
      */
     public function getLastLogin()
@@ -272,7 +264,8 @@ class User
     }
 
     /**
-     * Set deleted
+     * Set deleted.
+     *
      * @param int $deleted
      */
     public function setDeleted($deleted = 0)
@@ -281,7 +274,8 @@ class User
     }
 
     /**
-     * Get deleted
+     * Get deleted.
+     *
      * @return int
      */
     public function getDeleted()
@@ -290,7 +284,8 @@ class User
     }
 
     /**
-     * Set image
+     * Set image.
+     *
      * @param String $image
      */
     public function setImage($image = null)
@@ -299,7 +294,8 @@ class User
     }
 
     /**
-     * Get image
+     * Get image.
+     *
      * @return String
      */
     public function getImage()
@@ -308,7 +304,8 @@ class User
     }
 
     /**
-     * Set registered
+     * Set registered.
+     *
      * @param String $registered
      */
     public function setRegistered($registered = "0000-00-00 00:00:00")
@@ -317,7 +314,8 @@ class User
     }
 
     /**
-     * Get registered
+     * Get registered.
+     *
      * @return String
      */
     public function getRegistered()
@@ -326,7 +324,8 @@ class User
     }
 
     /**
-     * Set hideEmail
+     * Set hideEmail.
+     *
      * @param Boolean $hideEmail
      */
     public function setHideEmail($hideEmail = 0)
@@ -335,7 +334,8 @@ class User
     }
 
     /**
-     * Get hideEmail
+     * Get hideEmail.
+     *
      * @return Boolean
      */
     public function getHideEmail()
@@ -344,7 +344,8 @@ class User
     }
 
     /**
-     * Set ip
+     * Set ip.
+     *
      * @param String $ip
      */
     public function setIp($ip)
@@ -353,7 +354,8 @@ class User
     }
 
     /**
-     * Get ip
+     * Get ip.
+     *
      * @return String
      */
     public function getIp()
@@ -362,7 +364,8 @@ class User
     }
 
     /**
-     * Set language
+     * Set language.
+     *
      * @param Int $language
      */
     public function setLanguage($language = 1)
@@ -371,7 +374,8 @@ class User
     }
 
     /**
-     * Get language
+     * Get language.
+     *
      * @return Int
      */
     public function getLanguage()
@@ -380,7 +384,8 @@ class User
     }
 
     /**
-     * Set admin
+     * Set admin.
+     *
      * @param int $admin
      */
     public function setAdmin($admin = 0)
@@ -389,7 +394,8 @@ class User
     }
 
     /**
-     * Get admin
+     * Get admin.
+     *
      * @return Boolean
      */
     public function getAdmin()
@@ -397,6 +403,9 @@ class User
         return $this->admin;
     }
 
+    /**
+     * @return string
+     */
     public function getFullName()
     {
         return $this->getName()." ".$this->getSurname();

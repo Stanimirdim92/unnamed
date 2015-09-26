@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -96,7 +75,6 @@ class Content
 
     /**
      * @param array $data
-     * @return void
      */
     public function exchangeArray(array $data = [])
     {
@@ -115,7 +93,7 @@ class Content
     }
 
     /**
-     * Used into form binding
+     * Used into form binding.
      */
     public function getArrayCopy()
     {
@@ -123,7 +101,7 @@ class Content
     }
 
     /**
-     * constructor
+     * constructor.
      *
      * @param array $options
      */
@@ -133,7 +111,8 @@ class Content
     }
 
     /**
-     * Get id
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -142,7 +121,8 @@ class Content
     }
 
     /**
-     * Set id
+     * Set id.
+     *
      * @param int
      */
     public function setId($id = 0)
@@ -151,7 +131,8 @@ class Content
     }
 
     /**
-     * Set Menu
+     * Set Menu.
+     *
      * @param int $menu
      */
     public function setMenu($menu = 0)
@@ -160,7 +141,8 @@ class Content
     }
 
     /**
-     * Get menu
+     * Get menu.
+     *
      * @return int
      */
     public function getMenu()
@@ -169,7 +151,8 @@ class Content
     }
 
     /**
-     * Set title
+     * Set title.
+     *
      * @param null $title
      */
     public function setTitle($title = null)
@@ -178,7 +161,8 @@ class Content
     }
 
     /**
-     * Get title
+     * Get title.
+     *
      * @return String
      */
     public function getTitle()
@@ -187,7 +171,8 @@ class Content
     }
 
     /**
-     * Set titleLink
+     * Set titleLink.
+     *
      * @param null $titleLink
      */
     public function setTitleLink($titleLink = null)
@@ -196,7 +181,8 @@ class Content
     }
 
     /**
-     * Get titleLink
+     * Get titleLink.
+     *
      * @return String
      */
     public function getTitleLink()
@@ -205,7 +191,8 @@ class Content
     }
 
     /**
-     * Set author
+     * Set author.
+     *
      * @param string $author
      */
     public function setAuthor($author = null)
@@ -214,7 +201,8 @@ class Content
     }
 
     /**
-     * Get author
+     * Get author.
+     *
      * @return string
      */
     public function getAuthor()
@@ -223,7 +211,8 @@ class Content
     }
 
     /**
-     * Set active
+     * Set active.
+     *
      * @param Boolean $active
      */
     public function setActive($active = 0)
@@ -232,7 +221,8 @@ class Content
     }
 
     /**
-     * Get active
+     * Get active.
+     *
      * @return Boolean
      */
     public function getActive()
@@ -241,7 +231,8 @@ class Content
     }
 
     /**
-     * Set preview
+     * Set preview.
+     *
      * @param String $preview
      */
     public function setPreview($preview = null)
@@ -250,7 +241,8 @@ class Content
     }
 
     /**
-     * Get preview
+     * Get preview.
+     *
      * @return String
      */
     public function getPreview()
@@ -259,7 +251,8 @@ class Content
     }
 
     /**
-     * Set text
+     * Set text.
+     *
      * @param String $text
      */
     public function setText($text = null)
@@ -268,7 +261,8 @@ class Content
     }
 
     /**
-     * Get text
+     * Get text.
+     *
      * @return String
      */
     public function getText()
@@ -277,7 +271,8 @@ class Content
     }
 
     /**
-     * Set order
+     * Set order.
+     *
      * @param int $menuOrder
      */
     public function setMenuOrder($menuOrder = 0)
@@ -286,7 +281,8 @@ class Content
     }
 
     /**
-     * Get menuOrder
+     * Get menuOrder.
+     *
      * @return int
      */
     public function getMenuOrder()
@@ -295,7 +291,8 @@ class Content
     }
 
     /**
-     * Set type
+     * Set type.
+     *
      * @param int $type
      */
     public function setType($type = 0)
@@ -304,7 +301,8 @@ class Content
     }
 
     /**
-     * Get type
+     * Get type.
+     *
      * @return int
      */
     public function getType()
@@ -313,7 +311,8 @@ class Content
     }
 
     /**
-     * Set date
+     * Set date.
+     *
      * @param String $date
      */
     public function setDate($date = "0000-00-00 00:00:00")
@@ -322,7 +321,8 @@ class Content
     }
 
     /**
-     * Get date
+     * Get date.
+     *
      * @return String
      */
     public function getDate()
@@ -331,7 +331,8 @@ class Content
     }
 
     /**
-     * Set Language
+     * Set Language.
+     *
      * @param int $language
      */
     public function setLanguage($language = 1)
@@ -340,7 +341,8 @@ class Content
     }
 
     /**
-     * Get language
+     * Get language.
+     *
      * @return int
      */
     public function getLanguage()
@@ -349,8 +351,8 @@ class Content
     }
 
     /**
-     * This method is a copy constructor that will return a copy object (except for the id field)
-     * Note that this method will not save the object
+     * This method is a copy constructor that will return a copy object (except for the id field).
+     * Note that this method will not save the object.
      */
     public function getCopy()
     {

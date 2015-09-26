@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -66,7 +45,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * Initialize any variables before controller actions
+     * Initialize any variables before controller actions.
      *
      * @param MvcEvent $e
      */
@@ -77,7 +56,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This action shows the list of all contents
+     * This action shows the list of all contents.
      *
      * @return ViewModel
      */
@@ -93,7 +72,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This action serves for adding a new object of type Content
+     * This action serves for adding a new object of type Content.
      *
      * @return ViewModel
      */
@@ -106,8 +85,8 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Content object with a given id and session language
-     * Upon POST the form is processed and saved
+     * This action presents a modify form for Content object with a given id and session language.
+     * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
@@ -124,7 +103,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * this action deletes a content
+     * this action deletes a content.
      */
     protected function deleteAction()
     {
@@ -134,7 +113,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * this action shows content details
+     * this action shows content details.
      *
      * @return ViewModel
      */
@@ -162,7 +141,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This action will clone the object
+     * This action will clone the object.
      */
     protected function cloneAction()
     {
@@ -172,10 +151,10 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This is common function used by add and edit actions
+     * This is common function used by add and edit actions.
      *
      * @param string $label button title
-     * @param  Content $content
+     * @param Content $content
      */
     private function initForm($label = '', Content $content = null)
     {
@@ -249,7 +228,7 @@ final class ContentController extends IndexController
     }
 
     /**
-     * Deleted image with from a given src
+     * Deleted image with from a given src.
      *
      * @method deleteimageAction
      *
@@ -277,7 +256,7 @@ final class ContentController extends IndexController
 
     /**
      * Get all files from all folders and list them in the gallery
-     * getcwd() is there to make the work with images path easier
+     * getcwd() is there to make the work with images path easier.
      *
      * @return JsonModel
      */
@@ -307,7 +286,8 @@ final class ContentController extends IndexController
     }
 
     /**
-     * Upload all images async
+     * Upload all images async.
+     *
      * @return array
      */
     private function prepareImages()
@@ -328,6 +308,7 @@ final class ContentController extends IndexController
 
     /**
      * @param  Http $adapter
+     *
      * @return array
      */
     private function uploadFiles(Http $adapter)

@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -55,7 +34,7 @@ final class UserController extends IndexController
     }
 
     /**
-     * Initialize any variables before controller actions
+     * Initialize any variables before controller actions.
      *
      * @param MvcEvent $e
      */
@@ -66,7 +45,9 @@ final class UserController extends IndexController
     }
 
     /**
-     * This action shows the list with all users
+     * This action shows the list with all users.
+     *
+     * @return ViewModel
      */
     public function indexAction()
     {
@@ -79,8 +60,10 @@ final class UserController extends IndexController
     }
 
     /**
-     * This action presents a modify form for User object with a given id
-     * Upon POST the form is processed and saved
+     * This action presents a modify form for User object with a given id.
+     * Upon POST the form is processed and saved.
+     *
+     * @return ViewModel
      */
     protected function modifyAction()
     {
@@ -93,9 +76,9 @@ final class UserController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication)
+     * This is common function used by add and modify actions (to avoid code duplication).
      *
-     * @param String $label
+     * @param string $label
      * @param User $user
      */
     private function initForm($label= '', User $user = null)
@@ -128,6 +111,9 @@ final class UserController extends IndexController
         }
     }
 
+    /**
+     * @return ViewModel
+     */
     protected function disabledAction()
     {
         $this->getView()->setTemplate("admin/user/disabled");
@@ -139,7 +125,7 @@ final class UserController extends IndexController
     }
 
     /**
-     * In case that a user account has been disabled and it needs to be enabled call this action
+     * In case that a user account has been disabled and it needs to be enabled call this action.
      */
     protected function enableAction()
     {
@@ -149,7 +135,7 @@ final class UserController extends IndexController
     }
 
     /**
-     * Instead if deleting a user account from the database, we simply disabled it
+     * Instead if deleting a user account from the database, we simply disabled it.
      */
     protected function disableAction()
     {
@@ -159,7 +145,9 @@ final class UserController extends IndexController
     }
 
     /**
-     * this action shows user details from the provided id
+     * this action shows user details from the provided id.
+     *
+     * @return ViewModel
      */
     protected function detailAction()
     {
@@ -171,7 +159,7 @@ final class UserController extends IndexController
     }
 
     /**
-     * return the list of users that match a given criteria
+     * return the list of users that match a given criteria.
      *
      * @return JsonModel
      */
@@ -199,20 +187,5 @@ final class UserController extends IndexController
                 ]);
             }
         }
-    }
-
-    /**
-     * This method exports all users from the database in excel format
-     *
-     * @see  Admin\Model\UserTable::export for more info
-     */
-    protected function exportAction()
-    {
-        $filesPath = "public/userfiles/exports/";
-        if (!is_dir($filesPath)) {
-            mkdir($filesPath);
-        }
-        $fileName = $this->getTable("user")->export($filesPath);
-        return $this->redirect()->toUrl("/userfiles/exports/".$fileName);
     }
 }

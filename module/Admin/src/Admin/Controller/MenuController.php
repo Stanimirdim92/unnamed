@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *mits
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -52,7 +31,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * Initialize any variables before controller actions
+     * Initialize any variables before controller actions.
      *
      * @param MvcEvent $e
      */
@@ -85,16 +64,16 @@ final class MenuController extends IndexController
     }
 
     /**
-     * Builds menu HTML
+     * Builds menu HTML.
      *
      * @method generateMenu
      *
-     * @param  int $parent
-     * @param  array $menu
+     * @param int $parent
+     * @param array $menu
      *
      * @return string generated html code
      */
-    private function generateMenu($parent, $menu)
+    private function generateMenu($parent = 0, array $menu = [])
     {
         $output = "";
         if (isset($menu["submenus"][$parent])) {
@@ -133,7 +112,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This action shows the list with all menus
+     * This action shows the list with all menus.
      *
      * @return ViewModel
      */
@@ -161,8 +140,8 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Menu object with a given id
-     * Upon POST the form is processed and saved
+     * This action presents a modify form for Menu object with a given id.
+     * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
@@ -191,7 +170,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * this action deletes a menu object with a provided id
+     * this action deletes a menu object with a provided id.
      */
     protected function deleteAction()
     {
@@ -201,7 +180,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * this action shows menu details from the provided id and session language
+     * this action shows menu details from the provided id and session language.
      *
      * @return ViewModel
      */
@@ -215,7 +194,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This action will clone the object with the provided id and return to the index view
+     * This action will clone the object with the provided id and return to the index view.
      */
     protected function cloneAction()
     {
@@ -225,10 +204,10 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication)
+     * This is common function used by add and modify actions (to avoid code duplication).
      *
      * @param string $label button title
-     * @param  Menu $menu menu object
+     * @param Menu $menu menu object
      */
     private function initForm($label = '', Menu $menu = null)
     {

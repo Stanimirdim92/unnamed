@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -36,6 +15,7 @@ use Zend\Math\Rand;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Db\Adapter\Adapter;
 use Application\Exception\InvalidArgumentException;
+use Application\Exception\RuntimeException;
 
 final class Functions extends AbstractPlugin
 {
@@ -56,6 +36,7 @@ final class Functions extends AbstractPlugin
      * Execute plain mysql queries.
      *
      * @param string $query
+     *
      * @throws InvalidArgumentException
      *
      * @return ResultSet|null
@@ -78,19 +59,19 @@ final class Functions extends AbstractPlugin
     }
 
     /**
-     * @link https://github.com/ircmaxell/password_compat/
+     * Never set the salt parameter for this function unless you are not a security expert who knows what he is doing.
+     *
      * @link http://blog.ircmaxell.com/2015/03/security-issue-combining-bcrypt-with.html
-     * @todo add default php password_hash implementation
      *
      * @param string $password the user password in plain text
-     * @throws InvalidArgumentException
      *
-     * @return  the encrypted password with the salt. Salt comes from password_hash
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     *
+     * @return string the encrypted password with the salt. Salt comes from password_hash
      */
     public static function createPassword($password)
     {
-        require_once('/module/Application/src/Application/Entity/Password.php');
-
         if (empty($password)) {
             throw new InvalidArgumentException("Password cannot be empty");
         }
@@ -101,8 +82,8 @@ final class Functions extends AbstractPlugin
 
         $pw = password_hash($password, PASSWORD_BCRYPT, ["cost" => 13]);
 
-        if (!$pw) {
-            throw new InvalidArgumentException("Error while generating password");
+        if (empty($pw)) {
+            throw new RuntimeException("Error while generating password");
         }
 
         return $pw;
@@ -110,15 +91,16 @@ final class Functions extends AbstractPlugin
 
     /**
      * @param string $string The input string
+     *
      * @return int The number of bytes
      */
-    public static function strLength($string)
+    public static function strLength($string = null)
     {
         return mb_strlen($string, '8bit');
     }
 
     /**
-     * Generate a random 64 chars long string via the OpenSSL|MCRYPT|M_RAND functions.
+     * Generate a random 48 chars long string via the OpenSSL|MCRYPT|M_RAND functions. and return a base64 encode of it.
      *
      * @return string
      */
@@ -128,7 +110,7 @@ final class Functions extends AbstractPlugin
     }
 
     /**
-     * Detect SSL/TLS protocol. If true activate cookie_secure key
+     * Detect SSL/TLS protocol. If true activate cookie_secure key.
      *
      * @return bool
      */

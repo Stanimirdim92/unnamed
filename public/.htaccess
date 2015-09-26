@@ -1,8 +1,3 @@
-# Apache Server Configs v2.11.0 | MIT License
-# https://github.com/h5bp/server-configs-apache
-# My own snippets (Stanimir Dimitrov)
-# Snippets from other websites
-
 # (!) Using `.htaccess` files slows down Apache, therefore, if you have
 # access to the main server configuration file (which is usually called
 # `httpd.conf`), you should add this logic there.
@@ -30,11 +25,6 @@ RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 RewriteRule ^(.*) - [E=BASE:%1]
 # CGI does not support apache_response_headers, but we need this header in order to do basic HTTP authtentication when running with CGI or FastCGI.
 RewriteRule ^(.*)$ %{ENV:BASE}index.php [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L,NC]
-
-# Block all PHP easter eggs
-# Note that these features are disabled from PHP 5.5.0
-RewriteCond %{QUERY_STRING} \=PHP[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12} [NC]
-RewriteRule .* - [F]
 
 # Rules to block foreign characters in URLs
 RewriteCond %{QUERY_STRING} ^.*(%0|%A|%B|%C|%D|%E|%F).* [NC]

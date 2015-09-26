@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -81,7 +60,6 @@ class AdminMenu
 
     /**
      * @var array $data
-     * @return mixed
      */
     public function exchangeArray(array $data = [])
     {
@@ -97,7 +75,7 @@ class AdminMenu
     }
 
     /**
-     * Used into form binding
+     * Used into form binding.
      */
     public function getArrayCopy()
     {
@@ -105,7 +83,7 @@ class AdminMenu
     }
 
     /**
-     * constructor
+     * constructor.
      *
      * @param array $options
      */
@@ -115,7 +93,8 @@ class AdminMenu
     }
 
     /**
-     * Get id
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -124,7 +103,8 @@ class AdminMenu
     }
 
     /**
-     * Set id
+     * Set id.
+     *
      * @param int
      */
     public function setId($id = 0)
@@ -133,7 +113,8 @@ class AdminMenu
     }
 
     /**
-     * Set caption
+     * Set caption.
+     *
      * @param String $caption
      */
     public function setCaption($caption = null)
@@ -142,7 +123,8 @@ class AdminMenu
     }
 
     /**
-     * Get caption
+     * Get caption.
+     *
      * @return String
      */
     public function getCaption()
@@ -151,7 +133,8 @@ class AdminMenu
     }
 
     /**
-     * Set menuOrder
+     * Set menuOrder.
+     *
      * @param int $menuOrder
      */
     public function setMenuOrder($menuOrder = 0)
@@ -160,7 +143,8 @@ class AdminMenu
     }
 
     /**
-     * Get menuOrder
+     * Get menuOrder.
+     *
      * @return int
      */
     public function getMenuOrder()
@@ -169,7 +153,8 @@ class AdminMenu
     }
 
     /**
-     * Set advanced
+     * Set advanced.
+     *
      * @param Boolean $advanced
      */
     public function setAdvanced($advanced = 0)
@@ -178,7 +163,8 @@ class AdminMenu
     }
 
     /**
-     * Get advanced
+     * Get advanced.
+     *
      * @return Boolean
      */
     public function getAdvanced()
@@ -187,7 +173,8 @@ class AdminMenu
     }
 
     /**
-     * Set controller
+     * Set controller.
+     *
      * @param String $controller
      */
     public function setController($controller = null)
@@ -196,7 +183,8 @@ class AdminMenu
     }
 
     /**
-     * Get controller
+     * Get controller.
+     *
      * @return String
      */
     public function getController()
@@ -205,7 +193,8 @@ class AdminMenu
     }
 
     /**
-     * Set action
+     * Set action.
+     *
      * @param String $action
      */
     public function setAction($action = null)
@@ -214,7 +203,8 @@ class AdminMenu
     }
 
     /**
-     * Get action
+     * Get action.
+     *
      * @return String
      */
     public function getAction()
@@ -223,7 +213,8 @@ class AdminMenu
     }
 
     /**
-     * Set class
+     * Set class.
+     *
      * @param String $class
      */
     public function setClass($class = null)
@@ -232,7 +223,8 @@ class AdminMenu
     }
 
     /**
-     * Get class
+     * Get class.
+     *
      * @return String
      */
     public function getClass()
@@ -241,7 +233,8 @@ class AdminMenu
     }
 
     /**
-     * Set description
+     * Set description.
+     *
      * @param string $description
      */
     public function setDescription($description = null)
@@ -250,7 +243,8 @@ class AdminMenu
     }
 
     /**
-     * Get description
+     * Get description.
+     *
      * @return string
      */
     public function getDescription()
@@ -259,7 +253,8 @@ class AdminMenu
     }
 
     /**
-     * Set parent
+     * Set parent.
+     *
      * @param int $parent
      */
     public function setParent($parent = 0)
@@ -268,7 +263,8 @@ class AdminMenu
     }
 
     /**
-     * Get parent
+     * Get parent.
+     *
      * @return int
      */
     public function getParent()
@@ -277,8 +273,8 @@ class AdminMenu
     }
 
     /**
-     * This method is a copy constructor that will return a copy object (except for the id field)
-     * Note that this method will not save the object
+     * This method is a copy constructor that will return a copy object (except for the id field).
+     * Note that this method will not save the object.
      */
     public function getCopy()
     {

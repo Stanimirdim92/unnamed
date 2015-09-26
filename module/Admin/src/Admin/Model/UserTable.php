@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -163,6 +142,7 @@ class UserTable
 
     /**
      * @param int $id user id
+     *
      * @return User|null
      */
     public function getUser($id = 0)
@@ -176,7 +156,7 @@ class UserTable
     }
 
     /**
-     * This method can disable or enable user accounts
+     * This method can disable or enable user accounts.
      *
      * @param int $id user id
      * @param int $state 0 - enabled, 1 - disabled
@@ -189,10 +169,12 @@ class UserTable
     }
 
     /**
-     * Update user based on the provided id
+     * Update user based on the provided id.
      *
      * @param  User $use
+     *
      * @throws RuntimeException
+     *
      * @return User
      */
     public function saveUser(User $user)
@@ -224,54 +206,5 @@ class UserTable
         }
         unset($id, $data);
         return $user;
-    }
-
-    /**
-     * @param string $path
-     * not working due to codeplex missing
-     */
-    public function export($path = "/userfiles/exports")
-    {
-        require_once("/vendor/CodePlex/PHPExcel.php");
-        $filename = md5(rand(10, 2000000)).".xlsx";
-        $objPHPExcel = new \PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("User excel export plugin")
-        ->setTitle("Office 2007 XLS Export Document")
-        ->setSubject("Office 2007 XLS Export Document")
-        ->setDescription("Excel Autoexport");
-        $sheet = 0;
-        $objPHPExcel->createSheet();
-        $sheet = $objPHPExcel->setActiveSheetIndex($sheet++);
-        $sheet = $objPHPExcel->getActiveSheet();
-        $sheet->setTitle("User's auto export info");
-
-        $colLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        foreach ($colLetters as $colLetter) {
-            $objPHPExcel->getActiveSheet()->getColumnDimension($colLetter)->setWidth(25);
-        }
-        $cellTitles = ['ID', "Name", "Surname", "Email", "Last login", "Registered on", "Is admin", "Is disabled"];
-        $cellCol = 0;
-        foreach ($cellTitles as $cellTitle) {
-            $sheet->setCellValueExplicitByColumnAndRow($cellCol++, 1, $cellTitle);
-        }
-
-        $col = 0;
-        $row = 2;
-        $users = $this->fetchList(false, ["id", "name", "surname", "email", "lastLogin", "registered", 'admin', 'deleted'], ["deleted" => 0], null, null, "id DESC");
-        foreach ($users as $user) {
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getId(), \PHPExcel_Cell_DataType::TYPE_NUMERIC);
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getName());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getSurname());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getEmail());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getLastLogin());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getRegistered());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getAdmin());
-            $sheet->setCellValueExplicitByColumnAndRow($col++, $row, $user->getDeleted());
-            $col = 0; // reset column for next user
-            $row++;
-        }
-        $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
-        $objWriter->save($path."/".$filename);
-        return $filename;
     }
 }

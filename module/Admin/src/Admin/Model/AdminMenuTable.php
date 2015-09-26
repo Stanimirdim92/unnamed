@@ -1,32 +1,11 @@
 <?php
+
 /**
- * MIT License.
- *
- * Copyright (c) 2015 Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @author     Stanimir Dimitrov <stanimirdim92@gmail.com>
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.13
+ *
+ * @version    0.0.14
+ *
  * @link       TBA
  */
 
@@ -61,7 +40,7 @@ class AdminMenuTable
     }
 
     /**
-     * Main function for handling MySQL queries
+     * Main function for handling MySQL queries.
      *
      * @param  bool $paginated              should we use pagination or no
      * @param  array $columns               substitute * with the columns you need
@@ -70,6 +49,7 @@ class AdminMenuTable
      * @param  null $order                  ORDER condition
      * @param  int $limit                   LIMIT condition
      * @param  int $offset                  OFFSET condition
+     *
      * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
@@ -120,16 +100,16 @@ class AdminMenuTable
     }
 
     /**
-     * Prepare all statements before quering the database
+     * Prepare all statements before quering the database.
      *
-     * @param  Select $select
-     * @param  array $columns
-     * @param  null|array|string $where
-     * @param  null $group
-     * @param  null $predicate
-     * @param  null $order
-     * @param  null $limit
-     * @param  null $offset
+     * @param Select $select
+     * @param array $columns
+     * @param null|array|string $where
+     * @param null $group
+     * @param null $predicate
+     * @param null $order
+     * @param null $limit
+     * @param null $offset
      *
      * @return Zend\Db\Sql\Select
      */
@@ -163,7 +143,9 @@ class AdminMenuTable
 
     /**
      * @param int $id adminmenu id
+     *
      * @throws RuntimeException If adminmenu is not found
+     *
      * @return AdminMenu
      */
     public function getAdminMenu($id = 0)
@@ -177,9 +159,10 @@ class AdminMenuTable
     }
 
     /**
-     * Delete a adminmenu based on the provided id and language
+     * Delete a adminmenu based on the provided id and language.
      *
      * @param int $id adminmenu id
+     *
      * @return AdminMenu
      */
     public function deleteAdminMenu($id = 0)
@@ -190,9 +173,10 @@ class AdminMenuTable
     }
 
     /**
-     * Save or update menu based on the provided id and language
+     * Save or update menu based on the provided id and language.
      *
      * @param  AdminMenu $adminMenu
+     *
      * @return AdminMenu
      */
     public function saveAdminMenu(AdminMenu $adminMenu)
@@ -220,9 +204,10 @@ class AdminMenuTable
     }
 
     /**
-     * duplicate a content
+     * duplicate a content.
      *
      * @param  int    $id
+     *
      * @return AdminMenu
      */
     public function duplicate($id = 0)
