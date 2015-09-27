@@ -1,11 +1,11 @@
 # README #
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b)
-[![Build Status](https://semaphoreci.com/api/v1/projects/0613b317-95c1-4af3-8b73-4e1c99d7c8db/552367/shields_badge.svg)](https://semaphoreci.com/stanimir/unnamed)
-[![Dependency Status](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9)
-[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg?style=plastic)](https://bitbucket.org/StanimirDim92/unnamed/overview)
-
-This README would normally document whatever steps are necessary to get your application up and running.
+|   Info  |                                                   Badges                                                  |
+|:-------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Version | [![PHP minimum version](https://img.shields.io/badge/php-%3E%3D5.5-8892BF.svg)](https://php.net/) [![Unnamed version](https://img.shields.io/badge/Unnamed-v0.0.14-brightgreen.svg)](https://bitbucket.org/StanimirDim92/unnamed/overview)                                                                                                                                    |
+| License | [![Unnamed license](https://img.shields.io/badge/license-MIT-blue.svg)](https://bitbucket.org/StanimirDim92/unnamed/overview)                                                                                                                                                                                                                                                 |
+| Testing | [![Build Status](https://semaphoreci.com/api/v1/projects/0613b317-95c1-4af3-8b73-4e1c99d7c8db/552367/shields_badge.svg)](https://semaphoreci.com/stanimir/unnamed)                                                                                                                                                                                                            |
+| Quality | [![Dependency Status](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b) |
 
 ### Unnamed CMS ###
 
@@ -37,7 +37,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### LICENSE ###
 
-The files in this project are released under the MIT license. You can find a copy of this license in LICENSE.md.
+The files in this project are released under the MIT license. You can find a copy of this license in [LICENSE.md](https://bitbucket.org/StanimirDim92/unnamed/raw/master/LICENSE).
 
 ### Contacts ###
 

@@ -9,15 +9,17 @@
  * @link       TBA
  */
 
+namespace Admin;
+
 return [
     'router' => [
         'routes' => [
             'admin' => [
-                'type'    => 'Literal',
+                'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
                     'route' => '/admin',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Admin\Controller',
+                        '__NAMESPACE__' => Controller::class,
                         'controller'    => 'Index',
                         'action'        => 'index',
                     ],
@@ -36,7 +38,7 @@ return [
                                 'page'       => '[0-9]+',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => 'Admin\Controller',
+                                '__NAMESPACE__' => Controller::class,
                                 'controller'    => 'Index',
                                 'action'        => 'index',
                             ],
@@ -48,22 +50,22 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            'Admin\Controller\Content'       => 'Admin\Factory\Controller\ContentControllerFactory',
-            'Admin\Controller\Menu'          => 'Admin\Factory\Controller\MenuControllerFactory',
-            'Admin\Controller\Language'      => 'Admin\Factory\Controller\LanguageControllerFactory',
-            'Admin\Controller\Administrator' => 'Admin\Factory\Controller\AdministratorControllerFactory',
-            'Admin\Controller\AdminMenu'     => 'Admin\Factory\Controller\AdminMenuControllerFactory',
-            'Admin\Controller\User'          => 'Admin\Factory\Controller\UserControllerFactory',
+            'Admin\Controller\Content'       => Factory\Controller\ContentControllerFactory::class,
+            'Admin\Controller\Menu'          => Factory\Controller\MenuControllerFactory::class,
+            'Admin\Controller\Language'      => Factory\Controller\LanguageControllerFactory::class,
+            'Admin\Controller\Administrator' => Factory\Controller\AdministratorControllerFactory::class,
+            'Admin\Controller\AdminMenu'     => Factory\Controller\AdminMenuControllerFactory::class,
+            'Admin\Controller\User'          => Factory\Controller\UserControllerFactory::class,
         ],
         'invokables' => [
-            'Admin\Controller\Index' => 'Admin\Controller\IndexController',
+            'Admin\Controller\Index' => Controller\IndexController::class,
         ],
     ],
     'form_elements' => [
         'factories' => [
-            'Admin\Form\ContentForm'      => 'Admin\Factory\Form\ContentFormFactory',
-            'Admin\Form\MenuForm'         => 'Admin\Factory\Form\MenuFormFactory',
-            'Admin\Form\AdminMenuForm'    => 'Admin\Factory\Form\AdminMenuFormFactory',
+            'Admin\Form\ContentForm'      => Factory\Form\ContentFormFactory::class,
+            'Admin\Form\MenuForm'         => Factory\Form\MenuFormFactory::class,
+            'Admin\Form\AdminMenuForm'    => Factory\Form\AdminMenuFormFactory::class,
         ],
     ],
     'view_manager' => [

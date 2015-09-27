@@ -9,6 +9,7 @@ DD.MM.YYYY
  - CS fixes
  - removed user export functions
  - Fixed admin controller and main ajax function logics
+ - Added few more badges
 
 DD.MM.YYYY
 ## 0.0.13 (23.09.2015) - Stable Alpha
