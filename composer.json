@@ -27,5 +27,13 @@
         "san/san-session-toolbar": "0.*",
         "fabpot/php-cs-fixer": "1.*"
     },
+    "suggest": {
+       "ext-mcrypt": "for encryption",
+       "ext-mbstring": "for proper string encoding",
+       "ext-intl": "for translations",
+       "ext-gd": "for image manipulation",
+       "ext-fileinfo": "for image mimetype detection",
+       "ext-pdo": "for database driver"
+    },
     "prefer-stable": true
 }
