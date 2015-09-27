@@ -49,15 +49,15 @@
         }
 ?>
             <li class="table-cell">
-                <button id='delete_<?=$content->getId()?>' type="button" class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
-                <div style='display: none' id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>
-                    <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$content->getId()?>' type="button" class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
+                <div role="alertdialog" aria-labelledby="dialog<?=$content->getId()?>Title" id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>
+                    <p id="dialog<?=$content->getId()?>Title"><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
                     <ul>
                         <li>
                             <a class='btn delete' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "delete", "id" => $content->getId()])?>'><i class='fa fa-trash-o'></i>&nbsp; <?=$this->translate("DELETE")?></a>
                         </li>
                         <li>
-                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                            <button role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>
                         </li>
                     </ul>
                 </div>

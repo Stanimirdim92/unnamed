@@ -32,15 +32,15 @@
                 <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell">
-                <button id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
-                <div id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
-                   <p><?=$this->translate("ENABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
+                <div role="alertdialog" aria-labelledby="dialog<?=$user->getId()?>Title" id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
+                   <p id="dialog<?=$user->getId()?>Title"><?=$this->translate("ENABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
                         <li>
                             <a class='btn enable' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "enable", "id" => $user->getId()])?>'><i class='fa fa-plus'></i> <?=$this->translate("ENABLE")?></a>
                         </li>
                         <li>
-                            <a class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></a>
+                            <role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>
                         </li>
                     </ul>
                 </div>

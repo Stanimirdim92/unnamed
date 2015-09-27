@@ -103,15 +103,15 @@ ul {
     }
 
     /* Left|Right panels */
-    #aside {
+    .aside {
 
     }
 
-    .aside-menu-left {
+    #aside-menu-left {
 
     }
 
-    .aside-menu-right {
+    #aside-menu-right {
 
     }
 

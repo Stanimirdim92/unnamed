@@ -25,6 +25,7 @@ class ResetPasswordForm extends Form implements InputFilterProviderInterface
     {
         $this->setAttribute('method', 'post');
         $this->setAttribute('action', '/login/resetpassword');
+        $this->setAttribute('role', 'form');
 
         $this->add([
             'type' => 'Zend\Form\Element\Email',

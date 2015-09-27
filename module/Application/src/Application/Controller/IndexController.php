@@ -96,35 +96,40 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * Builds menu HTML.
+     *
+     * @method generateMenu
+     *
      * @param int $parent
      * @param array $menu
+     * @param string $role
      *
-     * @return string
+     * @return string generated html code
      */
-    private function generateMenu($parent = 0, array $menu = [])
+    private function generateMenu($parent = 0, array $menu = [], $role = "menubar")
     {
         $output = "";
         if (isset($menu["submenus"][$parent])) {
-            $output .= "<ul>";
+            $output .= "<ul role='{$role}'>";
 
             /**
              * This is a really, really ugly hack
              */
             if ($this->menuIncrementHack === 0) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
                 $userData = $this->UserData();
                 if ($userData->checkIdentity(false)) {
-                    $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
+                    $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
                 } else {
-                    $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
+                    $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
                 }
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
             }
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]->getMenuLink()}'>{$menu['menus'][$id]->getCaption()}</a>";
-                $output .= $this->generateMenu($id, $menu);
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]->getMenuLink()}'>{$menu['menus'][$id]->getCaption()}</a>";
+                $output .= $this->generateMenu($id, $menu, "menu");
                 $output .= "</li>";
             }
             $output .= "</ul>";

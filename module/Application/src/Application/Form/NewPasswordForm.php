@@ -25,6 +25,7 @@ class NewPasswordForm extends Form implements InputFilterProviderInterface
     {
         $this->setAttribute('method', 'post');
         $this->setAttribute('action', '/login/newpasswordprocess');
+        $this->setAttribute('role', 'form');
 
         $this->add([
             'type' => 'Zend\Form\Element\Password',

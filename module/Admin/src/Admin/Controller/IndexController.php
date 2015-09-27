@@ -90,28 +90,33 @@ class IndexController extends AbstractActionController
     }
 
     /**
+     * Builds menu HTML.
+     *
+     * @method generateMenu
+     *
      * @param int $parent
      * @param array $menu
+     * @param string $role
      *
-     * @return string
+     * @return string generated html code
      */
-    private function generateMenu($parent = 0, array $menu = [])
+    private function generateMenu($parent = 0, array $menu = [], $role = "menubar")
     {
         $output = "";
         if (isset($menu["submenus"][$parent])) {
-            $output .= "<ul>";
+            $output .= "<ul role='{$role}'>";
 
             /*
              * This is a really, really ugly hack
              */
             if ($this->menuIncrementHack === 0) {
-                $output .= "<li><a tabindex='1' hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'> {$this->translate("DASHBOARD")}</a></li>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='&sol;admin'> {$this->translate("DASHBOARD")}</a></li>";
             }
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'> {$menu['menus'][$id]->getCaption()}</a>";
-                $output .= $this->generateMenu($id, $menu);
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'> {$menu['menus'][$id]->getCaption()}</a>";
+                $output .= $this->generateMenu($id, $menu, "menu");
                 $output .= "</li>";
             }
             $output .= "</ul>";

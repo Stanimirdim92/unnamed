@@ -3,7 +3,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
     $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html prefix="og: http://ogp.me/ns#" lang="<?=$this->layout()->lang?>">
+<html itemscope itemtype="http://schema.org/WebPage" prefix="og: http://ogp.me/ns#" lang="<?=$this->layout()->lang?>">
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
@@ -18,17 +18,17 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
         <link rel="canonical" href="<?=$this->serverUrl(true);?>">
         <link rel="shortlink" href="<?=$this->serverUrl(true);?>">
     </head>
-    <body itemscope itemtype="http://schema.org/WebPage">
+    <body>
 
         <div id="content-wrapper">
             <!-- Header, banner, navigation menu -->
             <header id="header" role="banner">
-                <nav id="nav" role="navigation">
+                <nav id="nav" role="navigation" aria-label="main navigation">
                     <?=$view->menu;?>
                 </nav>
             </header>
 
-            <aside id="aside" class="aside-menu-left" role="complementary">
+            <aside class="aside" id="aside-menu-left" role="complementary">
 
             </aside>
 
@@ -41,7 +41,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                     foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
                         echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
                                 <ul>
-                                    <li>
+                                    <li role='alert'>
                                         <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
                                         <button type='button' class='btn btn-default close close'><i class='fa fa-times'></i></button>
                                     </li>
@@ -59,7 +59,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 ?>
             </main>
 
-            <aside id="aside" class="aside-menu-right" role="complementary">
+            <aside class="aside" id="aside-menu-right" role="complementary">
 
             </aside>
         </div>

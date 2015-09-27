@@ -27,6 +27,7 @@ class RegistrationForm extends Form implements InputFilterProviderInterface
     {
         $this->setAttribute('method', 'post');
         $this->setAttribute('action', '/registration/processregistration');
+        $this->setAttribute('role', 'form');
 
         $this->add([
             'type' => 'Zend\Form\Element\Text',

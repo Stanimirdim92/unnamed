@@ -3,12 +3,12 @@
     "description": "Flexible, strong and fast CMS built on top of Zend Framework 2",
     "license": "MIT",
     "type": "project",
-    "homepage": "https://bitbucket.org/StanimirDim92/zend-boilerplate#readme",
+    "homepage": "https://bitbucket.org/StanimirDim92/unnamed#readme",
     "authors": [
         {
             "name": "Stanimir Dimitrov",
             "email": "stanimirdim92@gmail.com",
-            "homepage": "https://bitbucket.org/StanimirDim92/zend-boilerplate#readme",
+            "homepage": "https://bitbucket.org/StanimirDim92/unnamed#readme",
             "role": "Creator"
         }
     ],

@@ -89,15 +89,15 @@ final class MenuController extends IndexController
                 }
                 $output .= "
                 <li class='table-cell'>
-                    <button id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
-                        <div id='delete_delete_{$menu['menus'][$id]['id']}' class='dialog_hide'>
-                           <p>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
+                    <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
+                        <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]['id']}Title' id='delete_delete_{$menu['menus'][$id]['id']}' class='dialog_hide'>
+                           <p id='dialog{$menu['menus'][$id]['id']}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
                             <ul>
                                 <li>
                                     <a class='btn delete' href='/admin/menu/delete/{$menu['menus'][$id]['id']}'><i class='fa fa-trash-o'></i> {$this->translate("DELETE")}</a>
                                 </li>
                                 <li>
-                                    <a class='btn btn-default cancel'><i class='fa fa-times'></i> {$this->translate("CANCEL")}</a>
+                                    <button role='button' aria-pressed='false' aria-label='{$this->translate("CANCEL")}' class='btn btn-default cancel'><i class='fa fa-times'></i> {$this->translate("CANCEL")}</button>
                                 </li>
                             </ul>
                         </div>

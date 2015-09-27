@@ -11,11 +11,11 @@
         </a>
     </p>
     <div class='form-inputs'>
-        <button class="add-new-translation" type="button">Add new field</button>
+        <button role="button" aria-pressed="false" class="add-new-translation" type="button">Add new field</button>
         <div class="toggle-translation-box">
             <input type="text" name="newTranslationsConstName" id="newTranslationsConstName" required="required" size="45" placeholder="Add a transaltions key, e.g. MY_TRANSLATION" value="">
             <input type="text" name="newTranslationsText" id="newTranslationsText" required="required" size="45" placeholder="Add a transaltions, e.g. My translation" value="">
-            <button class="add-translation" type="button">add</button>
+            <button role="button" aria-pressed="false" aria-label="<?=$this->translate("ADD")?>" class="add-translation" type="button"><?=$this->translate("ADD")?></button>
         </div>
 
         <br>
@@ -23,7 +23,7 @@
         <hr>
         <br>
         <br>
-        <form name="translationsArray" action="&#x2F;admin&#x2F;language&#x2F;translations" id="translationsArray" method="post">
+        <form role="form" name="translationsArray" action="&#x2F;admin&#x2F;language&#x2F;translations" id="translationsArray" method="post">
             <fieldset>
             <input type="submit" value="<?=$this->translate("MODIFY")?>" name="submit" id="submit">
             <br>
@@ -31,10 +31,10 @@
 <?php
             foreach ($translations as $constKey => $translation) {
 ?>
-                <label>
+                <label for="<?=$constKey?>">
                     <span><?=$constKey?></span>
-                    <input type="text" name="<?=$constKey?>" required="required" size="35" placeholder="<?=$constKey?>" value="<?=$translation?>">
-                    <button type='button' class='btn btn-sm delete translation_delete'><i class='fa fa-trash-o'></i></button>
+                    <input type="text" name="<?=$constKey?>" required="required" size="35" placeholder="<?=$constKey?>" id="<?=$constKey?>" value="<?=$translation?>">
+                    <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" type='button' class='btn btn-sm delete translation_delete'><i class='fa fa-trash-o'></i></button>
                 </label>
                 <br>
 <?php

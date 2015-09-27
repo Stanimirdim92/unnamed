@@ -26,6 +26,7 @@ class ContactForm extends Form implements InputFilterProviderInterface
     public function init()
     {
         $this->setAttribute('method', 'post');
+        $this->setAttribute('role', 'form');
 
         $this->add([
             'type' => 'Zend\Form\Element\Text',

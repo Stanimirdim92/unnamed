@@ -63,6 +63,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
     public function init()
     {
         $this->setAttribute('method', 'post');
+        $this->setAttribute('role', 'form');
 
         /*
          * Specific image for this content

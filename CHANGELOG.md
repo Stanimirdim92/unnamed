@@ -10,6 +10,9 @@ DD.MM.YYYY
  - removed user export functions
  - Fixed admin controller and main ajax function logics
  - Added few more badges
+ - WAI-ARIA Landmarks - all main roles have been placed. I will keep adding many other roles to almost every element
+ - Some links that are only clickable are changed to buttons
+ - Validation fixes
 
 DD.MM.YYYY
 ## 0.0.13 (23.09.2015) - Stable Alpha
@@ -138,7 +141,6 @@ DD.MM.YYYY
  - ElasticSearch
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
- - WAI-ARIA Landmarks
  - Better SEO
  - Social networks controller or module
  - Options controller, which will handle all the options across the CMS
