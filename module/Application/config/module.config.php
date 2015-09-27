@@ -39,7 +39,7 @@ return [
                                 'id'         => '[0-9]+',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => Controller::class,
+                                'Application'   => Controller::class,
                                 'controller'    => 'Index',
                                 'action'        => 'index',
                             ],

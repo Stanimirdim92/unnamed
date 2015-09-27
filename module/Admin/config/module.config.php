@@ -38,7 +38,7 @@ return [
                                 'page'       => '[0-9]+',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => Controller::class,
+                                'Admin'         => Controller::class,
                                 'controller'    => 'Index',
                                 'action'        => 'index',
                             ],
