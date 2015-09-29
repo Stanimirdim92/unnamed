@@ -48,7 +48,7 @@ final class MenuController extends IndexController
      */
     private function showMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'menulink', 'caption', 'language', 'active', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder")->getDataSource();
+        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder")->getDataSource();
 
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
@@ -76,16 +76,17 @@ final class MenuController extends IndexController
     private function generateMenu($parent = 0, array $menu = [])
     {
         $output = "";
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
         if (isset($menu["submenus"][$parent])) {
             foreach ($menu['submenus'][$parent] as $id) {
                 $output .= "<ul class='table-row'>";
-                $output .= "<li class='table-cell'>{$menu['menus'][$id]['caption']}</li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$menu['menus'][$id]['id']}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$menu['menus'][$id]['id']}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
+                $output .= "<li class='table-cell'><i class='fa {$menu['menus'][$id]['class']}'></i> {$menu['menus'][$id]['caption']}</li>";
+                $output .= "<li class='table-cell'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
+                $output .= "<li class='table-cell'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
                 if ($menu['menus'][$id]['active'] == 0) {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$menu['menus'][$id]['id']}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$menu['menus'][$id]['id']}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
                 }
                 $output .= "
                 <li class='table-cell'>
@@ -94,7 +95,7 @@ final class MenuController extends IndexController
                            <p id='dialog{$menu['menus'][$id]['id']}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
                             <ul>
                                 <li>
-                                    <a class='btn delete' href='/admin/menu/delete/{$menu['menus'][$id]['id']}'><i class='fa fa-trash-o'></i> {$this->translate("DELETE")}</a>
+                                    <a class='btn delete' href='/admin/menu/delete/{$escaper->escapeUrl($menu['menus'][$id]['id'])}'><i class='fa fa-trash-o'></i> {$this->translate("DELETE")}</a>
                                 </li>
                                 <li>
                                     <button role='button' aria-pressed='false' aria-label='{$this->translate("CANCEL")}' class='btn btn-default cancel'><i class='fa fa-times'></i> {$this->translate("CANCEL")}</button>
@@ -149,7 +150,6 @@ final class MenuController extends IndexController
     {
         $this->getView()->setTemplate("admin/menu/modify");
         $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language())->current();
-        $this->getView()->menu = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/modify/{$menu->getId()}", "name"=> $this->translate("MODIFY_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("MODIFY_MENU"), $menu);
         return $this->getView();
@@ -222,6 +222,7 @@ final class MenuController extends IndexController
         $form->bind($menu);
         $form->get("submit")->setValue($label);
         $this->getView()->form = $form;
+        $this->getView()->modifyMenu = $menu;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());

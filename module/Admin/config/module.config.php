@@ -19,9 +19,8 @@ return [
                 'options' => [
                     'route' => '/admin',
                     'defaults' => [
-                        '__NAMESPACE__' => Controller::class,
-                        'controller'    => 'Index',
-                        'action'        => 'index',
+                        'controller'  => 'Admin\Controller\Index',
+                        'action'     => 'index',
                     ],
                 ],
                 'may_terminate' => true,
@@ -38,7 +37,7 @@ return [
                                 'page'       => '[0-9]+',
                             ],
                             'defaults' => [
-                                'Admin'         => Controller::class,
+                                '__NAMESPACE__' => 'Admin\Controller',
                                 'controller'    => 'Index',
                                 'action'        => 'index',
                             ],

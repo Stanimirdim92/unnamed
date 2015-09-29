@@ -14,7 +14,7 @@ namespace Admin\Model;
 class AdminMenu
 {
     /**
-     * @var Int $id
+     * @var int $id
      */
     private $id = 0;
 
@@ -24,37 +24,37 @@ class AdminMenu
     private $caption = null;
 
     /**
-     * @var Int $menuOrder
+     * @var int $menuOrder
      */
     private $menuOrder = 0;
 
     /**
-     * @param Int $advanced
+     * @param int $advanced
      */
     private $advanced = 0;
 
     /**
-     * @param String $controller
+     * @param string $controller
      */
     private $controller = null;
 
     /**
-     * @param String $action
+     * @param string $action
      */
     private $action = null;
 
     /**
-     * @param String $class
+     * @param string $class
      */
     private $class = null;
 
     /**
-     * @param String $description
+     * @param string $description
      */
     private $description = null;
 
     /**
-     * @param Int $parent
+     * @param int $parent
      */
     private $parent = 0;
 

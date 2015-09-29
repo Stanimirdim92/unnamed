@@ -15,7 +15,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
 
-final class LayoutMessages extends AbstractPlugin
+final class SetLayoutMessages extends AbstractPlugin
 {
     /**
      * @var FlashMessenger $flashMessenger
@@ -55,7 +55,7 @@ final class LayoutMessages extends AbstractPlugin
      *     $this->setLayoutMessages($myArray, "default");
      * </code>
      *
-     * @param array|arrayobject|string $message
+     * @param array|string $message
      * @param string $namespace determinates the message layout and color. It's also used for the flashMessenger namespace
      */
     public function __invoke($message = [], $namespace = 'default')
@@ -74,5 +74,7 @@ final class LayoutMessages extends AbstractPlugin
         }
 
         $this->layout->setVariable('flashMessages', $this->flashMessenger);
+
+        return $this->layout();
     }
 }

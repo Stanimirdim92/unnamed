@@ -232,7 +232,7 @@ class ContentTable
     public function duplicate($id = 0, $language = 1)
     {
         $content = $this->getContent($id, $language);
-        $clone = $content->getCopy();
+        $clone = $content->current()->getCopy();
         $this->saveContent($clone);
         return $clone;
     }

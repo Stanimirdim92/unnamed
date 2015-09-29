@@ -75,6 +75,12 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendName('MobileOptimized', '320');
         $this->headMeta->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
         $this->headMeta->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
+        $this->headMeta->appendName('twitter:card', 'summary');
+        $this->headMeta->appendName('twitter:site', '@Unnamed');
+        $this->headMeta->appendName('twitter:title', substr(strip_tags($title), 0, 70)); // max 70 chars
+        $this->headMeta->appendName('twitter:description', substr(strip_tags($text), 0, 200));
+        $this->headMeta->appendName('twitter:image', $preview); // max 1MB
+
         $this->headMeta->appendProperty('og:image', $preview);
         $this->headMeta->appendProperty("og:title", $title);
         $this->headMeta->appendProperty("og:description", $description);

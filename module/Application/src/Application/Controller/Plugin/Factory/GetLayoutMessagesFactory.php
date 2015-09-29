@@ -11,21 +11,19 @@
 
 namespace Application\Controller\Plugin\Factory;
 
-use Application\Controller\Plugin\LayoutMessages;
+use Application\Controller\Plugin\GetLayoutMessages;
 use Zend\Mvc\Controller\PluginManager;
 
-class LayoutMessagesFactory
+class GetLayoutMessagesFactory
 {
     /**
      * @{inheritDoc}
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $layout = $pluginManager->getController()->layout();
-
         $flashmessenger = $pluginManager->get("flashmessenger");
 
-        $plugin = new LayoutMessages($layout, $flashmessenger);
+        $plugin = new GetLayoutMessages($flashmessenger);
 
         return $plugin;
     }

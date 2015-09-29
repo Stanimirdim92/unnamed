@@ -130,7 +130,8 @@ small {
 
 .italic,
 em,
-i:not(.fa) {
+i:not(.fa),
+em:not(.fa) {
     color: #777;
     font-style: italic;
     line-height: inherit;

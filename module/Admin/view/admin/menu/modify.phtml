@@ -10,7 +10,7 @@
              * @var Admin\Form\MenuForm
              */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'menu', 'action' => 'modify', 'id'=> $this->menu->getId()]));
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'menu', 'action' => 'modify', 'id'=> $this->modifyMenu->getId()]));
             $form->prepare();
             echo $this->form()->openTag($form);
             echo $this->formCollection($form);

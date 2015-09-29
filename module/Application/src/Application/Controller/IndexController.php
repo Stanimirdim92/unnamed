@@ -64,7 +64,7 @@ class IndexController extends AbstractActionController
         /*
          * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
          */
-        if ($this->params('action') != "title" || $this->params('action') != "post") {
+        if ( ($this->params('action') != "title") && ($this->params('action') != "post") ) {
             $this->initMetaTags();
         }
 
@@ -82,7 +82,7 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder");
+        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "class", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder");
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
             foreach ($menu as $submenus) {
@@ -106,11 +106,12 @@ class IndexController extends AbstractActionController
      *
      * @return string generated html code
      */
-    private function generateMenu($parent = 0, array $menu = [], $role = "menubar")
+    private function generateMenu($parent = 0, array $menu = [], $ariaRole = "menubar")
     {
         $output = "";
+        $escaper = new \Zend\Escaper\Escaper('utf-8');
         if (isset($menu["submenus"][$parent])) {
-            $output .= "<ul role='{$role}'>";
+            $output .= "<ul role='{$ariaRole}'>";
 
             /**
              * This is a really, really ugly hack
@@ -128,7 +129,7 @@ class IndexController extends AbstractActionController
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$menu['menus'][$id]->getMenuLink()}'>{$menu['menus'][$id]->getCaption()}</a>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$escaper->escapeUrl($menu['menus'][$id]->getMenuLink())}'><em class='fa {$menu['menus'][$id]->getClass()}'></em> {$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu, "menu");
                 $output .= "</li>";
             }

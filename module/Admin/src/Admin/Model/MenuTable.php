@@ -194,6 +194,7 @@ class MenuTable
             'footercolumn' => (int) $menu->getFooterColumn(),
             'menulink'     => (string) $menu->getMenuLink(),
             'active'       => (int) $menu->getActive(),
+            'class'        => (string) $menu->getClass(),
         ];
         $id = (int) $menu->getId();
         $language = (int) $menu->getLanguage();
@@ -232,7 +233,7 @@ class MenuTable
     public function duplicate($id = 0, $language = 1)
     {
         $menu = $this->getMenu($id, $language);
-        $clone = $menu->getCopy();
+        $clone = $menu->current()->getCopy();
         $this->saveMenu($clone);
         return $clone;
     }

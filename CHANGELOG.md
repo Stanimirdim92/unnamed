@@ -1,7 +1,7 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.14 (26.09.2015) - Stable Alpha
+## 0.0.14 (28.09.2015) - Stable Alpha
  - Bug fixes from sensiolabs
  - Aded test favicon
  - License
@@ -13,6 +13,9 @@ DD.MM.YYYY
  - WAI-ARIA Landmarks - all main roles have been placed. I will keep adding many other roles to almost every element
  - Some links that are only clickable are changed to buttons
  - Validation fixes
+ - Twitter cards
+ - Better SEO
+ - Web Developer checklist shows 100% validation
 
 DD.MM.YYYY
 ## 0.0.13 (23.09.2015) - Stable Alpha
@@ -141,11 +144,9 @@ DD.MM.YYYY
  - ElasticSearch
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
- - Better SEO
  - Social networks controller or module
  - Options controller, which will handle all the options across the CMS
  - Destroyers for all cached variables and queries, when new data is set
  - Better http://schema.org/
- - Twitter cards
  - Win 8 default png tile cms image
  - Voice Search

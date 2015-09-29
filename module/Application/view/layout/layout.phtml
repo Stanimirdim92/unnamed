@@ -35,7 +35,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             <main id="main" role="main">
 <?php
                 /**
-                 * All messages passed from $this->setLayoutMessages() plugin method are showed with this code
+                 * All messages passed from $this->getLayoutMessages() plugin method are showed with this code
                  */
                 if ($this->layout()->flashMessages) {
                     foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
@@ -43,7 +43,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                                 <ul>
                                     <li role='alert'>
                                         <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
-                                        <button type='button' class='btn btn-default close close'><i class='fa fa-times'></i></button>
+                                        <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' type='button' class='btn btn-default close close'><i class='fa fa-times'></i></button>
                                     </li>
                                 </ul>
                               </div>

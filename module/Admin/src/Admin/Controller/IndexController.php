@@ -115,7 +115,7 @@ class IndexController extends AbstractActionController
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' class='fa {$menu['menus'][$id]->getClass()}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'> {$menu['menus'][$id]->getCaption()}</a>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/{$menu['menus'][$id]->getController()}/{$menu['menus'][$id]->getAction()}'><em class='fa {$menu['menus'][$id]->getClass()}'></em> {$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu, "menu");
                 $output .= "</li>";
             }

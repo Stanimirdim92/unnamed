@@ -134,6 +134,7 @@ class MenuForm extends Form implements InputFilterProviderInterface
             'name' => 'parent',
             'options' => [
                 'label' => 'Parent menu',
+                'disable_inarray_validator' => true,
                 'empty_option' => 'Please choose your menu',
                 'value_options' => $this->collectMenuOptions(),
             ],
@@ -151,6 +152,20 @@ class MenuForm extends Form implements InputFilterProviderInterface
                 'empty_option' => 'Please choose menu type',
                 'value_options' => $valueOptions,
                 'label' => 'Choose menu type',
+            ],
+        ]);
+
+        $this->add([
+            'type' => 'Zend\Form\Element\Text',
+            'name' => 'class',
+            'attributes' => [
+                'required'   => false,
+                'size'        => 40,
+                'class'       => 'admin-menu-class',
+                'placeholder' => 'CSS class',
+            ],
+            'options' => [
+                'label' => 'CSS class',
             ],
         ]);
 
@@ -349,6 +364,25 @@ class MenuForm extends Form implements InputFilterProviderInterface
                     ['name' => 'StripTags'],
                     ['name' => 'StringTrim'],
                     ['name' => 'StringToLower'],
+                ],
+            ],
+            [
+                "name"=>"class",
+                "required" => false,
+                'filters' => [
+                    ['name' => 'StripTags'],
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => 'NotEmpty'],
+                    [
+                        'name'    => 'StringLength',
+                        'options' => [
+                            'encoding' => 'UTF-8',
+                            'min' => 1,
+                            'max' => 50,
+                        ],
+                    ],
                 ],
             ],
         ];

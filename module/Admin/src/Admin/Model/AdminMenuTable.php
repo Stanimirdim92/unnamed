@@ -213,7 +213,7 @@ class AdminMenuTable
     public function duplicate($id = 0)
     {
         $adminMenu = $this->getAdminMenu($id);
-        $clone = $adminMenu->getCopy();
+        $clone = $adminMenu->current()->getCopy();
         $this->saveAdminMenu($clone);
         return $clone;
     }

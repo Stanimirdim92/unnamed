@@ -19,9 +19,8 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        '__NAMESPACE__' => Controller::class,
-                        'controller'    => 'Index',
-                        'action'        => 'index',
+                        'controller'  => 'Application\Controller\Index',
+                        'action'      => 'index',
                     ],
                 ],
                 'may_terminate' => true,
@@ -39,7 +38,7 @@ return [
                                 'id'         => '[0-9]+',
                             ],
                             'defaults' => [
-                                'Application'   => Controller::class,
+                                '__NAMESPACE__' => 'Application\Controller',
                                 'controller'    => 'Index',
                                 'action'        => 'index',
                             ],
@@ -48,7 +47,7 @@ return [
                 ],
             ],
             'news' => [
-                'type' => 'Literal',
+                'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
                     'route'    => '/news',
                     'constraints' => [
@@ -56,9 +55,8 @@ return [
                         'page' => '[0-9]+',
                     ],
                     'defaults' => [
-                        '__NAMESPACE__' => Controller::class,
-                        'controller'    => 'News',
-                        'action'        => 'post',
+                        'controller' => 'Application\Controller\News',
+                        'action'     => 'post',
                     ],
                 ],
                 'may_terminate' => true,
@@ -72,7 +70,7 @@ return [
                                 'page' => '[0-9]+',
                             ],
                             'defaults' => [
-                                '__NAMESPACE__' => Controller::class,
+                                '__NAMESPACE__' => 'Application\Controller',
                                 'controller'    => 'News',
                                 'action'        => 'post',
                             ],

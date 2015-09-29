@@ -69,6 +69,11 @@ class Menu
     private $active = 1;
 
     /**
+     * @param string $class
+     */
+    private $class = null;
+
+    /**
      * @var array $data
      */
     public function exchangeArray(array $data = [])
@@ -84,6 +89,7 @@ class Menu
         $this->footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->getFooterColumn();
         $this->menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->getMenuLink();
         $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
+        $this->class = (isset($data['class'])) ? $data['class'] : $this->getClass();
     }
 
     /**
@@ -326,6 +332,26 @@ class Menu
     }
 
     /**
+     * Set class.
+     *
+     * @param String $class
+     */
+    public function setClass($class = null)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * Get class.
+     *
+     * @return String
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
      * Get menutype name.
      *
      * @return string
@@ -360,6 +386,7 @@ class Menu
         $clone->setFooterColumn($this->getFooterColumn());
         $clone->setMenuLink($this->getMenuLink());
         $clone->setActive($this->getActive());
+        $clone->setClass($this->getClass());
         return $clone;
     }
 }
