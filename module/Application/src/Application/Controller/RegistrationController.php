@@ -18,7 +18,6 @@ use Application\Form\RegistrationForm;
 
 final class RegistrationController extends IndexController
 {
-
     /**
      * @var RegistrationForm $registrationForm
      */

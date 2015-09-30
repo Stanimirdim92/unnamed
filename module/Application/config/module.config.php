@@ -30,12 +30,12 @@ return [
                         'options' => [
                             'route'    => '[:controller[/][:action[/[:id][token/:token][:title]][search/:search]]]',
                             'constraints' => [
-                                'controller' => '[a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z0-9_-]*',
-                                'token'      => '[a-zA-Z-+_/&0-9]*',
-                                'title'      => '[a-zA-Z0-9_-]*',
-                                'search'     => '[a-zA-Z0-9_-]*',
-                                'id'         => '[0-9]+',
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'token'      => '[a-zA-Z][a-zA-Z-+_/&0-9]*',
+                                'title'      => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'id'         => '[a-zA-Z][0-9]+',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Application\Controller',

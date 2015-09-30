@@ -63,7 +63,7 @@ class MenuTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 
@@ -95,7 +95,7 @@ class MenuTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 

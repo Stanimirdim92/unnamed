@@ -62,7 +62,7 @@ class ContentTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 
@@ -94,7 +94,7 @@ class ContentTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 

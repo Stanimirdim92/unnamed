@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/StanimirDim92/zend-boilerplate.git"
+    "url": "git+ssh://git@bitbucket.org/StanimirDim92/unnamed.git"
   },
   "keywords": [
     "gulp",
@@ -33,5 +33,5 @@
   ],
   "author": "Stanimir Dimitrov",
   "license": "MIT",
-  "homepage": "https://bitbucket.org/StanimirDim92/zend-boilerplate#readme"
+  "homepage": "https://bitbucket.org/StanimirDim92/unnamed#readme"
 }

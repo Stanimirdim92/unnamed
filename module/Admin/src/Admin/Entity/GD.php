@@ -13,7 +13,6 @@ namespace Admin\Entity;
 
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
-use Admin\Entity\GDInterface;
 
 final class GD implements GDInterface
 {

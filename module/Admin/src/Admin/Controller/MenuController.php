@@ -60,7 +60,7 @@ final class MenuController extends IndexController
 
             return $this->generateMenu(0, $menus);
         }
-        return null;
+        return;
     }
 
     /**

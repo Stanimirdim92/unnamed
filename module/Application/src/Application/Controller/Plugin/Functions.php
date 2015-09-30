@@ -55,7 +55,7 @@ final class Functions extends AbstractPlugin
             return $result;
         }
 
-        return null;
+        return;
     }
 
     /**

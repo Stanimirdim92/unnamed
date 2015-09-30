@@ -11,8 +11,6 @@
 
 namespace Admin\Exception;
 
-use Admin\Exception\ExceptionInterface;
-
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

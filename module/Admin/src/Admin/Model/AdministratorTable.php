@@ -62,7 +62,7 @@ class AdministratorTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 
@@ -94,7 +94,7 @@ class AdministratorTable
             if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
                 return $resultSet;
             }
-            return null;
+            return;
         }
     }
 
@@ -150,7 +150,7 @@ class AdministratorTable
         $rowset = $this->tableGateway->select(['user' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
-            return null;
+            return;
         }
         return $rowset;
     }

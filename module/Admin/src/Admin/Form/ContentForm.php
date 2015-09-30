@@ -57,7 +57,7 @@ class ContentForm extends Form implements InputFilterProviderInterface
             }
             return $valueOptions;
         }
-        return null;
+        return;
     }
 
     public function init()

@@ -57,7 +57,7 @@ class ResetPasswordTable
         if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0 ) {
             return $resultSet->getDataSource();
         }
-        return null;
+        return;
     }
 
     /**
