@@ -2,7 +2,7 @@
 
 |   Info  |                                                   Badges                                                                                                                                                                                                                                                                                                                      |
 |:-------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Versions | [![PHP minimum version](https://img.shields.io/badge/php-%3E%3D5.5-8892BF.svg)](https://php.net/) [![Unnamed version](https://img.shields.io/badge/Unnamed-v0.0.14-8892BF.svg)](https://bitbucket.org/StanimirDim92/unnamed/overview) [![NPM minimum version](https://img.shields.io/badge/npm-v2.14.3-8892BF.svg)](https://www.npmjs.com/)                                                                                                                           |
+| Versions | [![PHP minimum version](https://img.shields.io/badge/php-%3E%3D5.5-8892BF.svg)](https://php.net/) [![Unnamed version](https://img.shields.io/badge/Unnamed-v0.0.15-8892BF.svg)](https://bitbucket.org/StanimirDim92/unnamed/overview) [![NPM minimum version](https://img.shields.io/badge/npm-v2.14.3-8892BF.svg)](https://www.npmjs.com/)                                                                                                                           |
 | License | [![Unnamed license](https://img.shields.io/badge/license-MIT-blue.svg)](https://bitbucket.org/StanimirDim92/unnamed/raw/master/LICENSE)                                                                                                                                                                                                                                       |
 | Testing | [![Build Status](https://semaphoreci.com/api/v1/projects/0613b317-95c1-4af3-8b73-4e1c99d7c8db/552367/shields_badge.svg)](https://semaphoreci.com/stanimir/unnamed)                                                                                                                                                                                                            |
 | Quality | [![Dependency Status](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5606e2075a262f00220000a9) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b/mini.png)](https://insight.sensiolabs.com/projects/dbe0fb70-00d3-49ca-99b8-90dfcf688c2b) |
@@ -10,7 +10,7 @@
 ### Unnamed CMS ###
 
 * Building a new CMS on top of Zend Framework 2. Why? Because I can, it's fun and because the internet needs something better.
-* Version 0.0.14
+* Version 0.0.15
 * Huge thanks to [Abdul Malik Ikhsan](https://samsonasik.wordpress.com/) a.k.a [samsonasik](https://twitter.com/samsonasik?lang=en) for being saw helpful and patient
 
 ### Current features ###

@@ -1,0 +1,20 @@
+<div>
+    <p>
+        <a href="<?=$this->url("admin/default", ["controller" => "settings"])?>" class="btn btn-default">
+            <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
+        </a>
+    </p>
+    <div class='form-inputs'>
+        <?php
+            /**
+             * @var Admin\Form\SettingsPostsForm
+             */
+            $form = $this->form;
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'settings','action' => 'posts']));
+            $form->prepare();
+            echo $this->form()->openTag($form);
+            echo $this->formCollection($form);
+            echo $this->form()->closeTag();
+        ?>
+    </div>
+</div>

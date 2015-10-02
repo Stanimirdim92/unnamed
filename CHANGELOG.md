@@ -1,6 +1,11 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.15 (02.10.2015) - Stable Alpha
+- Options controller, which will handle all the options across the CMS
+
+
+DD.MM.YYYY
 ## 0.0.14 (28.09.2015) - Stable Alpha
  - Bug fixes from sensiolabs
  - Aded test favicon
@@ -141,11 +146,11 @@ DD.MM.YYYY
  - Run composer from the browser - WIP
 
 # TODO
+ - Comments controller
  - ElasticSearch
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - Social networks controller or module
- - Options controller, which will handle all the options across the CMS
  - Destroyers for all cached variables and queries, when new data is set
  - Better http://schema.org/
  - Win 8 default png tile cms image

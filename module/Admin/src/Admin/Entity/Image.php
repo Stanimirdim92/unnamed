@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -14,6 +14,7 @@ namespace Admin\Entity;
 use Admin\Exception\BadMethodCallException;
 use Admin\Exception\InvalidArgumentException;
 use Admin\Exception\RuntimeException;
+use Admin\Entity\ImageInterface;
 
 final class Image implements ImageInterface
 {

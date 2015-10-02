@@ -16,10 +16,12 @@ if (class_exists('Zend\Loader\AutoloaderFactory') && is_file('config/autoload/un
     return;
 }
 
-if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/unnamed.local.php')) {
-    if (!is_file('public/install.php')) {
-         throw new \RuntimeException('Installation file is missing. Process cannot be started.');
+if (!class_exists('Zend\Loader\AutoloaderFactory')) {
+    if (!is_file('config/autoload/unnamed.local.php')) {
+        if (!is_file('public/install.php')) {
+            throw new \RuntimeException('Installation file is missing. Process cannot be started.');
+        }
+        header('Location: /install.php');
     }
-    header('Location: /install.php');
     return;
 }

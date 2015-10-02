@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -62,14 +62,6 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'disable_inarray_validator' => true,
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
-            ],
-        ]);
-
-        $this->add([
-            'type' => 'Zend\Form\Element\Checkbox',
-            'name' => 'advanced',
-            'options' => [
-                'label' => 'Advanced',
             ],
         ]);
 
@@ -204,21 +196,6 @@ class AdminMenuForm extends Form implements InputFilterProviderInterface
                         'name' => 'Regex',
                         'options' => [
                             'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"advanced",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-1]+$/',
                         ],
                     ],
                 ],

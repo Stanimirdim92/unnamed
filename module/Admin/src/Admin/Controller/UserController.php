@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -34,8 +34,6 @@ final class UserController extends IndexController
     }
 
     /**
-     * Initialize any variables before controller actions.
-     *
      * @param MvcEvent $e
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)

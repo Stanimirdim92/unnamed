@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -45,8 +45,6 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Initialize any variables before controller actions.
-     *
      * @param MvcEvent $e
      *
      * @return ViewModel
@@ -64,7 +62,7 @@ class IndexController extends AbstractActionController
         /*
          * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
          */
-        if ( ($this->params('action') != "title") && ($this->params('action') != "post") ) {
+        if (($this->params('action') != "title") && ($this->params('action') != "post")) {
             $this->initMetaTags();
         }
 

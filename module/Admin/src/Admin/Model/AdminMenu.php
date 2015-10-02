@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -27,11 +27,6 @@ class AdminMenu
      * @var int $menuOrder
      */
     private $menuOrder = 0;
-
-    /**
-     * @param int $advanced
-     */
-    private $advanced = 0;
 
     /**
      * @param string $controller
@@ -66,7 +61,6 @@ class AdminMenu
         $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
         $this->caption = (isset($data['caption'])) ? $data['caption'] : $this->getCaption();
         $this->menuOrder = (isset($data['menuOrder'])) ? $data['menuOrder'] : $this->getMenuOrder();
-        $this->advanced = (isset($data['advanced'])) ? $data['advanced'] : $this->getAdvanced();
         $this->controller = (isset($data['controller'])) ? $data['controller'] : $this->getController();
         $this->action = (isset($data['action'])) ? $data['action'] : $this->getAction();
         $this->class = (isset($data['class'])) ? $data['class'] : $this->getClass();
@@ -150,26 +144,6 @@ class AdminMenu
     public function getMenuOrder()
     {
         return $this->menuOrder;
-    }
-
-    /**
-     * Set advanced.
-     *
-     * @param Boolean $advanced
-     */
-    public function setAdvanced($advanced = 0)
-    {
-        $this->advanced = $advanced;
-    }
-
-    /**
-     * Get advanced.
-     *
-     * @return Boolean
-     */
-    public function getAdvanced()
-    {
-        return $this->advanced;
     }
 
     /**
@@ -281,7 +255,6 @@ class AdminMenu
         $clone = new self();
         $clone->setCaption($this->getCaption());
         $clone->setMenuOrder($this->getMenuOrder());
-        $clone->setAdvanced($this->getAdvanced());
         $clone->setController($this->getController());
         $clone->setAction($this->getAction());
         $clone->setClass($this->getClass());

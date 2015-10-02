@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -185,7 +185,6 @@ class AdminMenuTable
             'caption'     => (string) $adminMenu->getCaption(),
             'description' => (string) $adminMenu->getDescription(),
             'menuOrder'   => (int) $adminMenu->getMenuOrder(),
-            'advanced'    => (int) $adminMenu->getAdvanced(),
             'controller'  => (string) $adminMenu->getController(),
             'action'      => (string) $adminMenu->getAction(),
             'class'       => (string) $adminMenu->getClass(),

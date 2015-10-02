@@ -25,7 +25,7 @@ $config->fixers(
         'function_declaration',
         'elseif',
         'eof_ending',
-        'unused_use',
+        // 'unused_use',
         'phpdoc_indent',
         'multiline_array_trailing_comma',
         'method_argument_space',
@@ -36,16 +36,14 @@ $config->fixers(
         'function_call_space',
         'line_after_namespace',
         'lowercase_keywords',
+        'join_function',
+        'parenthesis',
+        'multiple_use',
+        'object_operator',
+        'remove_lines_between_uses',
+        'standardize_not_equal',
+        'whitespacy_lines',
     )
-    // array(
-    //     'join_function',
-    //     'parenthesis',
-    //     'multiple_use',
-    //     'object_operator',
-    //     'remove_lines_between_uses',
-    //     'standardize_not_equal',
-    //     'whitespacy_lines',
-    // )
 );
 $config->finder($finder);
 return $config;

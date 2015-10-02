@@ -3,7 +3,7 @@
 /**
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.14
+ * @version    0.0.15
  * @link       TBA
  */
 
@@ -128,4 +128,5 @@ return [
     'CONTENT_ENABLE_SUCCESS' => 'Content was successfully activated',
     'DEACTIVATED' => 'Deactivated',
     'AUTHOR' => "Author",
+    'SETTINGS' => "Settings",
 ];

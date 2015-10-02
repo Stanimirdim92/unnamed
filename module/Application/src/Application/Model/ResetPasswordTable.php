@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -54,7 +54,7 @@ class ResetPasswordTable
         $select = $this->prepareQuery($this->tableGateway->getSql()->select(), $columns, $where, $predicate, $group, $order, (int) $limit, (int) $offset);
         $resultSet = $this->tableGateway->selectWith($select);
         $resultSet->buffer();
-        if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0 ) {
+        if ($resultSet->isBuffered() && $resultSet->valid() && $resultSet->count() > 0) {
             return $resultSet->getDataSource();
         }
         return;

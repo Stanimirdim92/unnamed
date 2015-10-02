@@ -905,7 +905,16 @@ FileETag None
     </FilesMatch>
 </IfModule>
 
+# prevent access to PHP error log
+<Files phplog.log>
+ Order allow,deny
+ Deny from all
+ Satisfy All
+</Files>
+
 <IfModule mod_php5.c>
+    php_flag  log_errors on
+    php_value error_log  phplog.log
     # Block cookie access via js. This might be already set via php.ini
     php_flag session.cookie_httponly on
     php_flag session.use_only_cookies on

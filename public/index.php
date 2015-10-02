@@ -4,26 +4,26 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
 
-header( 'Content-Type: text/html; charset=utf-8' );
+header('Content-Type: text/html; charset=utf-8');
 
 /**
  * Check requiarments.
  */
-if (version_compare("5.5", PHP_VERSION, '>' )) {
-    header( 'Content-Type: text/html; charset=utf-8' );
-    throw new \Exception(sprintf('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.14", "5.5"));
+if (version_compare("5.5", PHP_VERSION, '>')) {
+    header('Content-Type: text/html; charset=utf-8');
+    throw new \Exception(sprintf('Your server is running PHP version <b>%1$s</b>, but the system <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.15", "5.5"));
 }
 
 /**
  * Minimum required extensions.
  */
 if (!extension_loaded("mcrypt") || !extension_loaded("mbstring") || !extension_loaded("intl") || !extension_loaded("gd")) {
-    throw new \Exception(sprintf('One or more of these <b>%1$s</b> required extensions by Unnamed are missing, please enable them.', implode(", ", ["mcrypt", "mbstring", "intl", "gd"])));
+    throw new \Exception(sprintf('One or more of these <b>%1$s</b> required extensions are missing, please enable them.', implode(", ", ["mcrypt", "mbstring", "intl", "gd"])));
 }
 
 /**
@@ -41,11 +41,6 @@ if (isset($_SERVER['APPLICATION_ENV']) && $_SERVER["APPLICATION_ENV"] === 'devel
 error_reporting((APP_ENV === 'development' ? E_ALL : 0));
 
 /**
- * Log errors into a file.
- */
-ini_set("log_errors", (APP_ENV === 'development'));
-
-/**
  * Display of all other errors.
  */
 ini_set("display_errors", (APP_ENV === 'development'));
@@ -54,11 +49,6 @@ ini_set("display_errors", (APP_ENV === 'development'));
  * Display of all startup errors.
  */
 ini_set("display_startup_errors", (APP_ENV === 'development'));
-
-/**
- * Catch an error message emitted from PHP.
- */
-ini_set("track_errors", (APP_ENV === 'development'));
 
 /**
  * Fixes files and server encoding.

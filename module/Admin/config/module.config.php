@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -19,7 +19,7 @@ return [
                 'options' => [
                     'route' => '/admin',
                     'defaults' => [
-                        'controller'  => 'Admin\Controller\Index',
+                        'controller' => 'Admin\Controller\Index',
                         'action'     => 'index',
                     ],
                 ],
@@ -55,6 +55,7 @@ return [
             'Admin\Controller\Administrator' => Factory\Controller\AdministratorControllerFactory::class,
             'Admin\Controller\AdminMenu'     => Factory\Controller\AdminMenuControllerFactory::class,
             'Admin\Controller\User'          => Factory\Controller\UserControllerFactory::class,
+            'Admin\Controller\Settings'      => Factory\Controller\SettingsControllerFactory::class,
         ],
         'invokables' => [
             'Admin\Controller\Index' => Controller\IndexController::class,
@@ -62,9 +63,14 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            'Admin\Form\ContentForm'      => Factory\Form\ContentFormFactory::class,
-            'Admin\Form\MenuForm'         => Factory\Form\MenuFormFactory::class,
-            'Admin\Form\AdminMenuForm'    => Factory\Form\AdminMenuFormFactory::class,
+            'Admin\Form\ContentForm'              => Factory\Form\ContentFormFactory::class,
+            'Admin\Form\MenuForm'                 => Factory\Form\MenuFormFactory::class,
+            'Admin\Form\AdminMenuForm'            => Factory\Form\AdminMenuFormFactory::class,
+            'Admin\Form\SettingsMailForm'         => Factory\Form\SettingsMailFormFactory::class,
+            'Admin\Form\SettingsPostsForm'        => Factory\Form\SettingsPostsFormFactory::class,
+            'Admin\Form\SettingsGeneralForm'      => Factory\Form\SettingsGeneralFormFactory::class,
+            'Admin\Form\SettingsDiscussionForm'   => Factory\Form\SettingsDiscussionFormFactory::class,
+            'Admin\Form\SettingsRegistrationForm' => Factory\Form\SettingsRegistrationFormFactory::class,
         ],
     ],
     'view_manager' => [

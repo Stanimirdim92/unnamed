@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -34,8 +34,6 @@ final class AdministratorController extends IndexController
     }
 
     /**
-     * Initialize any variables before controller actions.
-     *
      * @param MvcEvent $e
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
@@ -166,8 +164,8 @@ final class AdministratorController extends IndexController
                      * See if user is in admin table, but admin column from user table is 0.
                      * If this is the case remove all access
                      */
-                    if ( ($adminExist && (int) $user->getAdmin() === 0) ||
-                         (!$adminExist && (int) $user->getAdmin() > 0 )
+                    if (($adminExist && (int) $user->getAdmin() === 0) ||
+                         (!$adminExist && (int) $user->getAdmin() > 0)
                        ) {
                         $user->setAdmin(0);
                         $this->getTable("user")->saveUser($user);

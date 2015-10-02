@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.14
+ * @version    0.0.15
  *
  * @link       TBA
  */
@@ -304,7 +304,7 @@ class MenuForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'encoding' => 'UTF-8',
                             'min' => 0,
-                            'max' => 200,
+                            'max' => 300,
                         ],
                     ],
                 ],

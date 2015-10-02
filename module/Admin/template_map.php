@@ -29,6 +29,11 @@ return [
     'admin/user/disabled'           => __DIR__ . '/view/admin/user/disabled.phtml',
     'admin/user/index'              => __DIR__ . '/view/admin/user/index.phtml',
     'admin/user/modify'             => __DIR__ . '/view/admin/user/modify.phtml',
+    'admin/settings/discussion'     => __DIR__ . '/view/admin/settings/discussion.phtml',
+    'admin/settings/general'        => __DIR__ . '/view/admin/settings/general.phtml',
+    'admin/settings/mail'           => __DIR__ . '/view/admin/settings/mail.phtml',
+    'admin/settings/posts'          => __DIR__ . '/view/admin/settings/posts.phtml',
+    'admin/settings/registration'   => __DIR__ . '/view/admin/settings/registration.phtml',
     'error/index'                   => __DIR__ . '/view/error/index.phtml',
     'layout/admin'                  => __DIR__ . '/view/layout/admin.phtml',
 ];
