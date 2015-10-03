@@ -35,8 +35,8 @@ final class MenuController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>$this->translate("MENUS")]);
+        parent::onDispatch($e);
     }
 
     /**
@@ -78,16 +78,16 @@ final class MenuController extends IndexController
         if (isset($menu["submenus"][$parent])) {
             foreach ($menu['submenus'][$parent] as $id) {
                 $output .= "<ul class='table-row'>";
-                $output .= "<li class='table-cell'><i class='fa {$menu['menus'][$id]['class']}'></i> {$menu['menus'][$id]['caption']}</li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
-                $output .= "<li class='table-cell'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
+                $output .= "<li class='table-cell flex-2'>{$menu['menus'][$id]['caption']}</li>";
+                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
+                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
                 if ($menu['menus'][$id]['active'] == 0) {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
-                    $output .= "<li class='table-cell'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
                 }
                 $output .= "
-                <li class='table-cell'>
+                <li class='table-cell flex-b'>
                     <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
                         <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]['id']}Title' id='delete_delete_{$menu['menus'][$id]['id']}' class='dialog_hide'>
                            <p id='dialog{$menu['menus'][$id]['id']}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
@@ -102,8 +102,8 @@ final class MenuController extends IndexController
                         </div>
                 </li>";
 
-                $output .= $this->generateMenu($id, $menu);
                 $output .= "</ul>";
+                $output .= $this->generateMenu($id, $menu);
             }
         }
 
@@ -186,7 +186,7 @@ final class MenuController extends IndexController
     {
         $this->getView()->setTemplate("admin/menu/detail");
         $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language())->current();
-        $this->getView()->menu = $menu;
+        $this->getView()->menuDetail = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
     }

@@ -27,7 +27,7 @@ class MenuTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new Menu());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('menu', $db, null, $resultSetPrototype);
         $table = new MenuTable($tableGateway);

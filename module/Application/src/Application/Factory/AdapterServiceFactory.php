@@ -24,14 +24,14 @@ class AdapterServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator = null)
     {
-        $this->config = $serviceLocator->get('Config');
+        $config = $serviceLocator->get('Config');
 
         if (APP_ENV === 'development') {
-            $adapter = new ProfilingAdapter($this->config["db"]);
+            $adapter = new ProfilingAdapter($config["db"]);
             $adapter->setProfiler(new Profiler());
             $adapter->injectProfilingStatementPrototype();
             return $adapter;
         }
-        return new Adapter($this->config["db"]);
+        return new Adapter($config["db"]);
     }
 }

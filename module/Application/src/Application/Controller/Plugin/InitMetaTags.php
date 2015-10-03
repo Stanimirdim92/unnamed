@@ -15,6 +15,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\View\Helper\Placeholder\Container as Placeholder;
 use Zend\View\Helper\HeadMeta;
 use Zend\Http\PhpEnvironment\Request;
+use Application\Controller\Plugin\SystemSettings;
 
 final class InitMetaTags extends AbstractPlugin
 {
@@ -34,15 +35,25 @@ final class InitMetaTags extends AbstractPlugin
     private $request = null;
 
     /**
+     * @var SystemSettings
+     */
+    private $settings = null;
+
+    /**
      * @param Placeholder $placeholder
      * @param HeadMeta $headMeta
      * @param Request $request
      */
-    public function __construct(Placeholder $placeholder = null, HeadMeta $headMeta = null, Request $request = null)
-    {
+    public function __construct(
+        Placeholder $placeholder = null,
+        HeadMeta $headMeta = null,
+        Request $request = null,
+        SystemSettings $settings = null
+    ) {
         $this->placeholder = $placeholder;
         $this->headMeta = $headMeta;
         $this->request = $request;
+        $this->settings = $settings;
     }
 
     /**
@@ -52,13 +63,13 @@ final class InitMetaTags extends AbstractPlugin
      */
     public function __invoke(array $content = [])
     {
-        $description = (!empty($content["description"]) ? $content["description"] : "lorem ipsum dolar sit amet");
-        $keywords = (!empty($content["keywords"]) ? $content["keywords"] : "lorem, ipsum, dolar, sit, amet");
-        $text = (!empty($content["text"]) ? $content["text"] : "lorem ipsum dolar sit amet");
+        $description = (!empty($content["description"]) ? $content["description"] : $this->settings->__invoke("general", "site_description"));
+        $keywords = (!empty($content["keywords"]) ? $content["keywords"] : $this->settings->__invoke("general", "site_keywords"));
+        $text = (!empty($content["text"]) ? $content["text"] : $this->settings->__invoke("general", "site_text"));
         $preview = (!empty($content["preview"]) ? $content["preview"] : "");
-        $title = (!empty($content["title"]) ? $content["title"] : "");
+        $title = (!empty($content["title"]) ? $content["title"] : $this->settings->__invoke("general", "site_name"));
 
-        $this->placeholder->append("\r\n<meta itemprop='name' content='Unnamed'>\r\n"); // must be set from db
+        $this->placeholder->append("\r\n<meta itemprop='name' content='{$this->settings->__invoke("general", "site_name")}'>\r\n"); // must be set from db
         $this->placeholder->append("<meta itemprop='description' content='".substr(strip_tags($text), 0, 150)."'>\r\n");
         $this->placeholder->append("<meta itemprop='title' content='".$title."'>\r\n");
         $this->placeholder->append("<meta itemprop='image' content='".$preview."'>\r\n");
@@ -66,9 +77,9 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendName('keywords', $keywords);
         $this->headMeta->appendName('description', $description);
         $this->headMeta->appendName('viewport', 'width=device-width, initial-scale=1.0');
-        $this->headMeta->appendName('generator', 'Unnamed');
+        $this->headMeta->appendName('generator', $this->settings->__invoke("general", "site_name"));
         $this->headMeta->appendName('apple-mobile-web-app-capable', 'yes');
-        $this->headMeta->appendName('application-name', 'Unnamed');
+        $this->headMeta->appendName('application-name', $this->settings->__invoke("general", "site_name"));
         $this->headMeta->appendName('msapplication-TileColor', '#000000');
         $this->headMeta->appendName('mobile-web-app-capable', 'yes');
         $this->headMeta->appendName('HandheldFriendly', 'True');
@@ -76,7 +87,7 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendName('apple-mobile-web-app-status-bar-style', 'black-translucent');
         $this->headMeta->appendName('author', 'Stanimir Dimitrov - stanimirdim92@gmail.com');
         $this->headMeta->appendName('twitter:card', 'summary');
-        $this->headMeta->appendName('twitter:site', '@Unnamed');
+        $this->headMeta->appendName('twitter:site', '@'.$this->settings->__invoke("general", "site_name"));
         $this->headMeta->appendName('twitter:title', substr(strip_tags($title), 0, 70)); // max 70 chars
         $this->headMeta->appendName('twitter:description', substr(strip_tags($text), 0, 200));
         $this->headMeta->appendName('twitter:image', $preview); // max 1MB

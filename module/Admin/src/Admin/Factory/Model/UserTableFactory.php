@@ -27,7 +27,7 @@ class UserTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new User());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('user', $db, null, $resultSetPrototype);
         $table = new UserTable($tableGateway);

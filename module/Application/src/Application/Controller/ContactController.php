@@ -56,8 +56,7 @@ final class ContactController extends IndexController
             if ($form->isValid()) {
                 $formData = $form->getData();
                 try {
-                    // must be set from db
-                    $this->Mailing()->sendMail("psyxopat@gmail.com", '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
+                    $this->Mailing()->sendMail($this->systemSettings("general", "system_email"), '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
                     $this->setLayoutMessages($this->translate("CONTACT_SUCCESS"), 'success');
                 } catch (\Exception $e) {
                     $this->setLayoutMessages($this->translate("CONTACT_ERROR"), 'error');

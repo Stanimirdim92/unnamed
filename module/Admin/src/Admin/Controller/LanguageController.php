@@ -38,8 +38,8 @@ final class LanguageController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
+        parent::onDispatch($e);
     }
 
     /**

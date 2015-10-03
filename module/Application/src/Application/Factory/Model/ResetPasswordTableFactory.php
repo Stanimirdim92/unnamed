@@ -20,11 +20,14 @@ use Application\Model\ResetPasswordTable;
 
 class ResetPasswordTableFactory implements FactoryInterface
 {
+    /**
+     * @{inheritDoc}
+     */
     public function createService(ServiceLocatorInterface $sm = null)
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new ResetPassword());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('resetpassword', $db, null, $resultSetPrototype);
         $table = new ResetPasswordTable($tableGateway);

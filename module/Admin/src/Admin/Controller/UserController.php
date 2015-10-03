@@ -38,8 +38,8 @@ final class UserController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>$this->translate("USERS")]);
+        parent::onDispatch($e);
     }
 
     /**
@@ -52,7 +52,7 @@ final class UserController extends IndexController
         $this->getView()->setTemplate("admin/user/index");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 0], null, null, "id DESC");
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        $paginator->setItemCountPerPage(50);
+        $paginator->setItemCountPerPage($this->systemSettings('posts', 'user'));
         $this->getView()->paginator = $paginator;
         return $this->getView();
     }
@@ -117,7 +117,7 @@ final class UserController extends IndexController
         $this->getView()->setTemplate("admin/user/disabled");
         $paginator = $this->getTable("user")->fetchList(true, [], ["deleted" => 1], null, null, "id DESC");
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        $paginator->setItemCountPerPage(50);
+        $paginator->setItemCountPerPage($this->systemSettings('posts', 'user'));
         $this->getView()->paginator = $paginator;
         return $this->getView();
     }

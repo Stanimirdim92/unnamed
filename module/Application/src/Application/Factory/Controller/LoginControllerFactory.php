@@ -25,7 +25,7 @@ class LoginControllerFactory
 
         $controller = new LoginController(
             $serviceLocator->get('FormElementManager')->get('Application\Form\LoginForm'),
-            $serviceLocator->get('Zend\Db\Adapter\Adapter'),
+            $serviceLocator->get('SD\Adapter'),
             $serviceLocator->get('FormElementManager')->get('Application\Form\ResetPasswordForm'),
             $serviceLocator->get('FormElementManager')->get('Application\Form\NewPasswordForm')
         );

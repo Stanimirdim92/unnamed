@@ -3,7 +3,12 @@
 DD.MM.YYYY
 ## 0.0.15 (02.10.2015) - Stable Alpha
 - Options controller, which will handle all the options across the CMS
-
+- Renamed Zend\Db\Adapter\Adapter to SD\Adapter to avoid name collisions
+- Moved news route into application and devided the logic in separated view files
+- Removed SM from session factory. Added a local copy of isSSL()
+- Created SystemSettings plugin.
+- Added flexbox.
+- Added few more ARIA roles
 
 DD.MM.YYYY
 ## 0.0.14 (28.09.2015) - Stable Alpha
@@ -107,8 +112,8 @@ DD.MM.YYYY
 ## 0.0.4 (06.08.2015) - Stable Alpha
  - Improved fetchList() and fetchJoin() functions
  - Created new translate function in IndexController and View Helper, which will handle all term translations
- - Improved|Refactored Admin\*\*
- - Improved|Refactored Application\*\*
+ - Improved|Refactored Admin module
+ - Improved|Refactored Application module
  - Enabled module config cache
  - Removed /id path from url
  - Fixed module.config.php files
@@ -143,7 +148,7 @@ DD.MM.YYYY
  - Created new controller plugin IndexPlugin
  - Deactivated translations for now.
  - Most of the controller actions were made protected
- - Run composer from the browser - WIP
+ - Run composer from the browser
 
 # TODO
  - Comments controller
@@ -151,7 +156,6 @@ DD.MM.YYYY
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - Social networks controller or module
- - Destroyers for all cached variables and queries, when new data is set
  - Better http://schema.org/
  - Win 8 default png tile cms image
  - Voice Search

@@ -27,7 +27,7 @@ class ContentTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new Content());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('content', $db, null, $resultSetPrototype);
         $table = new ContentTable($tableGateway);

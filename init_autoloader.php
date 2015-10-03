@@ -7,7 +7,6 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-// Composer autoloading
 if (is_dir('vendor/zendframework') && is_file('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
 }

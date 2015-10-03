@@ -18,6 +18,7 @@ use Zend\Mail\Message;
 use Zend\Mime\Part as MimePart;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Application\Controller\Plugin\SystemSettings;
 
 final class Mailing extends AbstractPlugin
 {
@@ -27,11 +28,18 @@ final class Mailing extends AbstractPlugin
     private $flashMessenger = null;
 
     /**
-     * @param FlashMessenger $flashMessenger
+     * @var SystemSettings
      */
-    public function __construct(FlashMessenger $flashMessenger = null)
+    private $settings = null;
+
+    /**
+     * @param FlashMessenger $flashMessenger
+     * @param SystemSettings $settings
+     */
+    public function __construct(FlashMessenger $flashMessenger = null, SystemSettings $settings = null)
     {
         $this->flashMessenger = $flashMessenger;
+        $this->settings = $settings;
     }
 
     /**
@@ -41,8 +49,8 @@ final class Mailing extends AbstractPlugin
      * @param string $message
      * @param string $from
      * @param string $fromName
+     *
      * @return boolean
-     * @todo  extend with more config methods
      *
      * @return bool|string
      */
@@ -50,15 +58,15 @@ final class Mailing extends AbstractPlugin
     {
         $transport = new SmtpTransport();
         $options   = new SmtpOptions([
-            'host'              => 'smtp.gmail.com',
-            'name'              => 'Unnamed',
-            'connection_class'  => 'login',
+            'host'              => $this->settings->__invoke("mail", 'host'),
+            'name'              => $this->settings->__invoke("mail", 'name'),
+            'connection_class'  => $this->settings->__invoke("mail", 'connection_class'),
             'connection_config' => [
-                'username' => '',
-                'password' => '',
-                'ssl' => 'tls',
+                'username' => $this->settings->__invoke("mail", 'username'),
+                'password' => $this->settings->__invoke("mail", 'password'),
+                'ssl' => $this->settings->__invoke("mail", 'ssl'),
             ],
-            'port' => '465',
+            'port' => $this->settings->__invoke("mail", 'port'),
         ]);
         $htmlPart = new MimePart($message);
         $htmlPart->type = "text/html";

@@ -24,7 +24,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     /**
      * Setup module layout.
      *
-     * @param  $moduleManager ModuleManager
+     * @param $moduleManager ModuleManager
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
@@ -79,30 +79,31 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         $app = $e->getApplication();
         $sm = $app->getServiceManager();
         $route = $e->getRouteMatch();
+        $title = $sm->get('ControllerPluginManager')->get("systemsettings");
         $viewHelper = $sm->get('ViewHelperManager');
         $lang = new Container("translations");
         $translator = $sm->get('translator');
 
-        /**
+        /*
          * Get translations
          */
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
         $viewModel = $app->getMvcEvent()->getViewModel();
         $viewModel->lang = $translator->getLocale();
 
-        /**
+        /*
          * Setup website title
          */
         $action = $route->getParam('title');
         if (empty($action)) {
             $action = strtolower($route->getParam('action'));
-            if ($action != "index") {
-                $action = ($route->getParam("post") ?: "");
+            if ($action != 'index') {
+                $action = ($route->getParam('post') ?: "");
             }
         }
 
         $headTitleHelper = $viewHelper->get('headTitle');
-        $headTitleHelper->append('Unnamed - '.ucfirst($action)); // must be set from db
+        $headTitleHelper->append($title->__invoke('general', 'site_name').' - '.ucfirst($action)); // must be set from db
     }
 
     /**

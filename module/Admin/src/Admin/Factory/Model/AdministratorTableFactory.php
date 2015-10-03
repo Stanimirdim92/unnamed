@@ -27,7 +27,7 @@ class AdministratorTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new Administrator());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('administrator', $db, null, $resultSetPrototype);
         $table = new AdministratorTable($tableGateway);

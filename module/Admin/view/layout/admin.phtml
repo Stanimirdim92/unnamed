@@ -33,7 +33,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             <header id="header" role="banner">
                 <nav id="nav" role="navigation" aria-label="main navigation">
                     <ul>
-                        <?=$view->menu;?>
+                        <?=$view->menuAdmin;?>
                     </ul>
                 </nav>
             </header>
@@ -46,14 +46,11 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 <!-- Breadcrumbs -->
                 <div class="breadcrumbs">
                     <ul>
+                    <li><a hreflang='<?=$this->layout()->lang?>' itemprop='url' href="/admin"><?=$this->translate("DASHBOARD");?></a> &sol;</li>
 <?php
                     if (!empty($view->breadcrumbs)) {
-                        $i = 2;
                         foreach($view->breadcrumbs as $bread) {
-                            if ($bread['name'] != null) {
-                                echo "<li><a tabindex='{$i}' hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
-                                $i = $i + 1;
-                            }
+                                echo "<li><a hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
                         }
                     }
                 echo "</ul>";
@@ -62,12 +59,12 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 /**
                  * All messages passed from $this->getLayoutMessages() plugin method are showed with this code
                  */
-                if ($view->flashMessages) {
-                    foreach ($view->flashMessages->getCurrentMessages() as $context => $message) {
-                        echo "<div class='{$view->flashMessages->getNamespace()}'>
+                if ($this->layout()->flashMessages) {
+                    foreach ($this->layout()->flashMessages->getCurrentMessages() as $context => $message) {
+                        echo "<div class='{$this->layout()->flashMessages->getNamespace()}'>
                                 <ul>
                                     <li role='alert'>
-                                        <i class='fa-fw fa fa-{$view->flashMessages->getNamespace()}'></i>{$message}
+                                        <i class='fa-fw fa fa-{$this->layout()->flashMessages->getNamespace()}'></i>{$message}
                                         <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' type='button' class='btn btn-default close close'><i class='fa fa-times'></i></button>
                                     </li>
                                 </ul>

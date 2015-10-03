@@ -27,7 +27,7 @@ class LanguageTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new Language());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('language', $db, null, $resultSetPrototype);
         $table = new LanguageTable($tableGateway);

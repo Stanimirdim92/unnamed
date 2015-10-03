@@ -24,7 +24,6 @@ class ApplicationSessionFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator = null)
     {
         $sessionConfig = new SessionConfig();
-        $func = $serviceLocator->get("ControllerPluginManager")->get("getfunctions");
         $sessionConfig->setOptions([
             'cookie_lifetime'         => 7200, //2hrs
             'remember_me_seconds'     => 7200, //2hrs This is also set in the login controller
@@ -33,11 +32,31 @@ class ApplicationSessionFactory implements FactoryInterface
             'cookie_path'             => "/",
             'cookie_httponly'         => true,
             'name'                    => '__zpc',
-            'cookie_secure'           => $func::isSSL(),
+            'cookie_secure'           => self::isSSL(),
             'hash_bits_per_character' => 6,
+            'hash_function'           => 1,
         ]);
         $sessionManager = new SessionManager($sessionConfig);
 
         return $sessionManager;
+    }
+
+    /**
+     * Detect SSL/TLS protocol. If true activate cookie_secure key.
+     * Same code as the one from Functions.php, but this way it's skips the call to SM. It saves 3 function calls.
+     *
+     * @return bool
+     */
+    private static function isSSL()
+    {
+        $stats = false;
+        if (isset($_SERVER['HTTPS'])) {
+            if ('on' == strtolower($_SERVER['HTTPS']) || '1' == $_SERVER['HTTPS']) {
+                $stats = true;
+            }
+        } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
+            $stats = true;
+        }
+        return $stats;
     }
 }

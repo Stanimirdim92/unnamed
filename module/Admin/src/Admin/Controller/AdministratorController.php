@@ -38,8 +38,8 @@ final class AdministratorController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
+        parent::onDispatch($e);
     }
 
     /**

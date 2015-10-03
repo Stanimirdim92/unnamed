@@ -11,21 +11,21 @@
 
 namespace Application\Controller\Plugin\Factory;
 
-use Application\Controller\Plugin\Functions;
+use Application\Controller\Plugin\SystemSettings;
 use Zend\Mvc\Controller\PluginManager;
 
-class FunctionsFactory
+class SystemSettingsFactory
 {
     /**
      * @{inheritDoc}
      */
     public function __invoke(PluginManager $pluginManager)
     {
-        $serviceLocator = $pluginManager->getServiceLocator();
+        $serviceLocator = $pluginManager->getController()->getServiceLocator();
 
-        $adapter = $serviceLocator->get('SD\Adapter');
+        $config = $serviceLocator->get("Config");
 
-        $plugin = new Functions($adapter);
+        $plugin = new SystemSettings($config["system_config"]);
 
         return $plugin;
     }

@@ -129,4 +129,6 @@ return [
     'DEACTIVATED' => 'Deactivated',
     'AUTHOR' => "Author",
     'SETTINGS' => "Settings",
+    'TOKEN_MISMATCH' => "Token misatch",
+    'DISABLE' => "Disable",
 ];

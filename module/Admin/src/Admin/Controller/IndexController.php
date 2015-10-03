@@ -21,7 +21,7 @@ class IndexController extends AbstractActionController
     /**
      * @var ViewModel $view creates instance to view model
      */
-    protected $view = null;
+    private $view = null;
 
     /**
      * @var $menuIncrementHack Used increment the menu and stop the second show up of home, login and logout links...
@@ -55,12 +55,11 @@ class IndexController extends AbstractActionController
      */
     public function onDispatch(MvcEvent $e)
     {
-        $this->addBreadcrumb(["reference" => "/admin", "name" => $this->translate("DASHBOARD")]);
+        parent::onDispatch($e);
         if (APP_ENV !== 'development') {
             $this->isAdmin();
         }
 
-        parent::onDispatch($e);
         $this->initMenus();
         $this->getView()->breadcrumbs = $this->breadcrumbs;
     }
@@ -82,7 +81,7 @@ class IndexController extends AbstractActionController
                 $menus['menus'][$submenus->getId()] = $submenus;
                 $menus['submenus'][$submenus->getParent()][] = $submenus->getId();
             }
-            $this->getView()->menu = $this->generateMenu(0, $menus);
+            $this->getView()->menuAdmin = $this->generateMenu(0, $menus);
         }
         return $this->getView();
     }

@@ -25,7 +25,7 @@ use Application\Exception\RuntimeException;
 final class LoginController extends IndexController
 {
     /**
-     * @var Zend\Db\Adapter\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
+     * @var SD\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
      */
     private $adapter = null;
 
@@ -46,7 +46,7 @@ final class LoginController extends IndexController
 
     /**
      * @param LoginForm $contactForm
-     * @param Zend\Db\Adapter\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
+     * @param SD\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
      * @param ResetPasswordForm $resetPasswordForm
      * @param NewPasswordForm $newPasswordForm
      */
@@ -207,7 +207,7 @@ final class LoginController extends IndexController
          * Check string bytes length
          */
         if ($func::strLength($token) !== 64) {
-            throw new RuntimeException("Wrong token");
+            throw new RuntimeException($this->translate("TOKEN_MISMATCH"));
         }
 
         /**
@@ -294,7 +294,7 @@ final class LoginController extends IndexController
                 $existingEmail = $this->getTable("User")->fetchList(false, [], ["email" => $formData["email"]])->current();
                 if (count($existingEmail) === 1) {
                     $func = $this->getFunctions();
-                    $token = $func::generateToken(48); // returns base64 string
+                    $token = $func::generateToken()
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
                     $resetpw->setToken($token);
@@ -303,7 +303,7 @@ final class LoginController extends IndexController
                     $resetpw->setIp($remote->getIpAddress());
                     $this->getTable("resetpassword")->saveResetPassword($resetpw);
                     $message = $this->translate("NEW_PW_TEXT")." ".$_SERVER["SERVER_NAME"]."/login/newpassword/token/{$token}";
-                    $result = $this->Mailing()->sendMail($formData["email"], $existingEmail->getFullName(),  $this->translate("NEW_PW_TITLE"), $message, "noreply@".$_SERVER["SERVER_NAME"], $_SERVER["SERVER_NAME"]);
+                    $result = $this->Mailing()->sendMail($formData["email"], $existingEmail->getFullName(),  $this->translate("NEW_PW_TITLE"), $message, $this->systemSettings("general", "system_email"), $this->systemSettings("general", "site_name"));
                     if (!$result) {
                         $this->setLayoutMessages($this->translate("EMAIL_NOT_SENT"), 'error');
                     } else {

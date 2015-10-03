@@ -49,8 +49,8 @@ final class ContentController extends IndexController
      */
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
-        parent::onDispatch($e);
         $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>$this->translate("CONTENTS")]);
+        parent::onDispatch($e);
     }
 
     /**

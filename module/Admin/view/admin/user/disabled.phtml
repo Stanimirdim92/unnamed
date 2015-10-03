@@ -6,11 +6,11 @@
     </p>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell"><?=$this->translate("NAME")?></li>
-            <li class="table-cell"><?=$this->translate("EMAIL")?></li>
-            <li class="table-cell"><?=$this->translate("DETAILS")?></li>
-            <li class="table-cell"><?=$this->translate("MODIFY")?></li>
-            <li class="table-cell"><?=$this->translate("ENABLE")?></li>
+            <li class="table-cell flex-2"><?=$this->translate("NAME")?></li>
+            <li class="table-cell flex-2"><?=$this->translate("EMAIL")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("ENABLE")?></li>
         </ul>
 <?php
     /**
@@ -19,25 +19,21 @@
     foreach($this->paginator as $user) {
 ?>
         <ul class="table-row">
-            <li class="table-cell"><?=$user->getId()?></li>
-            <li class="table-cell"><?=$user->getFullName()?></li>
-            <li class="table-cell"><?=$user->getEmail()?></li>
-            <li class="table-cell"><?=$user->getLastLogin()?></li>
-            <li class="table-cell"><?php if ($user->getDeleted()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
-            <li class="table-cell"><?=$user->getRegistered()?></li>
-            <li class="table-cell">
+            <li class="table-cell flex-2"><?=$user->getFullName()?></li>
+            <li class="table-cell flex-2"><?=$user->getEmail()?></li>
+            <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "detail", "id" => $user->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
-            <li class="table-cell">
+            <li class="table-cell flex-b">
                 <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
-            <li class="table-cell">
-                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
+            <li class="table-cell flex-b">
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm success enable dialog_delete' title='<?=$this->translate("ENABLE")?>'><i class='fa fa-plus'></i></button>
                 <div role="alertdialog" aria-labelledby="dialog<?=$user->getId()?>Title" id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
                    <p id="dialog<?=$user->getId()?>Title"><?=$this->translate("ENABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn enable' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "enable", "id" => $user->getId()])?>'><i class='fa fa-plus'></i> <?=$this->translate("ENABLE")?></a>
+                            <a class='btn success enable' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "enable", "id" => $user->getId()])?>'><i class='fa fa-plus'></i> <?=$this->translate("ENABLE")?></a>
                         </li>
                         <li>
                             <role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>

@@ -18,12 +18,12 @@ use Zend\Mvc\Controller\Plugin\Params;
 final class GetUrlParams extends AbstractPlugin
 {
     /**
-     * @var Params $param
+     * @var Params $params
      */
     private $params = null;
 
     /**
-     * @param Params $param
+     * @param Params $params
      */
     public function __construct(Params $params = null)
     {

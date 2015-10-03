@@ -100,13 +100,13 @@ final class Functions extends AbstractPlugin
     }
 
     /**
-     * Generate a random 48 chars long string via the OpenSSL|MCRYPT|M_RAND functions. and return a base64 encode of it.
+     * Generate a random string via the OpenSSL|MCRYPT|M_RAND functions. and return a base64 encode of it.
      *
      * @return string
      */
     public static function generateToken()
     {
-        return base64_encode(Rand::getBytes(48, true));
+        return base64_encode(Rand::getBytes(mt_rand(1,999999), true));
     }
 
     /**
@@ -116,13 +116,14 @@ final class Functions extends AbstractPlugin
      */
     public static function isSSL()
     {
+        $stats = false;
         if (isset($_SERVER['HTTPS'])) {
             if ('on' == strtolower($_SERVER['HTTPS']) || '1' == $_SERVER['HTTPS']) {
-                return true;
+                $stats = true;
             }
         } elseif (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
-            return true;
+            $stats = true;
         }
-        return false;
+        return $stats;
     }
 }

@@ -28,51 +28,21 @@ return [
                     'default' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '[:controller[/][:action[/[:id][token/:token][:title]][search/:search]]]',
+                            'route'    => '[:controller[/][:action[/[:id][token/:token][:post][:title]][/][page/:page][search/:search]]]',
                             'constraints' => [
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'token'      => '[a-zA-Z][a-zA-Z-+_/&0-9]*',
                                 'title'      => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'post'       => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'id'         => '[a-zA-Z][0-9]+',
+                                'page'       => '[0-9]+',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'Application\Controller',
                                 'controller'    => 'Index',
                                 'action'        => 'index',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'news' => [
-                'type'    => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/news',
-                    'constraints' => [
-                        'post' => '[a-zA-Z0-9_-]*',
-                        'page' => '[0-9]+',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Application\Controller\News',
-                        'action'     => 'post',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'default' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/[post/:post][page/:page]',
-                            'constraints' => [
-                                'post' => '[a-zA-Z0-9_-]*',
-                                'page' => '[0-9]+',
-                            ],
-                            'defaults' => [
-                                '__NAMESPACE__' => 'Application\Controller',
-                                'controller'    => 'News',
-                                'action'        => 'post',
                             ],
                         ],
                     ],

@@ -15,6 +15,7 @@ use Zend\Session\Container;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Escaper\Escaper;
 
 class IndexController extends AbstractActionController
 {
@@ -47,7 +48,6 @@ class IndexController extends AbstractActionController
     /**
      * @param MvcEvent $e
      *
-     * @return ViewModel
      */
     public function onDispatch(MvcEvent $e)
     {
@@ -65,8 +65,6 @@ class IndexController extends AbstractActionController
         if (($this->params('action') != "title") && ($this->params('action') != "post")) {
             $this->initMetaTags();
         }
-
-        return $this->getView();
     }
 
 /****************************************************
@@ -107,7 +105,7 @@ class IndexController extends AbstractActionController
     private function generateMenu($parent = 0, array $menu = [], $ariaRole = "menubar")
     {
         $output = "";
-        $escaper = new \Zend\Escaper\Escaper('utf-8');
+        $escaper = new Escaper('utf-8');
         if (isset($menu["submenus"][$parent])) {
             $output .= "<ul role='{$ariaRole}'>";
 

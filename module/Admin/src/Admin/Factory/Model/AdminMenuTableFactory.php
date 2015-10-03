@@ -27,7 +27,7 @@ class AdminMenuTableFactory implements FactoryInterface
     {
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new AdminMenu());
-        $db = $sm->get('Zend\Db\Adapter\Adapter');
+        $db = $sm->get('SD\Adapter');
 
         $tableGateway = new TableGateway('adminmenu', $db, null, $resultSetPrototype);
         $table = new AdminMenuTable($tableGateway);
