@@ -87,7 +87,7 @@
              */
             $("#imgajax").on("change", function (event) {
                 event.preventDefault();
-                $("#content").submit();
+                $("#ajaxform").submit();
 
                 /**
                  * Clear file input
@@ -104,7 +104,7 @@
              *
              * @return {void}
              */
-            $("#content").on("submit", function (event) {
+            $("#ajaxform").on("submit", function (event) {
                 event.preventDefault();
 
                 /**

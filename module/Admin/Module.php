@@ -11,7 +11,6 @@
 
 namespace Admin;
 
-use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -28,7 +27,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
-        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, "dispatch", function (EventInterface $e) {
             $e->getTarget()->layout('layout/admin');
         });
     }
@@ -40,9 +39,8 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function onBootstrap(EventInterface $e)
     {
-        $app = $e->getApplication();
-        $em = $app->getEventManager();
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
+        $em = $e->getApplication()->getEventManager();
+        $em->attach("dispatch.error", [$this, "onError"]);
     }
 
     /**
@@ -62,14 +60,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     }
 
     /**
-     * @return array|\Traversable
-     */
-    public function getConfig()
-    {
-        return include __DIR__.'/config/module.config.php';
-    }
-
-    /**
      * Return an array for passing to Zend\Loader\AutoloaderFactory.
      *
      * @return array
@@ -86,5 +76,13 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array|\Traversable
+     */
+    public function getConfig()
+    {
+        return include __DIR__.'/config/module.config.php';
     }
 }

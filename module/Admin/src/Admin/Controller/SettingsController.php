@@ -145,7 +145,8 @@ final class SettingsController extends IndexController
     private function initForm($form, $actionKey = 'general')
     {
         $form->get("submit")->setValue($this->translate("MODIFY"));
-        $settings = include "config/autoload/system.local.php";
+        $filename = "config/autoload/system.local.php";
+        $settings = include $filename;
         $this->getView()->form = $form;
 
         if ($this->getRequest()->isPost()) {
@@ -158,12 +159,11 @@ final class SettingsController extends IndexController
                 unset($formData["submit"], $formData["s"]);
                 $settings["system_config"][$actionKey] = array_merge($settings["system_config"][$actionKey], $formData);
 
-                file_put_contents("config/autoload/system.local.php", '<?php return '.var_export($settings, true).';');
+                file_put_contents($filename, '<?php return '.var_export($settings, true).';');
                 $this->setLayoutMessages($this->translate("SETTINGS")." ".$this->translate("SAVE_SUCCESS"), 'success');
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'settings', 'action' => $actionKey]);
         }
     }
 }

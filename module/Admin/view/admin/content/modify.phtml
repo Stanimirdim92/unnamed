@@ -29,11 +29,11 @@
             echo $this->formHidden($form->get("id"));
             echo $this->formRow($form->get("s"));
 
-            include __DIR__."/imgupload.phtml";
-
-            echo "<label><span>".$this->translate("AUTHOR")."</span>".$this->content->getAuthor()."</label>";
+            echo "<label><span>".$this->translate("AUTHOR")."</span> ".$this->content->getAuthor()."</label>";
 
             echo $this->form()->closeTag();
+
+            include __DIR__."/imgupload.phtml";
 ?>
     </div>
 </div>

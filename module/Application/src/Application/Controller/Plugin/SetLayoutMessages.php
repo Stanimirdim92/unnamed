@@ -62,13 +62,17 @@ final class SetLayoutMessages extends AbstractPlugin
     {
         $this->flashMessenger->setNamespace($namespace);
 
+        if (!in_array($namespace, ["success", "error", "warning", 'info', 'default'])) {
+            $namespace = 'default';
+        }
+
         $iterator = new \RecursiveArrayIterator((array) $message);
 
         while ($iterator->valid()) {
             if ($iterator->hasChildren()) {
                 $this->__invoke($iterator->getChildren(), $namespace);
             } else {
-                $this->flashMessenger->addMessage($iterator->current(), $namespace);
+                $this->flashMessenger->addMessage($iterator->current(), $namespace, 10);
             }
             $iterator->next();
         }

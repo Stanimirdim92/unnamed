@@ -1,14 +1,14 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell flex-2"><?=$this->translate("MENU_ORDER")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("CAPTION")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("CONTROLLER")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("ACTION")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("CLASS")?></li>
-			<li class="table-cell flex-2"><?=$this->translate("DETAILS")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("MODIFY")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("DELETE")?></li>
+            <li class="table-cell"><?=$this->translate("MENU_ORDER")?></li>
+            <li class="table-cell"><?=$this->translate("CAPTION")?></li>
+            <li class="table-cell"><?=$this->translate("CONTROLLER")?></li>
+            <li class="table-cell"><?=$this->translate("ACTION")?></li>
+            <li class="table-cell"><?=$this->translate("CLASS")?></li>
+			<li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("DELETE")?></li>
         </ul>
 <?php
 
@@ -19,20 +19,20 @@ if (count($this->menus)) {
         foreach($this->menus as $adminMenu) {
 ?>
             <ul class="table-row">
-                <li class="table-cell flex-2"><?=$adminMenu->getMenuOrder()?></li>
-                <li class="table-cell flex-2"><?=$adminMenu->getCaption()?></li>
-                <li class="table-cell flex-2"><?=$adminMenu->getController()?></li>
-                <li class="table-cell flex-2"><?=$adminMenu->getAction()?></li>
-                <li class="table-cell flex-2"><?=$adminMenu->getClass()?></li>
-                <li class="table-cell flex-2">
+                <li class="table-cell"><?=$adminMenu->getMenuOrder()?></li>
+                <li class="table-cell"><?=$adminMenu->getCaption()?></li>
+                <li class="table-cell"><?=$adminMenu->getController()?></li>
+                <li class="table-cell"><?=$adminMenu->getAction()?></li>
+                <li class="table-cell"><?=$adminMenu->getClass()?></li>
+                <li class="table-cell flex-b">
                     <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $adminMenu->getId()])?>'><i class='fa fa-info'></i></a>
                 </li>
-                <li class="table-cell flex-2">
+                <li class="table-cell flex-b">
                     <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $adminMenu->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
                 </li>
-                <li class='table-cell flex-2'>
-                    <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$adminMenu->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                        <div role="alertdialog" aria-labelledby="dialog<?=$adminMenu->getId()?>Title" id='delete_delete_<?=$adminMenu->getId()?>' class='dialog_hide'>
+                <li class='table-cell flex-b'>
+                    <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='<?=$adminMenu->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
+                        <div role="alertdialog" aria-labelledby="dialog<?=$adminMenu->getId()?>Title" class='delete_<?=$adminMenu->getId()?> dialog_hide'>
                            <p id="dialog<?=$adminMenu->getId()?>Title"><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$adminMenu->getCaption()?>&raquo;</p>
                             <ul>
                                 <li>
@@ -53,20 +53,20 @@ if (count($this->menus)) {
                 foreach($this->submenus[$adminMenu->getId()] as $sub) {
 ?>
                     <ul class="table-row">
-                        <li class="table-cell flex-2"><?=$sub->getMenuOrder()?></li>
-                        <li class="table-cell flex-2"><?=$sub->getCaption()?></li>
-                        <li class="table-cell flex-2"><?=$sub->getController()?></li>
-                        <li class="table-cell flex-2"><?=$sub->getAction()?></li>
-                        <li class="table-cell flex-2"><?=$sub->getClass()?></li>
-                        <li class="table-cell flex-2">
+                        <li class="table-cell"><?=$sub->getMenuOrder()?></li>
+                        <li class="table-cell"><?=$sub->getCaption()?></li>
+                        <li class="table-cell"><?=$sub->getController()?></li>
+                        <li class="table-cell"><?=$sub->getAction()?></li>
+                        <li class="table-cell"><?=$sub->getClass()?></li>
+                        <li class="table-cell flex-b">
                             <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $sub->getId()])?>'><i class='fa fa-info'></i></a>
                         </li>
-                        <li class="table-cell flex-2">
+                        <li class="table-cell flex-b">
                             <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $sub->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
                         </li>
-                        <li class='table-cell flex-2'>
-                            <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$sub->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                                <div role="alertdialog" aria-labelledby="dialog<?=$sub->getId()?>Title" id='delete_delete_<?=$sub->getId()?>' class='dialog_hide'>
+                        <li class='table-cell flex-b'>
+                            <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='<?=$sub->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
+                                <div role="alertdialog" aria-labelledby="dialog<?=$sub->getId()?>Title" class='delete_<?=$sub->getId()?> dialog_hide'>
                                    <p id="dialog<?=$adminMenu->getId()?>Title"><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$sub->getCaption()?>&raquo;</p>
                                     <ul>
                                         <li>

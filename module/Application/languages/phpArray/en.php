@@ -37,7 +37,7 @@
     'USER_DISABLE_SUCCESS' => 'User was successfully disabled',
     'CANCEL' => 'Cancel',
     'DELETE' => 'Delete',
-    'DELETE_CONFIRM_TEXT' => 'was successfully deleted',
+    'DELETE_CONFIRM_TEXT' => 'Are you sure you want to delete',
     'BACK' => 'Back',
     'CAPTION' => 'Caption',
     'MENU_ORDER' => 'Menu order',

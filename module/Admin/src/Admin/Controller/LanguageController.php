@@ -93,7 +93,6 @@ final class LanguageController extends IndexController
     {
         $this->getTable("language")->deleteLanguage((int)$this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
     }
 
     /**
@@ -148,7 +147,6 @@ final class LanguageController extends IndexController
                 file_put_contents($filename, '<?php return ' . var_export($arr2, true).';');
                 $this->setLayoutMessages($this->translate("TRANSLATIONS_SAVE_SUCCESS"), "success");
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
         }
         return $this->getView();
     }
@@ -175,13 +173,12 @@ final class LanguageController extends IndexController
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if ($form->isValid()) {
+            if (!$form->isValid()) {
                 $this->getTable("language")->saveLanguage($language);
                 $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'language']);
         }
     }
 }

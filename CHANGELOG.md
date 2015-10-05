@@ -1,7 +1,7 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.15 (02.10.2015) - Stable Alpha
+## 0.0.15 (05.10.2015) - Stable Alpha
 - Options controller, which will handle all the options across the CMS
 - Renamed Zend\Db\Adapter\Adapter to SD\Adapter to avoid name collisions
 - Moved news route into application and devided the logic in separated view files
@@ -9,6 +9,9 @@ DD.MM.YYYY
 - Created SystemSettings plugin.
 - Added flexbox.
 - Added few more ARIA roles
+- Separated content and image ajax forms
+- Removed init_autoloader.php and updated public/index.php
+- Fixed button events not triggered after DOM manipulation with AJAX
 
 DD.MM.YYYY
 ## 0.0.14 (28.09.2015) - Stable Alpha
@@ -156,6 +159,4 @@ DD.MM.YYYY
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - Social networks controller or module
- - Better http://schema.org/
- - Win 8 default png tile cms image
  - Voice Search

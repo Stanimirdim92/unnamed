@@ -1,8 +1,8 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell flex-2"><?=$this->translate("NAME");?></li>
-            <li class="table-cell flex-2"><?=$this->translate("ACTIVE");?></li>
+            <li class="table-cell"><?=$this->translate("NAME");?></li>
+            <li class="table-cell"><?=$this->translate("ACTIVE");?></li>
             <li class="table-cell flex-b"><?=$this->translate("DETAILS");?></li>
             <li class="table-cell flex-b"><?=$this->translate("MODIFY");?></li>
             <li class="table-cell flex-b"><?=$this->translate("DELETE");?></li>
@@ -14,8 +14,8 @@
         foreach($this->paginator as $language) {
 ?>
         <ul class="table-row">
-            <li class="table-cell flex-2"><?=$language->getName()?></li>
-            <li class="table-cell flex-2">
+            <li class="table-cell"><?=$language->getName()?></li>
+            <li class="table-cell">
                 <?php if (($language->getActive())) {?><i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i><?php } ?></li>
             <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "detail", "id" => $language->getId()])?>'><i class='fa fa-info'></i></a>
@@ -24,8 +24,8 @@
                 <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "modify", "id" => $language->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell flex-b">
-                <button id='delete_<?=$language->getId()?>' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                <div id='delete_delete_<?=$language->getId()?>' class='dialog_hide'>
+                <button id='<?=$language->getId()?>' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
+                <div class='delete_<?=$language->getId()?> dialog_hide'>
                     <p><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$language->getName()?>&raquo;</p>
                     <ul>
                         <li>

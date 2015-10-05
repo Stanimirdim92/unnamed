@@ -88,8 +88,8 @@ final class MenuController extends IndexController
                 }
                 $output .= "
                 <li class='table-cell flex-b'>
-                    <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='delete_{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
-                        <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]['id']}Title' id='delete_delete_{$menu['menus'][$id]['id']}' class='dialog_hide'>
+                    <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
+                        <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]['id']}Title' class='delete_{$menu['menus'][$id]['id']} dialog_hide'>
                            <p id='dialog{$menu['menus'][$id]['id']}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
                             <ul>
                                 <li>
@@ -157,14 +157,12 @@ final class MenuController extends IndexController
     {
         $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("MENU_DISABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
 
     protected function activateAction()
     {
         $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("MENU_ENABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
 
     /**
@@ -174,7 +172,6 @@ final class MenuController extends IndexController
     {
         $this->getTable("menu")->deleteMenu((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_MENU_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
 
     /**
@@ -198,7 +195,6 @@ final class MenuController extends IndexController
     {
         $menu = $this->getTable("menu")->duplicate((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
     }
 
     /**
@@ -227,14 +223,6 @@ final class MenuController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                // see if we have menu with the exact same caption.
-                if ((string) $this->getParam("action") === 'add') {
-                    $existingMenu = $this->getTable('menu')->fetchList(false, ['menulink', 'menutype', 'language', 'parent'], ["parent" => 0, "language" => $this->language(), "menutype" => $formData->getMenuType(), "menulink" => $formData->getMenuLink()], "AND", null);
-                    if (count($existingMenu) > 0) {
-                        $this->setLayoutMessages($this->translate("MENU_WITH_NAME")." &laquo; ".$formData->getCaption()." &raquo; ".$this->translate("ALREADY_EXIST"), 'warning');
-                        return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
-                    }
-                }
                 $this->getTable("menu")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);

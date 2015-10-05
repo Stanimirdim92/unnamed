@@ -94,7 +94,6 @@ final class AdministratorController extends IndexController
         $userTable->saveUser($user);
         $this->getTable("administrator")->deleteAdministrator($id);
         $this->setLayoutMessages($this->translate("DELETE_ADMINISTRATOR_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
     }
 
     /**
@@ -170,8 +169,7 @@ final class AdministratorController extends IndexController
                         $user->setAdmin(0);
                         $this->getTable("user")->saveUser($user);
                         $this->getTable("administrator")->deleteAdministrator($user->getId());
-                        $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
-                        return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
+                        return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
                     }
 
                     /*
@@ -191,7 +189,6 @@ final class AdministratorController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'administrator']);
         }
     }
 }

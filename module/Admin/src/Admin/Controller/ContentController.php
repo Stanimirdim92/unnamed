@@ -62,10 +62,14 @@ final class ContentController extends IndexController
     {
         $this->getView()->setTemplate("admin/content/index");
         if ((int) $this->getParam("id", 0) === 1) {
-            $this->getView()->contents = $this->getTable("content")->fetchList(false, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
+            $paginator = $this->getTable("content")->fetchList(true, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
         } else {
-            $this->getView()->contents = $this->getTable("content")->fetchJoin(false, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $paginator = $this->getTable("content")->fetchJoin(true, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
+
+        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        $paginator->setItemCountPerPage($this->systemSettings('posts', 'content'));
+        $this->getView()->paginator = $paginator;
         return $this->getView();
     }
 
@@ -107,7 +111,6 @@ final class ContentController extends IndexController
     {
         $this->getTable("content")->deleteContent((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -128,14 +131,12 @@ final class ContentController extends IndexController
     {
         $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("CONTENT_DISABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     protected function activateAction()
     {
         $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("CONTENT_ENABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -145,7 +146,6 @@ final class ContentController extends IndexController
     {
         $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language())->current();
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
     }
 
     /**
@@ -196,16 +196,15 @@ final class ContentController extends IndexController
                     $name = "Admin";
                 }
 
-                /**
+                /*
                  * We only need the name. All images ar stored in the same folder, based on the month and year
                  */
                 $formData->setPreview($formData->getPreview()["name"]);
                 $formData->setAuthor($name);
                 $this->getTable("content")->saveContent($content);
                 $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
-                return $this->redirect()->toRoute('admin/default', ['controller' => 'content']);
             } else {
-                return $this->setLayoutMessages($form->getMessages(), "error");
+                $this->setLayoutMessages($form->getMessages(), "error");
             }
         }
     }
@@ -241,12 +240,10 @@ final class ContentController extends IndexController
             $data = $request->getPost()->toArray();
 
             if ($request->isXmlHttpRequest()) {
-                // @codeCoverageIgnoreStart
                 if (is_file("public".$data["img"])) {
                     unlink("public".$data["img"]);
                     $status = true;
                 }
-                // @codeCoverageIgnoreEnd
             }
         }
         return $status;

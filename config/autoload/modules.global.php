@@ -35,7 +35,6 @@ return [
             'Mailing'           => 'Application\Controller\Plugin\Factory\MailingFactory',
             'UserData'          => 'Application\Controller\Plugin\Factory\UserDataFactory',
             'setLayoutMessages' => 'Application\Controller\Plugin\Factory\SetLayoutMessagesFactory',
-            'getLayoutMessages' => 'Application\Controller\Plugin\Factory\GetLayoutMessagesFactory',
             'InitMetaTags'      => 'Application\Controller\Plugin\Factory\InitMetaTagsFactory',
             'getParam'          => 'Application\Controller\Plugin\Factory\GetUrlParamsFactory',
             'getTable'          => 'Application\Controller\Plugin\Factory\GetTableModelFactory',

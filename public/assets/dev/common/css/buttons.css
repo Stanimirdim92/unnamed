@@ -83,9 +83,9 @@ button.add-new-translation {
     border-color: #540114
 }
 
-.success, .active {
+.success, .active, .enable {
     color: #FFF;
-    background: #2ECC71;
+    background: #5cb85c;
 }
 
 .error, .deactivated {

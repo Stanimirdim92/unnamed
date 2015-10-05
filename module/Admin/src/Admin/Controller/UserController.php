@@ -105,7 +105,6 @@ final class UserController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
         }
     }
 
@@ -129,7 +128,6 @@ final class UserController extends IndexController
     {
         $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
 
     /**
@@ -139,7 +137,6 @@ final class UserController extends IndexController
     {
         $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'user']);
     }
 
     /**
@@ -163,27 +160,75 @@ final class UserController extends IndexController
      */
     protected function searchAction()
     {
-        $search = (string) $this->getParam('usersearch', null);
+        $search = (string) $this->getParam('ajaxsearch', null);
         if (isset($search)) {
             if ($this->getRequest()->isXmlHttpRequest()) {
                 $this->getView()->setTerminal(true);
                 $where = "`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%'";
-                $results = $this->getTable("user")->fetchList(false, [], $where, "OR", null, "id DESC");
+                $results = $this->getTable("user")->fetchList(false, ["id", "name", "email", "deleted"], $where, "OR", null, "id DESC");
 
                 $json = [];
-                foreach ($results as $result) {
-                    $json[] = Json::encode($result);
+                $success = false;
+
+                if ($results) {
+                    foreach ($results as $key => $result) {
+                        $json[$key]["id"] = $result->getId();
+                        $json[$key]["name"] = $result->getName();
+                        $json[$key]["email"] = $result->getEmail();
+                        $json[$key]["buttons"] = $this->htmlButtons($result->getId(), $result->getFullName(), $result->getDeleted());
+                    }
+                    $success = true;
                 }
 
                 return new JsonModel([
-                    'usersearch' => $json,
-                    'cancel' => $this->translate("CANCEL"),
-                    'deleteuser' => $this->translate("DELETE"),
-                    'modify' => $this->translate("MODIFY_USER"),
-                    'details' => $this->translate("DETAILS"),
-                    'delete_text' => $this->translate("DELETE_CONFIRM_TEXT"),
+                    'ajaxsearch' =>  Json::encode($json),
+                    'statusType' => $success,
                 ]);
             }
         }
+    }
+
+    /**
+     * Used to generade buttons for every user row
+     *
+     * @method htmlButtons
+     *
+     * @param int $id
+     * @param string $fullName
+     * @param int $userStatus
+     *
+     * @return string
+     */
+    private function htmlButtons($id, $fullName, $userStatus)
+    {
+        $action = 'disable';
+        $class = 'delete';
+        $i18n = "DISABLE";
+        if ($userStatus === 1) {
+            $action = 'enable';
+            $class = 'enable';
+            $i18n = "ENABLE";
+        }
+
+        return "<li class='table-cell flex-b'>
+                <a title='{$this->translate('DETAILS')}' class='btn blue btn-sm' href='/admin/user/detail/{$id}'><i class='fa fa-info'></i></a>
+            </li>
+            <li class='table-cell flex-b'>
+                <a title='{$this->translate('MODIFY_USER')}' href='/admin/user/modify/{$id}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+            </li>
+            <li class='table-cell flex-b'>
+                <button role='button' aria-pressed='false' aria-label='{$this->translate("$i18n")}' id='{$id}' type='button' class='btn btn-sm {$class} dialog_delete' title='{$this->translate("$i18n")}'><i class='fa fa-trash-o'></i></button>
+                <div role='alertdialog' aria-labelledby='dialog{$id}Title' class='delete_{$id} dialog_hide'>
+                   <p id='dialog{$id}Title'>{$this->translate("$i18n".'_CONFIRM_TEXT')} &laquo;{$fullName}&raquo;</p>
+                    <ul>
+                        <li>
+                            <a class='btn {$class}' href='/admin/user/{$action}/{$id}'><i class='fa fa-trash-o'></i> {$this->translate("$i18n")}</a>
+                        </li>
+                        <li>
+                            <button role='button' aria-pressed='false' aria-label='{$this->translate('CANCEL')}' type='button' title='{$this->translate('CANCEL')}' class='btn btn-default cancel'><i class='fa fa-times'></i> {$this->translate('CANCEL')}</button>
+                        </li>
+                    </ul>
+                </div>
+            </li>";
     }
 }

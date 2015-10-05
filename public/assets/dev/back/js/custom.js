@@ -28,30 +28,30 @@
         /**
          * Custom dialog window for delete button
          */
-        $(".dialog_delete").on("click", function (e) {
+        $("body").on("click", "button.dialog_delete", function (e) {
             e.preventDefault();
-            $("#delete_" + $(this).attr("id")).fadeIn(650);
+            $(".delete_" + $(this).attr("id")).fadeIn(650);
         });
 
         /*
          * Custom cancel button for delete dialog. Acts as a close button
          */
-        $(".cancel").on("click", function (e) {
+        $("body").on("click", ".cancel", function (e) {
             e.preventDefault();
             $(".dialog_hide").fadeOut(650);
         });
 
-        $(".add-translation").on("click", function (e) {
+        $("body").on("click", ".add-translation", function (e) {
             e.preventDefault();
             appendTranslationNode("#translationsArray fieldset");
         });
 
-        $(".add-new-translation").on("click", function (e) {
+        $("body").on("click", ".add-new-translation", function (e) {
             e.preventDefault();
             $(".toggle-translation-box").fadeToggle("slow");
         });
 
-        $(".translation_delete").on("click", function (e) {
+        $("body").on("click", ".translation_delete", function (e) {
             e.preventDefault();
             $(this).parent("label").remove();
         });
@@ -94,8 +94,12 @@
                         $.each($.parseJSON(result.ajaxsearch), function (key, value) {
                             var $ul = $("<ul class='table-row'>");
                             for (var property in value) {
-                                if (value.hasOwnProperty(property) && value[property]) {
-                                    $ul.append("<li data-id ='"+value["id"]+"' class='table-cell'>"+value[property]+"</li>");
+                                if (value.hasOwnProperty(property) && value[property] && property !== "id") {
+                                    if (property !== "buttons") {
+                                        $ul.append("<li class='table-cell'>"+value[property]+"</li>");
+                                    } else {
+                                        $ul.append(value["buttons"]);
+                                    }
                                 }
                             }
                             $("#results").append($ul);

@@ -206,6 +206,7 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/index/index");
+
         return $this->getView();
     }
 

@@ -10,7 +10,6 @@
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
@@ -28,7 +27,7 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
-        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function (MvcEvent $e) {
+        $moduleManager->getEventManager()->getSharedManager()->attach(__NAMESPACE__, "dispatch", function (EventInterface $e) {
             $e->getTarget()->layout('layout/layout');
         });
     }
@@ -43,14 +42,15 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         $app = $e->getApplication();
         $moduleRouteListener = new ModuleRouteListener();
         $em = $app->getEventManager();
+        $sm = $app->getServiceManager();
         $moduleRouteListener->attach($em);
 
-        $sessionManager = $app->getServiceManager()->get('initSession');
+        $sessionManager = $sm->get('initSession');
         $sessionManager->setName("zpc")->start();
         Container::setDefaultManager($sessionManager);
 
-        $em->attach(MvcEvent::EVENT_DISPATCH, [$this, 'onDispatch']);
-        $em->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, "onError"]);
+        $em->attach("dispatch", [$this, 'onDispatch']);
+        $em->attach("dispatch.error", [$this, "onError"]);
     }
 
     /**
@@ -107,14 +107,6 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
     }
 
     /**
-     * @return array|\Traversable
-     */
-    public function getConfig()
-    {
-        return include __DIR__.'/config/module.config.php';
-    }
-
-    /**
      * Return an array for passing to Zend\Loader\AutoloaderFactory.
      *
      * @return array
@@ -131,5 +123,13 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array|\Traversable
+     */
+    public function getConfig()
+    {
+        return include __DIR__.'/config/module.config.php';
     }
 }

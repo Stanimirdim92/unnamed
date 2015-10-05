@@ -1,12 +1,16 @@
 <section>
+    <form action="#" method="post">
+        <input type="search" role="search" name="user" required="required" size="40" class="user-user ajax-search" placeholder="Search for user" autocomplete="off" value="">
+    </form>
     <div class="table-style">
         <ul class="table-header">
-            <li class="table-cell flex-2"><?=$this->translate("NAME")?></li>
-            <li class="table-cell flex-2"><?=$this->translate("EMAIL")?></li>
+            <li class="table-cell"><?=$this->translate("NAME")?></li>
+            <li class="table-cell"><?=$this->translate("EMAIL")?></li>
             <li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
             <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
             <li class="table-cell flex-b"><?=$this->translate("DISABLE")?></li>
         </ul>
+        <ul id="linked">
 <?php
     /**
      * @var $user Admin\Model\User
@@ -14,8 +18,8 @@
     foreach($this->paginator as $user) {
 ?>
         <ul class="table-row">
-            <li class="table-cell flex-2"><?=$user->getFullName()?></li>
-            <li class="table-cell flex-2"><?=$user->getEmail()?></li>
+            <li class="table-cell"><?=$user->getFullName()?></li>
+            <li class="table-cell"><?=$user->getEmail()?></li>
             <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "detail", "id" => $user->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
@@ -23,15 +27,15 @@
                 <a title='<?=$this->translate("MODIFY_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "modify", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell flex-b">
-                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$user->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
-                <div role="alertdialog" aria-labelledby="dialog<?=$user->getId()?>Title" id='delete_delete_<?=$user->getId()?>' class='dialog_hide'>
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DISABLE")?>" id='<?=$user->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DISABLE")?>'><i class='fa fa-trash-o'></i></button>
+                <div role="alertdialog" aria-labelledby="dialog<?=$user->getId()?>Title" class='delete_<?=$user->getId()?> dialog_hide'>
                    <p id="dialog<?=$user->getId()?>Title"><?=$this->translate("DISABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
                         <li>
                             <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "disable", "id" => $user->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DISABLE")?></a>
                         </li>
                         <li>
-                            <role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>
+                            <button role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>
                         </li>
                     </ul>
                 </div>
@@ -40,8 +44,9 @@
 <?php
     }
 ?>
+        </ul>
+        <ul id="results"></ul>
     </div>
-    <div id="results"></div>
 </section>
 <?php
     echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin/default']);

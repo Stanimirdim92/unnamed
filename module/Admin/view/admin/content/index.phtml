@@ -1,8 +1,8 @@
 <section>
     <div class="table-style">
         <ul class="table-header">
-              <li class="table-cell flex-2"><?=$this->translate("TITLE")?></li>
-              <li class="table-cell flex-2"><?=$this->translate("DATE")?></li>
+              <li class="table-cell"><?=$this->translate("TITLE")?></li>
+              <li class="table-cell"><?=$this->translate("DATE")?></li>
               <li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
               <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
               <li class="table-cell flex-b"><?=$this->translate("ACTIVE")?></li>
@@ -12,11 +12,11 @@
         /**
          * @var $content Admin\Model\Content
          */
-        foreach($this->contents as $content) {
+        foreach($this->paginator as $content) {
 ?>
         <ul class="table-row">
-            <li class="table-cell flex-2"><?=$content->getTitle()?></li>
-            <li class="table-cell flex-2"><?=$content->getDate()?></li>
+            <li class="table-cell"><?=$content->getTitle()?></li>
+            <li class="table-cell"><?=$content->getDate()?></li>
             <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-default btn-sm' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "detail", "id" => $content->getId()])?>'>
                     <i class='fa fa-info'></i>
@@ -47,8 +47,8 @@
         }
 ?>
             <li class="table-cell flex-b">
-                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='delete_<?=$content->getId()?>' type="button" class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
-                <div role="alertdialog" aria-labelledby="dialog<?=$content->getId()?>Title" id='delete_delete_<?=$content->getId()?>' class='dialog_hide'>
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='<?=$content->getId()?>' type="button" class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>
+                <div role="alertdialog" aria-labelledby="dialog<?=$content->getId()?>Title" class='delete_<?=$content->getId()?> dialog_hide'>
                     <p id="dialog<?=$content->getId()?>Title"><?=$this->translate("DELETE_CONFIRM_TEXT")?> &laquo;<?=$content->getTitle()?>&raquo;</p>
                     <ul>
                         <li>
@@ -66,3 +66,5 @@
 ?>
     </div>
 </section>
+<?php
+    echo $this->paginationControl($this->paginator, 'sliding', 'admin/pagination', ['route' => 'admin/default']);

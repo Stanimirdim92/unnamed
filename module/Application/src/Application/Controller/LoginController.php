@@ -294,7 +294,7 @@ final class LoginController extends IndexController
                 $existingEmail = $this->getTable("User")->fetchList(false, [], ["email" => $formData["email"]])->current();
                 if (count($existingEmail) === 1) {
                     $func = $this->getFunctions();
-                    $token = $func::generateToken()
+                    $token = $func::generateToken();
                     $resetpw = new ResetPassword();
                     $remote = new RemoteAddress();
                     $resetpw->setToken($token);

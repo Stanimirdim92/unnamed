@@ -100,7 +100,6 @@ final class AdminMenuController extends IndexController
     {
         $this->getTable("adminmenu")->deleteAdminMenu((int)$this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
 
     /**
@@ -119,7 +118,6 @@ final class AdminMenuController extends IndexController
     {
         $adminmenu = $this->getTable("adminmenu")->duplicate((int)$this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
-        return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
     }
 
     /**
@@ -151,7 +149,6 @@ final class AdminMenuController extends IndexController
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
-            return $this->redirect()->toRoute('admin/default', ['controller' => 'adminmenu']);
         }
     }
 }

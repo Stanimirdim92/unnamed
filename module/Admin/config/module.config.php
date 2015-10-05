@@ -28,7 +28,7 @@ return [
                     'default' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/[:controller[/][:action[/][:id][/page/:page][/search/:search]]]',
+                            'route'    => '/[:controller[/][:action[/][:id][page/:page][/search/:search]]]',
                             'constraints' => [
                                 'controller' => '[a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z0-9_-]*',
