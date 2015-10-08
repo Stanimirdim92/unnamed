@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "268543a84de4ddc679883aea333de593",
-    "content-hash": "4ad1b6f4378ba78b197a850cba4b5ccd",
+    "hash": "0dd6b6f3a6a8443c714714155fd70033",
+    "content-hash": "709b9b64669a11450029ca3435bafdf8",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -4388,7 +4388,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "zendframework/zend-developer-tools": 20,
         "bjyoungblood/bjy-profiler": 20

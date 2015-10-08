@@ -25,7 +25,8 @@
         "zendframework/zend-developer-tools": "dev-master",
         "bjyoungblood/bjy-profiler": "dev-master",
         "san/san-session-toolbar": "0.*",
-        "fabpot/php-cs-fixer": "1.*"
+        "fabpot/php-cs-fixer": "1.*",
+        "phpunit/PHPUnit": "4.*"
     },
     "suggest": {
        "ext-mcrypt": "for encryption",
@@ -35,5 +36,6 @@
        "ext-fileinfo": "for image mimetype detection",
        "ext-pdo": "for database driver"
     },
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

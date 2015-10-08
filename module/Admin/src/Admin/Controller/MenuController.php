@@ -222,7 +222,6 @@ final class MenuController extends IndexController
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $formData = $form->getData();
                 $this->getTable("menu")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
