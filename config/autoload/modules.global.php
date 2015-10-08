@@ -18,15 +18,18 @@ return [
             'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
         ],
         'factories' => [
-            'SD\Adapter'         => 'Application\Factory\AdapterServiceFactory',
-            'AdminErrorHandling' => 'Admin\Factory\AdminErrorHandlingFactory',
-            'AdministratorTable' => 'Admin\Factory\Model\AdministratorTableFactory',
-            'ContentTable'       => 'Admin\Factory\Model\ContentTableFactory',
-            'LanguageTable'      => 'Admin\Factory\Model\LanguageTableFactory',
-            'MenuTable'          => 'Admin\Factory\Model\MenuTableFactory',
-            'UserTable'          => 'Admin\Factory\Model\UserTableFactory',
-            'AdminMenuTable'     => 'Admin\Factory\Model\AdminMenuTableFactory',
-            'translator'         => 'Zend\Mvc\Service\TranslatorServiceFactory',
+            'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterServiceFactory',
+            'AdminErrorHandling'      => 'Admin\Factory\AdminErrorHandlingFactory',
+            'AdministratorTable'      => 'Admin\Factory\Model\AdministratorTableFactory',
+            'ContentTable'            => 'Admin\Factory\Model\ContentTableFactory',
+            'LanguageTable'           => 'Admin\Factory\Model\LanguageTableFactory',
+            'MenuTable'               => 'Admin\Factory\Model\MenuTableFactory',
+            'UserTable'               => 'Admin\Factory\Model\UserTableFactory',
+            'AdminMenuTable'          => 'Admin\Factory\Model\AdminMenuTableFactory',
+            'translator'              => 'Zend\Mvc\Service\TranslatorServiceFactory',
+        ],
+        'aliases' => [
+            'SD\Adapter' => 'Zend\Db\Adapter\Adapter',
         ],
     ],
     'controller_plugins' => [
@@ -43,6 +46,9 @@ return [
             'systemSettings'    => 'Application\Controller\Plugin\Factory\SystemSettingsFactory',
         ],
     ],
+    'shared' => [
+        'InitMetaTags' => false,
+    ],
     'translator' => [
         'locale' => 'en',
         'translation_file_patterns' => [
@@ -57,7 +63,7 @@ return [
                 'name'    => 'Filesystem',
                 'options' => [
                     'cache_dir' => __DIR__ . '/../../data/cache/frontend',
-                    'ttl'       => '3600',
+                    'ttl'       => '604800',
                 ],
             ],
             'plugins' => [

@@ -71,18 +71,18 @@ final class LanguageController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Language object with a given id.
+     * This action presents a edit form for Language object with a given id.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
-        $this->getView()->setTemplate("admin/language/modify");
+        $this->getView()->setTemplate("admin/language/edit");
         $language = $this->getTable("language")->getLanguage((int)$this->getParam("id", 0));
         $this->getView()->language = $language;
-        $this->addBreadcrumb(["reference"=>"/admin/language/modify/{$language->getId()}", "name"=>$this->translate("MODIFY_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY_LANGUAGE"), $language);
+        $this->addBreadcrumb(["reference"=>"/admin/language/edit/{$language->getId()}", "name"=>$this->translate("EDIT_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
+        $this->initForm($this->translate("EDIT_LANGUAGE"), $language);
         return $this->getView();
     }
 
@@ -152,7 +152,7 @@ final class LanguageController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication).
+     * This is common function used by add and edit actions (to avoid code duplication).
      *
      * @param String $label button title
      * @param Language $language object

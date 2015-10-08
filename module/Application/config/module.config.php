@@ -30,12 +30,12 @@ return [
                         'options' => [
                             'route'    => '[:controller[/][:action[/[:id][token/:token][:post]][/page/:page][/search/:search]]]',
                             'constraints' => [
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'token'      => '[a-zA-Z][a-zA-Z-+_/&0-9]*',
-                                'post'       => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'search'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'id'         => '[a-zA-Z][0-9]+',
+                                'controller' => '[a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z0-9_-]*',
+                                'token'      => '[a-zA-Z-+_/&0-9]*',
+                                'post'       => '[a-zA-Z0-9_-]*',
+                                'search'     => '[a-zA-Z0-9_-]*',
+                                'id'         => '[0-9]+',
                                 'page'       => '[0-9]+',
                             ],
                             'defaults' => [
@@ -67,6 +67,16 @@ return [
             'Application\Controller\News'  => Controller\NewsController::class,
             'Application\Controller\Menu'  => Controller\MenuController::class,
         ],
+    ],
+    'shared' => [
+        'initSession'                         => false,
+        'ResetPasswordTable'                  => false,
+        'Application\Controller\Login'        => false,
+        'Application\Controller\Contact'      => false,
+        'Application\Controller\Registration' => false,
+        'Application\Controller\Index'        => false,
+        'Application\Controller\News'         => false,
+        'Application\Controller\Menu'         => false,
     ],
     'view_manager' => [
         'template_map' => include __DIR__ . '/../template_map.php',

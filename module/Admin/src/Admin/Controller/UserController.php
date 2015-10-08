@@ -58,23 +58,23 @@ final class UserController extends IndexController
     }
 
     /**
-     * This action presents a modify form for User object with a given id.
+     * This action presents a edit form for User object with a given id.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
-        $this->getView()->setTemplate("admin/user/modify");
+        $this->getView()->setTemplate("admin/user/edit");
         $user = $this->getTable("user")->getUser((int)$this->getParam("id", 0))->current();
         $this->getView()->user = $user;
-        $this->addBreadcrumb(["reference"=>"/admin/user/modify/{$user->getId()}", "name"=> $this->translate("MODIFY_USER")." &laquo;".$user->getName()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY_USER"), $user);
+        $this->addBreadcrumb(["reference"=>"/admin/user/edit/{$user->getId()}", "name"=> $this->translate("EDIT_USER")." &laquo;".$user->getName()."&raquo;"]);
+        $this->initForm($this->translate("EDIT_USER"), $user);
         return $this->getView();
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication).
+     * This is common function used by add and edit actions (to avoid code duplication).
      *
      * @param string $label
      * @param User $user
@@ -214,7 +214,7 @@ final class UserController extends IndexController
                 <a title='{$this->translate('DETAILS')}' class='btn blue btn-sm' href='/admin/user/detail/{$id}'><i class='fa fa-info'></i></a>
             </li>
             <li class='table-cell flex-b'>
-                <a title='{$this->translate('MODIFY_USER')}' href='/admin/user/modify/{$id}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='{$this->translate('EDIT_USER')}' href='/admin/user/edit/{$id}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class='table-cell flex-b'>
                 <button role='button' aria-pressed='false' aria-label='{$this->translate("$i18n")}' id='{$id}' type='button' class='btn btn-sm {$class} dialog_delete' title='{$this->translate("$i18n")}'><i class='fa fa-trash-o'></i></button>

@@ -80,7 +80,7 @@ final class MenuController extends IndexController
                 $output .= "<ul class='table-row'>";
                 $output .= "<li class='table-cell flex-2'>{$menu['menus'][$id]['caption']}</li>";
                 $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
-                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('MODIFY')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/modify/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
+                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('EDIT')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/edit/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
                 if ($menu['menus'][$id]['active'] == 0) {
                     $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
@@ -139,17 +139,17 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Menu object with a given id.
+     * This action presents a edit form for Menu object with a given id.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
-        $this->getView()->setTemplate("admin/menu/modify");
+        $this->getView()->setTemplate("admin/menu/edit");
         $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language())->current();
-        $this->addBreadcrumb(["reference"=>"/admin/menu/modify/{$menu->getId()}", "name"=> $this->translate("MODIFY_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY_MENU"), $menu);
+        $this->addBreadcrumb(["reference"=>"/admin/menu/edit/{$menu->getId()}", "name"=> $this->translate("EDIT_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
+        $this->initForm($this->translate("EDIT_MENU"), $menu);
         return $this->getView();
     }
 
@@ -198,7 +198,7 @@ final class MenuController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication).
+     * This is common function used by add and edit actions (to avoid code duplication).
      *
      * @param string $label button title
      * @param Menu $menu menu object
@@ -216,7 +216,7 @@ final class MenuController extends IndexController
         $form->bind($menu);
         $form->get("submit")->setValue($label);
         $this->getView()->form = $form;
-        $this->getView()->modifyMenu = $menu;
+        $this->getView()->editMenu = $menu;
 
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());

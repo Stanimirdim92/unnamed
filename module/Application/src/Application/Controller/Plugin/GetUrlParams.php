@@ -31,7 +31,7 @@ final class GetUrlParams extends AbstractPlugin
     }
 
     /**
-     * Shorthand method for getting params from URLs. Makes code easier to modify and avoids DRY code.
+     * Shorthand method for getting params from URLs. Makes code easier to edit and avoids DRY code.
      *
      * @param String $paramName
      * @param mixed $default

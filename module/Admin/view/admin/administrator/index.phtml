@@ -3,7 +3,7 @@
         <ul class="table-header">
             <li class="table-cell"><?=$this->translate("NAME")?></li>
             <li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
-            <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("EDIT")?></li>
             <li class="table-cell flex-b"><?=$this->translate("DELETE")?></li>
         </ul>
 <?php
@@ -20,7 +20,7 @@
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "detail", "id" => $administrator->getUser()])?>'> <i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell flex-b">
-                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "administrator", "action" => "modify", "id" => $administrator->getUser()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translate("EDIT")?>' href='<?=$this->url("admin/default", ['controller' => "administrator", "action" => "edit", "id" => $administrator->getUser()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell flex-b">
                 <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" type="button" title='<?=$this->translate("DELETE")?>' id='<?=$administrator->getUser()?>' class='btn btn-sm delete dialog_delete'><i class='fa fa-trash-o'></i></button>

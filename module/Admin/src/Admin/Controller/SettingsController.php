@@ -144,7 +144,7 @@ final class SettingsController extends IndexController
      */
     private function initForm($form, $actionKey = 'general')
     {
-        $form->get("submit")->setValue($this->translate("MODIFY"));
+        $form->get("submit")->setValue($this->translate("EDIT"));
         $filename = "config/autoload/system.local.php";
         $settings = include $filename;
         $this->getView()->form = $form;

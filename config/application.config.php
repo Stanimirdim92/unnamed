@@ -21,15 +21,14 @@ return [
         ],
 
         'config_glob_paths' => [
-            // 'config/autoload/{{,*.}global,{,*.}local}.php',
             'config/autoload/{,*.}{global,local}.php',
         ],
 
         'config_cache_enabled' => (APP_ENV === 'production'),
-        'config_cache_key' => md5('app_config'),
+        'config_cache_key' => 'app_config',
         'module_map_cache_enabled' => (APP_ENV === 'production'),
-        'module_map_cache_key' => md5('module_map'),
-        'cache_dir' => dirname(__DIR__)."/data/cache",
+        'module_map_cache_key' => 'module_map',
+        'cache_dir' => dirname(__DIR__)."/data/cache/modules",
         'check_dependencies' => (APP_ENV !== 'production'),
     ],
 ];

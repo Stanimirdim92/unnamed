@@ -4,7 +4,7 @@
             <li class="table-cell"><?=$this->translate("NAME");?></li>
             <li class="table-cell"><?=$this->translate("ACTIVE");?></li>
             <li class="table-cell flex-b"><?=$this->translate("DETAILS");?></li>
-            <li class="table-cell flex-b"><?=$this->translate("MODIFY");?></li>
+            <li class="table-cell flex-b"><?=$this->translate("EDIT");?></li>
             <li class="table-cell flex-b"><?=$this->translate("DELETE");?></li>
         </ul>
 <?php
@@ -21,7 +21,7 @@
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "detail", "id" => $language->getId()])?>'><i class='fa fa-info'></i></a>
             </li>
             <li class="table-cell flex-b">
-                <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "modify", "id" => $language->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                <a title='<?=$this->translate("EDIT")?>' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "edit", "id" => $language->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell flex-b">
                 <button id='<?=$language->getId()?>' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>

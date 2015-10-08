@@ -4,7 +4,7 @@
               <li class="table-cell"><?=$this->translate("TITLE")?></li>
               <li class="table-cell"><?=$this->translate("DATE")?></li>
               <li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
-              <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
+              <li class="table-cell flex-b"><?=$this->translate("EDIT")?></li>
               <li class="table-cell flex-b"><?=$this->translate("ACTIVE")?></li>
               <li class="table-cell flex-b"><?=$this->translate("DELETE")?></li>
         </ul>
@@ -23,7 +23,7 @@
                 </a>
             </li>
             <li class="table-cell flex-b">
-                <a title='<?=$this->translate("MODIFY_CONTENT");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>' class='btn btn-sm orange'>
+                <a title='<?=$this->translate("EDIT_CONTENT");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "edit", "id" => $content->getId()])?>' class='btn btn-sm orange'>
                     <i class='fa fa-pencil'></i>
                 </a>
             </li>

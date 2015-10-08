@@ -1,16 +1,16 @@
 <div>
     <p>
-        <a href="<?=$this->url("admin/default", ["controller" => "adminmenu"])?>" class="btn btn-default">
+        <a href="<?=$this->url("admin/default", ["controller" => "menu"])?>" class="btn btn-default">
             <i class="fa fa-chevron-left"></i> <?=$this->translate("BACK")?>
         </a>
     </p>
     <div class='form-inputs'>
         <?php
             /**
-             * @var Admin\Form\AdminMenuForm
+             * @var Admin\Form\MenuForm
              */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'adminmenu', 'action' => 'modify', 'id'=> $this->adminMenu->getId()]));
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'menu', 'action' => 'edit', 'id'=> $this->editMenu->getId()]));
             $form->prepare();
             echo $this->form()->openTag($form);
             echo $this->formCollection($form);

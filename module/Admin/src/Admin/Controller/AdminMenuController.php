@@ -78,18 +78,18 @@ final class AdminMenuController extends IndexController
     }
 
     /**
-     * This action presents a modify form for AdminMenu with a given id.
+     * This action presents a edit form for AdminMenu with a given id.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
-        $this->getView()->setTemplate("admin/admin-menu/modify");
+        $this->getView()->setTemplate("admin/admin-menu/edit");
         $adminMenu = $this->getTable("adminmenu")->getAdminMenu((int) $this->getParam("id", 0))->current();
         $this->getView()->adminMenu = $adminMenu;
-        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/modify/{$adminMenu->getId()}", "name"=>$this->translate("MODIFY_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY_ADMINMENU"), $adminMenu);
+        $this->addBreadcrumb(["reference"=>"/admin/adminmenu/edit/{$adminMenu->getId()}", "name"=>$this->translate("EDIT_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
+        $this->initForm($this->translate("EDIT_ADMINMENU"), $adminMenu);
         return $this->getView();
     }
 
@@ -121,7 +121,7 @@ final class AdminMenuController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication).
+     * This is common function used by add and edit actions (to avoid code duplication).
      *
      * @param String $label
      * @param AdminMenu $adminMenu

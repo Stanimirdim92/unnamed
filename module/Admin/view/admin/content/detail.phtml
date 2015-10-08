@@ -67,7 +67,7 @@
 ?>
     </div>
 
-    <a title="<?=$this->translate("MODIFY_CONTENT")?>" href="<?=$this->url("admin/default", ["controller" => "content", "action" => "modify", "id" => $content->getId()])?>" class="btn btn-default modify-btn">
-        <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("MODIFY_CONTENT")?>
+    <a title="<?=$this->translate("EDIT_CONTENT")?>" href="<?=$this->url("admin/default", ["controller" => "content", "action" => "edit", "id" => $content->getId()])?>" class="btn btn-default edit-btn">
+        <span class="btn-label"><i class="fa fa-pencil"></i></span> <?=$this->translate("EDIT_CONTENT")?>
     </a>
 </section>

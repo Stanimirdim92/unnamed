@@ -87,20 +87,20 @@ final class ContentController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Content object with a given id and session language.
+     * This action presents a edit form for Content object with a given id and session language.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
         $this->acceptableviewmodelselector($this->acceptCriteria);
 
-        $this->getView()->setTemplate("admin/content/modify");
+        $this->getView()->setTemplate("admin/content/edit");
         $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
         $this->getView()->content = $content;
-        $this->addBreadcrumb(["reference"=>"/admin/content/modify/{$content->getId()}", "name"=> $this->translate("MODIFY_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
-        $this->initForm($this->translate("MODIFY_CONTENT"), $content);
+        $this->addBreadcrumb(["reference"=>"/admin/content/edit/{$content->getId()}", "name"=> $this->translate("EDIT_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
+        $this->initForm($this->translate("EDIT_CONTENT"), $content);
         return $this->getView();
     }
 

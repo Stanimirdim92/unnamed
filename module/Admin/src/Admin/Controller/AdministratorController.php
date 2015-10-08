@@ -67,18 +67,18 @@ final class AdministratorController extends IndexController
     }
 
     /**
-     * This action presents a modify form for Administrator object with a given id.
+     * This action presents a edit form for Administrator object with a given id.
      * Upon POST the form is processed and saved.
      *
      * @return ViewModel
      */
-    protected function modifyAction()
+    protected function editAction()
     {
-        $this->getView()->setTemplate("admin/administrator/modify");
+        $this->getView()->setTemplate("admin/administrator/edit");
         $administrator = $this->getTable("administrator")->getAdministrator((int) $this->getParam("id", 0))->current();
         $this->getView()->administrator = $administrator;
-        $this->addBreadcrumb(["reference"=>"/admin/administrator/modify/{$administrator->getUser()}", "name"=>$this->translate("MODIY_ADMINISTRATOR")]);
-        $this->initForm($this->translate("MODIY_ADMINISTRATOR"), $administrator);
+        $this->addBreadcrumb(["reference"=>"/admin/administrator/edit/{$administrator->getUser()}", "name"=>$this->translate("EDIT_ADMINISTRATOR")]);
+        $this->initForm($this->translate("EDIT_ADMINISTRATOR"), $administrator);
         return $this->getView();
     }
 
@@ -129,7 +129,7 @@ final class AdministratorController extends IndexController
     }
 
     /**
-     * This is common function used by add and modify actions (to avoid code duplication).
+     * This is common function used by add and edit actions (to avoid code duplication).
      *
      * @param String $label
      * @param Administrator $administrator

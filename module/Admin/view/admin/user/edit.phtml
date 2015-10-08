@@ -10,7 +10,7 @@
              * @var Admin\Form\UserForm
              */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'user', 'action' => 'modify', 'id'=> $this->user->getId()]));
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'user', 'action' => 'edit', 'id'=> $this->user->getId()]));
             $form->prepare();
             echo $this->form()->openTag($form);
             echo $this->formCollection($form);

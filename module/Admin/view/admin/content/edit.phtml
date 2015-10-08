@@ -11,7 +11,7 @@
              * @var Admin\Form\ContentForm
              */
             $form = $this->form;
-            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'content','action' => 'modify','id' => $this->content->getId()]));
+            $form->setAttribute('action', $this->url('admin/default', ['controller' =>'content','action' => 'edit','id' => $this->content->getId()]));
             $form->prepare();
 
             echo $this->form()->openTag($form);

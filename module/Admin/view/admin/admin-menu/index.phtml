@@ -7,7 +7,7 @@
             <li class="table-cell"><?=$this->translate("ACTION")?></li>
             <li class="table-cell"><?=$this->translate("CLASS")?></li>
 			<li class="table-cell flex-b"><?=$this->translate("DETAILS")?></li>
-            <li class="table-cell flex-b"><?=$this->translate("MODIFY")?></li>
+            <li class="table-cell flex-b"><?=$this->translate("EDIT")?></li>
             <li class="table-cell flex-b"><?=$this->translate("DELETE")?></li>
         </ul>
 <?php
@@ -28,7 +28,7 @@ if (count($this->menus)) {
                     <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $adminMenu->getId()])?>'><i class='fa fa-info'></i></a>
                 </li>
                 <li class="table-cell flex-b">
-                    <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $adminMenu->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                    <a title='<?=$this->translate("EDIT")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "edit", "id" => $adminMenu->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
                 </li>
                 <li class='table-cell flex-b'>
                     <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='<?=$adminMenu->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
@@ -62,7 +62,7 @@ if (count($this->menus)) {
                             <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "detail", "id" => $sub->getId()])?>'><i class='fa fa-info'></i></a>
                         </li>
                         <li class="table-cell flex-b">
-                            <a title='<?=$this->translate("MODIFY")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "modify", "id" => $sub->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
+                            <a title='<?=$this->translate("EDIT")?>' href='<?=$this->url("admin/default", ['controller' => "adminmenu", "action" => "edit", "id" => $sub->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
                         </li>
                         <li class='table-cell flex-b'>
                             <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DELETE")?>" id='<?=$sub->getId()?>' type='button' class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DELETE")?>'><i class='fa fa-trash-o'></i></button>
