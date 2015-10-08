@@ -62,7 +62,7 @@ class IndexController extends AbstractActionController
         /*
          * Call this method only if we are not in Menu or News. Both of them calls the function by themselves
          */
-        if (($this->params('action') != "title") && ($this->params('action') != "post")) {
+        if (($this->params('action') != "post")) {
             $this->initMetaTags();
         }
     }
@@ -125,7 +125,7 @@ class IndexController extends AbstractActionController
             $this->menuIncrementHack = 1;
 
             foreach ($menu['submenus'][$parent] as $id) {
-                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/title/{$escaper->escapeUrl($menu['menus'][$id]->getMenuLink())}'><em class='fa {$menu['menus'][$id]->getClass()}'></em> {$menu['menus'][$id]->getCaption()}</a>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/menu/post/{$escaper->escapeUrl($menu['menus'][$id]->getMenuLink())}'><em class='fa {$menu['menus'][$id]->getClass()}'></em> {$menu['menus'][$id]->getCaption()}</a>";
                 $output .= $this->generateMenu($id, $menu, "menu");
                 $output .= "</li>";
             }

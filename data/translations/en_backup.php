@@ -131,4 +131,5 @@ return [
     'SETTINGS' => "Settings",
     'TOKEN_MISMATCH' => "Token misatch",
     'DISABLE' => "Disable",
+    'REGISTRATION_CLOSED' => "Registrations are closed",
 ];

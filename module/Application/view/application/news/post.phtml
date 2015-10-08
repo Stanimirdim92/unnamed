@@ -27,7 +27,7 @@ if(!empty($this->new)) {
 
         <div itemprop="text" class="post-text"><?=$newsPost["text"];?></div>
         <p class="back-to-news">
-            <a hreflang='<?=$this->layout()->lang?>' itemprop="url" href="<?=$this->url('application/default', ['controller' => 'news']);?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
+            <a hreflang='<?=$this->layout()->lang?>' itemprop="url" href="<?=$this->url('application/default', ['controller' => 'news', 'action' => '']);?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
         </p>
     </article>
 <?php

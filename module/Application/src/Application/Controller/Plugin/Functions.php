@@ -106,7 +106,7 @@ final class Functions extends AbstractPlugin
      */
     public static function generateToken()
     {
-        return base64_encode(Rand::getBytes(mt_rand(1,999999), true));
+        return base64_encode(Rand::getBytes(mt_rand(1, 999999), true));
     }
 
     /**

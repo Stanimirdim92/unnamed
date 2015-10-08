@@ -84,26 +84,13 @@ class Module implements AutoloaderProviderInterface, ConfigProviderInterface, Bo
         $lang = new Container("translations");
         $translator = $sm->get('translator');
 
-        /*
-         * Get translations
-         */
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
         $viewModel = $app->getMvcEvent()->getViewModel();
         $viewModel->lang = $translator->getLocale();
 
-        /*
-         * Setup website title
-         */
-        $action = $route->getParam('title');
-        if (empty($action)) {
-            $action = strtolower($route->getParam('action'));
-            if ($action != 'index') {
-                $action = ($route->getParam('post') ?: "");
-            }
-        }
-
+        $action = ($route->getParam('post') ?: ucfirst($route->getParam('__CONTROLLER__')));
         $headTitleHelper = $viewHelper->get('headTitle');
-        $headTitleHelper->append($title->__invoke('general', 'site_name').' - '.ucfirst($action)); // must be set from db
+        $headTitleHelper->append($title->__invoke('general', 'site_name').' - '.$action);
     }
 
     /**

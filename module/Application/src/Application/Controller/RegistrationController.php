@@ -83,12 +83,10 @@ final class RegistrationController extends IndexController
                 $registerUser->setEmail($formData["email"]);
                 $registerUser->setLanguage($this->language());
                 $this->getTable("user")->saveUser($registerUser);
-                $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
-                return $this->redirect()->toUrl("/login");
+                return $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
             }
         } else {
-            $this->setLayoutMessages($form->getMessages(), 'error');
-            return $this->redirect()->toUrl("/registration");
+            return $this->setLayoutMessages($form->getMessages(), 'error');
         }
     }
 
@@ -98,6 +96,11 @@ final class RegistrationController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("application/registration/index");
+
+        if ($this->systemSettings("registration", "allow_registrations") !== 1) {
+            $this->getView()->form = $this->translate("REGISTRATION_CLOSED");
+            return $this->getView();
+        }
 
         /**
          * @var RegistrationForm $form

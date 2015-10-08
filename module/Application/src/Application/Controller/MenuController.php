@@ -18,12 +18,12 @@ final class MenuController extends IndexController
      *
      * @return ViewModel
      */
-    protected function titleAction()
+    protected function postAction()
     {
-        $this->getView()->setTemplate("application/menu/title");
+        $this->getView()->setTemplate("application/menu/post");
         $escaper = new \Zend\Escaper\Escaper('utf-8');
 
-        $contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("title")), "content.type" => 0, "content.language" => $this->language()], null, "menu.parent ASC, menu.menuOrder ASC");
+        $contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("post")), "content.type" => 0, "content.language" => $this->language()], null, "menu.parent ASC, menu.menuOrder ASC");
 
         if (!$contents) {
             return $this->setErrorCode(404);
