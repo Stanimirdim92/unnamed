@@ -35,6 +35,7 @@
         "zendframework/zend-filter": "2.*",
         "zendframework/zend-form": "2.*",
         "zendframework/zend-http": "2.*",
+        "zendframework/zend-hydrator": "2.*",
         "zendframework/zend-i18n": "2.*",
         "zendframework/zend-i18n-resources": "2.*",
         "zendframework/zend-inputfilter": "2.*",
