@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.15
+ * @version    0.0.16
  *
  * @link       TBA
  */
@@ -121,9 +121,11 @@ final class LoginController extends IndexController
 
     public function processloginAction()
     {
-        // Check if we have a POST request
+        /*
+         * Check if we have a POST request
+         */
         if (!$this->getRequest()->isPost()) {
-            return $this->logoutAction("/login");
+            return $this->logoutAction();
         }
 
         /**
@@ -138,7 +140,7 @@ final class LoginController extends IndexController
          */
         if (!$form->isValid()) {
             $this->setLayoutMessages($form->getMessages(), 'error');
-            return $this->logoutAction("/login");
+            return $this->logoutAction();
         }
 
         $adapter = $this->getAuthAdapter($form->getData());
@@ -150,7 +152,6 @@ final class LoginController extends IndexController
          */
         if (!$result->isValid()) {
             $this->setLayoutMessages($result->getMessages(), 'error');
-            return $this->redirect()->toUrl("/login");
         } else {
             $role = 1;
             $url = "/";
@@ -164,7 +165,7 @@ final class LoginController extends IndexController
              */
             if ((int) $user->getDeleted() === 1) {
                 $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
-                return $this->logoutAction("/login");
+                return $this->logoutAction();
             }
 
             /*
@@ -215,8 +216,7 @@ final class LoginController extends IndexController
          */
         $tokenExist = $this->getTable("resetpassword")->fetchList(["user", "token", "date"], "token = '{$token}' AND date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")->current();
         if (!$tokenExist) {
-            $this->setLayoutMessages($this->translate("LINK_EXPIRED"), 'error');
-            return $this->redirect()->toUrl("/login");
+            return $this->setLayoutMessages($this->translate("LINK_EXPIRED"), 'error');
         }
 
         /**
@@ -321,15 +321,13 @@ final class LoginController extends IndexController
 
     /**
      * Clear all sessions.
-     *
-     * @param string $redirectTo
      */
-    protected function logoutAction($redirectTo = "/")
+    protected function logoutAction()
     {
         $this->translation->getManager()->getStorage()->clear();
         $this->translation = new Container("translations");
         $auth = new AuthenticationService();
         $auth->clearIdentity();
-        return $this->redirect()->toUrl($redirectTo);
+        return $this->redirect()->toUrl("/");
     }
 }

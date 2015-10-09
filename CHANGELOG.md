@@ -1,6 +1,12 @@
 # CHANGELOG
 
 DD.MM.YYYY
+## 0.0.16 (10.10.2015) - Stable Alpha
+- Bumped PHP version to 5.5.28
+- Added Zend OPCache
+- Added php.ini
+
+DD.MM.YYYY
 ## 0.0.15 (05.10.2015) - Stable Alpha
 - Options controller, which will handle all the options across the CMS
 - Renamed Zend\Db\Adapter\Adapter to SD\Adapter to avoid name collisions
