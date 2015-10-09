@@ -17,7 +17,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Application\Controller\ErrorHandling;
 
-class ApplicationErrorHandlingFactory implements FactoryInterface
+final class ApplicationErrorHandlingFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}

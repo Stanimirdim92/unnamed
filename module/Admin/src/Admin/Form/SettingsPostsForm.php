@@ -14,7 +14,7 @@ namespace Admin\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class SettingsPostsForm extends Form implements InputFilterProviderInterface
+final class SettingsPostsForm extends Form implements InputFilterProviderInterface
 {
     /**
      * @var array

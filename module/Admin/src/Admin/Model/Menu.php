@@ -11,7 +11,7 @@
 
 namespace Admin\Model;
 
-class Menu
+final class Menu
 {
     /**
      * @var Int $id

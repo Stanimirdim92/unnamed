@@ -14,7 +14,7 @@ namespace Application\Factory\Controller;
 use Application\Controller\ContactController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class ContactControllerFactory
+final class ContactControllerFactory
 {
     /**
      * @{inheritDoc}

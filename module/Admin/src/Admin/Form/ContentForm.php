@@ -14,7 +14,7 @@ namespace Admin\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class ContentForm extends Form implements InputFilterProviderInterface
+final class ContentForm extends Form implements InputFilterProviderInterface
 {
     /**
      * @var array $menus

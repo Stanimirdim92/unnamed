@@ -11,26 +11,17 @@
 
 namespace Admin\Factory\Model;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Admin\Model\Menu;
 use Admin\Model\MenuTable;
 
-class MenuTableFactory implements FactoryInterface
+final class MenuTableFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $sm = null)
+    public function __invoke($serviceLocator)
     {
-        $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Menu());
-        $db = $sm->get('SD\Adapter');
-
-        $tableGateway = new TableGateway('menu', $db, null, $resultSetPrototype);
-        $table = new MenuTable($tableGateway);
+        $table = new MenuTable($serviceLocator->get('SD\Adapter'), new ResultSet());
 
         return $table;
     }

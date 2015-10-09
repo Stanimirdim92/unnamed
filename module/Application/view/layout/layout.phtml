@@ -19,20 +19,19 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
         <link rel="shortlink" href="<?=$this->serverUrl(true);?>">
     </head>
     <body>
-
         <div id="content-wrapper">
             <!-- Header, banner, navigation menu -->
-            <header id="header" role="banner">
-                <nav id="nav" role="navigation" aria-label="main navigation">
+            <header id="header">
+                <nav id="nav" aria-label="main navigation">
                     <?=$view->menu;?>
                 </nav>
             </header>
 
-            <aside class="aside" id="aside-menu-left" role="complementary">
+            <aside class="aside" id="aside-menu-left">
 
             </aside>
 
-            <main id="main" role="main">
+            <main id="main">
 <?php
                 /**
                  * All messages passed from $this->getLayoutMessages() plugin method are showed with this code
@@ -59,12 +58,12 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 ?>
             </main>
 
-            <aside class="aside" id="aside-menu-right" role="complementary">
+            <aside class="aside" id="aside-menu-right">
 
             </aside>
         </div>
 
-        <footer id="footer" role="contentinfo">
+        <footer id="footer">
             <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
         </footer>
 <?php

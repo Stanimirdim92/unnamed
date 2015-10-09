@@ -13,6 +13,6 @@ namespace Admin\Exception;
 
 use Admin\Exception\ExceptionInterface;
 
-class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
+final class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
 {
 }

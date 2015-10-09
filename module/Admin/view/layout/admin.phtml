@@ -30,19 +30,19 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 
         <div id="content-wrapper">
             <!-- Header, banner, navigation menu -->
-            <header id="header" role="banner">
-                <nav id="nav" role="navigation" aria-label="main navigation">
+            <header id="header">
+                <nav id="nav" aria-label="main navigation">
                     <ul>
                         <?=$view->menuAdmin;?>
                     </ul>
                 </nav>
             </header>
 
-            <aside class="aside" id="aside-menu-left" role="complementary">
+            <aside class="aside" id="aside-menu-left">
 
             </aside>
 
-            <main id="main" role="main">
+            <main id="main">
                 <!-- Breadcrumbs -->
                 <div class="breadcrumbs">
                     <ul>
@@ -81,11 +81,11 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 ?>
             </main>
 
-            <aside class="aside" id="aside-menu-left" role="complementary">
+            <aside class="aside" id="aside-menu-left">
 
             </aside>
 
-            <footer id="footer" role="contentinfo">
+            <footer id="footer">
                 <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
             </footer>
         </div>

@@ -18,7 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Admin\Model\AdminMenu;
 use Admin\Model\AdminMenuTable;
 
-class AdminMenuTableFactory implements FactoryInterface
+final class AdminMenuTableFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

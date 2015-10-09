@@ -11,7 +11,7 @@
 
 namespace Application\Model;
 
-class ResetPassword
+final class ResetPassword
 {
     /**
      * @var int $id

@@ -14,7 +14,7 @@ namespace Admin\Factory\Controller;
 use Admin\Controller\AdminMenuController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class AdminMenuControllerFactory
+final class AdminMenuControllerFactory
 {
     /**
      * @{inheritDoc}

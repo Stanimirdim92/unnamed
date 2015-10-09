@@ -14,7 +14,7 @@ namespace Admin\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class UserForm extends Form implements InputFilterProviderInterface
+final class UserForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {

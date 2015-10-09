@@ -15,7 +15,7 @@ use Admin\Form\SettingsDiscussionForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SettingsDiscussionFormFactory implements FactoryInterface
+final class SettingsDiscussionFormFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

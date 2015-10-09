@@ -18,7 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Application\Model\ResetPassword;
 use Application\Model\ResetPasswordTable;
 
-class ResetPasswordTableFactory implements FactoryInterface
+final class ResetPasswordTableFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

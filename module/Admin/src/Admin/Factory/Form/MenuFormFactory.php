@@ -16,7 +16,7 @@ use Zend\Session\Container;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class MenuFormFactory implements FactoryInterface
+final class MenuFormFactory implements FactoryInterface
 {
     /**
      * @var ServiceManager

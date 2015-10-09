@@ -11,7 +11,7 @@
 
 namespace Admin\Model;
 
-class User
+final class User
 {
     /**
      * @var Int $id

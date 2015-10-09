@@ -15,7 +15,7 @@ use Admin\Form\SettingsPostsForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SettingsPostsFormFactory implements FactoryInterface
+final class SettingsPostsFormFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

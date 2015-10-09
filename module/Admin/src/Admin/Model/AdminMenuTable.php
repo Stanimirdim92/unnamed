@@ -17,7 +17,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 use Admin\Exception\RuntimeException;
 
-class AdminMenuTable
+final class AdminMenuTable
 {
     /**
      * @var TableGateway $tableGateway

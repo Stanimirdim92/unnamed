@@ -47,11 +47,11 @@
 ### Requirements for development ###
 
 * APPLICATION_ENV must be set to development via .htaccess
-* ZendDeveloperTools (integrated into the system)
-* BjyProfiler (integrated into the system)
-* SanSessionToolbar (integrated into the system)
-* The PHP Coding Standards Fixer (integrated into the system)
-* Gulp (requires NodeJS 0.12.7 or later). node_modules folder is not included. You will have to run **npm install** from the app root directory
+* ZendDeveloperTools (built in via composer)
+* BjyProfiler (built in via composer)
+* SanSessionToolbar (built in via composer)
+* The PHP Coding Standards Fixer (built in via composer)
+* Gulp (requires NodeJS 0.12.7 or later). node_modules folder is not included. You will have to run **npm install** from the root directory
 
 ### LICENSE ###
 

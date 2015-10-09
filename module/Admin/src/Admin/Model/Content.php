@@ -11,7 +11,7 @@
 
 namespace Admin\Model;
 
-class Content
+final class Content
 {
     /**
      * @var Int $id

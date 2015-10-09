@@ -11,7 +11,7 @@
 
 namespace Admin\Model;
 
-class Language
+final class Language
 {
     /**
      * @var Int $id

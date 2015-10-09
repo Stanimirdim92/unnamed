@@ -15,7 +15,7 @@ use Admin\Form\AdminMenuForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class AdminMenuFormFactory implements FactoryInterface
+final class AdminMenuFormFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

@@ -14,7 +14,7 @@ namespace Admin\Factory\Controller;
 use Admin\Controller\ContentController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class ContentControllerFactory
+final class ContentControllerFactory
 {
     /**
      * @{inheritDoc}

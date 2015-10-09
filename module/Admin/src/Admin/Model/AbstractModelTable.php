@@ -17,26 +17,22 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 use Admin\Exception\RuntimeException;
 
-final class LanguageTable
+abstract class AbstractModelTable implements AbstractModelTableInterface
 {
     /**
      * @var TableGateway $tableGateway
      */
-    private $tableGateway = null;
-
-    /**
-     * Preducate contstants.
-     */
-    const PRE_AND = "AND";
-    const PRE_OR = "OR";
-    const PRE_NULL = null;
+    protected $tableGateway = null;
 
     /**
      * @param TableGateway $tg
      */
-    public function __construct(TableGateway $tg)
+    public function __construct($table, $model, $db, $resultSetPrototype)
     {
-        $this->tableGateway = $tg;
+        $model = __NAMESPACE__."\\".$model; // :D
+        $resultSetPrototype->setArrayObjectPrototype(new $model());
+
+        $this->tableGateway = new TableGateway($table, $db, null, $resultSetPrototype);
     }
 
     /**
@@ -49,6 +45,7 @@ final class LanguageTable
      * @param null $order                  ORDER condition
      * @param int $limit                   LIMIT condition
      * @param int $offset                  OFFSET condition
+     *
      * @return ResultSet|Paginator|null
      */
     public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0)
@@ -138,60 +135,5 @@ final class LanguageTable
             $select->offset($offset);
         }
         return $select;
-    }
-
-    /**
-     * @param int $id language
-     *
-     * @throws RuntimeException
-     *
-     * @return Language
-     */
-    public function getLanguage($id = 0)
-    {
-        $rowset = $this->tableGateway->select(['id' => (int) $id]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
-            throw new RuntimeException("Couldn't find language");
-        }
-        return $rowset->current();
-    }
-
-    /**
-     * @param int $id language
-     *
-     * @return Language
-     */
-    public function deleteLanguage($id = 0)
-    {
-        if ($this->getLanguage($id)) {
-            $this->tableGateway->delete(['id' => (int) $id]);
-        }
-    }
-
-    /**
-     * Save or update language based on the provided id.
-     *
-     * @param Language $language
-     *
-     * @return Language
-     */
-    public function saveLanguage(Language $language)
-    {
-        $data = [
-            'name' => (string) $language->getName(),
-            'active' => (int) $language->getActive(),
-        ];
-
-        $id = (int) $language->getId();
-        if (!$id) {
-            $this->tableGateway->insert($data);
-        } else {
-            if ($this->getLanguage($id)) {
-                $this->tableGateway->update($data, ['id' => $id]);
-            }
-        }
-        unset($id, $data);
-        return $language;
     }
 }

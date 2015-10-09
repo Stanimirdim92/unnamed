@@ -16,7 +16,7 @@ use Zend\Captcha;
 use Zend\Captcha\Image as CaptchaImage;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class ContactForm extends Form implements InputFilterProviderInterface
+final class ContactForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {

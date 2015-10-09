@@ -18,7 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Admin\Model\Administrator;
 use Admin\Model\AdministratorTable;
 
-class AdministratorTableFactory implements FactoryInterface
+final class AdministratorTableFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

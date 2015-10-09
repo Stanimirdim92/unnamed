@@ -15,7 +15,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 use Application\Exception\RuntimeException;
 
-class ResetPasswordTable
+final class ResetPasswordTable
 {
     /**
      * @var TableGateway

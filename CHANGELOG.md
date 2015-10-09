@@ -5,6 +5,8 @@ DD.MM.YYYY
 - Bumped PHP version to 5.5.28
 - Added Zend OPCache
 - Added php.ini
+- Removed role attribute from html5 elements. See [HTML5 Doctor](http://html5doctor.com/on-html-belts-and-aria-braces/)
+- Added final keyword on every class
 
 DD.MM.YYYY
 ## 0.0.15 (05.10.2015) - Stable Alpha

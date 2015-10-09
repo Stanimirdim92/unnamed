@@ -14,7 +14,7 @@ namespace Application\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class NewPasswordForm extends Form implements InputFilterProviderInterface
+final class NewPasswordForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {

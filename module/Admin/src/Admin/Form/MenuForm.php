@@ -14,7 +14,7 @@ namespace Admin\Form;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class MenuForm extends Form implements InputFilterProviderInterface
+final class MenuForm extends Form implements InputFilterProviderInterface
 {
     /**
      * @var Zend\Db\ResultSet\ResultSet $menus

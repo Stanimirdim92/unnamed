@@ -16,7 +16,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\SessionManager;
 use Zend\Session\Config\SessionConfig;
 
-class ApplicationSessionFactory implements FactoryInterface
+final class ApplicationSessionFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}

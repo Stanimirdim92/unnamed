@@ -14,7 +14,7 @@ namespace Application\Factory\Controller;
 use Application\Controller\LoginController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class LoginControllerFactory
+final class LoginControllerFactory
 {
     /**
      * @{inheritDoc}

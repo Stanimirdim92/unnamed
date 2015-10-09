@@ -14,7 +14,7 @@ namespace Application\Controller\Plugin\Factory;
 use Application\Controller\Plugin\Translate;
 use Zend\Mvc\Controller\PluginManager;
 
-class TranslateFactory
+final class TranslateFactory
 {
     /**
      * @{inheritDoc}

@@ -15,7 +15,7 @@ use Admin\Form\SettingsRegistrationForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SettingsRegistrationFormFactory implements FactoryInterface
+final class SettingsRegistrationFormFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

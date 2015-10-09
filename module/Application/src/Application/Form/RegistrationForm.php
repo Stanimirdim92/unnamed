@@ -16,7 +16,7 @@ use Zend\Captcha;
 use Zend\Captcha\Image as CaptchaImage;
 use Zend\InputFilter\InputFilterProviderInterface;
 
-class RegistrationForm extends Form implements InputFilterProviderInterface
+final class RegistrationForm extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {

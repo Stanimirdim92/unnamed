@@ -14,7 +14,7 @@ namespace Admin\Factory\Controller;
 use Admin\Controller\SettingsController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class SettingsControllerFactory
+final class SettingsControllerFactory
 {
     /**
      * @{inheritDoc}

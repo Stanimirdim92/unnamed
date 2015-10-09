@@ -46,17 +46,17 @@ final class MenuController extends IndexController
      */
     private function showMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder")->getDataSource();
+        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder");
 
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
 
             foreach ($menu as $submenus) {
-                $menus['menus'][$submenus['id']] = $submenus;
-                $menus['submenus'][$submenus['parent']][] = $submenus['id'];
+                $menus['menus'][$submenus->getId()] = $submenus;
+                $menus['submenus'][$submenus->getParent()][] = $submenus->getId();
             }
 
-            return $this->generateMenu(0, $menus);
+            return $this->getMenus(0, $menus);
         }
         return;
     }
@@ -64,36 +64,36 @@ final class MenuController extends IndexController
     /**
      * Builds menu HTML.
      *
-     * @method generateMenu
+     * @method getMenus
      *
      * @param int $parent
      * @param array $menu
      *
      * @return string generated html code
      */
-    private function generateMenu($parent = 0, array $menu = [])
+    private function getMenus($parent = 0, array $menu = [])
     {
         $output = "";
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         if (isset($menu["submenus"][$parent])) {
             foreach ($menu['submenus'][$parent] as $id) {
                 $output .= "<ul class='table-row'>";
-                $output .= "<li class='table-cell flex-2'>{$menu['menus'][$id]['caption']}</li>";
-                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
-                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('EDIT')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/edit/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
-                if ($menu['menus'][$id]['active'] == 0) {
-                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
+                $output .= "<li class='table-cell flex-2'>{$menu['menus'][$id]->getCaption()}</li>";
+                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
+                $output .= "<li class='table-cell flex-b'><a title='{$this->translate('EDIT')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/edit/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
+                if ($menu['menus'][$id]->getActive() == 0) {
+                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
-                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]['id'])}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
+                    $output .= "<li class='table-cell flex-b'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";
                 }
                 $output .= "
                 <li class='table-cell flex-b'>
-                    <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='{$menu['menus'][$id]['id']}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
-                        <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]['id']}Title' class='delete_{$menu['menus'][$id]['id']} dialog_hide'>
-                           <p id='dialog{$menu['menus'][$id]['id']}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]['caption']}&raquo;</p>
+                    <button role='button' aria-pressed='false' aria-label='{$this->translate("DELETE")}' id='{$menu['menus'][$id]->getId()}' type='button' class='btn btn-sm delete dialog_delete' title='{$this->translate("DELETE")}'><i class='fa fa-trash-o'></i></button>
+                        <div role='alertdialog' aria-labelledby='dialog{$menu['menus'][$id]->getId()}Title' class='delete_{$menu['menus'][$id]->getId()} dialog_hide'>
+                           <p id='dialog{$menu['menus'][$id]->getId()}Title'>{$this->translate("DELETE_CONFIRM_TEXT")} &laquo;{$menu['menus'][$id]->getCaption()}&raquo;</p>
                             <ul>
                                 <li>
-                                    <a class='btn delete' href='/admin/menu/delete/{$escaper->escapeUrl($menu['menus'][$id]['id'])}'><i class='fa fa-trash-o'></i> {$this->translate("DELETE")}</a>
+                                    <a class='btn delete' href='/admin/menu/delete/{$escaper->escapeUrl($menu['menus'][$id]->getId())}'><i class='fa fa-trash-o'></i> {$this->translate("DELETE")}</a>
                                 </li>
                                 <li>
                                     <button role='button' aria-pressed='false' aria-label='{$this->translate("CANCEL")}' class='btn btn-default cancel'><i class='fa fa-times'></i> {$this->translate("CANCEL")}</button>
@@ -103,7 +103,7 @@ final class MenuController extends IndexController
                 </li>";
 
                 $output .= "</ul>";
-                $output .= $this->generateMenu($id, $menu);
+                $output .= $this->getMenus($id, $menu);
             }
         }
 
@@ -119,8 +119,7 @@ final class MenuController extends IndexController
     {
         $this->getView()->setTemplate("admin/menu/index");
 
-        $menus = $this->showMenus();
-        $this->getView()->menus = $menus;
+        $this->getView()->menus = $this->showMenus();
 
         return $this->getView();
     }

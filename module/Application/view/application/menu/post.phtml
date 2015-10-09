@@ -1,9 +1,9 @@
 <?php
 if (!empty($this->contents)) {
    /**
-    * @var $c Admin\Model\Content
+    * @var $c array
     */
-    $c = $this->contents;
+    $c = $this->contents->getDataSource()->current();
     echo "<h2 itemscope itemprop='name'>{$c["title"]}</h2>";
 
     if($c["preview"] != null) {

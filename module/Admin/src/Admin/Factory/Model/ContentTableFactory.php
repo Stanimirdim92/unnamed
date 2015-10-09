@@ -11,26 +11,17 @@
 
 namespace Admin\Factory\Model;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Admin\Model\Content;
 use Admin\Model\ContentTable;
 
-class ContentTableFactory implements FactoryInterface
+final class ContentTableFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $sm = null)
+    public function __invoke($serviceLocator)
     {
-        $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new Content());
-        $db = $sm->get('SD\Adapter');
-
-        $tableGateway = new TableGateway('content', $db, null, $resultSetPrototype);
-        $table = new ContentTable($tableGateway);
+        $table = new ContentTable($serviceLocator->get('SD\Adapter'), new ResultSet());
 
         return $table;
     }

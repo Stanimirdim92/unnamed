@@ -14,7 +14,7 @@ namespace Application\Factory\Controller;
 use Application\Controller\RegistrationController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class RegistrationControllerFactory
+final class RegistrationControllerFactory
 {
     /**
      * @{inheritDoc}

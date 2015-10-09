@@ -18,7 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Admin\Model\Language;
 use Admin\Model\LanguageTable;
 
-class LanguageTableFactory implements FactoryInterface
+final class LanguageTableFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

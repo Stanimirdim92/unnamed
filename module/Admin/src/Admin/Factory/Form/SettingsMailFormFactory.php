@@ -15,7 +15,7 @@ use Admin\Form\SettingsMailForm;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SettingsMailFormFactory implements FactoryInterface
+final class SettingsMailFormFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

@@ -12,7 +12,7 @@
 header('Content-Type: text/html; charset=utf-8');
 
 /**
- * Check requiarments.
+ * Check requirements.
  */
 if (version_compare("5.5.28", PHP_VERSION, '>')) {
     throw new \Exception(sprintf('Your server is running PHP version <b>%1$s</b>, but the system <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.16", "5.5.28"));
@@ -28,11 +28,7 @@ if (!extension_loaded("Zend OPcache") || !extension_loaded("mcrypt") || !extensi
 /**
  * Set global ENV. Used for debugging.
  */
-if (getenv("APPLICATION_ENV") === 'development') {
-    define("APP_ENV", 'development');
-} else {
-    define("APP_ENV", "production");
-}
+define("APP_ENV", getenv("APPLICATION_ENV"));
 
 /**
  * Handle errors
@@ -45,6 +41,8 @@ ini_set("display_startup_errors", (APP_ENV === 'development'));
  * Fixes files and server encoding.
  */
 mb_internal_encoding('UTF-8');
+mb_http_output('UTF-8');
+
 
 /**
  * Some server configurations are missing a date timezone and PHP will throw a warning.

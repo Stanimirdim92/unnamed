@@ -17,7 +17,7 @@ use Zend\Db\Adapter\Adapter;
 use BjyProfiler\Db\Adapter\ProfilingAdapter;
 use BjyProfiler\Db\Profiler\Profiler;
 
-class AdapterServiceFactory implements FactoryInterface
+final class AdapterServiceFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}

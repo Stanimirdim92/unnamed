@@ -14,7 +14,7 @@ namespace Admin\Factory\Controller;
 use Admin\Controller\LanguageController;
 use Zend\Mvc\Controller\ControllerManager;
 
-class LanguageControllerFactory
+final class LanguageControllerFactory
 {
     /**
      * @{inheritDoc}

@@ -18,7 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Admin\Model\User;
 use Admin\Model\UserTable;
 
-class UserTableFactory implements FactoryInterface
+final class UserTableFactory implements FactoryInterface
 {
     /**
      * @{inheritDoc}

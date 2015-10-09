@@ -13,6 +13,6 @@ namespace Application\Exception;
 
 use Application\Exception\ExceptionInterface;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+final class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

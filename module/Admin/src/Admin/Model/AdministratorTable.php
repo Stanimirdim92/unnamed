@@ -16,7 +16,7 @@ use Zend\Paginator\Paginator;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Predicate\Expression;
 
-class AdministratorTable
+final class AdministratorTable
 {
     /**
      * @var TableGateway $tableGateway

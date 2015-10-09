@@ -134,7 +134,7 @@ class IndexController extends AbstractActionController
      *
      * @return mixed
      */
-    protected function language($offset = "language")
+    final protected function language($offset = "language")
     {
         if ($this->translation->offSetExists($offset)) {
             return $this->translation->offSetGet($offset);
@@ -147,7 +147,7 @@ class IndexController extends AbstractActionController
     /**
      * @param array $breadcrumbs
      */
-    protected function addBreadcrumb(array $breadcrumb = [])
+    final protected function addBreadcrumb(array $breadcrumb = [])
     {
         $this->breadcrumbs[] = $breadcrumb;
     }
@@ -191,7 +191,7 @@ class IndexController extends AbstractActionController
     /**
      * @return ViewModel
      */
-    public function getView()
+    final protected function getView()
     {
         return $this->view;
     }
@@ -215,7 +215,7 @@ class IndexController extends AbstractActionController
      *
      * This will reload the translations every time the method is being called.
      */
-    protected function languageAction()
+    final protected function languageAction()
     {
         $language = $this->getTable("language")->getLanguage((int) $this->getParam("id", 1));
 
