@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -31,8 +31,15 @@ final class MenuFormFactory implements FactoryInterface
         $this->services = $serviceLocator->getServiceLocator();
         $lang = new Container("translations");
 
-        $languages = $this->services->get("LanguageTable")->fetchList(false, [], ["active" => 1], "AND");
-        $menu = $this->services->get("MenuTable")->fetchList(false, ['id', 'language', 'caption'], ["active" => 1, "language" => $lang->language], "AND", null, "id, menuOrder");
+        $languages = $this->services->get("LanguageTable");
+        $languages->where( ["active" => 1]);
+        $languages = $languages->fetch();
+
+        $menu = $this->services->get("MenuTable");
+        $menu->columns(['id', 'language', 'caption']);
+        $menu->where(["active" => 1, "language" => $lang->language]);
+        $menu->order("id, menuOrder");
+        $menu = $menu->fetch();
 
         $form = new MenuForm($languages, $menu);
 

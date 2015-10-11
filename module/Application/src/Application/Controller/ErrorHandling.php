@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -17,6 +17,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Application\Exception\InvalidArgumentException;
 
 final class ErrorHandling
 {
@@ -44,30 +45,51 @@ final class ErrorHandling
      * Set log destination.
      *
      * @param string $destination set the destination where you want to save the log.
+     *
+     * @return ErrorHandling
      */
     public function setDestination($destination = null)
     {
-        if (is_dir($destination) && is_writable($destination)) {
-            $this->destination = (string) $destination;
+        $destination = (string) $destination;
+
+        if (!is_dir($destination)) {
+            throw new InvalidArgumentException(
+                "Public directory '{$destination}' not found or not a directory"
+            );
+        } elseif (!is_writable($destination)) {
+            throw new InvalidArgumentException(
+                "Public directory '{$destination}' not writable"
+            );
+        } elseif (!is_readable($destination)) {
+            throw new InvalidArgumentException(
+                "Public directory '{$destination}' not readable"
+            );
         }
+
+        $this->destination = rtrim(realpath($destination), DIRECTORY_SEPARATOR);
+        return $this;
     }
 
     /**
      * @param \Exception $e
+     *
+     * @return Logger
      */
     private function logException(\Exception $e = null)
     {
         $i = 1;
         $messages = [];
-        while ($e->getPrevious()) {
-            $messages[] = $i++ . ": " . $e->getMessage();
-        }
+        // while ($e->getPrevious()) {
+        //     $messages[] = $i++ . ": " . $e->getMessage();
+        // }
 
-        $log =  PHP_EOL."Exception: ".implode("", $messages);
-        $log .=  PHP_EOL."Code: ".$e->getCode();
-        $log .=  PHP_EOL."File: ".$e->getFile();
+        // $log = PHP_EOL."Exception: ".implode("", $messages);
+        $log = PHP_EOL."Exception: ".$e->getMessage();
+        $log .= PHP_EOL."Code: ".$e->getCode();
+        $log .= PHP_EOL."File: ".$e->getFile();
         $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
         $this->logger->err($log);
+
         return $this->logger;
     }
 
@@ -95,6 +117,7 @@ final class ErrorHandling
         ]);
         $e->getViewModel()->setTemplate('error/index');
         $e->stopPropagation();
+
         return $e;
     }
 

@@ -4,24 +4,24 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
 
 namespace Admin\Factory\Model;
 
-use Zend\Db\ResultSet\ResultSet;
 use Admin\Model\MenuTable;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 final class MenuTableFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function __invoke($serviceLocator)
+    public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        $table = new MenuTable($serviceLocator->get('SD\Adapter'), new ResultSet());
+        $table = new MenuTable($serviceLocator->get('SD\Adapter'));
 
         return $table;
     }

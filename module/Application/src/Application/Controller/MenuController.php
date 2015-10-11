@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -23,13 +23,18 @@ final class MenuController extends IndexController
         $this->getView()->setTemplate("application/menu/post");
         $escaper = new \Zend\Escaper\Escaper('utf-8');
 
-        $contents = $this->getTable("Content")->fetchJoin(false, "menu", ["menu", "text", "id", "title", "titleLink", "preview"], ["parent", "keywords", "description"], "content.menu=menu.id", "inner", ["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("post")), "content.type" => 0, "content.language" => $this->language()], null, "menu.parent ASC, menu.menuOrder ASC");
+        $contents = $this->getTable("Content");
+        $contents->columns(["menu", "text", "id", "title", "titleLink", "preview"]);
+        $contents->join("menu", "content.menu=menu.id", ["parent", "keywords", "description"], "inner");
+        $contents->where(["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("post")), "content.type" => 0, "content.language" => $this->language()], "AND");
+        $contents->order("menu.parent ASC, menu.menuOrder ASC");
+        $contents = $contents->fetch();
 
-        if ($contents) {
+        if ($contents instanceof \Zend\Db\ResultSet\ResultSet) {
             $this->initMetaTags($contents->getDataSource()->current());
+            $this->getView()->contents = $contents;
         }
 
-        $this->getView()->contents = $contents;
         return $this->getView();
     }
 }

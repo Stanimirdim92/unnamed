@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -18,37 +18,123 @@ interface AbstractModelTableInterface
      */
     const PRE_AND = "AND";
     const PRE_OR = "OR";
-    const PRE_NULL = null;
 
     /**
-     * Main function for handling MySQL queries.
+     * Fetch results
      *
-     * @param bool $paginated              should we use pagination or no
-     * @param array $columns               substitute * with the columns you need
-     * @param null|array|string $where     WHERE condition
-     * @param null $group                  GROUP condition
-     * @param null $order                  ORDER condition
-     * @param int $limit                   LIMIT condition
-     * @param int $offset                  OFFSET condition
+     * @method fetch
      *
-     * @return ResultSet|Paginator|null
+     * @return ResultSet|null
      */
-    public function fetchList($paginated = false, array $columns = [], $where = null, $predicate = self::PRE_NULL, $group = null, $order = null, $limit = 0, $offset = 0);
+    public function fetch();
 
     /**
-     * @param bool $pagination
-     * @param string $join
-     * @param array $tbl1OneCols - content table
-     * @param array $tbl2OneCols - the joined table
+     * Return pagination results
+     *
+     * @method fetchPagination
+     *
+     * @return Paginator
+     */
+    public function fetchPagination();
+
+    /**
+     * Create join clause.
+     *
+     * @param string $name - table name to join
      * @param string $on
+     * @param array|string $columns - the joined table
      * @param string $joinType
-     * @param null|array|string $where
-     * @param null $group
-     * @param null $order
+     *
+     * @return AbstractModelTable
+     */
+    public function join($name, $on, $columns = self::SQL_STAR, $joinType = self::JOIN_INNER);
+
+    /**
+     * Specify columns from which to select.
+     *
+     * Possible valid states:
+     *
+     *   array(*)
+     *
+     *   array(value, ...)
+     *     value can be strings or Expression objects
+     *
+     *   array(string => value, ...)
+     *     key string will be use as alias,
+     *     value can be string or Expression objects
+     *
+     * @param array $columns
+     * @param bool  $prefixColumnsWithTable
+     *
+     * @return AbstractModelTable
+     */
+    public function columns(array $columns, $prefixColumnsWithTable = true);
+
+    /**
+     * Create where clause
+     *
+     * @method where
+     *
+     * @param array|string $where
+     * @param string $combination One of the PRE_* constants
+     *
+     * @return AbstractModelTable
+     */
+    public function where($where, $predicate = self::PRE_NULL);
+
+    /**
+     * Create group clause
+     *
+     * @method group
+     *
+     * @param array $group
+     *
+     * @return AbstreactModelTable
+     */
+    public function group($group);
+
+    /**
+     * Create having clause
+     *
+     * @method having
+     *
+     * @param array|string $having
+     * @param string $combination One of the PRE_* constants
+     *
+     * @return AbstractModelTable
+     */
+    public function having($having, $predicate = self::PRE_NULL);
+
+    /**
+     * Create order clause
+     *
+     * @method order
+     *
+     * @param array $order
+     *
+     * @return AbstreactModelTable
+     */
+    public function order($order);
+
+    /**
+     * Create limit clause
+     *
+     * @method limit
+     *
      * @param int $limit
+     *
+     * @return AbstreactModelTable
+     */
+    public function limit($limit = 0);
+
+    /**
+     * Create offset clause
+     *
+     * @method offset
+     *
      * @param int $offset
      *
-     * @return ResultSet|Paginator|null
+     * @return AbstreactModelTable
      */
-    public function fetchJoin($pagination = false, $join = '', array $tbl1OneCols = [], array $tbl2OneCols = [], $on = '', $joinType = self::JOIN_INNER, $where = null, $group = null, $order = null, $limit = 0, $offset = 0);
+    public function offset($offset = 0);
 }

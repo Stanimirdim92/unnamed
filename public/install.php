@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -15,7 +15,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if (version_compare("5.5", PHP_VERSION, '>')) {
     header('Content-Type: text/html; charset=utf-8');
-    throw new \RuntimeException('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.16", "5.5");
+    throw new \RuntimeException('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.17", "5.5");
 }
 
 /**
@@ -52,12 +52,9 @@ $requiredDirs = [
     'data/cache/modules',
     'data/logs',
     'data/translations',
-    'data/fonts',
     'data/database',
     'public/userfiles/captcha',
-    'public/userfiles/exports',
     'public/userfiles/images',
-    'public/userfiles/preview',
 ];
 
 foreach ($requiredDirs as $dir) {
@@ -99,6 +96,9 @@ switch ((int) $pageId) {
             echo "<p>Installing composer packagelist.</p>";
 
             require 'composerInstalation/vendor/autoload.php';
+
+            $install = new Process(sprintf('composer self-update'), getcwd(), null, null, 1000);
+            $install->run();
 
             $install = new Process(sprintf('composer install'), getcwd(), null, null, 1000);
             $install->run();

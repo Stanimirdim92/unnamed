@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -46,7 +46,11 @@ final class MenuController extends IndexController
      */
     private function showMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent'], ["language" => $this->language()], "AND", null, "id, menuOrder");
+        $menu = $this->getTable("Menu");
+        $menu->columns(['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent']);
+        $menu->where(["language" => $this->language()]);
+        $menu->order("id, menuOrder");
+        $menu = $menu->fetch();
 
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
@@ -146,7 +150,7 @@ final class MenuController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/menu/edit");
-        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language())->current();
+        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->addBreadcrumb(["reference"=>"/admin/menu/edit/{$menu->getId()}", "name"=> $this->translate("EDIT_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("EDIT_MENU"), $menu);
         return $this->getView();
@@ -181,7 +185,7 @@ final class MenuController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/menu/detail");
-        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language())->current();
+        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->getView()->menuDetail = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -224,9 +228,8 @@ final class MenuController extends IndexController
                 $this->getTable("menu")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
-            } else {
-                $this->setLayoutMessages($form->getMessages(), 'error');
             }
+            return $this->setLayoutMessages($form->getMessages(), 'error');
         }
     }
 }

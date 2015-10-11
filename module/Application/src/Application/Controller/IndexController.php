@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -78,7 +78,12 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu")->fetchList(false, ["id", "caption", "class", "menulink", "parent"], ["active" => 1, "language" => $this->language()], "AND", null, "id, menuOrder");
+        $menu = $this->getTable("Menu");
+        $menu->columns(["id", "caption", "class", "menulink", "parent"]);
+        $menu->where(["active" => 1, "language" => $this->language()], "AND");
+        $menu->order("id, menuOrder");
+        $menu = $menu->fetch();
+
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
             foreach ($menu as $submenus) {

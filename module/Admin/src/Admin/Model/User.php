@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -49,9 +49,9 @@ final class User
     private $lastLogin = "0000-00-00 00:00:00";
 
     /**
-     * @var Int $deleted
+     * @var Int $isDisabled
      */
-    private $deleted = 0;
+    private $isDisabled = false;
 
     /**
      * @var String $image
@@ -95,7 +95,7 @@ final class User
         $this->email = (isset($data['email'])) ? $data['email'] : $this->getEmail();
         $this->birthDate = (isset($data['birthDate'])) ? $data['birthDate'] : $this->getBirthDate();
         $this->lastLogin = (isset($data['lastLogin'])) ? $data['lastLogin'] : $this->getLastLogin();
-        $this->deleted = (isset($data['deleted'])) ? $data['deleted'] : $this->getDeleted();
+        $this->isDisabled = (isset($data['isDisabled'])) ? $data['isDisabled'] : $this->isDisabled();
         $this->image = (isset($data['image'])) ? $data['image'] : $this->getImage();
         $this->registered = (isset($data['registered'])) ? $data['registered'] : $this->getRegistered();
         $this->hideEmail = (isset($data['hideEmail'])) ? $data['hideEmail'] : $this->getHideEmail();
@@ -140,6 +140,8 @@ final class User
     public function setId($id = 0)
     {
         $this->id = $id;
+
+        return $this;
     }
 
 
@@ -151,6 +153,8 @@ final class User
     public function setName($name = null)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -171,6 +175,8 @@ final class User
     public function setSurname($surname = null)
     {
         $this->surname = $surname;
+
+        return $this;
     }
 
     /**
@@ -191,6 +197,8 @@ final class User
     public function setPassword($password = null)
     {
         $this->password = $password;
+
+        return $this;
     }
 
     /**
@@ -211,6 +219,8 @@ final class User
     public function setEmail($email = null)
     {
         $this->email = $email;
+
+        return $this;
     }
 
     /**
@@ -231,6 +241,8 @@ final class User
     public function setBirthDate($birthDate = "0000-00-00")
     {
         $this->birthDate = $birthDate;
+
+        return $this;
     }
 
     /**
@@ -251,6 +263,8 @@ final class User
     public function setLastLogin($lastLogin = "0000-00-00 00:00:00")
     {
         $this->lastLogin = $lastLogin;
+
+        return $this;
     }
 
     /**
@@ -264,23 +278,25 @@ final class User
     }
 
     /**
-     * Set deleted.
+     * Set isDisabled.
      *
-     * @param int $deleted
+     * @param int $isDisabled
      */
-    public function setDeleted($deleted = 0)
+    public function setDisabled($isDisabled = false)
     {
-        $this->deleted = $deleted;
+        $this->isDisabled = $isDisabled;
+
+        return $this;
     }
 
     /**
-     * Get deleted.
+     * Get isDisabled.
      *
      * @return int
      */
-    public function getDeleted()
+    public function isDisabled()
     {
-        return $this->deleted;
+        return $this->isDisabled;
     }
 
     /**
@@ -291,6 +307,8 @@ final class User
     public function setImage($image = null)
     {
         $this->image = $image;
+
+        return $this;
     }
 
     /**
@@ -311,6 +329,8 @@ final class User
     public function setRegistered($registered = "0000-00-00 00:00:00")
     {
         $this->registered = $registered;
+
+        return $this;
     }
 
     /**
@@ -331,6 +351,8 @@ final class User
     public function setHideEmail($hideEmail = 0)
     {
         $this->hideEmail = $hideEmail;
+
+        return $this;
     }
 
     /**
@@ -351,6 +373,8 @@ final class User
     public function setIp($ip)
     {
         $this->ip = $ip;
+
+        return $this;
     }
 
     /**
@@ -371,6 +395,8 @@ final class User
     public function setLanguage($language = 1)
     {
         $this->language = $language;
+
+        return $this;
     }
 
     /**
@@ -391,6 +417,8 @@ final class User
     public function setAdmin($admin = 0)
     {
         $this->admin = $admin;
+
+        return $this;
     }
 
     /**

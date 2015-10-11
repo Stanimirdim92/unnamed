@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -74,7 +74,7 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("AdminMenu")->fetchList(false, [], []);
+        $menu = $this->getTable("AdminMenu")->fetch();
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
             foreach ($menu as $submenus) {
@@ -176,14 +176,15 @@ class IndexController extends AbstractActionController
                 isset($auth->getIdentity()->logged)       &&
                 $auth->getIdentity()->logged === true
             ) {
-                $checkAdminExistence = $this->getTable("administrator")->fetchList(false, [], ["user" => $auth->getIdentity()->id])->current();
+                $checkAdminExistence = $this->getTable("administrator");
+                $checkAdminExistence->where(["user" => $auth->getIdentity()->id]);
+                $checkAdminExistence = $checkAdminExistence->current();
+
                 if (count($checkAdminExistence) === 1) {
                     unset($checkAdminExistence);
                     return true;
                 }
-                return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
             }
-            return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
         }
         return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
     }

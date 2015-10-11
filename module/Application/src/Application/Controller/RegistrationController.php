@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -44,7 +44,7 @@ final class RegistrationController extends IndexController
          * he will be redirected to the root url of the website.
          * For resetpassword and newpassword actions we assume that the user is not logged in.
          */
-        if (APP_ENV !== 'development') {
+        if (APP_ENV == 'development') {
             $this->UserData()->checkIdentity();
         }
     }
@@ -70,7 +70,10 @@ final class RegistrationController extends IndexController
             /*
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("user")->fetchList(false, [], ["email" => $formData["email"]]);
+            $existingEmail = $this->getTable("user");
+            $existingEmail->where(["email" => $formData["email"]]);
+            $existingEmail = $existingEmail->fetch();
+
             if (count($existingEmail) > 0) {
                 return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData["email"]."</b> ".$this->translate("ALREADY_EXIST"), 'info');
             } else {

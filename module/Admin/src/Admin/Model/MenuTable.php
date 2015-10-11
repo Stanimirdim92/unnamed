@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -12,15 +12,18 @@
 namespace Admin\Model;
 
 use Admin\Model\AbstractModelTable;
+use Admin\Exception\RuntimeException;
 
 final class MenuTable extends AbstractModelTable
 {
-    private $adapter = null;
-
-
-    public function __construct($adapter, $resultSetPrototype)
+    /**
+     * @method __construct
+     *
+     * @param \Zend\Db\Adapter\Adapter $adapter
+     */
+    public function __construct($adapter)
     {
-        parent::__construct('menu', 'Menu', $adapter, $resultSetPrototype);
+        parent::__construct('menu', 'Menu', $adapter);
     }
 
     /**
@@ -38,7 +41,7 @@ final class MenuTable extends AbstractModelTable
         if (!$rowset->current()) {
             throw new RuntimeException("Couldn't find menu");
         }
-        return $rowset;
+        return $rowset->current();
     }
 
     /**
@@ -115,7 +118,7 @@ final class MenuTable extends AbstractModelTable
     public function duplicate($id = 0, $language = 1)
     {
         $menu = $this->getMenu($id, $language);
-        $clone = $menu->current()->getCopy();
+        $clone = $menu->getCopy();
         $this->saveMenu($clone);
         return $clone;
     }

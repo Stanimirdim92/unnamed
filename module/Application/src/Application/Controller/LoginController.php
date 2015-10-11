@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -121,6 +121,8 @@ final class LoginController extends IndexController
 
     public function processloginAction()
     {
+        $this->getView()->setTemplate("application/login/index");
+
         /*
          * Check if we have a POST request
          */
@@ -151,43 +153,43 @@ final class LoginController extends IndexController
          * See if authentication is valid
          */
         if (!$result->isValid()) {
-            $this->setLayoutMessages($result->getMessages(), 'error');
-        } else {
-            $role = 1;
-            $url = "/";
-            $includeRows = ['id', 'ip', 'name', 'surname', 'email', 'deleted', 'image', 'admin', 'language'];
-            $excludeRows = ['password', 'registered', 'lastLogin', 'birthDate', 'hideEmail', ];
-            $data = $adapter->getResultRowObject($includeRows, $excludeRows);
-            $user = $this->getTable('user')->getUser($data->id)->current();
-
-            /*
-             * If account is disabled/banned (call it w/e you like) clear user data and redirect
-             */
-            if ((int) $user->getDeleted() === 1) {
-                $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
-                return $this->logoutAction();
-            }
-
-            /*
-             * See if user is admin
-             */
-            if ((int) $user->getAdmin() === 1) {
-                $role = 10;
-                $url = "/admin";
-            }
-
-            $user->setLastLogin(date("Y-m-d H:i:s", time()));
-            $remote = new RemoteAddress();
-            $user->setIp($remote->getIpAddress());
-            $this->getTable('user')->saveUser($user);
-
-            $data->role = (int) $role;
-            $data->logged = true;
-            Container::getDefaultManager()->regenerateId();
-
-            $auth->getStorage()->write($data);
-            return $this->redirect()->toUrl($url);
+            return $this->setLayoutMessages($result->getMessages(), 'error');
         }
+
+        $role = 1;
+        $url = "/";
+        $includeRows = ['id', 'ip', 'name', 'surname', 'email', 'isDisabled', 'image', 'admin', 'language'];
+        $excludeRows = ['password', 'registered', 'lastLogin', 'birthDate', 'hideEmail', ];
+        $data = $adapter->getResultRowObject($includeRows, $excludeRows);
+        $user = $this->getTable('user')->getUser($data->id);
+
+        /*
+         * If account is disabled/banned (call it w/e you like) clear user data and redirect
+         */
+        if ((int) $user->isDisabled() === 1) {
+            $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
+            return $this->logoutAction();
+        }
+
+        /*
+         * See if user is admin
+         */
+        if ((int) $user->getAdmin() === 1) {
+            $role = 10;
+            $url = "/admin";
+        }
+
+        $user->setLastLogin(date("Y-m-d H:i:s", time()));
+        $remote = new RemoteAddress();
+        $user->setIp($remote->getIpAddress());
+        $this->getTable('user')->saveUser($user);
+
+        $data->role = (int) $role;
+        $data->logged = true;
+        Container::getDefaultManager()->regenerateId();
+
+        $auth->getStorage()->write($data);
+        return $this->redirect()->toUrl($url);
     }
 
     /**
@@ -214,7 +216,11 @@ final class LoginController extends IndexController
         /**
          * See if token exist or has expired
          */
-        $tokenExist = $this->getTable("resetpassword")->fetchList(["user", "token", "date"], "token = '{$token}' AND date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")->current();
+        $tokenExist = $this->getTable("resetpassword");
+        $tokenExist->columns(["user", "token", "date"]);
+        $tokenExist->where("token = '{$token}' AND date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)", "AND");
+        $tokenExist = $tokenExist->fetch()->current();
+
         if (!$tokenExist) {
             return $this->setLayoutMessages($this->translate("LINK_EXPIRED"), 'error');
         }
@@ -253,7 +259,7 @@ final class LoginController extends IndexController
                 $formData = $form->getData();
                 $pw = $func::createPassword($formData->password);
                 if (!empty($pw)) {
-                    $user = $this->getTable("user")->getUser($this->getView()->resetpwUserId)->current();
+                    $user = $this->getTable("user")->getUser($this->getView()->resetpwUserId);
                     $remote = new RemoteAddress();
                     unset($this->getView()->resetpwUserId);
                     $user->setPassword($pw);
@@ -291,7 +297,9 @@ final class LoginController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("User")->fetchList(false, [], ["email" => $formData["email"]])->current();
+                $existingEmail = $this->getTable("User");
+                $existingEmail = $existingEmail->where(["email" => $formData["email"]])->current();
+
                 if (count($existingEmail) === 1) {
                     $func = $this->getFunctions();
                     $token = $func::generateToken();

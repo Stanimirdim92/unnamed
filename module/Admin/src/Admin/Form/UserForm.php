@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -82,7 +82,7 @@ final class UserForm extends Form implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Zend\Form\Element\Checkbox',
-            'name' => 'deleted',
+            'name' => 'isDisabled',
             'options' => [
                 'label' => 'Disabled',
             ],
@@ -213,7 +213,7 @@ final class UserForm extends Form implements InputFilterProviderInterface
                 ],
             ],
             [
-                "name"=>"deleted",
+                "name"=>"isDisabled",
                 "required" => false,
                 'filters'  => [
                     ['name' => 'Int'],

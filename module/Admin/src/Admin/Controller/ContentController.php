@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -61,12 +61,18 @@ final class ContentController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/content/index");
+
+        $paginator = $this->getTable("content");
         if ((int) $this->getParam("id", 0) === 1) {
-            $paginator = $this->getTable("content")->fetchList(true, [], "type='1' AND content.language='".$this->language()."'", null, null,  "content.date DESC");
+            $paginator->where(["type" => 1, "content.language" => $this->language()]);
+            $paginator->order("content.date DESC");
         } else {
-            $paginator = $this->getTable("content")->fetchJoin(true, "menu", [], [], "content.menu=menu.id", "inner", "type='0' AND content.language='".$this->language()."'", null, "menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $paginator->join("menu", "content.menu=menu.id", [], "inner");
+            $paginator->where(["type" => 0, "content.language" => $this->language()]);
+            $paginator->order("menu.parent ASC, menu.menuOrder ASC, content.date DESC");
         }
 
+        $paginator = $paginator->fetchPagination();
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage($this->systemSettings('posts', 'content'));
         $this->getView()->paginator = $paginator;
@@ -97,7 +103,7 @@ final class ContentController extends IndexController
         $this->acceptableviewmodelselector($this->acceptCriteria);
 
         $this->getView()->setTemplate("admin/content/edit");
-        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
+        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/edit/{$content->getId()}", "name"=> $this->translate("EDIT_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
         $this->initForm($this->translate("EDIT_CONTENT"), $content);
@@ -121,7 +127,7 @@ final class ContentController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/content/detail");
-        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language())->current();
+        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -144,7 +150,7 @@ final class ContentController extends IndexController
      */
     protected function cloneAction()
     {
-        $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language())->current();
+        $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 

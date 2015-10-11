@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -12,12 +12,18 @@
 namespace Admin\Model;
 
 use Admin\Model\AbstractModelTable;
+use Admin\Exception\RuntimeException;
 
 final class ContentTable extends AbstractModelTable
 {
-    public function __construct($adapter, $resultSetPrototype)
+    /**
+     * @method __construct
+     *
+     * @param \Zend\Db\Adapter\Adapter $adapter
+     */
+    public function __construct($adapter)
     {
-        parent::__construct('content', 'Content', $adapter, $resultSetPrototype);
+        parent::__construct('content', 'Content', $adapter);
     }
 
     /**
@@ -35,7 +41,7 @@ final class ContentTable extends AbstractModelTable
         if (!$rowset->current()) {
             throw new RuntimeException("Couldn't find content");
         }
-        return $rowset;
+        return $rowset->current();
     }
 
     /**
@@ -112,7 +118,7 @@ final class ContentTable extends AbstractModelTable
     public function duplicate($id = 0, $language = 1)
     {
         $content = $this->getContent($id, $language);
-        $clone = $content->current()->getCopy();
+        $clone = $content->getCopy();
         $this->saveContent($clone);
         return $clone;
     }

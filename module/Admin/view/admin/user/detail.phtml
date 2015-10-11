@@ -25,7 +25,7 @@
         </ul>
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("DISABLED")?></li>
-            <li class="table-cell"><?php if ($user->getDeleted()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
+            <li class="table-cell"><?php if ($user->isDisabled()) { ?> <i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i> <?php } ?></li>
         </ul>
         <ul class="table-row">
             <li class="table-cell"><?=$this->translate("REGISTERED")?></li>

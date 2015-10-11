@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -50,9 +50,9 @@ final class LanguageController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/language/index");
-        $paginator = $this->getTable("language")->fetchList(true);
+        $paginator = $this->getTable("language")->fetchPagination();
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        $paginator->setItemCountPerPage(20);
+        $paginator->setItemCountPerPage($this->systemSettings('posts', 'language'));
         $this->getView()->paginator = $paginator;
         return $this->getView();
     }
@@ -139,14 +139,12 @@ final class LanguageController extends IndexController
         $this->getView()->translationsArray = include $arr;
 
         $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($request->getPost() instanceof Parameters) {
-                $filename = "module/Application/languages/phpArray/".$this->language("languageName").".php";
-                $arr2 = $request->getPost()->toArray();
-                unset($arr2["submit"]); // remove the submit button
-                file_put_contents($filename, '<?php return ' . var_export($arr2, true).';');
-                $this->setLayoutMessages($this->translate("TRANSLATIONS_SAVE_SUCCESS"), "success");
-            }
+        if ($request->isPost() && $request->getPost() instanceof Parameters) {
+            $filename = "module/Application/languages/phpArray/".$this->language("languageName").".php";
+            $arr2 = $request->getPost()->toArray();
+            unset($arr2["submit"]); // remove submit button
+            file_put_contents($filename, '<?php return ' . var_export($arr2, true).';');
+            $this->setLayoutMessages($this->translate("TRANSLATIONS_SAVE_SUCCESS"), "success");
         }
         return $this->getView();
     }
@@ -173,12 +171,11 @@ final class LanguageController extends IndexController
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
-            if (!$form->isValid()) {
+            if ($form->isValid()) {
                 $this->getTable("language")->saveLanguage($language);
-                $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-            } else {
-                $this->setLayoutMessages($form->getMessages(), 'error');
+                return $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
             }
+            return $this->setLayoutMessages($form->getMessages(), 'error');
         }
     }
 }

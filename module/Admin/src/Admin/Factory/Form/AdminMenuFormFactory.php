@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -22,7 +22,10 @@ final class AdminMenuFormFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $parents = $serviceLocator->getServiceLocator()->get("AdminMenuTable")->fetchList(false, ["caption", "id"], ["parent" => 0]);
+        $parents = $serviceLocator->getServiceLocator()->get("AdminMenuTable")
+                                                       ->columns(["caption", "id"])
+                                                       ->where(["parent" => 0])
+                                                       ->fetch();
 
         $valueOptions = [];
         if (count($parents) > 0) {

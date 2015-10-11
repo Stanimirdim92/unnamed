@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
@@ -68,6 +68,8 @@ final class Administrator
     public function setId($id = 0)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -78,6 +80,8 @@ final class Administrator
     public function setUser($user = 0)
     {
         $this->user = $user;
+
+        return $this;
     }
 
     /**

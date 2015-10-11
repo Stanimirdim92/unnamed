@@ -4,33 +4,24 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.16
+ * @version    0.0.17
  *
  * @link       TBA
  */
 
 namespace Application\Factory\Model;
 
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\TableGateway\TableGateway;
-use Application\Model\ResetPassword;
 use Application\Model\ResetPasswordTable;
 
-final class ResetPasswordTableFactory implements FactoryInterface
+final class ResetPasswordTableFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $sm = null)
+    public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        $resultSetPrototype = new ResultSet();
-        $resultSetPrototype->setArrayObjectPrototype(new ResetPassword());
-        $db = $sm->get('SD\Adapter');
-
-        $tableGateway = new TableGateway('resetpassword', $db, null, $resultSetPrototype);
-        $table = new ResetPasswordTable($tableGateway);
+        $table = new ResetPasswordTable($serviceLocator->get('SD\Adapter'));
 
         return $table;
     }

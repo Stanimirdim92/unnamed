@@ -1,7 +1,16 @@
 # CHANGELOG
 
 DD.MM.YYYY
-## 0.0.16 (10.10.2015) - Stable Alpha
+## 0.0.17 (11.10.2015) - Stable Alpha ##
+- Full refactor of class model tables. Created a new AbstractModelTable class which merges all functions into 1 abstract class with an interface. ~800 lines of code were saved. More to come
+- All factories were recoded to use the __invoke method
+- Fixed all getObject() methods to return the current object by themself instead of doing getObject()->current();
+- *->fetchJoin should access 'n' number of tables and join them - fixed by the first comment
+- User method getDeleted() was renamed to isDisabled()
+- Models now have fluent interfaces
+
+DD.MM.YYYY
+## 0.0.16 (09.10.2015) - Stable Alpha
 - Bumped PHP version to 5.5.28
 - Added Zend OPCache
 - Added php.ini
@@ -164,7 +173,7 @@ DD.MM.YYYY
 # TODO
  - Comments controller
  - ElasticSearch
+ - Add settings in session
  - After/In Beta version start creating the first PHPUnit and Selenium tests
- - *->fetchJoin should access 'n' number of tables and join them (array with tables info passed via foreach maybe?)
  - Social networks controller or module
  - Voice Search
