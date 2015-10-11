@@ -71,70 +71,64 @@ final class ErrorHandling
     }
 
     /**
-     * @param \Exception $e
+     * @param \Exception $exception
      *
-     * @return Logger
+     * @return ErrorHandling
      */
-    private function logException(\Exception $e = null)
+    private function logException(\Exception $exception = null)
     {
-        $i = 1;
-        $messages = [];
-        // while ($e->getPrevious()) {
-        //     $messages[] = $i++ . ": " . $e->getMessage();
-        // }
-
-        // $log = PHP_EOL."Exception: ".implode("", $messages);
-        $log = PHP_EOL."Exception: ".$e->getMessage();
-        $log .= PHP_EOL."Code: ".$e->getCode();
-        $log .= PHP_EOL."File: ".$e->getFile();
-        $log .= PHP_EOL."Trace: ".$e->getTraceAsString();
+        $log = PHP_EOL."Exception: ".$exception->getMessage();
+        $log .= PHP_EOL."Code: ".$exception->getCode();
+        $log .= PHP_EOL."File: ".$exception->getFile();
+        $log .= PHP_EOL."Trace: ".$exception->getTraceAsString();
+        $this->logger->addWriter(new Stream($this->destination.'front_end_log_'.date('F').'.txt'));
         $this->logger->err($log);
 
-        return $this->logger;
+        return $this;
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      * @param ServiceLocatorInterface $sm
      *
      * @return MvcEvent
      */
-    public function logError(MvcEvent $e = null, ServiceLocatorInterface $sm = null)
+    public function logError(MvcEvent $event = null, ServiceLocatorInterface $sm = null)
     {
-        $exception = $e->getParam("exception");
+        $exception = $event->getParam("exception");
         if ($exception instanceof AuthorizationException) {
-            $this->logAuthorisationError($e, $sm);
+            $this->logAuthorisationError($event, $sm);
             $this->logException($exception);
         } elseif ($exception !== null) {
             $this->logException($exception);
         }
 
-        $e->getResponse()->setStatusCode(404);
-        $e->getViewModel()->setVariables([
+        $event->getResponse()->setStatusCode(404);
+        $event->getViewModel()->setVariables([
             'message' => '404 Not found',
             'reason' => 'The link you have requested doesn\'t exists',
             'exception' => ($exception !== null ? $exception->getMessage() : ""),
         ]);
-        $e->getViewModel()->setTemplate('error/index');
-        $e->stopPropagation();
+        $event->getViewModel()->setTemplate('error/index');
+        $event->stopPropagation();
 
-        return $e;
+        return $event;
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      * @param ServiceLocatorInterface $sm
      * @todo add user data such as id and name
      *
-     * @return Logger
+     * @return ErrorHandling
      */
-    private function logAuthorisationError(MvcEvent $e = null, ServiceLocatorInterface $sm = null)
+    private function logAuthorisationError(MvcEvent $event = null, ServiceLocatorInterface $sm = null)
     {
         $remote = new RemoteAddress();
 
         $errorMsg = " *** APPLICATION LOG ***
-        Controller: ".$e->getRouteMatch()->getParam('controller').",
-        Controller action: ".$e->getRouteMatch()->getParam('action').",
+        Controller: ".$event->getRouteMatch()->getParam('controller').",
+        Controller action: ".$event->getRouteMatch()->getParam('action').",
         IP: ".$remote->getIpAddress().",
         Browser string: ".$sm->get("Request")->getServer()->get('HTTP_USER_AGENT').",
         Date: ".date("Y-m-d H:i:s", time()).",
@@ -143,10 +137,10 @@ final class ErrorHandling
         Remote host addr: ".gethostbyaddr($remote->getIpAddress()).",
         Method used: ".$sm->get("Request")->getMethod()."\n";
 
-        $log = new Logger();
         $writer = new Stream($this->destination.date('F').'.txt');
-        $log->addWriter($writer);
-        $log->info($errorMsg);
-        return $log;
+        $this->logger->addWriter($writer);
+        $this->logger->info($errorMsg);
+
+        return $this;
     }
 }

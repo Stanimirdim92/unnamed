@@ -11,22 +11,19 @@
 
 namespace Application\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
 use Application\Controller\ErrorHandling;
 
-final class ApplicationErrorHandlingFactory implements FactoryInterface
+final class ApplicationErrorHandlingFactory
 {
     /**
      * {@inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $servicLocator = null)
+    public function __invoke(ServiceLocatorInterface $servicLocator = null)
     {
-        $log = new Logger();
-        $log->addWriter(new Stream('./data/logs/front_end_log_'.date('F').'.txt'));
-        $error =  new ErrorHandling($log);
-        return $error;
+        $logger = new ErrorHandling(new Logger());
+
+        return $logger;
     }
 }
