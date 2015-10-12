@@ -32,7 +32,7 @@ final class UserTable extends AbstractModelTable
      */
     public function getUser($id = 0)
     {
-        $rowset = $this->tableGateway->select(['id' => (int) $id]);
+        $rowset = $this->select(['id' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
             return;
@@ -49,7 +49,7 @@ final class UserTable extends AbstractModelTable
     public function toggleUserState($id = 0, $state = 0)
     {
         if ($this->getUser($id)) {
-            $this->tableGateway->update(["isDisabled" => (int) $state, 'admin' => 0], ['id' => (int) $id]);
+            $this->update(["isDisabled" => (int) $state, 'admin' => 0], ['id' => (int) $id]);
         }
     }
 
@@ -82,12 +82,12 @@ final class UserTable extends AbstractModelTable
 
         $id = (int) $user->getId();
         if (!$id) {
-            $this->tableGateway->insert($data);
+            $this->insert($data);
         } else {
             if (!$this->getUser($id)) {
                 throw new RuntimeException("User not saved");
             }
-            $this->tableGateway->update($data, ['id' =>(int)  $id]);
+            $this->update($data, ['id' =>(int)  $id]);
         }
         unset($id, $data);
         return $user;

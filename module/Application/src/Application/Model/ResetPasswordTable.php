@@ -38,7 +38,7 @@ final class ResetPasswordTable extends AbstractModelTable
      */
     public function getResetPassword($id = 0, $user = 0)
     {
-        $rowset = $this->tableGateway->select(['id' => (int) $id, 'user' => (int) $user]);
+        $rowset = $this->select(['id' => (int) $id, 'user' => (int) $user]);
         if (!$rowset->current()) {
             throw new RuntimeException("Couldn't find row");
         }
@@ -63,10 +63,10 @@ final class ResetPasswordTable extends AbstractModelTable
         $id = (int) $resetpw->getId();
         $user = (int) $resetpw->getUser();
         if (!$id) {
-            $this->tableGateway->insert($data);
+            $this->insert($data);
         } else {
             if ($this->getResetPassword($id, $user)) {
-                $this->tableGateway->update($data, ['id' => (int) $id, 'user' => (int) $user]);
+                $this->update($data, ['id' => (int) $id, 'user' => (int) $user]);
             }
         }
         unset($id, $user, $data);

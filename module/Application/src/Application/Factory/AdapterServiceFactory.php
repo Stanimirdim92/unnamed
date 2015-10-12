@@ -11,18 +11,17 @@
 
 namespace Application\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter;
 use BjyProfiler\Db\Adapter\ProfilingAdapter;
 use BjyProfiler\Db\Profiler\Profiler;
 
-final class AdapterServiceFactory implements FactoryInterface
+final class AdapterServiceFactory
 {
     /**
      * {@inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator = null)
+    public function __invoke(ServiceLocatorInterface $serviceLocator = null)
     {
         $config = $serviceLocator->get('Config');
 

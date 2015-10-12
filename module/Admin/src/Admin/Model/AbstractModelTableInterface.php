@@ -38,6 +38,45 @@ interface AbstractModelTableInterface
     public function fetchPagination();
 
     /**
+     * Perform a select query
+     *
+     * @method select
+     *
+     * @param array $select
+     *
+     * @return ResultSet
+     */
+    public function select(array $select = []);
+
+    /**
+     * Perform a delete query
+     *
+     * @method delete
+     *
+     * @param array $delete
+     */
+    public function delete(array $delete = []);
+
+    /**
+     * Perform a insert query
+     *
+     * @method insert
+     *
+     * @param array $insert
+     */
+    public function insert(array $insert = []);
+
+    /**
+     * Perform a update query
+     *
+     * @method update
+     *
+     * @param array $set
+     * @param string|array|\Closure $where
+     */
+    public function update(array $set = [], $where = null);
+
+    /**
      * Create join clause.
      *
      * @param string $name - table name to join

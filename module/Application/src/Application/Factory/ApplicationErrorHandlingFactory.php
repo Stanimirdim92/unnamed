@@ -11,7 +11,6 @@
 
 namespace Application\Factory;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Log\Logger;
 use Application\Controller\ErrorHandling;
 
@@ -20,7 +19,7 @@ final class ApplicationErrorHandlingFactory
     /**
      * {@inheritDoc}
      */
-    public function __invoke(ServiceLocatorInterface $servicLocator = null)
+    public function __invoke()
     {
         $logger = new ErrorHandling(new Logger());
 

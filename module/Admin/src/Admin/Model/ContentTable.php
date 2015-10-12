@@ -36,7 +36,7 @@ final class ContentTable extends AbstractModelTable
      */
     public function getContent($id = 0, $language = 1)
     {
-        $rowset = $this->tableGateway->select(['id' => (int) $id, "language" => (int) $language]);
+        $rowset = $this->select(['id' => (int) $id, "language" => (int) $language]);
         $rowset->buffer();
         if (!$rowset->current()) {
             throw new RuntimeException("Couldn't find content");
@@ -55,7 +55,7 @@ final class ContentTable extends AbstractModelTable
     public function deleteContent($id = 0, $language = 1)
     {
         if ($this->getContent($id, $language)) {
-            $this->tableGateway->delete(['id' => (int) $id, "language" => (int) $language]);
+            $this->delete(['id' => (int) $id, "language" => (int) $language]);
         }
     }
 
@@ -84,10 +84,10 @@ final class ContentTable extends AbstractModelTable
         $id = (int) $content->getId();
         $language = (int) $content->getLanguage();
         if (!$id) {
-            $this->tableGateway->insert($data);
+            $this->insert($data);
         } else {
             if ($this->getContent($id, $language)) {
-                $this->tableGateway->update($data, ['id' => $id, 'language' => $language]);
+                $this->update($data, ['id' => $id, 'language' => $language]);
             }
         }
         unset($id, $language, $data);
@@ -103,7 +103,7 @@ final class ContentTable extends AbstractModelTable
     public function toggleActiveContent($id = 0, $state = 0)
     {
         if ($this->getContent($id)) {
-            $this->tableGateway->update(["active" => (int) $state], ['id' => (int) $id]);
+            $this->update(["active" => (int) $state], ['id' => (int) $id]);
         }
     }
 

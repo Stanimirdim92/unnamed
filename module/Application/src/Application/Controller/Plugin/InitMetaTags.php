@@ -80,7 +80,6 @@ final class InitMetaTags extends AbstractPlugin
         $this->headMeta->appendName('generator', $this->settings->__invoke("general", "site_name"));
         $this->headMeta->appendName('apple-mobile-web-app-capable', 'yes');
         $this->headMeta->appendName('application-name', $this->settings->__invoke("general", "site_name"));
-        $this->headMeta->appendName('msapplication-TileColor', '#000000');
         $this->headMeta->appendName('mobile-web-app-capable', 'yes');
         $this->headMeta->appendName('HandheldFriendly', 'True');
         $this->headMeta->appendName('MobileOptimized', '320');

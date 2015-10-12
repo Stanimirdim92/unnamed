@@ -26,7 +26,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     /**
      * @var TableGateway $tableGateway
      */
-    protected $tableGateway = null;
+    private $tableGateway = null;
 
     /**
      * @var Select
@@ -86,6 +86,59 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
         $dbSelect = new DbSelect($this->select, $this->tableGateway->getAdapter(), $this->tableGateway->getResultSetPrototype());
 
         return new Paginator($dbSelect);
+    }
+
+    /**
+     * Perform a select query
+     *
+     * @method select
+     *
+     * @param array $select
+     *
+     * @return ResultSet
+     */
+    public function select(array $select = [])
+    {
+        $result = $this->tableGateway->select($select);
+
+        return $result;
+    }
+
+    /**
+     * Perform a delete query
+     *
+     * @method delete
+     *
+     * @param array $delete
+     */
+    public function delete(array $delete = [])
+    {
+        $result = $this->tableGateway->delete($delete);
+    }
+
+    /**
+     * Perform a insert query
+     *
+     * @method insert
+     *
+     * @param array $insert
+     */
+    public function insert(array $insert = [])
+    {
+        $result = $this->tableGateway->insert($insert);
+    }
+
+    /**
+     * Perform a update query
+     *
+     * @method update
+     *
+     * @param array $set
+     * @param string|array|\Closure $where
+     */
+    public function update(array $set = [], $where = null)
+    {
+        $result = $this->tableGateway->update($set, $where);
     }
 
     /**

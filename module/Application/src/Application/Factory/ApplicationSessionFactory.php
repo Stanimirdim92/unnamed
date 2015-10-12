@@ -11,17 +11,15 @@
 
 namespace Application\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\SessionManager;
 use Zend\Session\Config\SessionConfig;
 
-final class ApplicationSessionFactory implements FactoryInterface
+final class ApplicationSessionFactory
 {
     /**
      * {@inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator = null)
+    public function __invoke()
     {
         $sessionConfig = new SessionConfig();
         $sessionConfig->setOptions([
@@ -32,7 +30,7 @@ final class ApplicationSessionFactory implements FactoryInterface
             'cookie_path'             => "/",
             'cookie_httponly'         => true,
             'name'                    => '__zpc',
-            'cookie_secure'           => self::isSSL(),
+            'cookie_secure'           => static::isSSL(),
             'hash_bits_per_character' => 6,
             'hash_function'           => 1,
         ]);

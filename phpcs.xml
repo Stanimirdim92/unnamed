@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Unnamed coding standards">
+    <description>All coding standards for this framework.</description>
+
+    <file>config</file>
+    <file>data</file>
+    <file>module</file>
+    <file>public/index.php</file>
+    <file>public/install.php</file>
+
+    <arg name="report-file" value="phpcs.log"/>
+    <arg value="np"/>
+
+    <rule ref="PHPCS"/>
+</ruleset>

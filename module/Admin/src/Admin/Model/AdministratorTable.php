@@ -32,7 +32,7 @@ final class AdministratorTable extends AbstractModelTable
      */
     public function getAdministrator($id = 0)
     {
-        $rowset = $this->tableGateway->select(['user' => (int) $id]);
+        $rowset = $this->select(['user' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
             return;
@@ -48,7 +48,7 @@ final class AdministratorTable extends AbstractModelTable
     public function deleteAdministrator($id = 0)
     {
         if ($this->getAdministrator($id)) {
-            $this->tableGateway->delete(['user' => (int) $id]);
+            $this->delete(['user' => (int) $id]);
         }
     }
 
@@ -66,10 +66,10 @@ final class AdministratorTable extends AbstractModelTable
         ];
         $id = (int)$administrator->getId();
         if (!$id) {
-            $this->tableGateway->insert($data);
+            $this->insert($data);
         } else {
             if ($this->getAdministrator($id)) {
-                $this->tableGateway->update($data, ['user' => $id]);
+                $this->update($data, ['user' => $id]);
             }
         }
         unset($id, $data);

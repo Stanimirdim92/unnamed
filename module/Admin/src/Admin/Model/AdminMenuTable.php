@@ -35,7 +35,7 @@ final class AdminMenuTable extends AbstractModelTable
      */
     public function getAdminMenu($id = 0)
     {
-        $rowset = $this->tableGateway->select(['id' => (int) $id]);
+        $rowset = $this->select(['id' => (int) $id]);
         $rowset->buffer();
         if (!$rowset->current()) {
             throw new RuntimeException("Couldn't find admin menu");
@@ -53,7 +53,7 @@ final class AdminMenuTable extends AbstractModelTable
     public function deleteAdminMenu($id = 0)
     {
         if ($this->getAdminMenu($id)) {
-            $this->tableGateway->delete(['id' => (int) $id]);
+            $this->delete(['id' => (int) $id]);
         }
     }
 
@@ -77,10 +77,10 @@ final class AdminMenuTable extends AbstractModelTable
         ];
         $id = (int)$adminMenu->getId();
         if (!$id) {
-            $this->tableGateway->insert($data);
+            $this->insert($data);
         } else {
             if ($this->getAdminMenu($id)) {
-                $this->tableGateway->update($data, ['id' => $id]);
+                $this->update($data, ['id' => $id]);
             }
         }
         unset($id, $data);

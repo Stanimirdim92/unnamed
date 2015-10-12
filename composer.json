@@ -62,7 +62,7 @@
         "zendframework/zend-developer-tools": "dev-master",
         "bjyoungblood/bjy-profiler": "dev-master",
         "san/san-session-toolbar": "0.*",
-        "fabpot/php-cs-fixer": "1.*",
+        "squizlabs/php_codesniffer": "2.*",
         "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
@@ -71,7 +71,8 @@
        "ext-intl": "for translations",
        "ext-gd": "for image manipulation",
        "ext-fileinfo": "for image mimetype detection",
-       "ext-pdo": "for database driver"
+       "ext-pdo": "for database driver",
+       "ext-opcache": "for caching"
     },
     "prefer-stable": true
 }
