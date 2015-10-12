@@ -26,7 +26,8 @@ final class UserForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
             'attributes' => [
@@ -37,9 +38,11 @@ final class UserForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Name',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'surname',
             'attributes' => [
@@ -50,9 +53,11 @@ final class UserForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Surname',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'email',
             'attributes' => [
@@ -64,9 +69,11 @@ final class UserForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Email',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'birthDate',
             'attributes' => [
@@ -78,25 +85,31 @@ final class UserForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Birthdate',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'isDisabled',
             'options' => [
                 'label' => 'Disabled',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'hideEmail',
             'options' => [
                 'label' => 'Hide email',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -104,20 +117,25 @@ final class UserForm extends Form implements InputFilterProviderInterface
                     'timeout' => 1400,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

@@ -27,7 +27,8 @@ final class ResetPasswordForm extends Form implements InputFilterProviderInterfa
         $this->setAttribute('action', '/login/resetpassword');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'email',
             'attributes' => [
@@ -36,15 +37,18 @@ final class ResetPasswordForm extends Form implements InputFilterProviderInterfa
                 'size' => 30,
                 'placeholder' => 'johnsmith@example.com',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'resetpw',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

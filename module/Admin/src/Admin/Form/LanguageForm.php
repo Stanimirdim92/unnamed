@@ -26,7 +26,8 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
             'attributes' => [
@@ -37,17 +38,21 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Name',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'active',
             'options' => [
                 'label' => 'Active',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -55,20 +60,25 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
                     'timeout' => 500,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

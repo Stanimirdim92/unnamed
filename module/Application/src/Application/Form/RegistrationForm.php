@@ -29,7 +29,8 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
         $this->setAttribute('action', '/registration/processregistration');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
             'attributes' => [
@@ -38,9 +39,11 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
                 'max' => 20,
                 'size' => 30,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'password',
             'attributes' => [
@@ -49,9 +52,11 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
                 'size' => 30,
                 'placeholder' => '1234567890',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'repeatpw',
             'attributes' => [
@@ -59,9 +64,11 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
                 'size' => 30,
                 'placeholder' => '1234567890',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'email',
             'attributes' => [
@@ -70,9 +77,11 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
                 'size' => 30,
                 'placeholder' => 'johnsmith@example.com',
             ],
-        ]);
+            ]
+        );
 
-        $captchaImage = new CaptchaImage([
+        $captchaImage = new CaptchaImage(
+            [
             'font'           => 'public/assets/prod/front/fonts/arial.ttf',
             'width'          => 180,
             'height'         => 50,
@@ -86,7 +95,8 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Captcha',
             'name' => 'captcha',
             'attributes' => [
@@ -96,9 +106,11 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'captcha' => $captchaImage,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -106,15 +118,18 @@ final class RegistrationForm extends Form implements InputFilterProviderInterfac
                     'timeout' => 320,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'register',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

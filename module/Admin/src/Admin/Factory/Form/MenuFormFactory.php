@@ -32,7 +32,7 @@ final class MenuFormFactory implements FactoryInterface
         $lang = new Container("translations");
 
         $languages = $this->services->get("LanguageTable");
-        $languages->where( ["active" => 1]);
+        $languages->where(["active" => 1]);
         $languages = $languages->fetch();
 
         $menu = $this->services->get("MenuTable");

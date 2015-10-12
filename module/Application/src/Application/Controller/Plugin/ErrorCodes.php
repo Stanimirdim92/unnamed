@@ -43,11 +43,13 @@ final class ErrorCodes extends AbstractPlugin
     public function __invoke($code = 404)
     {
         $this->response->setStatusCode((int) $code);
-        $this->layout->setVariables([
+        $this->layout->setVariables(
+            [
             'message' => '404 Not found',
             'reason' => 'The link you have requested doesn\'t exists',
             'exception' => "",
-        ]);
+            ]
+        );
         $this->layout->setTemplate('error/index');
     }
 }

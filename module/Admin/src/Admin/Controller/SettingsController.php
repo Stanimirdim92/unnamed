@@ -59,7 +59,8 @@ final class SettingsController extends IndexController
             SettingsGeneralForm $generalForm = null,
             SettingsDiscussionForm $discussionForm = null,
             SettingsRegistrationForm $registrationForm = null
-    ) {
+    ) 
+    {
         parent::__construct();
 
         $this->mailForm = $mailForm;

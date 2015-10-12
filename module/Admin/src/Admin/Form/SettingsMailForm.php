@@ -35,7 +35,8 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'host',
             'attributes' => [
@@ -48,9 +49,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Host',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
             'attributes' => [
@@ -63,9 +66,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Name',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'port',
             'attributes' => [
@@ -78,9 +83,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Port',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'username',
             'attributes' => [
@@ -93,9 +100,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Username',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'password',
             'attributes' => [
@@ -108,9 +117,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Password',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'ssl',
             'attributes' => [
@@ -123,9 +134,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Cert type',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'from',
             'attributes' => [
@@ -138,9 +151,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
             'options' => [
                 'label' => 'Admin email',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'connection_class',
             'attributes' => [
@@ -152,9 +167,11 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
                 'label' => 'Connection type',
                 'value_options' => $this->config['connection_classes'],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -162,15 +179,18 @@ final class SettingsMailForm extends Form implements InputFilterProviderInterfac
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

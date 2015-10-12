@@ -221,10 +221,12 @@ final class Image implements ImageInterface
     private function setOptions(array $options = [])
     {
         if (!is_array($options) && !$options instanceof \Traversable) {
-            throw new InvalidArgumentException(sprintf(
-                'Parameter provided to %s must be an array or Traversable',
-                __METHOD__
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Parameter provided to %s must be an array or Traversable',
+                    __METHOD__
+                )
+            );
         }
 
         if (!empty($options)) {

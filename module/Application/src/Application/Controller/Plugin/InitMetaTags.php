@@ -49,7 +49,8 @@ final class InitMetaTags extends AbstractPlugin
         HeadMeta $headMeta = null,
         Request $request = null,
         SystemSettings $settings = null
-    ) {
+    ) 
+    {
         $this->placeholder = $placeholder;
         $this->headMeta = $headMeta;
         $this->request = $request;

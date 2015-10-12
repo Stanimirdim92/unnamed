@@ -36,7 +36,8 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'caption',
             'attributes' => [
@@ -48,13 +49,15 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Caption',
             ],
-        ]);
+            ]
+        );
 
         $valueOptions = [];
         for ($i = 1; $i < 150; $i++) {
             $valueOptions[$i] = $i;
         }
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'menuOrder',
             'options' => [
@@ -63,9 +66,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'controller',
             'attributes' => [
@@ -77,9 +82,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Controller',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'class',
             'attributes' => [
@@ -91,9 +98,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'CSS class',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'action',
             'attributes' => [
@@ -105,9 +114,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Action',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'description',
             'attributes' => [
@@ -119,9 +130,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Description',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'parent',
             'options' => [
@@ -130,9 +143,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'empty_option' => "Select parent admin menu",
                 'value_options' => $this->parent,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -140,20 +155,25 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                     'timeout' => 1400,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

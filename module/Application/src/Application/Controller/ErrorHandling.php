@@ -104,11 +104,13 @@ final class ErrorHandling
         }
 
         $event->getResponse()->setStatusCode(404);
-        $event->getViewModel()->setVariables([
+        $event->getViewModel()->setVariables(
+            [
             'message' => '404 Not found',
             'reason' => 'The link you have requested doesn\'t exists',
             'exception' => ($exception !== null ? $exception->getMessage() : ""),
-        ]);
+            ]
+        );
         $event->getViewModel()->setTemplate('error/index');
         $event->stopPropagation();
 

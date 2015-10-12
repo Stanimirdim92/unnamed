@@ -35,7 +35,8 @@ final class SettingsRegistrationForm extends Form implements InputFilterProvider
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'allow_registrations',
             'attributes' => [
@@ -45,9 +46,11 @@ final class SettingsRegistrationForm extends Form implements InputFilterProvider
             'options' => [
                 'label' => 'Allow user registration',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'email_verification',
             'attributes' => [
@@ -58,9 +61,11 @@ final class SettingsRegistrationForm extends Form implements InputFilterProvider
                 'label' => 'Email verification type',
                 'value_options' => $this->config['email_verifications'],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -68,15 +73,18 @@ final class SettingsRegistrationForm extends Form implements InputFilterProvider
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

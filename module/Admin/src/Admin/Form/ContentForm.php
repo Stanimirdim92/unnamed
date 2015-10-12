@@ -68,7 +68,8 @@ final class ContentForm extends Form implements InputFilterProviderInterface
         /*
          * Specific image for this content
          */
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\File',
             'name' => 'preview',
             'attributes' => [
@@ -78,12 +79,14 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Image',
             ],
-        ]);
+            ]
+        );
 
         /*
          * Gallery for all contents
          */
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\File',
             'name' => 'imageUpload',
             'attributes' => [
@@ -94,9 +97,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Image',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'title',
             'attributes' => [
@@ -108,9 +113,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Title',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'text',
             'attributes' => [
@@ -121,13 +128,15 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Text',
             ],
-        ]);
+            ]
+        );
 
         $valueOptions = [];
         for ($i = 1; $i < 100; $i++) {
             $valueOptions[$i] = $i;
         }
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'menuOrder',
             'options' => [
@@ -135,9 +144,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'type',
             'options' => [
@@ -148,9 +159,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                     '1' => "News",
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'date',
             'attributes' => [
@@ -159,9 +172,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Date',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'menu',
             'options' => [
@@ -169,9 +184,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'empty_option' => 'Please choose your menu',
                 'value_options' => $this->collectMenuOptions(),
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'language',
             'options' => [
@@ -179,9 +196,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'empty_option' => 'Please choose a language',
                 'value_options' => $this->collectLanguageOptions(),
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -189,28 +208,35 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'titleLink',
             'attributes' => [
                 'id' => 'titleLink',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

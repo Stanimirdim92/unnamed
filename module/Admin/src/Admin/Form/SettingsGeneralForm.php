@@ -35,7 +35,8 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'site_name',
             'attributes' => [
@@ -48,9 +49,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Site name',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'site_tag_line',
             'attributes' => [
@@ -63,9 +66,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Tag line',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'site_description',
             'attributes' => [
@@ -78,9 +83,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Description',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'site_keywords',
             'attributes' => [
@@ -93,9 +100,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Keywords',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'site_text',
             'attributes' => [
@@ -108,9 +117,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Site text',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'system_email',
             'attributes' => [
@@ -123,9 +134,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'System email',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'timezone',
             'attributes' => [
@@ -138,9 +151,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Timezone',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'robots_indexing',
             'attributes' => [
@@ -151,9 +166,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
             'options' => [
                 'label' => 'Site indexing',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'date_format',
             'attributes' => [
@@ -164,9 +181,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
                 'label' => 'Date',
                 'value_options' => $this->config['date_formats'],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'time_format',
             'attributes' => [
@@ -177,9 +196,11 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
                 'label' => 'Time',
                 'value_options' => $this->config['time_formats'],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -187,15 +208,18 @@ final class SettingsGeneralForm extends Form implements InputFilterProviderInter
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

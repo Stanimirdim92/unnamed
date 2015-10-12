@@ -27,7 +27,8 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('action', '/login/newpasswordprocess');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'password',
             'attributes' => [
@@ -36,9 +37,11 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
                 'size' => 30,
                 'placeholder' => '1234567890',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'repeatpw',
             'attributes' => [
@@ -49,9 +52,11 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => "Password",
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -62,15 +67,18 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => "Repeat password",
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'resetpw',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

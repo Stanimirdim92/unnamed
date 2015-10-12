@@ -24,7 +24,7 @@ final class ContentControllerFactory
         $serviceLocator = $controllerManager->getServiceLocator();
 
         $controller = new ContentController(
-           (object) $serviceLocator->get('FormElementManager')->get('Admin\Form\ContentForm')
+            (object) $serviceLocator->get('FormElementManager')->get('Admin\Form\ContentForm')
         );
 
         return $controller;

@@ -35,7 +35,8 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'allow_comments',
             'attributes' => [
@@ -45,9 +46,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'Allow comments',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'comment_registration',
             'attributes' => [
@@ -57,9 +60,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'Users must be registered and logged in to comment',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'comments_notify',
             'attributes' => [
@@ -69,9 +74,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'Anyone posts a comment',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'moderation_notify',
             'attributes' => [
@@ -81,9 +88,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'A comment is held for moderation',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'comment_moderation',
             'attributes' => [
@@ -93,9 +102,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'Comment must be manually approved',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Checkbox',
             'name' => 'show_avatars',
             'attributes' => [
@@ -105,9 +116,11 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
             'options' => [
                 'label' => 'Show avatars',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -115,15 +128,18 @@ final class SettingsDiscussionForm extends Form implements InputFilterProviderIn
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

@@ -26,7 +26,8 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'user',
             'attributes' => [
@@ -39,9 +40,11 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Caption',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -49,20 +52,25 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
                     'timeout' => 1400,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

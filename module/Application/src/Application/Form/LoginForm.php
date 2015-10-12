@@ -27,7 +27,8 @@ final class LoginForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('action', '/login/processlogin');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'email',
             'attributes' => [
@@ -36,9 +37,11 @@ final class LoginForm extends Form implements InputFilterProviderInterface
                 'size' => 30,
                 'placeholder' => 'johnsmith@example.com',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Password',
             'name' => 'password',
             'attributes' => [
@@ -47,9 +50,11 @@ final class LoginForm extends Form implements InputFilterProviderInterface
                 'size' => 30,
                 'placeholder' => '1234567890',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -57,15 +62,18 @@ final class LoginForm extends Form implements InputFilterProviderInterface
                     'timeout' => 600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'login',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

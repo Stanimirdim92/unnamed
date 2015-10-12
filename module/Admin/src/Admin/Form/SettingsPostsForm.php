@@ -36,7 +36,8 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'content',
             'attributes' => [
@@ -51,9 +52,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Content posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'menu',
             'attributes' => [
@@ -68,9 +71,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Menu posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'adminmenu',
             'attributes' => [
@@ -85,9 +90,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Admin menu posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'administrator',
             'attributes' => [
@@ -102,9 +109,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Administrator posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'language',
             'attributes' => [
@@ -119,9 +128,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'Language posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'user',
             'attributes' => [
@@ -136,9 +147,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'User posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Number',
             'name' => 'news',
             'attributes' => [
@@ -153,9 +166,11 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
             'options' => [
                 'label' => 'News posts per page',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -163,15 +178,18 @@ final class SettingsPostsForm extends Form implements InputFilterProviderInterfa
                     'timeout' => 3600,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

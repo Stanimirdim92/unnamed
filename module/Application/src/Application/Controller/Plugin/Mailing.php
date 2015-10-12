@@ -57,7 +57,8 @@ final class Mailing extends AbstractPlugin
     public function sendMail($to, $toName, $subject, $message, $from, $fromName)
     {
         $transport = new SmtpTransport();
-        $options   = new SmtpOptions([
+        $options   = new SmtpOptions(
+            [
             'host'              => $this->settings->__invoke("mail", 'host'),
             'name'              => $this->settings->__invoke("mail", 'name'),
             'connection_class'  => $this->settings->__invoke("mail", 'connection_class'),
@@ -67,7 +68,8 @@ final class Mailing extends AbstractPlugin
                 'ssl' => $this->settings->__invoke("mail", 'ssl'),
             ],
             'port' => $this->settings->__invoke("mail", 'port'),
-        ]);
+            ]
+        );
         $htmlPart = new MimePart($message);
         $htmlPart->type = "text/html";
 

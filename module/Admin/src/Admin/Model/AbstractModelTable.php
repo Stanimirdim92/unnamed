@@ -314,10 +314,12 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
         $className = __NAMESPACE__."\\".$className;
 
         if (!class_exists($className)) {
-            throw new InvalidArgumentException(sprintf(
-                'Class "%s" does not exists or it was not auto loaded.',
-                $className
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Class "%s" does not exists or it was not auto loaded.',
+                    $className
+                )
+            );
         }
 
         return $className;

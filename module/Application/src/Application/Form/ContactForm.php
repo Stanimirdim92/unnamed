@@ -28,7 +28,8 @@ final class ContactForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
             'attributes' => [
@@ -37,9 +38,11 @@ final class ContactForm extends Form implements InputFilterProviderInterface
                 'max' => 30,
                 'size' => 30,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Email',
             'name' => 'email',
             'attributes' => [
@@ -48,9 +51,11 @@ final class ContactForm extends Form implements InputFilterProviderInterface
                 'size' => 30,
                 'placeholder' => 'johnsmith@example.com',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'subject',
             'attributes' => [
@@ -58,9 +63,11 @@ final class ContactForm extends Form implements InputFilterProviderInterface
                 'min' => 3,
                 'size' => 30,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Textarea',
             'name' => 'message',
             'attributes' => [
@@ -68,10 +75,12 @@ final class ContactForm extends Form implements InputFilterProviderInterface
                 'rows' => 8,
                 'cols' => 70,
             ],
-        ]);
+            ]
+        );
 
 
-        $captchaImage = new CaptchaImage([
+        $captchaImage = new CaptchaImage(
+            [
             'font'           => 'public/assets/prod/front/fonts/arial.ttf',
             'width'          => 180,
             'height'         => 50,
@@ -84,7 +93,8 @@ final class ContactForm extends Form implements InputFilterProviderInterface
         $captchaImage->setImgDir('./public/userfiles/captcha');
         $captchaImage->setImgUrl('/userfiles/captcha');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Captcha',
             'name' => 'captcha',
             'attributes' => [
@@ -94,17 +104,21 @@ final class ContactForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'captcha' => $captchaImage,
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -112,7 +126,8 @@ final class ContactForm extends Form implements InputFilterProviderInterface
                     'timeout' => 320,
                 ],
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()

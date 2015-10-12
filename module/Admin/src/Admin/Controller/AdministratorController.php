@@ -126,10 +126,12 @@ final class AdministratorController extends IndexController
                 }
                 $success = true;
             }
-            return new JsonModel([
+            return new JsonModel(
+                [
                 'ajaxsearch' =>  Json::encode($json),
                 'statusType' => $success,
-            ]);
+                ]
+            );
         }
     }
 

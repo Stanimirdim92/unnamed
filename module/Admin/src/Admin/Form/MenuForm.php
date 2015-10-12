@@ -65,7 +65,8 @@ final class MenuForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method', 'post');
         $this->setAttribute('role', 'form');
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'caption',
             'attributes' => [
@@ -77,13 +78,15 @@ final class MenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Caption',
             ],
-        ]);
+            ]
+        );
 
         $valueOptions = [];
         for ($i = 1; $i < 150; $i++) {
             $valueOptions[$i] = $i;
         }
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'menuOrder',
             'options' => [
@@ -91,9 +94,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'keywords',
             'attributes' => [
@@ -104,9 +109,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Keywords',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'description',
             'attributes' => [
@@ -117,9 +124,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'Description',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'language',
             'options' => [
@@ -127,9 +136,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'empty_option' => 'Please choose a language',
                 'value_options' => $this->collectLanguageOptions(),
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'parent',
             'options' => [
@@ -138,14 +149,16 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'empty_option' => 'Please choose your menu',
                 'value_options' => $this->collectMenuOptions(),
             ],
-        ]);
+            ]
+        );
 
         $valueOptions = [];
         $valueOptions[0] = "Main menu";
         $valueOptions[1] = "Left menu";
         $valueOptions[2] = "Right menu";
         $valueOptions[3] = "Footer menu";
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'menutype',
             'options' => [
@@ -153,9 +166,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'value_options' => $valueOptions,
                 'label' => 'Choose menu type',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'class',
             'attributes' => [
@@ -167,7 +182,8 @@ final class MenuForm extends Form implements InputFilterProviderInterface
             'options' => [
                 'label' => 'CSS class',
             ],
-        ]);
+            ]
+        );
 
         $valueOptions = [];
         // 0 index missed intentionally
@@ -175,7 +191,8 @@ final class MenuForm extends Form implements InputFilterProviderInterface
         $valueOptions[2] = "Column two";
         $valueOptions[3] = "Column three";
         $valueOptions[4] = "Column four";
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Select',
             'name' => 'footercolumn',
             'options' => [
@@ -183,9 +200,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'value_options' => $valueOptions,
                 'label' => 'Choose footer column',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Csrf',
             'name' => 's',
             'options' => [
@@ -193,28 +212,35 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                     'timeout' => 1400,
                 ],
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'name' => 'submit',
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
             ],
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
-        ]);
+            ]
+        );
 
-        $this->add([
+        $this->add(
+            [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'menulink',
             'attributes' => [
                 'id' => 'menulink',
             ],
-        ]);
+            ]
+        );
     }
 
     public function getInputFilterSpecification()
