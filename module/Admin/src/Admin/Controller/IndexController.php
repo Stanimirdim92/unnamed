@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -74,7 +74,8 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("AdminMenu")->fetch();
+        $menu = $this->getTable("AdminMenuTable")->fetch();
+
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
             foreach ($menu as $submenus) {
@@ -170,13 +171,12 @@ class IndexController extends AbstractActionController
     {
         $auth = $this->UserData();
         if ($auth->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
-            if (
-                isset($auth->getIdentity()->role)         &&
+            if (isset($auth->getIdentity()->role)         &&
                 ((int) $auth->getIdentity()->role === 10) &&
                 isset($auth->getIdentity()->logged)       &&
                 $auth->getIdentity()->logged === true
             ) {
-                $checkAdminExistence = $this->getTable("administrator");
+                $checkAdminExistence = $this->getTable("AdministratorTable");
                 $checkAdminExistence->where(["user" => $auth->getIdentity()->id]);
                 $checkAdminExistence = $checkAdminExistence->current();
 
@@ -218,7 +218,7 @@ class IndexController extends AbstractActionController
      */
     final protected function languageAction()
     {
-        $language = $this->getTable("language")->getLanguage((int) $this->getParam("id", 1));
+        $language = $this->getTable("LanguageTable")->getLanguage((int) $this->getParam("id", 1));
 
         $this->translation->language = $language->getId();
         $this->translation->languageName = $language->getName();

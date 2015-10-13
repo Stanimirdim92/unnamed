@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -55,8 +55,7 @@ final class LoginController extends IndexController
         $adapter = null,
         ResetPasswordForm $resetPasswordForm = null,
         NewPasswordForm $newPasswordForm = null
-    ) 
-    {
+    ) {
         parent::__construct();
         $this->loginForm = $loginForm;
         $this->adapter = $adapter;
@@ -162,7 +161,7 @@ final class LoginController extends IndexController
         $includeRows = ['id', 'ip', 'name', 'surname', 'email', 'isDisabled', 'image', 'admin', 'language'];
         $excludeRows = ['password', 'registered', 'lastLogin', 'birthDate', 'hideEmail', ];
         $data = $adapter->getResultRowObject($includeRows, $excludeRows);
-        $user = $this->getTable('user')->getUser($data->id);
+        $user = $this->getTable('UserTable')->getUser($data->id);
 
         /*
          * If account is disabled/banned (call it w/e you like) clear user data and redirect
@@ -183,7 +182,7 @@ final class LoginController extends IndexController
         $user->setLastLogin(date("Y-m-d H:i:s", time()));
         $remote = new RemoteAddress();
         $user->setIp($remote->getIpAddress());
-        $this->getTable('user')->saveUser($user);
+        $this->getTable('UserTable')->saveUser($user);
 
         $data->role = (int) $role;
         $data->logged = true;
@@ -217,7 +216,7 @@ final class LoginController extends IndexController
         /**
          * See if token exist or has expired
          */
-        $tokenExist = $this->getTable("resetpassword");
+        $tokenExist = $this->getTable("ResetPasswordTable");
         $tokenExist->columns(["user", "token", "date"]);
         $tokenExist->where("token = '{$token}' AND date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)", "AND");
         $tokenExist = $tokenExist->fetch()->current();
@@ -260,12 +259,12 @@ final class LoginController extends IndexController
                 $formData = $form->getData();
                 $pw = $func::createPassword($formData->password);
                 if (!empty($pw)) {
-                    $user = $this->getTable("user")->getUser($this->getView()->resetpwUserId);
+                    $user = $this->getTable("UserTable")->getUser($this->getView()->resetpwUserId);
                     $remote = new RemoteAddress();
                     unset($this->getView()->resetpwUserId);
                     $user->setPassword($pw);
                     $user->setIp($remote->getIpAddress());
-                    $this->getTable("user")->saveUser($user);
+                    $this->getTable("UserTable")->saveUser($user);
                     $this->setLayoutMessages($this->translate("NEW_PW_SUCCESS"), 'success');
                 } else {
                     $this->setLayoutMessages($this->translate("PASSWORD_NOT_GENERATED"), 'error');
@@ -298,7 +297,7 @@ final class LoginController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("User");
+                $existingEmail = $this->getTable("UserTable");
                 $existingEmail = $existingEmail->where(["email" => $formData["email"]])->current();
 
                 if (count($existingEmail) === 1) {
@@ -310,7 +309,7 @@ final class LoginController extends IndexController
                     $resetpw->setUser($existingEmail->getId());
                     $resetpw->setDate(date("Y-m-d H:i:s", time()));
                     $resetpw->setIp($remote->getIpAddress());
-                    $this->getTable("resetpassword")->saveResetPassword($resetpw);
+                    $this->getTable("ResetPasswordTable")->saveResetPassword($resetpw);
                     $message = $this->translate("NEW_PW_TEXT")." ".$_SERVER["SERVER_NAME"]."/login/newpassword/token/{$token}";
                     $result = $this->Mailing()->sendMail($formData["email"], $existingEmail->getFullName(), $this->translate("NEW_PW_TITLE"), $message, $this->systemSettings("general", "system_email"), $this->systemSettings("general", "site_name"));
                     if (!$result) {

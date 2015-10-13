@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -54,13 +54,12 @@ final class SettingsController extends IndexController
      * @param SettingsRegistrationForm $registrationForm
      */
     public function __construct(
-            SettingsMailForm $mailForm = null,
-            SettingsPostsForm $postsForm = null,
-            SettingsGeneralForm $generalForm = null,
-            SettingsDiscussionForm $discussionForm = null,
-            SettingsRegistrationForm $registrationForm = null
-    ) 
-    {
+        SettingsMailForm $mailForm = null,
+        SettingsPostsForm $postsForm = null,
+        SettingsGeneralForm $generalForm = null,
+        SettingsDiscussionForm $discussionForm = null,
+        SettingsRegistrationForm $registrationForm = null
+    ) {
         parent::__construct();
 
         $this->mailForm = $mailForm;

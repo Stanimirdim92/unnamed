@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -48,7 +48,7 @@ final class AdministratorController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/administrator/index");
-        $paginator = $this->getTable("administrator");
+        $paginator = $this->getTable("AdministratorTable");
         $paginator->columns(["user"]);
         $paginator->join("user", "administrator.user=user.id", ["name"], "left");
         $paginator = $paginator->fetchPagination();
@@ -78,7 +78,7 @@ final class AdministratorController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/administrator/edit");
-        $administrator = $this->getTable("administrator")->getAdministrator((int) $this->getParam("id", 0));
+        $administrator = $this->getTable("AdministratorTable")->getAdministrator((int) $this->getParam("id", 0));
         $this->getView()->administrator = $administrator;
         $this->addBreadcrumb(["reference"=>"/admin/administrator/edit/{$administrator->getUser()}", "name"=>$this->translate("EDIT_ADMINISTRATOR")]);
         $this->initForm($this->translate("EDIT_ADMINISTRATOR"), $administrator);
@@ -91,11 +91,11 @@ final class AdministratorController extends IndexController
     protected function deleteAction()
     {
         $id = (int)$this->getParam('id', 0);
-        $userTable = $this->getTable("user");
+        $userTable = $this->getTable("UserTable");
         $user = $userTable->getUser($id);
         $user->setAdmin(0);
         $userTable->saveUser($user);
-        $this->getTable("administrator")->deleteAdministrator($id);
+        $this->getTable("AdministratorTable")->deleteAdministrator($id);
         $this->setLayoutMessages($this->translate("DELETE_ADMINISTRATOR_SUCCESS"), "success");
     }
 
@@ -110,7 +110,7 @@ final class AdministratorController extends IndexController
         $search = (string) $this->getParam('ajaxsearch');
         $this->getView()->setTerminal(true);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
-            $results = $this->getTable("user");
+            $results = $this->getTable("UserTable");
             $results->columns(["id", "name", "surname", "email"]);
             $results->where("`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'");
             $results = $results->fetch();
@@ -160,11 +160,11 @@ final class AdministratorController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $user = $this->getTable("User")->getUser($formData->getUser());
+                $user = $this->getTable("UserTable")->getUser($formData->getUser());
                 // valid user id
                 if (count($user) === 1) {
                     // should return false|null|0 etc.
-                    $adminExist = $this->getTable("Administrator")->getAdministrator($user->getId());
+                    $adminExist = $this->getTable("AdministratorTable")->getAdministrator($user->getId());
 
                     /*
                      * See if user is in admin table, but admin column from user table is 0.
@@ -174,8 +174,8 @@ final class AdministratorController extends IndexController
                          (!$adminExist && (int) $user->getAdmin() > 0)
                        ) {
                         $user->setAdmin(0);
-                        $this->getTable("user")->saveUser($user);
-                        $this->getTable("Administrator")->deleteAdministrator($user->getId());
+                        $this->getTable("UserTable")->saveUser($user);
+                        $this->getTable("AdministratorTable")->deleteAdministrator($user->getId());
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
                     }
 
@@ -184,8 +184,8 @@ final class AdministratorController extends IndexController
                      */
                     if (!$adminExist && (int) $user->getAdmin() === 0) {
                         $user->setAdmin(1);
-                        $this->getTable("user")->saveUser($user);
-                        $this->getTable("Administrator")->saveAdministrator($administrator);
+                        $this->getTable("UserTable")->saveUser($user);
+                        $this->getTable("AdministratorTable")->saveAdministrator($administrator);
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                     }
                     return $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');

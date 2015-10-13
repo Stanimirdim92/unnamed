@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -49,8 +49,7 @@ final class InitMetaTags extends AbstractPlugin
         HeadMeta $headMeta = null,
         Request $request = null,
         SystemSettings $settings = null
-    ) 
-    {
+    ) {
         $this->placeholder = $placeholder;
         $this->headMeta = $headMeta;
         $this->request = $request;

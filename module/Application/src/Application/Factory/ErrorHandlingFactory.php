@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -14,7 +14,7 @@ namespace Application\Factory;
 use Zend\Log\Logger;
 use Application\Controller\ErrorHandling;
 
-final class ApplicationErrorHandlingFactory
+final class ErrorHandlingFactory
 {
     /**
      * {@inheritDoc}

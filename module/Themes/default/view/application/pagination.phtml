@@ -1,0 +1,57 @@
+    <div class="pagination">
+        <ul>
+<?php if (isset($this->previous)) { ?>
+            <li class="first">
+                <a href="<?=$this->url($this->route, ['page' => $this->first], false, true); ?>"><?=$this->translate("PAGINATION_FIRST")?></a>
+            </li>
+<?php } else { ?>
+            <li class="first disabled">
+                <span><?=$this->translate("PAGINATION_FIRST")?></span>
+            </li>
+<?php }
+      if (isset($this->previous)) {
+?>
+            <li class="prev">
+                <a rel="prev" href="<?=$this->url($this->route, ['page' => $this->previous], false, true); ?>"><?=$this->translate("PAGINATION_PREV")?></a>
+            </li>
+<?php } else { ?>
+            <li class="prev disabled">
+                <span><?=$this->translate("PAGINATION_PREV")?></span>
+            </li>
+<?php } ?>
+
+<?php foreach ($this->pagesInRange as $page) {
+    if ($page != $this->current) {
+?>
+            <li>
+                <a href="<?=$this->url($this->route, ['page' => $page], false, true); ?>"><?= $page; ?></a>
+            </li>
+    <?php } else { ?>
+            <li  class="active">
+                <a href="<?=$this->url($this->route, ['page' => $page], false, true); ?>"><?= $page; ?></a>
+            </li>
+<?php   }
+    }
+      if (isset($this->next)) {
+?>
+            <li class="next">
+                <a rel="next" href="<?=$this->url($this->route, ['page' => $this->next], false, true); ?>"><?=$this->translate("PAGINATION_NEXT")?></a>
+            </li>
+<?php } else { ?>
+            <li class="next disabled">
+                <span><?=$this->translate("PAGINATION_NEXT")?></span>
+            </li>
+<?php
+      }
+      if (isset($this->next)) {
+?>
+            <li class="last">
+                <a href="<?=$this->url($this->route, ['page' => $this->last], false, true); ?>"><?=$this->translate("PAGINATION_LAST")?></a>
+            </li>
+<?php } else { ?>
+            <li class="last disabled">
+                <span><?=$this->translate("PAGINATION_LAST")?></span>
+            </li>
+<?php } ?>
+        </ul>
+    </div>

@@ -1,0 +1,36 @@
+<?php
+if(!empty($this->new)) {
+   /**
+    * @var $newsPost Admin\Model\Content
+    */
+    $newsPost = $this->new;
+    $dateTime = date("Y-m-d", strtotime($newsPost["date"]));
+    $dateTimeShow = date("M d, Y", strtotime($newsPost["date"]));
+?>
+    <article role="article" class="post-content" itemscope itemprop="event" itemtype="http://schema.org/Article">
+        <h2 role="heading" itemprop="name" class="post-title"><?=$newsPost["title"];?></h2>
+
+<?php
+        if ($newsPost["preview"] != null) {
+?>
+            <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+                <a hreflang='<?=$this->layout()->lang?>' itemprop="url" href="/userfiles/preview/<?=$newsPost["preview"];?>" id="news_image" title="<?=$newsPost["title"];?>">
+                    <img itemprop="image" src="/userfiles/preview/<?=$newsPost["preview"];?>" title="<?=$newsPost["title"];?>" alt="<?=$newsPost["title"];?>" />
+                </a>
+            </figure>
+<?php
+        }
+?>
+        <time datetime="<?=$dateTime?>" class="post-date">
+            <?=$this->translate("POSTED_ON");?>&nbsp;<meta itemprop="datePublished" content="<?=$dateTime?>"><?=$dateTimeShow;?>
+        </time>
+
+        <div itemprop="text" class="post-text"><?=$newsPost["text"];?></div>
+        <p class="back-to-news">
+            <a hreflang='<?=$this->layout()->lang?>' itemprop="url" href="<?=$this->url('application/default', ['controller' => 'news', 'action' => '']);?>" title="<?=$this->translate("BACK_TO_NEWS_OVERVIEW");?>" class="back-to-news-link"><?=$this->translate("BACK_TO_NEWS_OVERVIEW");?></a>
+        </p>
+    </article>
+<?php
+} else {
+    echo "<h3 itemscope itemprop='name' class='c no-content'>".$this->translate("NO_CONTENT")."</h3>";
+}

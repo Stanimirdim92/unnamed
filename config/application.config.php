@@ -10,6 +10,7 @@ if (APP_ENV === 'development') {
 
 $modules[] = 'Application';
 $modules[] = 'Admin';
+$modules[] = 'Themes';
 
 return [
     'modules' => $modules,

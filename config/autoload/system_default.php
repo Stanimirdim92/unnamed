@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -82,6 +82,9 @@ return [
             'moderation_notify' => 1,
             'comment_moderation' => 0,
             'show_avatars' => 1,
+        ],
+        'theme' => [
+            'name' => 'default',
         ],
     ],
 ];

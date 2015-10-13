@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -22,7 +22,7 @@ final class NewsController extends IndexController
     {
         $this->getView()->setTemplate("application/news/index");
 
-        $news = $this->getTable("content");
+        $news = $this->getTable("ContentTable");
         $news->columns(["title", "titleLink", "text", "date", "preview"]);
         $news->where(["type" => 1, "menu" => 0, "language" => $this->language()], "AND");
         $news->order("date DESC");
@@ -45,12 +45,12 @@ final class NewsController extends IndexController
 
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         $post = (string) $escaper->escapeUrl($this->getParam("post"));
-        $new = $this->getTable("content");
+        $new = $this->getTable("ContentTable");
         $new->columns(["title", "text", "date", "preview"]);
         $new->where(["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->language()]);
         $new = $new->fetch();
 
-        if ($new instanceof \Zend\Db\ResultSet\ResultSet) {
+        if ($new) {
             $new = $new->getDataSource()->current();
             $this->getView()->new = $new;
             $this->initMetaTags($new);

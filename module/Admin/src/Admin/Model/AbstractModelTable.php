@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -113,7 +113,8 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      */
     public function delete(array $delete = [])
     {
-       $this->tableGateway->delete($delete);
+        $this->tableGateway->delete($delete);
+                return $this;
     }
 
     /**
@@ -126,6 +127,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function insert(array $insert = [])
     {
         $this->tableGateway->insert($insert);
+                return $this;
     }
 
     /**
@@ -139,6 +141,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function update(array $set = [], $where = null)
     {
         $this->tableGateway->update($set, $where);
+                return $this;
     }
 
     /**
@@ -152,6 +155,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function join($name, $on, $columns = self::SQL_STAR, $joinType = self::JOIN_INNER)
     {
         $this->select->join($name, $on, $columns, $joinType);
+                return $this;
     }
 
     /**
@@ -173,9 +177,11 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @param array $columns
      * @param bool $prefixColumnsWithTable
      */
-    public function columns(array $columns, $prefixColumnsWithTable = true)
+    public function columns(array $columns = ["*"], $prefixColumnsWithTable = true)
     {
         $this->select->columns($columns, $prefixColumnsWithTable);
+
+        return $this;
     }
 
     /**
@@ -196,6 +202,8 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
         } elseif (!empty($where) && is_string($where)) {
             $this->select->where(new Expression($where));
         }
+
+                return $this;
     }
 
     /**
@@ -208,6 +216,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function group($group)
     {
         $this->select->group($group);
+                return $this;
     }
 
     /**
@@ -240,6 +249,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function order($order)
     {
         $this->select->order($order);
+                return $this;
     }
 
     /**
@@ -252,6 +262,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function limit($limit = 0)
     {
         $this->select->limit((int) $limit);
+                return $this;
     }
 
     /**
@@ -264,6 +275,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
     public function offset($offset = 0)
     {
         $this->select->offset((int) $offset);
+                return $this;
     }
 
     /**

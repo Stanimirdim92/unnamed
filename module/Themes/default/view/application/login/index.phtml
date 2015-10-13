@@ -1,0 +1,16 @@
+<div class="showLogin" id="showForm">
+    <p itemprop='name' class="legend"><?=$this->translate("SIGN_IN");?></p>
+    <?php
+       /**
+        * @var $form Application\Form\LoginForm
+        */
+        $form = $this->form;
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        echo $this->formCollection($form);
+        echo $this->form()->closeTag();
+    ?>
+    <p class="c">
+        <a itemprop="url" href="/login/resetpassword"><?=$this->translate("RESET_PW");?></a>
+    </p>
+</div>

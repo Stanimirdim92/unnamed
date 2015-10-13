@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -78,7 +78,7 @@ class IndexController extends AbstractActionController
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Menu");
+        $menu = $this->getTable("MenuTable");
         $menu->columns(["id", "caption", "class", "menulink", "parent"]);
         $menu->where(["active" => 1, "language" => $this->language()], "AND");
         $menu->order("id, menuOrder");
@@ -193,7 +193,7 @@ class IndexController extends AbstractActionController
      */
     final protected function languageAction()
     {
-        $language = $this->getTable("language")->getLanguage((int) $this->getParam("id", 1));
+        $language = $this->getTable("LanguageTable")->getLanguage((int) $this->getParam("id", 1));
 
         $this->translation->language = $language->getId();
         $this->translation->languageName = $language->getName();

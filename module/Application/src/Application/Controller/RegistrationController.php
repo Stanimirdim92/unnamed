@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -70,7 +70,7 @@ final class RegistrationController extends IndexController
             /*
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("user");
+            $existingEmail = $this->getTable("UserTable");
             $existingEmail->where(["email" => $formData["email"]]);
             $existingEmail = $existingEmail->fetch();
 
@@ -85,7 +85,7 @@ final class RegistrationController extends IndexController
                 $registerUser->setIp($remote->getIpAddress());
                 $registerUser->setEmail($formData["email"]);
                 $registerUser->setLanguage($this->language());
-                $this->getTable("user")->saveUser($registerUser);
+                $this->getTable("UserTable")->saveUser($registerUser);
                 return $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
             }
         } else {

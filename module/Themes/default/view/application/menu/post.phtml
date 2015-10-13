@@ -1,0 +1,21 @@
+<?php
+if (!empty($this->contents)) {
+   /**
+    * @var $c array
+    */
+    $c = $this->contents->getDataSource()->current();
+    echo "<h2 itemscope itemprop='name'>{$c["title"]}</h2>";
+
+    if($c["preview"] != null) {
+?>
+        <figure itemscope itemtype="http://schema.org/ImageObject" class="image-size">
+            <a itemprop="url" href="/userfiles/preview/<?=$c["preview"]?>" id="news_image" title="<?=$c["title"]?>">
+                <img itemprop="image" src="/userfiles/preview/<?=$c["preview"]?>" title="<?=$c["title"]?>" alt="<?=$c["title"]?>" />
+            </a>
+        </figure>
+<?php
+    }
+    echo "<p itemscope itemprop='text' class='post-text'>{$c["text"]}</p>";
+} else {
+    echo "<h3 class='c no-content'>{$this->translate("NO_CONTENT")}</h3>";
+}

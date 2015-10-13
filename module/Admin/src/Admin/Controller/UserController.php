@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -50,7 +50,7 @@ final class UserController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/user/index");
-        $paginator = $this->getTable("user");
+        $paginator = $this->getTable("UserTable");
         $paginator->where(["isDisabled" => 0]);
         $paginator->order("id DESC");
         $paginator = $paginator->fetchPagination();
@@ -70,7 +70,7 @@ final class UserController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/user/edit");
-        $user = $this->getTable("user")->getUser((int)$this->getParam("id", 0));
+        $user = $this->getTable("UserTable")->getUser((int)$this->getParam("id", 0));
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/edit/{$user->getId()}", "name"=> $this->translate("EDIT_USER")." &laquo;".$user->getName()."&raquo;"]);
         $this->initForm($this->translate("EDIT_USER"), $user);
@@ -83,7 +83,7 @@ final class UserController extends IndexController
      * @param string $label
      * @param User $user
      */
-    private function initForm($label= '', User $user = null)
+    private function initForm($label = '', User $user = null)
     {
         if (!$user instanceof User) {
             throw new AuthorizationException($this->translate("ERROR_AUTHORIZATION"));
@@ -99,7 +99,7 @@ final class UserController extends IndexController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("user");
+                $existingEmail = $this->getTable("UserTable");
                 $existingEmail->columns(["email"]);
                 $existingEmail->where(["email" => $formData->getEmail()])->fetch();
 
@@ -107,7 +107,7 @@ final class UserController extends IndexController
                     return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->getEmail()."</b> ".$this->translate("ALREADY_EXIST"), 'info');
                 }
 
-                $this->getTable("user")->saveUser($user);
+                $this->getTable("UserTable")->saveUser($user);
                 return $this->setLayoutMessages("&laquo;".$user->getFullName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
 
             }
@@ -122,7 +122,7 @@ final class UserController extends IndexController
     {
         $this->getView()->setTemplate("admin/user/disabled");
 
-        $paginator = $this->getTable("user");
+        $paginator = $this->getTable("UserTable");
         $paginator->where(["isDisabled" => 0]);
         $paginator->order("id DESC");
         $paginator = $paginator->fetchPagination();
@@ -138,7 +138,7 @@ final class UserController extends IndexController
      */
     protected function enableAction()
     {
-        $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 0);
+        $this->getTable("UserTable")->toggleUserState((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
     }
 
@@ -147,7 +147,7 @@ final class UserController extends IndexController
      */
     protected function disableAction()
     {
-        $this->getTable("user")->toggleUserState((int)$this->getParam("id", 0), 1);
+        $this->getTable("UserTable")->toggleUserState((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
     }
 
@@ -159,7 +159,7 @@ final class UserController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/user/detail");
-        $user = $this->getTable("user")->getUser((int)$this->getParam("id", 0));
+        $user = $this->getTable("UserTable")->getUser((int)$this->getParam("id", 0));
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/detail/".$user->getId()."", "name"=>"&laquo;". $user->getFullName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -176,7 +176,7 @@ final class UserController extends IndexController
         if (isset($search)) {
             if ($this->getRequest()->isXmlHttpRequest()) {
                 $this->getView()->setTerminal(true);
-                $results = $this->getTable("user");
+                $results = $this->getTable("UserTable");
                 $results->columns(["id", "name", "email", "isDisabled"]);
                 $results->where("`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%' OR `registered` LIKE '%{$search}%'", "OR");
                 $results->order("id DESC");

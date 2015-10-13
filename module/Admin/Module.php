@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -28,8 +28,10 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
     public function init(ModuleManagerInterface $moduleManager)
     {
         $moduleManager->getEventManager()->getSharedManager()->attach(
-            __NAMESPACE__, "dispatch", function (EventInterface $e) {
-            $e->getTarget()->layout('layout/admin');
+            __NAMESPACE__,
+            "dispatch",
+            function (EventInterface $e) {
+                $e->getTarget()->layout('layout/admin');
             }
         );
     }
@@ -55,10 +57,9 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
     public function onError(EventInterface $e)
     {
         $sm = $e->getApplication()->getServiceManager();
-        $service = $sm->get('ApplicationErrorHandling');
+        $service = $sm->get('ErrorHandling');
         $service->logError($e, $sm);
-        $e->stopPropagation();
-        return;
+        return $e->stopPropagation();
     }
 
     /**

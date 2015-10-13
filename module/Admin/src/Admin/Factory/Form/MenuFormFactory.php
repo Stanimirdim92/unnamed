@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -13,10 +13,9 @@ namespace Admin\Factory\Form;
 
 use Admin\Form\MenuForm;
 use Zend\Session\Container;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-final class MenuFormFactory implements FactoryInterface
+final class MenuFormFactory
 {
     /**
      * @var ServiceManager
@@ -26,7 +25,7 @@ final class MenuFormFactory implements FactoryInterface
     /**
      * @{inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
         $this->services = $serviceLocator->getServiceLocator();
         $lang = new Container("translations");

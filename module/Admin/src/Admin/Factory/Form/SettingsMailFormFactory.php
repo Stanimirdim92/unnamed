@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -12,15 +12,14 @@
 namespace Admin\Factory\Form;
 
 use Admin\Form\SettingsMailForm;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-final class SettingsMailFormFactory implements FactoryInterface
+final class SettingsMailFormFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->getServiceLocator()->get("Config");
 

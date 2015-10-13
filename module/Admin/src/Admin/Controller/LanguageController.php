@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -50,7 +50,7 @@ final class LanguageController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/language/index");
-        $paginator = $this->getTable("language")->fetchPagination();
+        $paginator = $this->getTable("LanguageTable")->fetchPagination();
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage($this->systemSettings('posts', 'language'));
         $this->getView()->paginator = $paginator;
@@ -79,7 +79,7 @@ final class LanguageController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/language/edit");
-        $language = $this->getTable("language")->getLanguage((int)$this->getParam("id", 0));
+        $language = $this->getTable("LanguageTable")->getLanguage((int)$this->getParam("id", 0));
         $this->getView()->language = $language;
         $this->addBreadcrumb(["reference"=>"/admin/language/edit/{$language->getId()}", "name"=>$this->translate("EDIT_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
         $this->initForm($this->translate("EDIT_LANGUAGE"), $language);
@@ -91,7 +91,7 @@ final class LanguageController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("language")->deleteLanguage((int)$this->getParam('id', 0));
+        $this->getTable("LanguageTable")->deleteLanguage((int)$this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
     }
 
@@ -103,7 +103,7 @@ final class LanguageController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/language/detail");
-        $lang = $this->getTable("Language")->getLanguage((int)$this->getParam('id', 0));
+        $lang = $this->getTable("LanguageTable")->getLanguage((int)$this->getParam('id', 0));
         $this->getView()->lang = $lang;
         $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -172,7 +172,7 @@ final class LanguageController extends IndexController
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $this->getTable("language")->saveLanguage($language);
+                $this->getTable("LanguageTable")->saveLanguage($language);
                 return $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
             }
             return $this->setLayoutMessages($form->getMessages(), 'error');

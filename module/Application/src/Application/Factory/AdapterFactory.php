@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -16,7 +16,7 @@ use Zend\Db\Adapter\Adapter;
 use BjyProfiler\Db\Adapter\ProfilingAdapter;
 use BjyProfiler\Db\Profiler\Profiler;
 
-final class AdapterServiceFactory
+final class AdapterFactory
 {
     /**
      * {@inheritDoc}

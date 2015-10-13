@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -16,17 +16,14 @@ return [
     'service_manager' => [
         'abstract_factories' => [
             'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Application\ServiceManager\AbstractFactory\AbstractTableFactory',
         ],
         'factories' => [
-            'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterServiceFactory',
-            'AdminErrorHandling'      => 'Admin\Factory\AdminErrorHandlingFactory',
-            'AdministratorTable'      => 'Admin\Factory\Model\AdministratorTableFactory',
-            'ContentTable'            => 'Admin\Factory\Model\ContentTableFactory',
-            'LanguageTable'           => 'Admin\Factory\Model\LanguageTableFactory',
-            'MenuTable'               => 'Admin\Factory\Model\MenuTableFactory',
-            'UserTable'               => 'Admin\Factory\Model\UserTableFactory',
-            'AdminMenuTable'          => 'Admin\Factory\Model\AdminMenuTableFactory',
             'translator'              => 'Zend\Mvc\Service\TranslatorServiceFactory',
+            'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterFactory',
+            'ErrorHandling'           => 'Application\Factory\ErrorHandlingFactory',
+            'initSession'             => 'Application\Factory\SessionFactory',
+            'initThemes'              => 'Application\Factory\ThemesFactory',
         ],
         'aliases' => [
             'SD\Adapter' => 'Zend\Db\Adapter\Adapter',

@@ -3,7 +3,7 @@
 /**
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
- * @version    0.0.17
+ * @version    0.0.18
  * @link       TBA
  */
 
@@ -14,45 +14,41 @@ use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
-use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Session\Container;
 
-final class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
+final class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface
 {
-    /**
-     * Setup module layout.
-     *
-     * @param $moduleManager ModuleManager
-     */
-    public function init(ModuleManagerInterface $moduleManager)
-    {
-        $moduleManager->getEventManager()->getSharedManager()->attach(
-            __NAMESPACE__, "dispatch", function (EventInterface $e) {
-            $e->getTarget()->layout('layout/layout');
-            }
-        );
-    }
-
     /**
      * Listen to the bootstrap event.
      *
      * @param EventInterface $e
      */
-    public function onBootstrap(EventInterface $e)
+    public function onBootstrap(EventInterface $event)
     {
-        $app = $e->getApplication();
+        $app = $event->getApplication();
         $moduleRouteListener = new ModuleRouteListener();
-        $em = $app->getEventManager();
-        $sm = $app->getServiceManager();
-        $moduleRouteListener->attach($em);
+        $eventManager = $app->getEventManager();
+        $serviceManager = $app->getServiceManager();
+        $moduleRouteListener->attach($eventManager);
 
-        $sessionManager = $sm->get('initSession');
+        $sessionManager = $serviceManager->get('initSession');
         $sessionManager->setName("zpc")->start();
         Container::setDefaultManager($sessionManager);
 
-        $em->attach("dispatch", [$this, 'onDispatch'], -10);
-        $em->attach("dispatch.error", [$this, "onError"], 2);
+        $eventManager->attach("render", [$this,'setTheme'], 100);
+        $eventManager->attach("dispatch", [$this, 'setTitleAndTranslation'], -10);
+        $eventManager->attach("dispatch.error", [$this, "onError"], 2);
+    }
+
+    /**
+     * Setup theme
+     *
+     * @param EventInterface $e
+     */
+    public function setTheme(EventInterface $event)
+    {
+        return $event->getApplication()->getServiceManager()->get('initThemes');
     }
 
     /**
@@ -62,13 +58,12 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
      *
      * @return void
      */
-    public function onError(EventInterface $e)
+    public function onError(EventInterface $event)
     {
-        $sm = $e->getApplication()->getServiceManager();
-        $service = $sm->get('ApplicationErrorHandling');
-        $service->logError($e, $sm);
-        $e->stopPropagation();
-        return;
+        $serviceManager = $event->getApplication()->getServiceManager();
+        $service = $serviceManager->get('ErrorHandling');
+        $service->logError($event, $serviceManager);
+        return $event->stopPropagation();
     }
 
     /**
@@ -76,15 +71,15 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
      *
      * @param EventInterface $e
      */
-    public function onDispatch(EventInterface $e)
+    public function setTitleAndTranslation(EventInterface $e)
     {
         $app = $e->getApplication();
-        $sm = $app->getServiceManager();
+        $serviceManager = $app->getServiceManager();
         $route = $e->getRouteMatch();
-        $title = $sm->get('ControllerPluginManager')->get("systemsettings");
-        $viewHelper = $sm->get('ViewHelperManager');
+        $title = $serviceManager->get('ControllerPluginManager')->get("systemsettings");
+        $viewHelper = $serviceManager->get('ViewHelperManager');
         $lang = new Container("translations");
-        $translator = $sm->get('translator');
+        $translator = $serviceManager->get('translator');
 
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
         $viewModel = $app->getMvcEvent()->getViewModel();

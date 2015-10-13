@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -48,7 +48,7 @@ final class AdminMenuController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/index");
-        $menu = $this->getTable("AdminMenu")->fetch();
+        $menu = $this->getTable("AdminMenuTable")->fetch();
 
         if (count($menu) > 0) {
             $menus = ["menus" => null, "submenus" => null];
@@ -87,7 +87,7 @@ final class AdminMenuController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/edit");
-        $adminMenu = $this->getTable("AdminMenu")->getAdminMenu((int) $this->getParam("id", 0));
+        $adminMenu = $this->getTable("AdminMenuTable")->getAdminMenu((int) $this->getParam("id", 0));
         $this->getView()->adminMenu = $adminMenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/edit/{$adminMenu->getId()}", "name"=>$this->translate("EDIT_ADMINMENU")." &laquo;".$adminMenu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("EDIT_ADMINMENU"), $adminMenu);
@@ -99,7 +99,7 @@ final class AdminMenuController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("AdminMenu")->deleteAdminMenu((int)$this->getParam("id", 0));
+        $this->getTable("AdminMenuTable")->deleteAdminMenu((int)$this->getParam("id", 0));
         $this->setLayoutMessages($this->translate("DELETE_ADMINMENU_SUCCESS"), "success");
     }
 
@@ -109,7 +109,7 @@ final class AdminMenuController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/detail");
-        $adminmenu = $this->getTable("AdminMenu")->getAdminMenu((int)$this->getParam("id", 0), $this->language());
+        $adminmenu = $this->getTable("AdminMenuTable")->getAdminMenu((int)$this->getParam("id", 0), $this->language());
         $this->getView()->adminmenu = $adminmenu;
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu/detail/".$adminmenu->getId()."", "name"=>"&laquo;". $adminmenu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -117,7 +117,7 @@ final class AdminMenuController extends IndexController
 
     protected function cloneAction()
     {
-        $adminmenu = $this->getTable("AdminMenu")->duplicate((int)$this->getParam("id", 0));
+        $adminmenu = $this->getTable("AdminMenuTable")->duplicate((int)$this->getParam("id", 0));
         $this->setLayoutMessages("&laquo;".$adminmenu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 
@@ -145,7 +145,7 @@ final class AdminMenuController extends IndexController
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $this->getTable("AdminMenu")->saveAdminMenu($adminMenu);
+                $this->getTable("AdminMenuTable")->saveAdminMenu($adminMenu);
                 return $this->setLayoutMessages("&laquo;".$adminMenu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
             }
             return $this->setLayoutMessages($form->getMessages(), 'error');

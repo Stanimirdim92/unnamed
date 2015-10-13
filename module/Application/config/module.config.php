@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -49,13 +49,6 @@ return [
             ],
         ],
     ],
-    'service_manager' => [
-        'factories' => [
-            'ApplicationErrorHandling' => Factory\ApplicationErrorHandlingFactory::class,
-            'ResetPasswordTable'       => Factory\Model\ResetPasswordTableFactory::class,
-            'initSession'              => Factory\ApplicationSessionFactory::class,
-        ],
-    ],
     'controllers' => [
         'factories' => [
             'Application\Controller\Login'        => Factory\Controller\LoginControllerFactory::class,
@@ -70,15 +63,11 @@ return [
     ],
     'shared' => [
         'initSession'                         => false,
-        'ResetPasswordTable'                  => false,
         'Application\Controller\Login'        => false,
         'Application\Controller\Contact'      => false,
         'Application\Controller\Registration' => false,
         'Application\Controller\Index'        => false,
         'Application\Controller\News'         => false,
         'Application\Controller\Menu'         => false,
-    ],
-    'view_manager' => [
-        'template_map' => include __DIR__ . '/../template_map.php',
     ],
 ];

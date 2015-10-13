@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -62,7 +62,7 @@ final class ContentController extends IndexController
     {
         $this->getView()->setTemplate("admin/content/index");
 
-        $paginator = $this->getTable("content");
+        $paginator = $this->getTable("ContentTable");
         if ((int) $this->getParam("id", 0) === 1) {
             $paginator->where(["type" => 1, "content.language" => $this->language()]);
             $paginator->order("content.date DESC");
@@ -103,7 +103,7 @@ final class ContentController extends IndexController
         $this->acceptableviewmodelselector($this->acceptCriteria);
 
         $this->getView()->setTemplate("admin/content/edit");
-        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language());
+        $content = $this->getTable("ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/edit/{$content->getId()}", "name"=> $this->translate("EDIT_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
         $this->initForm($this->translate("EDIT_CONTENT"), $content);
@@ -115,7 +115,7 @@ final class ContentController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("content")->deleteContent((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("ContentTable")->deleteContent((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
     }
 
@@ -127,7 +127,7 @@ final class ContentController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/content/detail");
-        $content = $this->getTable("content")->getContent((int)$this->getParam("id", 0), $this->language());
+        $content = $this->getTable("ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -135,13 +135,13 @@ final class ContentController extends IndexController
 
     protected function deactivateAction()
     {
-        $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 0);
+        $this->getTable("ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("CONTENT_DISABLE_SUCCESS"), "success");
     }
 
     protected function activateAction()
     {
-        $this->getTable("content")->toggleActiveContent((int)$this->getParam("id", 0), 1);
+        $this->getTable("ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("CONTENT_ENABLE_SUCCESS"), "success");
     }
 
@@ -150,7 +150,7 @@ final class ContentController extends IndexController
      */
     protected function cloneAction()
     {
-        $this->getTable("content")->duplicate((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("ContentTable")->duplicate((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 
@@ -207,7 +207,7 @@ final class ContentController extends IndexController
                  */
                 $formData->setPreview($formData->getPreview()["name"]);
                 $formData->setAuthor($name);
-                $this->getTable("content")->saveContent($content);
+                $this->getTable("ContentTable")->saveContent($content);
                 $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");

@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -46,7 +46,7 @@ final class MenuController extends IndexController
      */
     private function showMenus()
     {
-        $menu = $this->getTable("Menu");
+        $menu = $this->getTable("MenuTable");
         $menu->columns(['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent']);
         $menu->where(["language" => $this->language()]);
         $menu->order("id, menuOrder");
@@ -150,7 +150,7 @@ final class MenuController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/menu/edit");
-        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->addBreadcrumb(["reference"=>"/admin/menu/edit/{$menu->getId()}", "name"=> $this->translate("EDIT_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
         $this->initForm($this->translate("EDIT_MENU"), $menu);
         return $this->getView();
@@ -158,13 +158,13 @@ final class MenuController extends IndexController
 
     protected function deactivateAction()
     {
-        $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
+        $this->getTable("MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("MENU_DISABLE_SUCCESS"), "success");
     }
 
     protected function activateAction()
     {
-        $this->getTable("menu")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
+        $this->getTable("MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("MENU_ENABLE_SUCCESS"), "success");
     }
 
@@ -173,7 +173,7 @@ final class MenuController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("menu")->deleteMenu((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("MenuTable")->deleteMenu((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_MENU_SUCCESS"), "success");
     }
 
@@ -185,7 +185,7 @@ final class MenuController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/menu/detail");
-        $menu = $this->getTable("menu")->getMenu((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->getView()->menuDetail = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
         return $this->getView();
@@ -196,7 +196,7 @@ final class MenuController extends IndexController
      */
     protected function cloneAction()
     {
-        $menu = $this->getTable("menu")->duplicate((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("MenuTable")->duplicate((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 
@@ -225,7 +225,7 @@ final class MenuController extends IndexController
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $this->getTable("menu")->saveMenu($menu);
+                $this->getTable("MenuTable")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
             }

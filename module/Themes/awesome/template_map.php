@@ -6,7 +6,7 @@ return [
     'application/login/index'         => __DIR__ . '/view/application/login/index.phtml',
     'application/login/newpassword'   => __DIR__ . '/view/application/login/newpassword.phtml',
     'application/login/resetpassword' => __DIR__ . '/view/application/login/resetpassword.phtml',
-    'application/menu/post'          => __DIR__ . '/view/application/menu/post.phtml',
+    'application/menu/post'           => __DIR__ . '/view/application/menu/post.phtml',
     'application/news/index'          => __DIR__ . '/view/application/news/index.phtml',
     'application/news/post'           => __DIR__ . '/view/application/news/post.phtml',
     'application/pagination'          => __DIR__ . '/view/application/pagination.phtml',

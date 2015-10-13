@@ -4,7 +4,7 @@
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * @version    0.0.17
+ * @version    0.0.18
  *
  * @link       TBA
  */
@@ -15,7 +15,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 if (version_compare("5.5", PHP_VERSION, '>')) {
     header('Content-Type: text/html; charset=utf-8');
-    throw new \RuntimeException('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.17", "5.5");
+    throw new \RuntimeException('Your server is running PHP version <b>%1$s</b> but Unnamed <b>%2$s</b> requires at least <b>%3$s</b> or higher</b>.', PHP_VERSION, "0.0.18", "5.5");
 }
 
 /**
@@ -158,36 +158,36 @@ switch ((int) $pageId) {
                 <input type="submit" id="submit" name="submit" value="Configure database">
             </form>
 <?php
-            if (!empty($_POST["submit"]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
-                /**
-                 * htmlspecialchars fix|hack. Well done PHP, well done...
-                 */
-                define('CHARSET', 'UTF-8');
-                define('REPLACE_FLAGS', ENT_QUOTES | ENT_SUBSTITUTE);
+if (!empty($_POST["submit"]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    /**
+     * htmlspecialchars fix|hack. Well done PHP, well done...
+     */
+    define('CHARSET', 'UTF-8');
+    define('REPLACE_FLAGS', ENT_QUOTES | ENT_SUBSTITUTE);
 
-                function filter($string = null)
-                {
-                    return htmlspecialchars($string, REPLACE_FLAGS, CHARSET);
-                }
+    function filter($string = null)
+    {
+        return htmlspecialchars($string, REPLACE_FLAGS, CHARSET);
+    }
 
-                $dbSetup = [
-                    "db" => [
-                        "driver" => filter($_POST["driver"]),
-                        "port" => filter($_POST["port"]),
-                        "dsn" => "mysql:dbname=".filter($_POST["dbname"]).";host=".filter($_POST["host"])."",
-                        "driver_options" => [
-                            PDO::ATTR_EMULATE_PREPARES   => false,
-                            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES \"UTF8\"",
-                        ],
-                        "username" => filter($_POST["username"]),
-                        "password" => filter($_POST["password"]),
-                    ],
-                ];
+    $dbSetup = [
+        "db" => [
+            "driver" => filter($_POST["driver"]),
+            "port" => filter($_POST["port"]),
+            "dsn" => "mysql:dbname=".filter($_POST["dbname"]).";host=".filter($_POST["host"])."",
+            "driver_options" => [
+                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES \"UTF8\"",
+            ],
+            "username" => filter($_POST["username"]),
+            "password" => filter($_POST["password"]),
+        ],
+    ];
 
-                file_put_contents("config/autoload/local.php", '<?php return ' . var_export($dbSetup, true).';'.PHP_EOL);
-                header("Location: /");
-                return;
-            }
+    file_put_contents("config/autoload/local.php", '<?php return ' . var_export($dbSetup, true).';'.PHP_EOL);
+    header("Location: /");
+    return;
+}
         } else {
             throw new \RuntimeException("Your database configuration has already been setup");
         }
