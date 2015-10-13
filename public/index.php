@@ -9,8 +9,6 @@
  * @link       TBA
  */
 
-header('Content-Type: text/html; charset=utf-8');
-
 /**
  * Check requirements.
  */

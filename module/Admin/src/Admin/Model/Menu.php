@@ -128,8 +128,6 @@ final class Menu
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
 
@@ -141,8 +139,6 @@ final class Menu
     public function setCaption($caption = null)
     {
         $this->caption = $caption;
-
-        return $this;
     }
 
     /**
@@ -163,8 +159,6 @@ final class Menu
     public function setMenuOrder($menuOrder = 0)
     {
         $this->menuOrder = $menuOrder;
-
-        return $this;
     }
 
     /**
@@ -185,8 +179,6 @@ final class Menu
     public function setActive($active = 0)
     {
         $this->active = $active;
-
-        return $this;
     }
 
     /**
@@ -207,8 +199,6 @@ final class Menu
     public function setLanguage($language = 1)
     {
         $this->language = $language;
-
-        return $this;
     }
 
     /**
@@ -229,8 +219,6 @@ final class Menu
     public function setParent($parent = 0)
     {
         $this->parent = $parent;
-
-        return $this;
     }
 
     /**
@@ -251,8 +239,6 @@ final class Menu
     public function setKeywords($keywords = null)
     {
         $this->keywords = $keywords;
-
-        return $this;
     }
 
     /**
@@ -273,8 +259,6 @@ final class Menu
     public function setDescription($description = null)
     {
         $this->description = $description;
-
-        return $this;
     }
 
     /**
@@ -295,8 +279,6 @@ final class Menu
     public function setMenuType($menutype = 0)
     {
         $this->menutype = $menutype;
-
-        return $this;
     }
 
     /**
@@ -317,8 +299,6 @@ final class Menu
     public function setFooterColumn($footercolumn = 0)
     {
         $this->footercolumn = $footercolumn;
-
-        return $this;
     }
 
     /**
@@ -339,8 +319,6 @@ final class Menu
     public function setMenuLink($menulink = null)
     {
         $this->menulink = $menulink;
-
-        return $this;
     }
 
     /**
@@ -361,8 +339,6 @@ final class Menu
     public function setClass($class = null)
     {
         $this->class = $class;
-
-        return $this;
     }
 
     /**

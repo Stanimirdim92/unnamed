@@ -51,8 +51,8 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
         $sessionManager->setName("zpc")->start();
         Container::setDefaultManager($sessionManager);
 
-        $em->attach("dispatch", [$this, 'onDispatch']);
-        $em->attach("dispatch.error", [$this, "onError"]);
+        $em->attach("dispatch", [$this, 'onDispatch'], -10);
+        $em->attach("dispatch.error", [$this, "onError"], 2);
     }
 
     /**
@@ -90,9 +90,10 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
         $viewModel = $app->getMvcEvent()->getViewModel();
         $viewModel->lang = $translator->getLocale();
 
-        $action = ($route->getParam('post') ?: ucfirst($route->getParam('__CONTROLLER__')));
+        $action = ($route->getParam('post') ? ' - '.$route->getParam('post') : ucfirst($route->getParam('__CONTROLLER__')));
+
         $headTitleHelper = $viewHelper->get('headTitle');
-        $headTitleHelper->append($title->__invoke('general', 'site_name').' - '.$action);
+        $headTitleHelper->append($title->__invoke('general', 'site_name').$action);
     }
 
     /**

@@ -113,7 +113,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      */
     public function delete(array $delete = [])
     {
-        $result = $this->tableGateway->delete($delete);
+       $this->tableGateway->delete($delete);
     }
 
     /**
@@ -125,7 +125,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      */
     public function insert(array $insert = [])
     {
-        $result = $this->tableGateway->insert($insert);
+        $this->tableGateway->insert($insert);
     }
 
     /**
@@ -138,7 +138,7 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      */
     public function update(array $set = [], $where = null)
     {
-        $result = $this->tableGateway->update($set, $where);
+        $this->tableGateway->update($set, $where);
     }
 
     /**
@@ -148,14 +148,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @param string $on
      * @param array|string $columns - the joined table
      * @param string $joinType
-     *
-     * @return AbstractModelTable
      */
     public function join($name, $on, $columns = self::SQL_STAR, $joinType = self::JOIN_INNER)
     {
         $this->select->join($name, $on, $columns, $joinType);
-
-        return $this;
     }
 
     /**
@@ -176,14 +172,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      *
      * @param array $columns
      * @param bool $prefixColumnsWithTable
-     *
-     * @return AbstractModelTable
      */
     public function columns(array $columns, $prefixColumnsWithTable = true)
     {
         $this->select->columns($columns, $prefixColumnsWithTable);
-
-        return $this;
     }
 
     /**
@@ -193,8 +185,6 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      *
      * @param array|string $where
      * @param string $combination One of the PRE_* constants
-     *
-     * @return AbstractModelTable
      */
     public function where($where, $predicate = self::PRE_AND)
     {
@@ -206,8 +196,6 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
         } elseif (!empty($where) && is_string($where)) {
             $this->select->where(new Expression($where));
         }
-
-        return $this;
     }
 
     /**
@@ -216,14 +204,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @method group
      *
      * @param array $group
-     *
-     * @return AbstractModelTable
      */
     public function group($group)
     {
         $this->select->group($group);
-
-        return $this;
     }
 
     /**
@@ -233,8 +217,6 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      *
      * @param array|string $having
      * @param string $combination One of the PRE_* constants
-     *
-     * @return AbstractModelTable
      */
     public function having($having, $predicate = self::PRE_AND)
     {
@@ -246,8 +228,6 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
         } elseif (!empty($having) && is_string($having)) {
             $this->select->having(new Expression($having));
         }
-
-        return $this;
     }
 
     /**
@@ -256,14 +236,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @method order
      *
      * @param array|string $order
-     *
-     * @return AbstractModelTable
      */
     public function order($order)
     {
         $this->select->order($order);
-
-        return $this;
     }
 
     /**
@@ -272,14 +248,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @method limit
      *
      * @param int $limit
-     *
-     * @return AbstractModelTable
      */
     public function limit($limit = 0)
     {
         $this->select->limit((int) $limit);
-
-        return $this;
     }
 
     /**
@@ -288,14 +260,10 @@ abstract class AbstractModelTable implements AbstractModelTableInterface
      * @method offset
      *
      * @param int $offset
-     *
-     * @return AbstractModelTable
      */
     public function offset($offset = 0)
     {
         $this->select->offset((int) $offset);
-
-        return $this;
     }
 
     /**

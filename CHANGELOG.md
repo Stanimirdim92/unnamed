@@ -7,7 +7,6 @@ DD.MM.YYYY
 - Fixed all getObject() methods to return the current object by themself instead of doing getObject()->current();
 - *->fetchJoin should access 'n' number of tables and join them - fixed by the first comment
 - User method getDeleted() was renamed to isDisabled()
-- Models now have fluent interfaces
 - Add CRUD in AbstractModelTable
 - Replaced php-cs-fixer with PHP_CodeSniffer
 
@@ -179,3 +178,4 @@ DD.MM.YYYY
  - After/In Beta version start creating the first PHPUnit and Selenium tests
  - Social networks controller or module
  - Voice Search
+ - Theme module

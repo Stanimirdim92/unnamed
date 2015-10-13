@@ -104,8 +104,6 @@ final class AdminMenu
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -116,8 +114,6 @@ final class AdminMenu
     public function setCaption($caption = null)
     {
         $this->caption = $caption;
-
-        return $this;
     }
 
     /**
@@ -138,8 +134,6 @@ final class AdminMenu
     public function setMenuOrder($menuOrder = 0)
     {
         $this->menuOrder = $menuOrder;
-
-        return $this;
     }
 
     /**
@@ -160,8 +154,6 @@ final class AdminMenu
     public function setController($controller = null)
     {
         $this->controller = $controller;
-
-        return $this;
     }
 
     /**
@@ -182,8 +174,6 @@ final class AdminMenu
     public function setAction($action = null)
     {
         $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -204,8 +194,6 @@ final class AdminMenu
     public function setClass($class = null)
     {
         $this->class = $class;
-
-        return $this;
     }
 
     /**
@@ -226,8 +214,6 @@ final class AdminMenu
     public function setDescription($description = null)
     {
         $this->description = $description;
-
-        return $this;
     }
 
     /**
@@ -248,8 +234,6 @@ final class AdminMenu
     public function setParent($parent = 0)
     {
         $this->parent = $parent;
-
-        return $this;
     }
 
     /**

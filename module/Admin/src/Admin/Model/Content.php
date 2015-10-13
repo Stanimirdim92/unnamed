@@ -128,8 +128,6 @@ final class Content
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -140,8 +138,6 @@ final class Content
     public function setMenu($menu = 0)
     {
         $this->menu = $menu;
-
-        return $this;
     }
 
     /**
@@ -162,8 +158,6 @@ final class Content
     public function setTitle($title = null)
     {
         $this->title = $title;
-
-        return $this;
     }
 
     /**
@@ -184,8 +178,6 @@ final class Content
     public function setTitleLink($titleLink = null)
     {
         $this->titleLink = $titleLink;
-
-        return $this;
     }
 
     /**
@@ -206,8 +198,6 @@ final class Content
     public function setAuthor($author = null)
     {
         $this->author = $author;
-
-        return $this;
     }
 
     /**
@@ -228,8 +218,6 @@ final class Content
     public function setActive($active = 0)
     {
         $this->active = $active;
-
-        return $this;
     }
 
     /**
@@ -250,8 +238,6 @@ final class Content
     public function setPreview($preview = null)
     {
         $this->preview = $preview;
-
-        return $this;
     }
 
     /**
@@ -272,8 +258,6 @@ final class Content
     public function setText($text = null)
     {
         $this->text = $text;
-
-        return $this;
     }
 
     /**
@@ -294,8 +278,6 @@ final class Content
     public function setMenuOrder($menuOrder = 0)
     {
         $this->menuOrder = $menuOrder;
-
-        return $this;
     }
 
     /**
@@ -316,8 +298,6 @@ final class Content
     public function setType($type = 0)
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -338,8 +318,6 @@ final class Content
     public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->date = $date;
-
-        return $this;
     }
 
     /**
@@ -360,8 +338,6 @@ final class Content
     public function setLanguage($language = 1)
     {
         $this->language = $language;
-
-        return $this;
     }
 
     /**

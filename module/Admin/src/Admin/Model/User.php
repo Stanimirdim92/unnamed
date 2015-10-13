@@ -140,8 +140,6 @@ final class User
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
 
@@ -153,8 +151,6 @@ final class User
     public function setName($name = null)
     {
         $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -175,8 +171,6 @@ final class User
     public function setSurname($surname = null)
     {
         $this->surname = $surname;
-
-        return $this;
     }
 
     /**
@@ -197,8 +191,6 @@ final class User
     public function setPassword($password = null)
     {
         $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -219,8 +211,6 @@ final class User
     public function setEmail($email = null)
     {
         $this->email = $email;
-
-        return $this;
     }
 
     /**
@@ -241,8 +231,6 @@ final class User
     public function setBirthDate($birthDate = "0000-00-00")
     {
         $this->birthDate = $birthDate;
-
-        return $this;
     }
 
     /**
@@ -263,8 +251,6 @@ final class User
     public function setLastLogin($lastLogin = "0000-00-00 00:00:00")
     {
         $this->lastLogin = $lastLogin;
-
-        return $this;
     }
 
     /**
@@ -285,8 +271,6 @@ final class User
     public function setDisabled($isDisabled = false)
     {
         $this->isDisabled = $isDisabled;
-
-        return $this;
     }
 
     /**
@@ -307,8 +291,6 @@ final class User
     public function setImage($image = null)
     {
         $this->image = $image;
-
-        return $this;
     }
 
     /**
@@ -329,8 +311,6 @@ final class User
     public function setRegistered($registered = "0000-00-00 00:00:00")
     {
         $this->registered = $registered;
-
-        return $this;
     }
 
     /**
@@ -351,8 +331,6 @@ final class User
     public function setHideEmail($hideEmail = 0)
     {
         $this->hideEmail = $hideEmail;
-
-        return $this;
     }
 
     /**
@@ -373,8 +351,6 @@ final class User
     public function setIp($ip)
     {
         $this->ip = $ip;
-
-        return $this;
     }
 
     /**
@@ -395,8 +371,6 @@ final class User
     public function setLanguage($language = 1)
     {
         $this->language = $language;
-
-        return $this;
     }
 
     /**
@@ -417,8 +391,6 @@ final class User
     public function setAdmin($admin = 0)
     {
         $this->admin = $admin;
-
-        return $this;
     }
 
     /**

@@ -88,8 +88,6 @@ final class ResetPassword
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -100,8 +98,6 @@ final class ResetPassword
     public function setToken($token = null)
     {
         $this->token = $token;
-
-        return $this;
     }
 
     /**
@@ -122,8 +118,6 @@ final class ResetPassword
     public function setIp($ip = null)
     {
         $this->ip = $ip;
-
-        return $this;
     }
 
     /**
@@ -144,8 +138,6 @@ final class ResetPassword
     public function setDate($date = "0000-00-00 00:00:00")
     {
         $this->date = $date;
-
-        return $this;
     }
 
     /**
@@ -166,8 +158,6 @@ final class ResetPassword
     public function setUser($user = null)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**

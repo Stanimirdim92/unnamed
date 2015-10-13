@@ -68,8 +68,6 @@ final class Administrator
     public function setId($id = 0)
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -80,8 +78,6 @@ final class Administrator
     public function setUser($user = 0)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
