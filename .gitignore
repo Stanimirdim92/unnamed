@@ -11,3 +11,5 @@ data/cache/modules
 vendor
 composerInstalation
 node_modules
+phpcs.log
+phplog.log

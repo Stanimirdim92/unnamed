@@ -1,9 +1,19 @@
 <?php
+
+/**
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ *
+ * @version    0.0.18
+ *
+ * @link       TBA
+ */
+
 if ($this->viewModel()->getCurrent()->getChildren() != null) {
     $view = $this->viewModel()->getCurrent()->getChildren()[0];
 ?>
 <!doctype html>
-<html itemscope itemtype="http://schema.org/WebPage" lang="<?=$this->layout()->lang?>">
+<html lang="<?=$this->layout()->lang?>">
     <head>
         <meta charset="utf-8">
         <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
@@ -22,7 +32,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 ->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
             echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
-                ->prependStylesheet($this->basePath('/assets/prod/back/css/back.min.css'), 'screen');
+                ->prependStylesheet($this->basePath('/themes/default/back/css/back.min.css'), 'screen');
 
 ?>
     </head>
@@ -46,11 +56,11 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 <!-- Breadcrumbs -->
                 <div class="breadcrumbs">
                     <ul>
-                    <li><a hreflang='<?=$this->layout()->lang?>' itemprop='url' href="/admin"><?=$this->translate("DASHBOARD");?></a> &sol;</li>
+                    <li><a hreflang='<?=$this->layout()->lang?>' href="/admin"><?=$this->translate("DASHBOARD");?></a> &sol;</li>
 <?php
                     if (!empty($view->breadcrumbs)) {
                         foreach($view->breadcrumbs as $bread) {
-                                echo "<li><a hreflang='{$this->layout()->lang}' itemprop='url' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
+                                echo "<li><a hreflang='{$this->layout()->lang}' href='{$bread["reference"]}'>{$bread["name"]}</a></li> &sol;";
                         }
                     }
                 echo "</ul>";
@@ -85,13 +95,13 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 
             </aside>
 
-            <footer id="footer">
-                <small>Copyright &copy; <time datetime="<?=date("Y");?>"><?=date("Y");?></time></small>
-            </footer>
+        <footer class="c" id="footer">
+            <small>Copyright <time datetime="2015 - <?=date("Y");?>">2015 - <?=date("Y");?></time> &copy; Stanimir Dimitrov. </small>
+        </footer>
         </div>
 <?php
         echo $this->headScript()
-            ->prependFile($this->basePath('assets/prod/back/js/back.min.js'))
+            ->prependFile($this->basePath('themes/default/back/js/back.min.js'))
 ?>
     </body>
 </html>

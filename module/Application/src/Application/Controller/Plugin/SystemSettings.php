@@ -44,7 +44,6 @@ final class SystemSettings extends AbstractPlugin
             case 'registration':
             case 'posts':
             case 'discussion':
-            case 'theme':
                 return $this->getOption($option, $value);
                 break;
 

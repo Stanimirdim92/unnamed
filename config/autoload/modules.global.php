@@ -23,7 +23,6 @@ return [
             'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterFactory',
             'ErrorHandling'           => 'Application\Factory\ErrorHandlingFactory',
             'initSession'             => 'Application\Factory\SessionFactory',
-            'initThemes'              => 'Application\Factory\ThemesFactory',
         ],
         'aliases' => [
             'SD\Adapter' => 'Zend\Db\Adapter\Adapter',

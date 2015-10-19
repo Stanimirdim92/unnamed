@@ -3,6 +3,7 @@
 return [
     'Admin\Module'                                            => __DIR__ . '/Module.php',
     'Admin\Controller\AdministratorController'                => __DIR__ . '/src/Admin/Controller/AdministratorController.php',
+    'Admin\Controller\ThemesController'                       => __DIR__ . '/src/Admin/Controller/ThemesController.php',
     'Admin\Controller\AdminMenuController'                    => __DIR__ . '/src/Admin/Controller/AdminMenuController.php',
     'Admin\Controller\ContentController'                      => __DIR__ . '/src/Admin/Controller/ContentController.php',
     'Admin\Controller\IndexController'                        => __DIR__ . '/src/Admin/Controller/IndexController.php',

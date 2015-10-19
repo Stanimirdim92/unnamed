@@ -9,27 +9,50 @@
 
 namespace Themes;
 
+use Zend\EventManager\EventInterface;
+use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
-final class Module implements ConfigProviderInterface
+final class Module implements ConfigProviderInterface, BootstrapListenerInterface
 {
+    /**
+     * Listen to the bootstrap event.
+     *
+     * @param EventInterface $event
+     */
+    public function onBootstrap(EventInterface $event)
+    {
+        $app = $event->getApplication();
+        $eventManager = $app->getEventManager();
+        $serviceManager = $app->getServiceManager();
+
+        $router = $serviceManager->get('router');
+        $request = $serviceManager->get('request');
+        $matchedRoute = $router->match($request);
+        $route = $matchedRoute->getMatchedRouteName();
+
+        $routes = ["admin", "admin/default", "themes", "themes/default"];
+
+        if (!in_array($route, $routes)) {
+            $eventManager->attach(["render"], [$this,'loadTheme'], 100);
+        }
+    }
+
+    /**
+     * Setup theme.
+     *
+     * @param EventInterface $event
+     */
+    public function loadTheme(EventInterface $event)
+    {
+        return $event->getApplication()->getServiceManager()->get('initThemes');
+    }
+
     /**
      * @return array|\Traversable
      */
     public function getConfig()
     {
-        $dir = new \DirectoryIterator(__DIR__);
-
-        foreach ($dir as $file) {
-            if ($file->isDir() && !$file->isDot()) {
-                $hasConfig = __DIR__.DIRECTORY_SEPARATOR.$file->getBasename()."/config/module.config.php";
-
-                if (is_file($hasConfig)) {
-                    $config["themes"][$file->getBasename()] = include $hasConfig;
-                }
-            }
-        }
-
-        return $config;
+        return include __DIR__.'/config/module.config.php';
     }
 }

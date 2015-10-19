@@ -12,7 +12,7 @@ return [
     "ADD_ADMINISTRATOR" => "Add administrator",
     "EDIT_ADMINISTRATOR" => "Save administrator",
     "DELETE_ADMINISTRATOR_SUCCESS" => "Administrator was successfully deleted",
-    "SAVE_SUCCESS" => "was successfully saved",
+    "SAVE_SUCCESS" => "successfully saved",
     "ALREADY_ADMIN" => " is already admin",
     "ERROR" => "Error!",
     "ADMIN_MENUS" => "Admin menus",
@@ -132,4 +132,6 @@ return [
     'TOKEN_MISMATCH' => "Token misatch",
     'DISABLE' => "Disable",
     'REGISTRATION_CLOSED' => "Registrations are closed",
+    'THEMES' => "Themes",
+    'THEME_ACTIVATED' => "Theme was successfully activated",
 ];

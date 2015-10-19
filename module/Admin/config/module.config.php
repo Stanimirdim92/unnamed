@@ -28,12 +28,13 @@ return [
                     'default' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/[:controller[/][:action[/][:id][page/:page][/search/:search]]]',
+                            'route'    => '/[:controller[/][:action[/][[:id][:themeName]][page/:page][/search/:search]]]',
                             'constraints' => [
                                 'controller' => '[a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z0-9_-]*',
                                 'search'     => '[a-zA-Z0-9_-]*',
                                 'id'         => '[0-9]+',
+                                'themeName'         => '[a-zA-Z0-9_-]*',
                                 'page'       => '[0-9]+',
                             ],
                             'defaults' => [
@@ -58,7 +59,8 @@ return [
             'Admin\Controller\Settings'      => Factory\Controller\SettingsControllerFactory::class,
         ],
         'invokables' => [
-            'Admin\Controller\Index' => Controller\IndexController::class,
+            'Admin\Controller\Index'  => Controller\IndexController::class,
+            'Admin\Controller\Themes' => Controller\ThemesController::class,
         ],
     ],
     'form_elements' => [
@@ -74,6 +76,7 @@ return [
         ],
     ],
     'shared' => [
+        'Admin\Controller\Themes'             => false,
         'Admin\Controller\Content'            => false,
         'Admin\Controller\Index'              => false,
         'Admin\Controller\Menu'               => false,

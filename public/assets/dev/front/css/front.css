@@ -57,47 +57,69 @@ ul {
 
     /* Navigation */
     #nav {
+        padding: 0;
+        margin: 0;
+        border: 0;
         width: 100%;
+        background: #333;
+        border-bottom: 4px solid #1b9bff;
     }
 
     #nav ul {
-        background: #eee;
-        border-bottom: 1px solid #DBDBDB;
     }
 
-    #nav ul > li {
+    #nav ul li {
         display: inline-block;
-        padding: 7px;
+        min-height: 1px;
+        vertical-align: middle;
     }
 
     #nav ul li a {
+        color: #CACACA;
         padding: 10px;
-        color: green;
+        display: inline-block;
     }
 
-    #nav ul li a:hover {
-        background: #fff;
+    #nav ul li:hover {
+        background: #1b9bff;
+    }
+
+    #nav ul li:hover a {
+        color: #FFF;
+        text-decoration: none;
     }
 
     #nav ul li ul {
         position: absolute;
-        background: #eee;
+        background: #454545;
         min-width: 150px;
         display: none;
     }
 
-    #nav ul li:hover ul  {
+    #nav ul li:hover ul, #nav ul li:hover ul li  {
         display: block;
     }
 
-    #nav ul li ul li a:hover {
-        background: #fff;
+    #nav ul li:hover ul li > ul {
+        display: none;
+        left: 100%;
+        top: 0;
+    }
+
+    #nav ul li:hover ul li:hover > ul {
+        display: inline-block;
+        left: 100%;
+        top: 0;
     }
 
     #nav ul li ul li a {
         padding: 10px;
         display: block;
-        border-bottom: 1px solid #Ccc;
+        border-bottom: 1px solid #1b9bff;
+    }
+
+    #nav ul li ul li a:hover {
+        background: #1b9bff;
     }
 
     /* Left|Right panels */

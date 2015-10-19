@@ -29,6 +29,7 @@
 * User page with account disable option
 * Flexbox
 * Zend OPcache
+* Font Awesome icons
 
 ### Requirements ###
 
@@ -50,7 +51,7 @@
 * ZendDeveloperTools (built in via composer)
 * BjyProfiler (built in via composer)
 * SanSessionToolbar (built in via composer)
-* The PHP Coding Standards Fixer (built in via composer)
+* PHP CodeSniffer (built in via composer)
 * Gulp (requires NodeJS 0.12.7 or later). node_modules folder is not included. You will have to run **npm install** from the root directory
 
 ### LICENSE ###

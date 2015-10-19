@@ -83,8 +83,5 @@ return [
             'comment_moderation' => 0,
             'show_avatars' => 1,
         ],
-        'theme' => [
-            'name' => 'default',
-        ],
     ],
 ];

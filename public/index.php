@@ -65,19 +65,12 @@ chdir(dirname(__DIR__));
 /**
  * Setup autoloading.
  */
-if (is_dir('vendor/zendframework') && is_file('vendor/autoload.php')) {
-    $loader = include 'vendor/autoload.php';
-}
-
-if (!class_exists('Zend\Loader\AutoloaderFactory') || !is_file('config/autoload/db.local.php')) {
-    if (!is_file('public/install.php')) {
-        throw new \RuntimeException('Installation file is missing. Process cannot be started.');
-    }
+if (!is_file('vendor/autoload.php') || !is_file('config/autoload/db.local.php')) {
     header('Location: /install.php');
-    return;
 }
+require 'vendor/autoload.php';
 
 /**
  * Run the application!
  */
-Zend\Mvc\Application::init(require 'config/application.config.php')->run();
+Zend\Mvc\Application::init(include 'config/application.config.php')->run();

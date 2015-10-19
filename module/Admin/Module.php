@@ -12,13 +12,12 @@
 namespace Admin;
 
 use Zend\EventManager\EventInterface;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleManagerInterface;
 
-final class Module implements AutoloaderProviderInterface, ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
+final class Module implements ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
      * Setup module layout.
@@ -60,25 +59,6 @@ final class Module implements AutoloaderProviderInterface, ConfigProviderInterfa
         $service = $sm->get('ErrorHandling');
         $service->logError($e, $sm);
         return $e->stopPropagation();
-    }
-
-    /**
-     * Return an array for passing to Zend\Loader\AutoloaderFactory.
-     *
-     * @return array
-     */
-    public function getAutoloaderConfig()
-    {
-        return [
-            'Zend\Loader\ClassMapAutoloader' => [
-                __DIR__ . '/autoload_classmap.php',
-            ],
-            'Zend\Loader\StandardAutoloader' => [
-                'namespaces' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ],
-            ],
-        ];
     }
 
     /**

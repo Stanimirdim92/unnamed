@@ -21,28 +21,42 @@ var plumber = require('gulp-plumber');
  * Paths
  */
 function paths (folder) {
-    var assets = "./public/assets/";
-    var paths = {
+    var devFolders = "./public/assets/";
+    var prodFolders = "./public/themes/";
+    var filePaths = {
+        // these are the development folder
         back: {
-            CSS: assets + folder + "/back/css",
-            JS:  assets + folder + "/back/js",
-            IMG: assets + folder + "/back/img"
+            CSS: devFolders + folder + "/back/css",
+            JS:  devFolders + folder + "/back/js",
+            IMG: devFolders + folder + "/back/img"
         },
         front: {
-            CSS: assets + folder + "/front/css",
-            JS:  assets + folder + "/front/js",
-            IMG: assets + folder + "/front/img"
+            CSS: devFolders + folder + "/front/css",
+            JS:  devFolders + folder + "/front/js",
+            IMG: devFolders + folder + "/front/img"
+        },
+        // these are the production folders
+        defaultThemeBack: {
+            CSS: prodFolders + folder + "/back/css",
+            JS:  prodFolders + folder + "/back/js",
+            IMG: prodFolders + folder + "/back/img",
+        },
+        defaultThemeFront: {
+            CSS: prodFolders + folder + "/front/css",
+            JS:  prodFolders + folder + "/front/js",
+            IMG: prodFolders + folder + "/front/img",
         }
     }
 
+    // this is also a dev folder
     if (folder === "dev") {
-        paths.common = {
-            CSS: assets + folder + "/common/css",
-            JS:  assets + folder + "/common/js",
-            IMG: assets + folder + "/common/img"
+        filePaths.common = {
+            CSS: devFolders + folder + "/common/css",
+            JS:  devFolders + folder + "/common/js",
+            IMG: devFolders + folder + "/common/img"
         }
     }
-    return paths;
+    return filePaths;
 }
 
 /**
@@ -65,7 +79,7 @@ gulp.task('styles-f', function () {
             .pipe(minifycss({compatibility: 'ie8'}))
         .pipe(sourcemaps.write("./"))
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").front.CSS));
+        .pipe(gulp.dest(paths("default").defaultThemeFront.CSS));
 });
 
 gulp.task('scripts-f', function () {
@@ -84,7 +98,7 @@ gulp.task('scripts-f', function () {
             .pipe(uglify())
         .pipe(sourcemaps.write("./"))
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").front.JS));
+        .pipe(gulp.dest(paths("default").defaultThemeFront.JS));
 });
 
 gulp.task('images-f', function () {
@@ -106,7 +120,7 @@ gulp.task('images-f', function () {
             })
         )
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").front.IMG));
+        .pipe(gulp.dest(paths("default").defaultThemeFront.IMG));
 });
 
 /**
@@ -129,7 +143,7 @@ gulp.task('styles-b', function () {
             .pipe(minifycss())
         .pipe(sourcemaps.write("./"))
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").back.CSS));
+        .pipe(gulp.dest(paths("default").defaultThemeBack.CSS));
 });
 
 gulp.task('scripts-b', function () {
@@ -148,7 +162,7 @@ gulp.task('scripts-b', function () {
             .pipe(uglify())
         .pipe(sourcemaps.write("./"))
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").back.JS));
+        .pipe(gulp.dest(paths("default").defaultThemeBack.JS));
 });
 
 gulp.task('images-b', function () {
@@ -170,7 +184,7 @@ gulp.task('images-b', function () {
             })
         )
         .pipe(plumber.stop())
-        .pipe(gulp.dest(paths("prod").back.IMG));
+        .pipe(gulp.dest(paths("default").defaultThemeBack.IMG));
 });
 
 /**

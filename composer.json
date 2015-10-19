@@ -65,6 +65,13 @@
         "squizlabs/php_codesniffer": "2.*",
         "phpunit/PHPUnit": "~4.0"
     },
+    "autoload": {
+        "psr-4": {
+          "Application\\": "module/Application/src",
+          "Admin\\": "module/Admin/src",
+          "Themes\\": "module/Themes/src"
+        }
+    },
     "suggest": {
        "ext-mcrypt": "for encryption",
        "ext-mbstring": "for proper string encoding",

@@ -37,6 +37,7 @@ ul {
     margin: 0;
     padding: 0;
 }
+
 .table-cell {
     display: -webkit-box;
     display: -moz-box;
@@ -62,6 +63,7 @@ ul {
     word-break: break-word;
     padding: 0.5em;
 }
+
 .table-style {
      display: -webkit-box;
   display: -moz-box;
@@ -129,7 +131,6 @@ ul {
     -ms-flex: 10 0 0;
     flex: 10 0 0;
 }
-
 
 .table-row .table-row {
     width: 100%;
@@ -529,4 +530,17 @@ ul {
 /* Form wrapper */
 .form-inputs {
 
+}
+
+.theme {
+    margin: 0 4% 4% 0;
+    display: inline-block;
+    width: 30.6%;
+    background: #fefefe !important;
+    box-shadow: 2px 2px 10px #D8D8D8;
+}
+
+.theme-item {
+    border-bottom: 1px solid #ccc;
+    padding: 9px;
 }
