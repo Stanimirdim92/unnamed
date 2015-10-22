@@ -60,7 +60,6 @@ return [
         ],
         'invokables' => [
             'Admin\Controller\Index'  => Controller\IndexController::class,
-            'Admin\Controller\Themes' => Controller\ThemesController::class,
         ],
     ],
     'form_elements' => [
@@ -76,7 +75,6 @@ return [
         ],
     ],
     'shared' => [
-        'Admin\Controller\Themes'             => false,
         'Admin\Controller\Content'            => false,
         'Admin\Controller\Index'              => false,
         'Admin\Controller\Menu'               => false,

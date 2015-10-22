@@ -16,11 +16,14 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 <html itemscope itemtype="http://schema.org/WebPage" prefix="og: http://ogp.me/ns#" lang="<?=$this->layout()->lang?>">
     <head>
         <meta charset="utf-8">
-        <title>Awesome theme</title>
+        <title><?=$this->escapeHtml($this->headTitle()->renderTitle());?></title>
 <?php
-            echo $this->headMeta();
-            echo $this->placeholder('customHead');
-            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico']);
+            // echo $this->headMeta();
+            // echo $this->placeholder('customHead');
+            // echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico']);
+
+            echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
+                ->prependStylesheet($this->basePath('/layouts/default/front/css/front.min.css'), 'screen');
 ?>
         <meta property="og:site_name" content="<?=$this->escapeHtml($this->headTitle()->renderTitle());?>">
         <link rel="apple-touch-icon" href="<?=$this->basePath('/apple-touch-icon.png');?>">
@@ -33,7 +36,7 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
             <!-- Header, banner, navigation menu -->
             <header id="header">
                 <nav id="nav" class="clearfix" aria-label="main navigation">
-                    <?=$view->menu;?>
+                    <!-- <?=$view->menu;?> -->
                 </nav>
             </header>
 
@@ -76,6 +79,10 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
         <footer class="c" id="footer">
             <small>Copyright <time datetime="2015 - <?=date("Y");?>">2015 - <?=date("Y");?></time> &copy; Stanimir Dimitrov. </small>
         </footer>
+<?php
+        echo $this->headScript()
+            ->prependFile($this->basePath('themes/default/front/js/front.min.js'))
+?>
     </body>
 </html>
 <?php

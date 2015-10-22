@@ -32,12 +32,11 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
                 ->appendHttpEquiv('x-dns-prefetch-control', 'on');
 
             echo $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath().'/favicon.ico'])
-                ->prependStylesheet($this->basePath('/themes/default/back/css/back.min.css'), 'screen');
+                ->prependStylesheet($this->basePath('/layouts/default/back/css/back.min.css'), 'screen');
 
 ?>
     </head>
     <body>
-
         <div id="content-wrapper">
             <!-- Header, banner, navigation menu -->
             <header id="header">
@@ -95,9 +94,9 @@ if ($this->viewModel()->getCurrent()->getChildren() != null) {
 
             </aside>
 
-        <footer class="c" id="footer">
-            <small>Copyright <time datetime="2015 - <?=date("Y");?>">2015 - <?=date("Y");?></time> &copy; Stanimir Dimitrov. </small>
-        </footer>
+            <footer class="c" id="footer">
+                <small>Copyright <time datetime="2015 - <?=date("Y");?>">2015 - <?=date("Y");?></time> &copy; Stanimir Dimitrov. </small>
+            </footer>
         </div>
 <?php
         echo $this->headScript()

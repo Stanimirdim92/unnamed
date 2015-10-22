@@ -3,18 +3,44 @@
 /**
  * @copyright  2015 (c) Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
+ *
  * @version    0.0.18
+ *
  * @link       TBA
  */
 
 namespace Themes;
 
 use Zend\EventManager\EventInterface;
+use Themes\Service\ReloadService;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
+use Zend\ModuleManager\ModuleManagerInterface;
 
-final class Module implements ConfigProviderInterface, BootstrapListenerInterface
+final class Module implements ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
+    /**
+     * @var \Zend\getServiceManager\ServiceManager
+     */
+    private $service = null;
+
+    /**
+     * Setup module layout.
+     *
+     * @param  $moduleManager ModuleManager
+     */
+    public function init(ModuleManagerInterface $moduleManager)
+    {
+        $moduleManager->getEventManager()->getSharedManager()->attach(
+            __NAMESPACE__,
+            "dispatch",
+            function (EventInterface $e) {
+                $e->getTarget()->layout('layout/layout');
+            }
+        );
+    }
+
     /**
      * Listen to the bootstrap event.
      *
@@ -23,19 +49,26 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
     public function onBootstrap(EventInterface $event)
     {
         $app = $event->getApplication();
+        $this->service = $app->getServiceManager();
         $eventManager = $app->getEventManager();
-        $serviceManager = $app->getServiceManager();
+        $sharedEventManager = $eventManager->getSharedManager();
 
-        $router = $serviceManager->get('router');
-        $request = $serviceManager->get('request');
-        $matchedRoute = $router->match($request);
-        $route = $matchedRoute->getMatchedRouteName();
+        $eventManager->attach(["render"], [$this,'loadTheme'], 100);
+        $sharedEventManager->attach(ReloadService::class, 'reload', [$this, 'reloadConfig'], 101);
+    }
 
-        $routes = ["admin", "admin/default", "themes", "themes/default"];
+    /**
+     * Listen for theme change and override Config.
+     */
+    public function reloadConfig()
+    {
+        $request = $this->service->get('Request');
 
-        if (!in_array($route, $routes)) {
-            $eventManager->attach(["render"], [$this,'loadTheme'], 100);
-        }
+        $config = $this->service->get('Config');
+        $this->service->setAllowOverride(true);
+        $config['theme']['name'] = $request->getPost()['themeName'];
+        $this->service->setService('Config', $config);
+        $this->service->setAllowOverride(false);
     }
 
     /**
@@ -45,7 +78,12 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      */
     public function loadTheme(EventInterface $event)
     {
-        return $event->getApplication()->getServiceManager()->get('initThemes');
+        /**
+         * Exclude modules that doesn't need a dinamicly changed layout
+         */
+        if (!in_array($event->getRouteMatch()->getMatchedRouteName(), ["admin", "admin/default", "themes", "themes/default"])) {
+            return $this->service->get('initThemes');
+        }
     }
 
     /**

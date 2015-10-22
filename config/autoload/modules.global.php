@@ -15,7 +15,7 @@
 return [
     'service_manager' => [
         'abstract_factories' => [
-            'CacheAbstractFactory' => 'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Application\ServiceManager\AbstractFactory\AbstractTableFactory',
         ],
         'factories' => [

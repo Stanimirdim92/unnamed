@@ -30,12 +30,6 @@
                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
               ),
-              'defaults' => 
-              array (
-                '__NAMESPACE__' => 'Themes\\Controller',
-                'controller' => 'Index',
-                'action' => 'index',
-              ),
             ),
           ),
         ),
@@ -56,18 +50,20 @@
       'initThemes' => 'Themes\\Factory\\ThemesFactory',
       'getThemesFromDir' => 'Themes\\Factory\\GetThemesFromDir',
     ),
+    'invokables' => 
+    array (
+      'reloadService' => 'Themes\\Service\\ReloadService',
+    ),
   ),
   'theme' => 
   array (
-    'name' => 'awesome',
+    'name' => 'default',
   ),
   'view_manager' => 
   array (
-    'template_map' => 
+    'template_path_stack' => 
     array (
-      'themes/index/index' => 'C:\\xampp\\htdocs\\unnamed\\module\\Themes/view/themes/index/index.phtml',
-      'error/index' => 'C:\\xampp\\htdocs\\unnamed\\module\\Themes/view/error/index.phtml',
-      'layout/layout' => 'C:\\xampp\\htdocs\\unnamed\\module\\Themes/view/layout/layout.phtml',
+      'themes' => 'C:\\xampp\\htdocs\\unnamed\\module\\Themes\\config/../view',
     ),
   ),
 );

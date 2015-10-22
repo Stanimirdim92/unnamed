@@ -8,13 +8,10 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-//var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 var imagemin = require('gulp-imagemin');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
-var watch = require('gulp-watch');
-//var cache = require('gulp-cache');
 var plumber = require('gulp-plumber');
 
 /**

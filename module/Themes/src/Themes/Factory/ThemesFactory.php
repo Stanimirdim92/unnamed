@@ -1,31 +1,18 @@
 <?php
 
 /**
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * @copyright  2015 (c) Stanimir Dimitrov.
+ * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license.
+ * @version    0.0.18
+ *
+ * @link       TBA
  */
 
 namespace Themes\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-/**
- * @author Stanimir Dimitrov <stanimirdim92@gmail.com>
- *
- * This is the class where all the magic happens!!!
- */
 final class ThemesFactory
 {
     /**
@@ -45,16 +32,16 @@ final class ThemesFactory
          * At this point the user has already been selected the new theme he wants to use
          * from indexAction.
          */
+        $viewTemplate = $serviceLocator->get('ViewTemplatePathStack');
         $themes = $themesConfig['themes'][$config['theme']['name']];
 
-        if (isset($themes['template_map'])) {
-            $map = $serviceLocator->get('ViewTemplateMapResolver');
-            $map->merge($themes['template_map']);
+        if (isset($themes['template_path_stack'])) {
+            $viewTemplate->addPaths($themes['template_path_stack']);
         }
 
-        if (isset($themes['template_path_stack'])) {
-            $stack = $serviceLocator->get('ViewTemplatePathStack');
-            $stack->addPaths($themes['template_path_stack']);
+        if (isset($themes['template_map'])) {
+            $viewTemplate = $serviceLocator->get('ViewTemplateMapResolver');
+            $viewTemplate->merge($themes['template_map']);
         }
 
         foreach ($themes['css'] as $key => $file) {
@@ -65,6 +52,6 @@ final class ThemesFactory
             $headScript->prependFile($publicDir.$file);
         }
 
-        return new self();
+        return $viewTemplate;
     }
 }
