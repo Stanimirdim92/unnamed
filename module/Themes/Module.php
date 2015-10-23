@@ -23,7 +23,7 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
     /**
      * @var \Zend\getServiceManager\ServiceManager
      */
-    private $service = null;
+    private $service;
 
     /**
      * Setup module layout.
@@ -53,7 +53,7 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
         $eventManager = $app->getEventManager();
         $sharedEventManager = $eventManager->getSharedManager();
 
-        $eventManager->attach(["render"], [$this,'loadTheme'], 100);
+        $eventManager->attach("render", [$this,'loadTheme'], 100);
         $sharedEventManager->attach(ReloadService::class, 'reload', [$this, 'reloadConfig'], 101);
     }
 

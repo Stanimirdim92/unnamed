@@ -30,6 +30,7 @@
 * Flexbox
 * Zend OPcache
 * Font Awesome icons
+* Doctrine
 
 ### Requirements ###
 
@@ -52,6 +53,9 @@
 * BjyProfiler (built in via composer)
 * SanSessionToolbar (built in via composer)
 * PHP CodeSniffer (built in via composer)
+* PHP Unit (built in via composer)
+* Codeception (built in via composer)
+* PHP Coveralls (built in via composer)
 * Gulp (requires NodeJS 0.12.7 or later). node_modules folder is not included. You will have to run **npm install** from the root directory
 
 ### LICENSE ###

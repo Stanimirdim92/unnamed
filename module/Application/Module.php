@@ -22,6 +22,11 @@ use Zend\Session\Container;
 final class Module implements ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
+     * @var \Zend\getServiceManager\ServiceManager
+     */
+    private $service;
+
+    /**
      * Setup module layout.
      *
      * @param $moduleManager ModuleManager
@@ -47,10 +52,10 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
         $app = $event->getApplication();
         $moduleRouteListener = new ModuleRouteListener();
         $eventManager = $app->getEventManager();
-        $serviceManager = $app->getServiceManager();
+        $this->service = $app->getServiceManager();
         $moduleRouteListener->attach($eventManager);
 
-        $sessionManager = $serviceManager->get('initSession');
+        $sessionManager = $this->service->get('initSession');
         $sessionManager->setName("zpc")->start();
         Container::setDefaultManager($sessionManager);
 
@@ -67,9 +72,8 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      */
     public function onError(EventInterface $event)
     {
-        $serviceManager = $event->getApplication()->getServiceManager();
-        $service = $serviceManager->get('ErrorHandling');
-        $service->logError($event, $serviceManager);
+        $service = $this->service->get('ErrorHandling');
+        $service->logError($event, $this->service);
         return $event->stopPropagation();
     }
 
@@ -80,19 +84,17 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      */
     public function setTitleAndTranslation(EventInterface $event)
     {
-        $app = $event->getApplication();
-        $serviceManager = $app->getServiceManager();
         $route = $event->getRouteMatch();
-        $title = $serviceManager->get('ControllerPluginManager')->get("systemsettings");
-        $viewHelper = $serviceManager->get('ViewHelperManager');
+        $title = $this->service->get('ControllerPluginManager')->get("systemsettings");
+        $viewHelper = $this->service->get('ViewHelperManager');
         $lang = new Container("translations");
-        $translator = $serviceManager->get('translator');
+        $translator = $this->service->get('translator');
 
         /*
          * Load translations.
          */
         $translator->setLocale($lang->languageName)->setFallbackLocale('en');
-        $viewModel = $app->getMvcEvent()->getViewModel();
+        $viewModel = $event->getViewModel();
         $viewModel->lang = $translator->getLocale();
 
         /*

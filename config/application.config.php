@@ -3,8 +3,11 @@
 $modules = [];
 
 $modules[] = 'Application';
-$modules[] = 'Themes';
 $modules[] = 'Admin';
+$modules[] = 'Themes';
+$modules[] = 'RedirectHandlerModule';
+// $modules[] = 'DoctrineModule';
+// $modules[] = 'DoctrineORMModule';
 
 if (APP_ENV === 'development') {
     $modules[] = 'ZendDeveloperTools';
