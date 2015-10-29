@@ -16,16 +16,12 @@ return [
     'service_manager' => [
         'abstract_factories' => [
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Application\ServiceManager\AbstractFactory\AbstractTableFactory',
+            'Admin\Service\AbstractTableFactory',
         ],
         'factories' => [
             'translator'              => 'Zend\Mvc\Service\TranslatorServiceFactory',
-            'Zend\Db\Adapter\Adapter' => 'Application\Factory\AdapterFactory',
             'ErrorHandling'           => 'Application\Factory\ErrorHandlingFactory',
             'initSession'             => 'Application\Factory\SessionFactory',
-        ],
-        'aliases' => [
-            'SD\Adapter' => 'Zend\Db\Adapter\Adapter',
         ],
     ],
     'controller_plugins' => [

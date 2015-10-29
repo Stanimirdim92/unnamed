@@ -11,19 +11,26 @@
 
 namespace Application\Model;
 
-use Admin\Model\AbstractModelTable;
 use Application\Exception\RuntimeException;
 
-final class ResetPasswordTable extends AbstractModelTable
+final class ResetPasswordTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct($entityManager)
     {
-        parent::__construct('resetpassword', 'ResetPassword', $adapter);
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->entityManager;
     }
 
     /**

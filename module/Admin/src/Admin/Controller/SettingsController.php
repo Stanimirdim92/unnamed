@@ -17,7 +17,7 @@ use Admin\Form\SettingsGeneralForm;
 use Admin\Form\SettingsDiscussionForm;
 use Admin\Form\SettingsRegistrationForm;
 
-final class SettingsController extends IndexController
+final class SettingsController extends BaseController
 {
     /**
      * @var SettingsMailForm

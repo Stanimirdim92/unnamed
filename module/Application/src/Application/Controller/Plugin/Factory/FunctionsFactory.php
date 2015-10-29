@@ -12,20 +12,15 @@
 namespace Application\Controller\Plugin\Factory;
 
 use Application\Controller\Plugin\Functions;
-use Zend\Mvc\Controller\PluginManager;
 
 class FunctionsFactory
 {
     /**
      * @{inheritDoc}
      */
-    public function __invoke(PluginManager $pluginManager)
+    public function __invoke()
     {
-        $serviceLocator = $pluginManager->getServiceLocator();
-
-        $adapter = $serviceLocator->get('SD\Adapter');
-
-        $plugin = new Functions($adapter);
+        $plugin = new Functions();
 
         return $plugin;
     }

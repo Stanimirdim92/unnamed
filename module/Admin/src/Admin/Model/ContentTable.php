@@ -11,19 +11,35 @@
 
 namespace Admin\Model;
 
-use Admin\Model\AbstractModelTable;
 use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
 
-final class ContentTable extends AbstractModelTable
+final class ContentTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct('content', 'Content', $adapter);
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @return Doctrine\ORM\QueryBuilder
+     */
+    public function queryBuilder()
+    {
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\Content
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\Content");
     }
 
     /**
@@ -36,12 +52,19 @@ final class ContentTable extends AbstractModelTable
      */
     public function getContent($id = 0, $language = 1)
     {
-        $rowset = $this->select(['id' => (int) $id, "language" => (int) $language]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
+        $content = $this->queryBuilder();
+        $content->select(["c"]);
+        $content->from('Admin\Entity\Content', 'c');
+        $content->where("c.id = :id AND c.language = :language");
+        $content->setParameter(':id', (int) $id);
+        $content->setParameter(':language', (int) $language);
+        $content = $content->getQuery()->getSingleResult();
+
+        if (empty($content)) {
             throw new RuntimeException("Couldn't find content");
         }
-        return $rowset->current();
+
+        return $content;
     }
 
     /**
@@ -55,7 +78,13 @@ final class ContentTable extends AbstractModelTable
     public function deleteContent($id = 0, $language = 1)
     {
         if ($this->getContent($id, $language)) {
-            $this->delete(['id' => (int) $id, "language" => (int) $language]);
+            $del = $this->queryBuilder();
+            $del->delete('Admin\Entity\Content', 'c');
+            $del->where("c.id = :id AND c.language = :language");
+            $del->setParameter(':id', (int) $id);
+            $del->setParameter(':language', (int) $language);
+
+            return $del->getQuery()->execute();
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright  2015 (c) Stanimir Dimitrov.
+ * @copyright  2015 (c] Stanimir Dimitrov.
  * @license    http://www.opensource.org/licenses/mit-license.php  MIT License
  *
  * @version    0.0.18
@@ -56,6 +56,7 @@ return [
             'Application\Controller\Registration' => Factory\Controller\RegistrationControllerFactory::class,
         ],
         'invokables' => [
+            'Application\Controller\Base'  => Controller\BaseController::class,
             'Application\Controller\Index' => Controller\IndexController::class,
             'Application\Controller\News'  => Controller\NewsController::class,
             'Application\Controller\Menu'  => Controller\MenuController::class,
@@ -69,5 +70,21 @@ return [
         'Application\Controller\Index'        => false,
         'Application\Controller\News'         => false,
         'Application\Controller\Menu'         => false,
+    ],
+    'doctrine' => [
+        'driver' => [
+            __NAMESPACE__ . '_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__ . '/../src/' . __NAMESPACE__ . '/Model',
+                ],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    __NAMESPACE__ . '\Model' => __NAMESPACE__ . '_driver',
+                ],
+            ],
+        ],
     ],
 ];

@@ -11,67 +11,101 @@
 
 namespace Admin\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Content
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="content")
+ */
 final class Content
 {
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Column(name="menu", type="integer", nullable=false)
      */
     private $menu = 0;
 
     /**
-     * @var string $title
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=200, nullable=true)
      */
-    private $title = null;
+    private $title;
 
     /**
-     * @var string $preview
+     * @var string
+     *
+     * @ORM\Column(name="preview", type="string", length=100, nullable=true)
      */
-    private $preview = null;
+    private $preview;
 
     /**
-     * @var string $text
+     * @var string
+     *
+     * @ORM\Column(name="text", type="text", nullable=true)
      */
-    private $text = null;
+    private $text;
 
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Column(name="menuOrder", type="integer", nullable=false)
      */
     private $menuOrder = 0;
 
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Column(name="type", type="smallint", nullable=false)
      */
     private $type = 0;
 
     /**
-     * @var string $date
+     * @var string
+     *
+     * @ORM\Column(name="date", type="datetime", nullable=false)
      */
     private $date = "0000-00-00 00:00:00";
 
     /**
-     * @var Int $language
+     * @var integer
+     *
+     * @ORM\Column(name="language", type="integer", nullable=false)
      */
     private $language = 1;
 
     /**
-     * @var string $titleLink
+     * @var string
+     *
+     * @ORM\Column(name="titleLink", type="string", length=255, nullable=true)
      */
-    private $titleLink = null;
+    private $titleLink;
 
     /**
-     * @var bool $active
+     * @var boolean
+     *
+     * @ORM\Column(name="active", type="smallint", nullable=false)
      */
     private $active = 1;
 
     /**
-     * @var string $author
+     * @var string
+     *
+     * @ORM\Column(name="author", type="string", length=200, nullable=true)
      */
-    private $author = null;
+    private $author;
 
     /**
      * @param array $data
@@ -155,7 +189,7 @@ final class Content
      *
      * @param null $title
      */
-    public function setTitle($title = null)
+    public function setTitle($title)
     {
         $this->title = $title;
     }
@@ -175,7 +209,7 @@ final class Content
      *
      * @param null $titleLink
      */
-    public function setTitleLink($titleLink = null)
+    public function setTitleLink($titleLink)
     {
         $this->titleLink = $titleLink;
     }
@@ -195,7 +229,7 @@ final class Content
      *
      * @param string $author
      */
-    public function setAuthor($author = null)
+    public function setAuthor($author)
     {
         $this->author = $author;
     }
@@ -235,7 +269,7 @@ final class Content
      *
      * @param String $preview
      */
-    public function setPreview($preview = null)
+    public function setPreview($preview)
     {
         $this->preview = $preview;
     }
@@ -255,7 +289,7 @@ final class Content
      *
      * @param String $text
      */
-    public function setText($text = null)
+    public function setText($text)
     {
         $this->text = $text;
     }

@@ -11,7 +11,7 @@
 
 namespace Application\Controller;
 
-final class NewsController extends IndexController
+final class NewsController extends BaseController
 {
     /**
      * Get the contents for all the news.

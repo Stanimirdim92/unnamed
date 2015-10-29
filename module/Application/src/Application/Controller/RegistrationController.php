@@ -16,7 +16,7 @@ use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
 use Application\Form\RegistrationForm;
 
-final class RegistrationController extends IndexController
+final class RegistrationController extends BaseController
 {
     /**
      * @var RegistrationForm $registrationForm

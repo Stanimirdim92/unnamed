@@ -11,19 +11,35 @@
 
 namespace Admin\Model;
 
-use Admin\Model\AbstractModelTable;
 use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
 
-final class AdminMenuTable extends AbstractModelTable
+final class AdminMenuTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct('adminmenu', 'AdminMenu', $adapter);
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @return Doctrine\ORM\QueryBuilder
+     */
+    public function queryBuilder()
+    {
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\AdminMenu
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\AdminMenu");
     }
 
     /**
@@ -35,16 +51,22 @@ final class AdminMenuTable extends AbstractModelTable
      */
     public function getAdminMenu($id = 0)
     {
-        $rowset = $this->select(['id' => (int) $id]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
+        $adminMenu = $this->queryBuilder();
+        $adminMenu->select(["am"]);
+        $adminMenu->from('Admin\Entity\AdminMenu', 'am');
+        $adminMenu->where("am.id = :id");
+        $adminMenu->setParameter(':id', (int) $id);
+        $adminMenu = $adminMenu->getQuery()->getSingleResult();
+
+        if (empty($adminMenu)) {
             throw new RuntimeException("Couldn't find admin menu");
         }
-        return $rowset->current();
+
+        return $adminMenu;
     }
 
     /**
-     * Delete a adminmenu based on the provided id and language.
+     * Delete a adminmenu based on the provided id.
      *
      * @param int $id adminmenu id
      *
@@ -53,7 +75,12 @@ final class AdminMenuTable extends AbstractModelTable
     public function deleteAdminMenu($id = 0)
     {
         if ($this->getAdminMenu($id)) {
-            $this->delete(['id' => (int) $id]);
+            $del = $this->queryBuilder();
+            $del->delete('Admin\Entity\AdminMenu', 'am');
+            $del->where("am.id = :id");
+            $del->setParameter(':id', (int) $id);
+
+            return $del->getQuery()->execute();
         }
     }
 

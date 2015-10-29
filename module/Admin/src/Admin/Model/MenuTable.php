@@ -11,19 +11,35 @@
 
 namespace Admin\Model;
 
-use Admin\Model\AbstractModelTable;
 use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
 
-final class MenuTable extends AbstractModelTable
+final class MenuTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct('menu', 'Menu', $adapter);
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @return Doctrine\ORM\QueryBuilder
+     */
+    public function queryBuilder()
+    {
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\Menu
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\Menu");
     }
 
     /**
@@ -36,12 +52,19 @@ final class MenuTable extends AbstractModelTable
      */
     public function getMenu($id = 0, $language = 1)
     {
-        $rowset = $this->select(['id' => (int) $id, 'language' => (int) $language]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
+        $menu = $this->queryBuilder();
+        $menu->select(["m"]);
+        $menu->from('Admin\Entity\Menu', 'm');
+        $menu->where("m.id = :id AND m.language = :language");
+        $menu->setParameter(':id', (int) $id);
+        $menu->setParameter(':language', (int) $language);
+        $menu = $menu->getQuery()->getSingleResult();
+
+        if (empty($menu)) {
             throw new RuntimeException("Couldn't find menu");
         }
-        return $rowset->current();
+
+        return $menu;
     }
 
     /**
@@ -50,12 +73,18 @@ final class MenuTable extends AbstractModelTable
      * @param int $id menu id
      * @param int $language user language
      *
-     * @return Menu
+     * @return int
      */
     public function deleteMenu($id = 0, $language = 1)
     {
         if ($this->getMenu($id, $language)) {
-            $this->delete(['id' => (int) $id, "language" => (int) $language]);
+            $del = $this->queryBuilder();
+            $del->delete('Admin\Entity\Menu', 'm');
+            $del->where("m.id = :id AND m.language = :language");
+            $del->setParameter(':id', (int) $id);
+            $del->setParameter(':language', (int) $language);
+
+            return $del->getQuery()->execute();
         }
     }
 
@@ -91,6 +120,7 @@ final class MenuTable extends AbstractModelTable
             }
         }
         unset($id, $language, $data);
+
         return $menu;
     }
 
@@ -120,6 +150,7 @@ final class MenuTable extends AbstractModelTable
         $menu = $this->getMenu($id, $language);
         $clone = $menu->getCopy();
         $this->saveMenu($clone);
+
         return $clone;
     }
 }

@@ -11,23 +11,39 @@
 
 namespace Admin\Model;
 
-use Admin\Model\AbstractModelTable;
 use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
 
-final class LanguageTable extends AbstractModelTable
+final class LanguageTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
     {
-        parent::__construct('language', 'Language', $adapter);
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * @param int $id language
+     * @return Doctrine\ORM\QueryBuilder
+     */
+    public function queryBuilder()
+    {
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\Language
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\Language");
+    }
+
+    /**
+     * @param int $id
      *
      * @throws RuntimeException
      *
@@ -35,23 +51,34 @@ final class LanguageTable extends AbstractModelTable
      */
     public function getLanguage($id = 0)
     {
-        $rowset = $this->select(['id' => (int) $id]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
+        $language = $this->queryBuilder();
+        $language->select(["l"]);
+        $language->from('Admin\Entity\Language', 'l');
+        $language->where("l.id = :id");
+        $language->setParameter(':id', (int) $id);
+        $language = $language->getQuery()->getSingleResult();
+
+        if (empty($language)) {
             throw new RuntimeException("Couldn't find language");
         }
-        return $rowset->current();
+
+        return $language;
     }
 
     /**
-     * @param int $id language
+     * @param int $id
      *
      * @return Language
      */
     public function deleteLanguage($id = 0)
     {
         if ($this->getLanguage($id)) {
-            $this->delete(['id' => (int) $id]);
+            $del = $this->queryBuilder();
+            $del->delete('Admin\Entity\Language', 'l');
+            $del->where("l.id = :id");
+            $del->setParameter(':id', (int) $id);
+
+            return $del->getQuery()->execute();
         }
     }
 

@@ -11,20 +11,36 @@
 
 namespace Admin\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Language
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="language")
+ */
 final class Language
 {
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var null $name
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=100, nullable=true)
      */
-    private $name = null;
+    private $name;
 
     /**
-     * @var bool $active
+     * @var boolean
+     *
+     * @ORM\Column(name="active", type="smallint", nullable=false)
      */
     private $active = 1;
 
@@ -84,7 +100,7 @@ final class Language
      *
      * @param null $name
      */
-    public function setName($name = null)
+    public function setName($name)
     {
         $this->name = $name;
 

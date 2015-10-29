@@ -24,7 +24,7 @@ final class AdministratorControllerFactory
         $serviceLocator = $controllerManager->getServiceLocator();
 
         $controller = new AdministratorController(
-            $serviceLocator->get('FormElementManager')->get('Admin\Form\AdministratorForm')
+            (object) $serviceLocator->get('FormElementManager')->get('Admin\Form\AdministratorForm')
         );
 
         return $controller;

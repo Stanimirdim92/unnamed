@@ -17,7 +17,7 @@ use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 use Admin\Exception\AuthorizationException;
 
-final class UserController extends IndexController
+final class UserController extends BaseController
 {
     /**
      * @var UserForm $userForm

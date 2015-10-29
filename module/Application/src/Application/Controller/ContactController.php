@@ -13,7 +13,7 @@ namespace Application\Controller;
 
 use Application\Form\ContactForm;
 
-final class ContactController extends IndexController
+final class ContactController extends BaseController
 {
     /**
      * @var ContactForm $contactForm

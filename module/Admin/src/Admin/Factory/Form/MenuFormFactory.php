@@ -18,29 +18,24 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 final class MenuFormFactory
 {
     /**
-     * @var ServiceManager
-     */
-    private $services = null;
-
-    /**
      * @{inheritDoc}
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        $this->services = $serviceLocator->getServiceLocator();
+        $services = $serviceLocator->getServiceLocator();
         $lang = new Container("translations");
 
-        $languages = $this->services->get("LanguageTable");
-        $languages->where(["active" => 1]);
-        $languages = $languages->fetch();
+        $languages = $services->get("Admin\Model\LanguageTable")
+                              ->getEntityRepository()
+                              ->findBy(["active" => 1]);
 
-        $menu = $this->services->get("MenuTable");
-        $menu->columns(['id', 'language', 'caption']);
-        $menu->where(["active" => 1, "language" => $lang->language]);
-        $menu->order("id, menuOrder");
-        $menu = $menu->fetch();
+        $menu = $services->get("Admin\Model\MenuTable")
+                              ->getEntityRepository()
+                              ->findBy(["active" => 1, "language" => $lang->language], ["parent" => "DESC"]);
 
-        $form = new MenuForm($languages, $menu);
+        $entityManager = $services->get('Doctrine\ORM\EntityManager');
+
+        $form = new MenuForm($entityManager);
 
         return $form;
     }

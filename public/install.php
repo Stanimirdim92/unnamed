@@ -100,7 +100,7 @@ switch ((int) $pageId) {
             $install = new Process(sprintf('composer self-update'), getcwd(), null, null, 1000);
             $install->run();
 
-            $install = new Process(sprintf('composer install'), getcwd(), null, null, 1000);
+            $install = new Process(sprintf('composer install --optimize-autoloader'), getcwd(), null, null, 1000);
             $install->run();
 
             if (!$install->isSuccessful()) {
@@ -118,7 +118,7 @@ switch ((int) $pageId) {
         /**
          * Check for database setup
          */
-        if (!is_file('config/autoload/db.local.php')) {
+        if (!is_file('config/autoload/doctrine.local.php')) {
             echo "<p><a href='/install.php?page=2'>Setup a database</a></p>";
         } else {
             echo "<p>Your database configuration file has already been setup</p>";
@@ -127,7 +127,7 @@ switch ((int) $pageId) {
 
         break;
     case 2:
-        if (!is_file('config/autoload/db.local.php')) {
+        if (!is_file('config/autoload/doctrine.local.php')) {
             ?>
             <form id="databaseSetup" method="post" action="#">
                 <label for="name">Database &#42;
@@ -145,16 +145,6 @@ switch ((int) $pageId) {
                 <label for="port">Port
                     <input type="text" size="35" id="port" name="port" placeholder="The port to connect to (if applicable)">
                 </label>
-                <label for="driver">
-                    <select id="driver" required="required" name="driver">
-                        <option value="pdo">Pdo (MySQL)</option>
-                        <option value="mysqli">Mysqli</option>
-                        <option value="sqlsrv">Sqlsrv</option>
-                        <option value="oci8">Oci8</option>
-                        <option value="pgsql">Pgsql</option>
-                        <option value="ibmdb2">IbmDb2</option>
-                    </select>
-                </label>
                 <input type="submit" id="submit" name="submit" value="Configure database">
             </form>
 <?php
@@ -171,20 +161,23 @@ if (!empty($_POST["submit"]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $dbSetup = [
-        "db" => [
-            "driver" => filter($_POST["driver"]),
-            "port" => filter($_POST["port"]),
-            "dsn" => "mysql:dbname=".filter($_POST["dbname"]).";host=".filter($_POST["host"])."",
-            "driver_options" => [
-                PDO::ATTR_EMULATE_PREPARES   => false,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES \"UTF8\"",
+        'doctrine' => [
+            'connection' => [
+                'orm_default' => [
+                    'driverClass' =>'Doctrine\DBAL\Driver\PDOMySql\Driver',
+                    'params' => [
+                        'host'     => filter($_POST["host"]),
+                        'port'     => filter($_POST["port"]),
+                        'user'     => filter($_POST["username"]),
+                        'password' => filter($_POST["password"]),
+                        'dbname'   => filter($_POST["dbname"]),
+                    ],
+                ],
             ],
-            "username" => filter($_POST["username"]),
-            "password" => filter($_POST["password"]),
         ],
     ];
 
-    file_put_contents("config/autoload/local.php", '<?php return ' . var_export($dbSetup, true).';'.PHP_EOL);
+    file_put_contents("config/autoload/doctrine.local.php", '<?php return ' . var_export($dbSetup, true).';'.PHP_EOL);
     header("Location: /");
     return;
 }

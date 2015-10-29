@@ -24,11 +24,11 @@ final class SettingsControllerFactory
         $FormElementManager = $controllerManager->getServiceLocator()->get('FormElementManager');
 
         $controller = new SettingsController(
-            $FormElementManager->get('Admin\Form\SettingsMailForm'),
-            $FormElementManager->get('Admin\Form\SettingsPostsForm'),
-            $FormElementManager->get('Admin\Form\SettingsGeneralForm'),
-            $FormElementManager->get('Admin\Form\SettingsDiscussionForm'),
-            $FormElementManager->get('Admin\Form\SettingsRegistrationForm')
+            (object) $FormElementManager->get('Admin\Form\SettingsMailForm'),
+            (object) $FormElementManager->get('Admin\Form\SettingsPostsForm'),
+            (object) $FormElementManager->get('Admin\Form\SettingsGeneralForm'),
+            (object) $FormElementManager->get('Admin\Form\SettingsDiscussionForm'),
+            (object) $FormElementManager->get('Admin\Form\SettingsRegistrationForm')
         );
 
         return $controller;

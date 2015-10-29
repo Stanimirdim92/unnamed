@@ -13,27 +13,34 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Doctrine\ORM\EntityManager;
 
 final class MenuForm extends Form implements InputFilterProviderInterface
 {
     /**
-     * @var Zend\Db\ResultSet\ResultSet $menus
+     * @var $menus
      */
-    private $menus = null;
+    private $menus;
 
     /**
-     * @var array $languages
+     * @var $languages
      */
     private $languages = [];
 
     /**
-     * @param Zend\Db\ResultSet\ResultSet $languages
-     * @param array $menus
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($languages, $menus = null)
+    private $entityManager;
+
+    /**
+     * @param $languages
+     * @param $menus
+     */
+    public function __construct(EntityManager $entityManager)
     {
-        $this->languages = $languages;
-        $this->menus = $menus;
+        // $this->languages = $languages;
+        // $this->menus = $menus;
+        $this->entityManager = $entityManager;
 
         parent::__construct("menu");
     }
@@ -67,7 +74,7 @@ final class MenuForm extends Form implements InputFilterProviderInterface
 
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'DoctrineORMModule\Form\Element\DoctrineEntity',
             'name' => 'caption',
             'attributes' => [
                 'required'   => true,
@@ -77,182 +84,186 @@ final class MenuForm extends Form implements InputFilterProviderInterface
             ],
             'options' => [
                 'label' => 'Caption',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Menu',
+                'property' => 'name'
             ],
             ]
         );
 
-        $valueOptions = [];
-        for ($i = 1; $i < 150; $i++) {
-            $valueOptions[$i] = $i;
-        }
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'menuOrder',
-            'options' => [
-                'empty_option' => 'Please choose menu order (optional)',
-                'value_options' => $valueOptions,
-                'label' => 'Menu order',
-            ],
-            ]
-        );
+        // $valueOptions = [];
+        // for ($i = 1; $i < 150; $i++) {
+        //     $valueOptions[$i] = $i;
+        // }
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Select',
+        //     'name' => 'menuOrder',
+        //     'options' => [
+        //         'empty_option' => 'Please choose menu order (optional)',
+        //         'value_options' => $valueOptions,
+        //         'label' => 'Menu order',
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Text',
-            'name' => 'keywords',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'placeholder' => 'Keywords (max 15 words) seperated by commas',
-            ],
-            'options' => [
-                'label' => 'Keywords',
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Text',
+        //     'name' => 'keywords',
+        //     'attributes' => [
+        //         'required'   => false,
+        //         'size'        => 40,
+        //         'placeholder' => 'Keywords (max 15 words) seperated by commas',
+        //     ],
+        //     'options' => [
+        //         'label' => 'Keywords',
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Text',
-            'name' => 'description',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'placeholder' => 'Description (max 150 characters)',
-            ],
-            'options' => [
-                'label' => 'Description',
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Text',
+        //     'name' => 'description',
+        //     'attributes' => [
+        //         'required'   => false,
+        //         'size'        => 40,
+        //         'placeholder' => 'Description (max 150 characters)',
+        //     ],
+        //     'options' => [
+        //         'label' => 'Description',
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'language',
-            'options' => [
-                'label' => 'Language',
-                'empty_option' => 'Please choose a language',
-                'value_options' => $this->collectLanguageOptions(),
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Select',
+        //     'name' => 'language',
+        //     'options' => [
+        //         'label' => 'Language',
+        //         'empty_option' => 'Please choose a language',
+        //         'value_options' => $this->collectLanguageOptions(),
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'parent',
-            'options' => [
-                'label' => 'Parent menu',
-                'disable_inarray_validator' => true,
-                'empty_option' => 'Please choose your menu',
-                'value_options' => $this->collectMenuOptions(),
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Select',
+        //     'name' => 'parent',
+        //     'options' => [
+        //         'label' => 'Parent menu',
+        //         'disable_inarray_validator' => true,
+        //         'empty_option' => 'Please choose your menu',
+        //         'value_options' => $this->collectMenuOptions(),
+        //     ],
+        //     ]
+        // );
 
-        $valueOptions = [];
-        $valueOptions[0] = "Main menu";
-        $valueOptions[1] = "Left menu";
-        $valueOptions[2] = "Right menu";
-        $valueOptions[3] = "Footer menu";
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'menutype',
-            'options' => [
-                'empty_option' => 'Please choose menu type',
-                'value_options' => $valueOptions,
-                'label' => 'Choose menu type',
-            ],
-            ]
-        );
+        // $valueOptions = [];
+        // $valueOptions[0] = "Main menu";
+        // $valueOptions[1] = "Left menu";
+        // $valueOptions[2] = "Right menu";
+        // $valueOptions[3] = "Footer menu";
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Select',
+        //     'name' => 'menutype',
+        //     'options' => [
+        //         'empty_option' => 'Please choose menu type',
+        //         'value_options' => $valueOptions,
+        //         'label' => 'Choose menu type',
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Text',
-            'name' => 'class',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'class'       => 'admin-menu-class',
-                'placeholder' => 'CSS class',
-            ],
-            'options' => [
-                'label' => 'CSS class',
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Text',
+        //     'name' => 'class',
+        //     'attributes' => [
+        //         'required'   => false,
+        //         'size'        => 40,
+        //         'class'       => 'admin-menu-class',
+        //         'placeholder' => 'CSS class',
+        //     ],
+        //     'options' => [
+        //         'label' => 'CSS class',
+        //     ],
+        //     ]
+        // );
 
-        $valueOptions = [];
-        // 0 index missed intentionally
-        $valueOptions[1] = "Column one";
-        $valueOptions[2] = "Column two";
-        $valueOptions[3] = "Column three";
-        $valueOptions[4] = "Column four";
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
-            'name' => 'footercolumn',
-            'options' => [
-                'empty_option' => 'Please choose footer column',
-                'value_options' => $valueOptions,
-                'label' => 'Choose footer column',
-            ],
-            ]
-        );
+        // $valueOptions = [];
+        // // 0 index missed intentionally
+        // $valueOptions[1] = "Column one";
+        // $valueOptions[2] = "Column two";
+        // $valueOptions[3] = "Column three";
+        // $valueOptions[4] = "Column four";
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Select',
+        //     'name' => 'footercolumn',
+        //     'options' => [
+        //         'empty_option' => 'Please choose footer column',
+        //         'value_options' => $valueOptions,
+        //         'label' => 'Choose footer column',
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Csrf',
-            'name' => 's',
-            'options' => [
-                'csrf_options' => [
-                    'timeout' => 1400,
-                ],
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Csrf',
+        //     'name' => 's',
+        //     'options' => [
+        //         'csrf_options' => [
+        //             'timeout' => 1400,
+        //         ],
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'name' => 'submit',
-            'attributes' => [
-                'type'  => 'submit',
-                'id' => 'submitbutton',
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'name' => 'submit',
+        //     'attributes' => [
+        //         'type'  => 'submit',
+        //         'id' => 'submitbutton',
+        //         'value' => "Save",
+        //     ],
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Hidden',
-            'name' => 'id',
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Hidden',
+        //     'name' => 'id',
+        //     ]
+        // );
 
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Hidden',
-            'name' => 'menulink',
-            'attributes' => [
-                'id' => 'menulink',
-            ],
-            ]
-        );
+        // $this->add(
+        //     [
+        //     'type' => 'Zend\Form\Element\Hidden',
+        //     'name' => 'menulink',
+        //     'attributes' => [
+        //         'id' => 'menulink',
+        //     ],
+        //     ]
+        // );
     }
 
     public function getInputFilterSpecification()
     {
         return [
-            [
-                'name'     => 'id',
-                'required' => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-            ],
+            // [
+            //     'name'     => 'id',
+            //     'required' => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            // ],
             [
                 "name"=>"caption",
                 "required" => true,
@@ -272,145 +283,145 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                     ],
                 ],
             ],
-            [
-                "name"=>"menuOrder",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"language",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"parent",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"keywords",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 0,
-                            'max' => 300,
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"description",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 0,
-                            'max' => 150,
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"menutype",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"footercolumn",
-                "required" => false,
-                'filters'  => [
-                    ['name' => 'Int'],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Regex',
-                        'options' => [
-                            'pattern' => '/^[0-9]+$/',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                "name"=>"menulink",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                    ['name' => 'StringToLower'],
-                ],
-            ],
-            [
-                "name"=>"class",
-                "required" => false,
-                'filters' => [
-                    ['name' => 'StripTags'],
-                    ['name' => 'StringTrim'],
-                ],
-                'validators' => [
-                    ['name' => 'NotEmpty'],
-                    [
-                        'name'    => 'StringLength',
-                        'options' => [
-                            'encoding' => 'UTF-8',
-                            'min' => 1,
-                            'max' => 50,
-                        ],
-                    ],
-                ],
-            ],
+            // [
+            //     "name"=>"menuOrder",
+            //     "required" => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name' => 'Regex',
+            //             'options' => [
+            //                 'pattern' => '/^[0-9]+$/',
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"language",
+            //     "required" => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name' => 'Regex',
+            //             'options' => [
+            //                 'pattern' => '/^[0-9]+$/',
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"parent",
+            //     "required" => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name' => 'Regex',
+            //             'options' => [
+            //                 'pattern' => '/^[0-9]+$/',
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"keywords",
+            //     "required" => false,
+            //     'filters' => [
+            //         ['name' => 'StripTags'],
+            //         ['name' => 'StringTrim'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name'    => 'StringLength',
+            //             'options' => [
+            //                 'encoding' => 'UTF-8',
+            //                 'min' => 0,
+            //                 'max' => 300,
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"description",
+            //     "required" => false,
+            //     'filters' => [
+            //         ['name' => 'StripTags'],
+            //         ['name' => 'StringTrim'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name'    => 'StringLength',
+            //             'options' => [
+            //                 'encoding' => 'UTF-8',
+            //                 'min' => 0,
+            //                 'max' => 150,
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"menutype",
+            //     "required" => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name' => 'Regex',
+            //             'options' => [
+            //                 'pattern' => '/^[0-9]+$/',
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"footercolumn",
+            //     "required" => false,
+            //     'filters'  => [
+            //         ['name' => 'Int'],
+            //     ],
+            //     'validators' => [
+            //         [
+            //             'name' => 'Regex',
+            //             'options' => [
+            //                 'pattern' => '/^[0-9]+$/',
+            //             ],
+            //         ],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"menulink",
+            //     "required" => false,
+            //     'filters' => [
+            //         ['name' => 'StripTags'],
+            //         ['name' => 'StringTrim'],
+            //         ['name' => 'StringToLower'],
+            //     ],
+            // ],
+            // [
+            //     "name"=>"class",
+            //     "required" => false,
+            //     'filters' => [
+            //         ['name' => 'StripTags'],
+            //         ['name' => 'StringTrim'],
+            //     ],
+            //     'validators' => [
+            //         ['name' => 'NotEmpty'],
+            //         [
+            //             'name'    => 'StringLength',
+            //             'options' => [
+            //                 'encoding' => 'UTF-8',
+            //                 'min' => 1,
+            //                 'max' => 50,
+            //             ],
+            //         ],
+            //     ],
+            // ],
         ];
     }
 }

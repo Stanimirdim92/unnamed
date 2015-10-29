@@ -59,7 +59,8 @@ return [
             'Admin\Controller\Settings'      => Factory\Controller\SettingsControllerFactory::class,
         ],
         'invokables' => [
-            'Admin\Controller\Index'  => Controller\IndexController::class,
+            'Admin\Controller\Base'  => Controller\BaseController::class,
+            'Admin\Controller\Index' => Controller\IndexController::class,
         ],
     ],
     'form_elements' => [
@@ -74,25 +75,23 @@ return [
             'Admin\Form\SettingsRegistrationForm' => Factory\Form\SettingsRegistrationFormFactory::class,
         ],
     ],
-    'shared' => [
-        'Admin\Controller\Content'            => false,
-        'Admin\Controller\Index'              => false,
-        'Admin\Controller\Menu'               => false,
-        'Admin\Controller\Language'           => false,
-        'Admin\Controller\Administrator'      => false,
-        'Admin\Controller\AdminMenu'          => false,
-        'Admin\Controller\User'               => false,
-        'Admin\Controller\Settings'           => false,
-        'Admin\Form\ContentForm'              => false,
-        'Admin\Form\MenuForm'                 => false,
-        'Admin\Form\AdminMenuForm'            => false,
-        'Admin\Form\SettingsMailForm'         => false,
-        'Admin\Form\SettingsPostsForm'        => false,
-        'Admin\Form\SettingsGeneralForm'      => false,
-        'Admin\Form\SettingsDiscussionForm'   => false,
-        'Admin\Form\SettingsRegistrationForm' => false,
-    ],
     'view_manager' => [
         'template_map' => include __DIR__ . '/../template_map.php',
+    ],
+    'doctrine' => [
+        'driver' => [
+            __NAMESPACE__ . '_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [
+                    __DIR__ . '/../src/' . __NAMESPACE__ . '/Entity',
+                ],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    __NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver',
+                ],
+            ],
+        ],
     ],
 ];

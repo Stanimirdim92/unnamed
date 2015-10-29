@@ -11,10 +11,10 @@
 
 namespace Admin\Controller;
 
-use Admin\Model\AdminMenu;
+use Admin\Entity\AdminMenu;
 use Admin\Form\AdminMenuForm;
 
-final class AdminMenuController extends IndexController
+final class AdminMenuController extends BaseController
 {
     /**
      * @var AdminMenuForm $adminMenuForm
@@ -48,7 +48,7 @@ final class AdminMenuController extends IndexController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/admin-menu/index");
-        $menu = $this->getTable("AdminMenuTable")->fetch();
+        $menu = $this->getTable("Admin\Model\AdminMenuTable")->fetch();
 
         if (count($menu) > 0) {
             $menus = ["menus" => null, "submenus" => null];

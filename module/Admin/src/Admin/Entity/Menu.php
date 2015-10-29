@@ -9,69 +9,103 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Menu
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="menu")
+ */
 final class Menu
 {
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var null $caption
+     * @var string
+     *
+     * @ORM\Column(name="caption", type="string", length=200, nullable=true)
      */
-    private $caption = null;
+    private $caption;
 
     /**
-     * @var Int $menuOrder
+     * @var integer
+     *
+     * @ORM\Column(name="menuOrder", type="integer", nullable=false)
      */
     private $menuOrder = 0;
 
     /**
-     * @var null $language
+     * @var integer
+     *
+     * @ORM\Column(name="language", type="smallint", nullable=false)
      */
     private $language = 1;
 
     /**
-     * @var Int $parent
+     * @var integer
+     *
+     * @ORM\Column(name="parent", type="integer", nullable=false)
      */
     private $parent = 0;
 
     /**
-     * @var null $keywords
+     * @var string
+     *
+     * @ORM\Column(name="keywords", type="string", length=100, nullable=true)
      */
-    private $keywords = null;
+    private $keywords;
 
     /**
-     * @var null $description
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=150, nullable=true)
      */
-    private $description = null;
+    private $description;
 
     /**
-     * @var Int $menutype
+     * @var integer
+     *
+     * @ORM\Column(name="menutype", type="smallint", nullable=false)
      */
     private $menutype = 0;
 
     /**
-     * @var Int $footercolumn
+     * @var integer
+     *
+     * @ORM\Column(name="footercolumn", type="integer", nullable=false)
      */
     private $footercolumn = 0;
 
     /**
-     * @var null $id
+     * @var string
+     *
+     * @ORM\Column(name="menulink", type="string", length=255, nullable=true)
      */
-    private $menulink = null;
+    private $menulink;
 
     /**
-     * @var bool $active
+     * @var bool
+     *
+     * @ORM\Column(name="active", type="smallint", nullable=false)
      */
     private $active = 1;
 
     /**
-     * @param string $class
+     * @var string
+     *
+     * @ORM\Column(name="class", type="string", length=50, nullable=true)
      */
-    private $class = null;
+    private $class;
 
     /**
      * @var array $data
@@ -113,7 +147,7 @@ final class Menu
     /**
      * Get id.
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -136,7 +170,7 @@ final class Menu
      *
      * @param String $caption
      */
-    public function setCaption($caption = null)
+    public function setCaption($caption)
     {
         $this->caption = $caption;
     }
@@ -144,7 +178,7 @@ final class Menu
     /**
      * Get caption.
      *
-     * @return String
+     * @return string
      */
     public function getCaption()
     {
@@ -164,7 +198,7 @@ final class Menu
     /**
      * Get menuOrder.
      *
-     * @return int
+     * @return integer
      */
     public function getMenuOrder()
     {
@@ -204,7 +238,7 @@ final class Menu
     /**
      * Get language.
      *
-     * @return int
+     * @return integer
      */
     public function getLanguage()
     {
@@ -224,7 +258,7 @@ final class Menu
     /**
      * Get parent.
      *
-     * @return int
+     * @return integer
      */
     public function getParent()
     {
@@ -236,7 +270,7 @@ final class Menu
      *
      * @param String $keywords
      */
-    public function setKeywords($keywords = null)
+    public function setKeywords($keywords)
     {
         $this->keywords = $keywords;
     }
@@ -256,7 +290,7 @@ final class Menu
      *
      * @param null $description
      */
-    public function setDescription($description = null)
+    public function setDescription($description)
     {
         $this->description = $description;
     }
@@ -284,7 +318,7 @@ final class Menu
     /**
      * Get menutype.
      *
-     * @return Int
+     * @return integer
      */
     public function getMenuType()
     {
@@ -304,7 +338,7 @@ final class Menu
     /**
      * Get footercolumn.
      *
-     * @return Int
+     * @return integer
      */
     public function getFooterColumn()
     {
@@ -316,7 +350,7 @@ final class Menu
      *
      * @param null $menulink
      */
-    public function setMenuLink($menulink = null)
+    public function setMenuLink($menulink)
     {
         $this->menulink = $menulink;
     }
@@ -324,7 +358,7 @@ final class Menu
     /**
      * Get menulink.
      *
-     * @return Int
+     * @return integer
      */
     public function getMenuLink()
     {
@@ -336,7 +370,7 @@ final class Menu
      *
      * @param String $class
      */
-    public function setClass($class = null)
+    public function setClass($class)
     {
         $this->class = $class;
     }

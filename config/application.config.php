@@ -4,16 +4,14 @@ $modules = [];
 
 $modules[] = 'Application';
 $modules[] = 'Admin';
+$modules[] = 'DoctrineModule';
+$modules[] = 'DoctrineORMModule';
 $modules[] = 'Themes';
-$modules[] = 'RedirectHandlerModule';
-// $modules[] = 'DoctrineModule';
-// $modules[] = 'DoctrineORMModule';
 
-if (APP_ENV === 'development') {
-    $modules[] = 'ZendDeveloperTools';
-    $modules[] = 'BjyProfiler';
-    $modules[] = 'SanSessionToolbar';
-}
+// if (APP_ENV === 'development') {
+//     $modules[] = 'ZendDeveloperTools';
+//     $modules[] = 'SanSessionToolbar';
+// }
 
 $config = [
     'modules' => $modules,

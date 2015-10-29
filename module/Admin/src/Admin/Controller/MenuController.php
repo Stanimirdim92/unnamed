@@ -11,20 +11,21 @@
 
 namespace Admin\Controller;
 
-use Admin\Model\Menu;
+use Admin\Entity\Menu;
 use Admin\Form\MenuForm;
+use Zend\Mvc\MvcEvent;
 
-final class MenuController extends IndexController
+final class MenuController extends BaseController
 {
     /**
-     * @var MenuForm $menuForm
+     * @var MenuForm
      */
-    private $menuForm = null;
+    private $menuForm;
 
     /**
-     * @param MenuForm $menuForm
+     * @param MenuForm
      */
-    public function __construct(MenuForm $menuForm = null)
+    public function __construct(MenuForm $menuForm)
     {
         parent::__construct();
         $this->menuForm = $menuForm;
@@ -33,7 +34,7 @@ final class MenuController extends IndexController
     /**
      * @param MvcEvent $e
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $e)
     {
         $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>$this->translate("MENUS")]);
         parent::onDispatch($e);
@@ -46,11 +47,9 @@ final class MenuController extends IndexController
      */
     private function showMenus()
     {
-        $menu = $this->getTable("MenuTable");
-        $menu->columns(['id', 'class', 'menulink', 'caption', 'language', 'active', 'parent']);
-        $menu->where(["language" => $this->language()]);
-        $menu->order("id, menuOrder");
-        $menu = $menu->fetch();
+        $menu = $this->getTable("Admin\Model\MenuTable")
+                     ->getEntityRepository()
+                     ->findBy(["language" => $this->language()], ['parent' => "DESC"]);
 
         if (count($menu) > 0) {
             $menus = ['menus' => [], 'submenus' => []];
@@ -62,6 +61,7 @@ final class MenuController extends IndexController
 
             return $this->getMenus(0, $menus);
         }
+
         return;
     }
 
@@ -136,8 +136,9 @@ final class MenuController extends IndexController
     protected function addAction()
     {
         $this->getView()->setTemplate("admin/menu/add");
-        $this->initForm($this->translate("ADD_NEW_MENU"), null);
+        $this->initForm(null);
         $this->addBreadcrumb(["reference"=>"/admin/menu/add", "name"=>$this->translate("ADD_NEW_MENU")]);
+
         return $this->getView();
     }
 
@@ -150,21 +151,22 @@ final class MenuController extends IndexController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/menu/edit");
-        $menu = $this->getTable("MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("Admin\Model\MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->addBreadcrumb(["reference"=>"/admin/menu/edit/{$menu->getId()}", "name"=> $this->translate("EDIT_MENU")." &laquo;".$menu->getCaption()."&raquo;"]);
-        $this->initForm($this->translate("EDIT_MENU"), $menu);
+        $this->initForm($menu);
+
         return $this->getView();
     }
 
     protected function deactivateAction()
     {
-        $this->getTable("MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
+        $this->getTable("Admin\Model\MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("MENU_DISABLE_SUCCESS"), "success");
     }
 
     protected function activateAction()
     {
-        $this->getTable("MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
+        $this->getTable("Admin\Model\MenuTable")->toggleActiveMenu((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("MENU_ENABLE_SUCCESS"), "success");
     }
 
@@ -173,7 +175,7 @@ final class MenuController extends IndexController
      */
     protected function deleteAction()
     {
-        $this->getTable("MenuTable")->deleteMenu((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("Admin\Model\MenuTable")->deleteMenu((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_MENU_SUCCESS"), "success");
     }
 
@@ -185,9 +187,10 @@ final class MenuController extends IndexController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/menu/detail");
-        $menu = $this->getTable("MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("Admin\Model\MenuTable")->getMenu((int)$this->getParam("id", 0), $this->language());
         $this->getView()->menuDetail = $menu;
         $this->addBreadcrumb(["reference"=>"/admin/menu/detail/".$menu->getId()."", "name"=>"&laquo;". $menu->getCaption()."&raquo; ".$this->translate("DETAILS")]);
+
         return $this->getView();
     }
 
@@ -196,28 +199,25 @@ final class MenuController extends IndexController
      */
     protected function cloneAction()
     {
-        $menu = $this->getTable("MenuTable")->duplicate((int)$this->getParam("id", 0), $this->language());
+        $menu = $this->getTable("Admin\Model\MenuTable")->duplicate((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 
     /**
      * This is common function used by add and edit actions (to avoid code duplication).
      *
-     * @param string $label button title
      * @param Menu $menu menu object
      */
-    private function initForm($label = '', Menu $menu = null)
+    private function initForm(Menu $menu = null)
     {
         if (!$menu instanceof Menu) {
             $menu = new Menu([]);
         }
-
         /**
          * @var MenuForm $form
          */
         $form = $this->menuForm;
         $form->bind($menu);
-        $form->get("submit")->setValue($label);
         $this->getView()->form = $form;
         $this->getView()->editMenu = $menu;
 
@@ -225,7 +225,7 @@ final class MenuController extends IndexController
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $this->getTable("MenuTable")->saveMenu($menu);
+                $this->getTable("Admin\Model\MenuTable")->saveMenu($menu);
                 $this->setLayoutMessages("&laquo;".$menu->getCaption()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 return $this->redirect()->toRoute('admin/default', ['controller' => 'menu']);
             }

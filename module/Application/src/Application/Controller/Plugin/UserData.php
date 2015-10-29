@@ -21,17 +21,17 @@ final class UserData extends AbstractPlugin
     /**
      * @var AuthenticationService $auth
      */
-    private $auth = null;
+    private $auth;
 
     /**
      * @var Redirect $redirect
      */
-    private $redirect = null;
+    private $redirect;
 
     /**
      * @param Redirect $redirect
      */
-    public function __construct(Redirect $redirect = null)
+    public function __construct(Redirect $redirect)
     {
         $this->redirect = $redirect;
         $this->auth = new AuthenticationService();
@@ -45,7 +45,7 @@ final class UserData extends AbstractPlugin
      *
      * @throws AuthorizationException
      */
-    public function clearUserData($errorString = null)
+    public function clearUserData($errorString)
     {
         $this->auth->clearIdentity();
         throw new AuthorizationException($errorString);
@@ -67,7 +67,7 @@ final class UserData extends AbstractPlugin
      *
      * @return mixed
      */
-    public function checkIdentity($redirect = true, $errorString = null, $url = "/")
+    public function checkIdentity($redirect = true, $errorString = "ERROR", $url = "/")
     {
         if ($this->auth->hasIdentity()) {
             if (!empty($this->auth->getIdentity()->role) &&

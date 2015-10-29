@@ -13,51 +13,11 @@ namespace Application\Controller\Plugin;
 
 use Zend\Math\Rand;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Db\Adapter\Adapter;
 use Application\Exception\InvalidArgumentException;
 use Application\Exception\RuntimeException;
 
 final class Functions extends AbstractPlugin
 {
-    /**
-     * @var Adapter $adapter
-     */
-    private $adapter = null;
-
-    /**
-     * @param Adapter $adapter
-     */
-    public function __construct(Adapter $adapter)
-    {
-        $this->adapter = $adapter;
-    }
-
-    /**
-     * Execute plain mysql queries.
-     *
-     * @param string $query
-     *
-     * @throws InvalidArgumentException
-     *
-     * @return ResultSet|null
-     */
-    public function createPlainQuery($query)
-    {
-        if (empty($query)) {
-            throw new InvalidArgumentException('Query must not be empty');
-        }
-
-        $stmt = $this->adapter->query((string) $query);
-        $result = $stmt->execute();
-        $result->buffer();
-
-        if ($result->count() > 0 && $result->isQueryResult() && $result->isBuffered()) {
-            return $result;
-        }
-
-        return;
-    }
-
     /**
      * Never set the salt parameter for this function unless you are not a security expert who knows what he is doing.
      *

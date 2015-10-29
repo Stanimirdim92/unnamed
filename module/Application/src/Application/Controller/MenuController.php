@@ -11,7 +11,7 @@
 
 namespace Application\Controller;
 
-final class MenuController extends IndexController
+final class MenuController extends BaseController
 {
     /**
      * Get the contents for the menu/submenu.

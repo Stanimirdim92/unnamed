@@ -24,7 +24,7 @@ final class LanguageControllerFactory
         $serviceLocator = $controllerManager->getServiceLocator();
 
         $controller = new LanguageController(
-            $serviceLocator->get('FormElementManager')->get('Admin\Form\LanguageForm')
+            (object) $serviceLocator->get('FormElementManager')->get('Admin\Form\LanguageForm')
         );
 
         return $controller;

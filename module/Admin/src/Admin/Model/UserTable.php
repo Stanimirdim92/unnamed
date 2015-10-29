@@ -11,20 +11,28 @@
 
 namespace Admin\Model;
 
-use Admin\Model\AbstractModelTable;
 use Admin\Exception\RuntimeException;
 
-final class UserTable extends AbstractModelTable
+final class UserTable
 {
     /**
-     * @method __construct
-     *
-     * @param \Zend\Db\Adapter\Adapter $adapter
+     * @var Doctrine\ORM\EntityManager
      */
-    public function __construct($adapter)
+    private $entityManager;
+
+    public function __construct($entityManager)
     {
-        parent::__construct('user', 'User', $adapter);
+        $this->entityManager = $entityManager;
     }
+
+    /**
+     * @param Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->entityManager;
+    }
+
     /**
      * @param int $id user id
      *

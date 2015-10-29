@@ -16,7 +16,7 @@ use Admin\Form\LanguageForm;
 use Admin\Exception\RunTimeException;
 use Zend\Stdlib\Parameters;
 
-final class LanguageController extends IndexController
+final class LanguageController extends BaseController
 {
     /**
      * @var LanguageForm $languageForm

@@ -19,7 +19,7 @@ use Zend\Validator\File\IsImage;
 use Zend\Validator\File\Size;
 use Zend\Validator\File\Extension;
 
-final class ContentController extends IndexController
+final class ContentController extends BaseController
 {
     /**
      * @var array

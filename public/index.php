@@ -65,10 +65,10 @@ chdir(dirname(__DIR__));
 /**
  * Setup autoloading.
  */
-if (!is_file('vendor/autoload.php') || !is_file('config/autoload/db.local.php')) {
+if (!is_file('vendor/autoload.php')) {
     header('Location: /install.php');
 }
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 /**
  * Run the application!

@@ -9,47 +9,73 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * AdminMenu
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="adminmenu")
+ */
 final class AdminMenu
 {
     /**
-     * @var int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var null $caption
+     * @var string
+     *
+     * @ORM\Column(name="caption", type="string", length=150, nullable=true)
      */
-    private $caption = null;
+    private $caption;
 
     /**
-     * @var int $menuOrder
+     * @var integer
+     *
+     * @ORM\Column(name="menuOrder", type="integer", nullable=false)
      */
     private $menuOrder = 0;
 
     /**
-     * @param string $controller
+     * @var string
+     *
+     * @ORM\Column(name="controller", type="string", length=50, nullable=true)
      */
-    private $controller = null;
+    private $controller;
 
     /**
-     * @param string $action
+     * @var string
+     *
+     * @ORM\Column(name="action", type="string", length=50, nullable=true)
      */
-    private $action = null;
+    private $action;
 
     /**
-     * @param string $class
+     * @var string
+     *
+     * @ORM\Column(name="class", type="string", length=50, nullable=true)
      */
-    private $class = null;
+    private $class;
 
     /**
-     * @param string $description
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=150, nullable=true)
      */
-    private $description = null;
+    private $description;
 
     /**
-     * @param int $parent
+     * @var integer
+     *
+     * @ORM\Column(name="parent", type="integer", nullable=false)
      */
     private $parent = 0;
 
@@ -111,7 +137,7 @@ final class AdminMenu
      *
      * @param String $caption
      */
-    public function setCaption($caption = null)
+    public function setCaption($caption)
     {
         $this->caption = $caption;
     }
@@ -151,7 +177,7 @@ final class AdminMenu
      *
      * @param String $controller
      */
-    public function setController($controller = null)
+    public function setController($controller)
     {
         $this->controller = $controller;
     }
@@ -171,7 +197,7 @@ final class AdminMenu
      *
      * @param String $action
      */
-    public function setAction($action = null)
+    public function setAction($action)
     {
         $this->action = $action;
     }
@@ -191,7 +217,7 @@ final class AdminMenu
      *
      * @param String $class
      */
-    public function setClass($class = null)
+    public function setClass($class)
     {
         $this->class = $class;
     }
@@ -211,7 +237,7 @@ final class AdminMenu
      *
      * @param string $description
      */
-    public function setDescription($description = null)
+    public function setDescription($description)
     {
         $this->description = $description;
     }

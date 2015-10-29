@@ -22,10 +22,10 @@ use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
 use Application\Exception\RuntimeException;
 
-final class LoginController extends IndexController
+final class LoginController extends BaseController
 {
     /**
-     * @var SD\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
+     * @var $adapter
      */
     private $adapter = null;
 
@@ -46,7 +46,7 @@ final class LoginController extends IndexController
 
     /**
      * @param LoginForm $contactForm
-     * @param SD\Adapter|BjyProfiler\Db\Adapter\ProfilingAdapter $adapter
+     * @param $adapter
      * @param ResetPasswordForm $resetPasswordForm
      * @param NewPasswordForm $newPasswordForm
      */
@@ -332,8 +332,7 @@ final class LoginController extends IndexController
      */
     protected function logoutAction()
     {
-        $this->translation->getManager()->getStorage()->clear();
-        $this->translation = new Container("translations");
+        $this->getTranslation()->getManager()->getStorage()->clear();
         $auth = new AuthenticationService();
         $auth->clearIdentity();
         return $this->redirect()->toUrl("/");

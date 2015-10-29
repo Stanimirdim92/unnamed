@@ -16,7 +16,7 @@ use Admin\Form\AdministratorForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
 
-final class AdministratorController extends IndexController
+final class AdministratorController extends BaseController
 {
     /**
      * @var AdministratorForm $administratorForm
