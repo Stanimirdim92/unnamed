@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="adminmenu")
+ * @ORM\Entity(repositoryClass="Admin\Repository\AdminMenuRepository")
  */
 final class AdminMenu
 {
@@ -103,8 +104,6 @@ final class AdminMenu
     }
 
     /**
-     * constructor.
-     *
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -270,22 +269,5 @@ final class AdminMenu
     public function getParent()
     {
         return $this->parent;
-    }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field).
-     * Note that this method will not save the object.
-     */
-    public function getCopy()
-    {
-        $clone = new self();
-        $clone->setCaption($this->getCaption());
-        $clone->setMenuOrder($this->getMenuOrder());
-        $clone->setController($this->getController());
-        $clone->setAction($this->getAction());
-        $clone->setClass($this->getClass());
-        $clone->setDescription($this->getDescription());
-        $clone->setParent($this->getParent());
-        return $clone;
     }
 }

@@ -13,22 +13,22 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Doctrine\ORM\EntityManager;
 
 final class AdminMenuForm extends Form implements InputFilterProviderInterface
 {
     /**
-     * @var array
+     * @var Doctrine\ORM\EntityManager
      */
-    private $parent = [];
+    private $entityManager;
 
     /**
-     * @param array $parent
+     * @param $entityManager
      */
-    public function __construct(array $parent = [])
+    public function __construct(EntityManager $entityManager)
     {
-        $this->parent = $parent;
-
         parent::__construct("admin-menu");
+        $this->entityManager = $entityManager;
     }
 
     public function init()
@@ -39,14 +39,17 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'caption',
-            'attributes' => [
-                'required'   => true,
-                'size'        => 40,
-            'class'      => 'admin-menu-caption',
-            'placeholder' => 'Caption',
-            ],
             'options' => [
                 'label' => 'Caption',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "caption",
+                'option_attributes' => [
+                    'required'   => "true",
+                    'size'        => "40",
+                    'class'      => 'admin-menu-caption',
+                    'placeholder' => 'Caption',
+                ],
             ],
         ]);
 
@@ -55,11 +58,15 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             $valueOptions[$i] = $i;
         }
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'menuOrder',
             'options' => [
-                'empty_option' => 'Please choose menu order (optional)',
+                'object_manager' => $this->entityManager,
                 'disable_inarray_validator' => true,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => 'menuOrder',
+                'display_empty_item' => true,
+                'empty_item_label' => 'Please choose menu order (optional)',
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
@@ -68,67 +75,82 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'controller',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'class'       => 'admin-menu-controller',
-                'placeholder' => 'Controller',
-            ],
             'options' => [
                 'label' => 'Controller',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "controller",
+                'option_attributes' => [
+                    'size'        => "40",
+                    'class'       => 'admin-menu-controller',
+                    'placeholder' => 'Controller',
+                ],
             ],
         ]);
 
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'class',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'class'       => 'admin-menu-class',
-                'placeholder' => 'CSS class',
-            ],
             'options' => [
                 'label' => 'CSS class',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "class",
+                'option_attributes' => [
+                    'size'        => "40",
+                    'class'       => 'admin-menu-class',
+                    'placeholder' => 'CSS class',
+                ],
             ],
         ]);
 
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'action',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'class'       => 'admin-menu-action',
-                'placeholder' => 'Action',
-            ],
             'options' => [
                 'label' => 'Action',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "action",
+                'option_attributes' => [
+                    'size'        => "40",
+                    'class'       => 'admin-menu-action',
+                    'placeholder' => 'Action',
+                ],
             ],
         ]);
 
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'description',
-            'attributes' => [
-                'required'   => false,
-                'size'        => 40,
-                'class'       => 'admin-menu-description',
-                'placeholder' => 'Description',
-            ],
             'options' => [
                 'label' => 'Description',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "caption",
+                'option_attributes' => [
+                    'size'        => "40",
+                    'class'       => 'admin-menu-description',
+                    'placeholder' => 'Description',
+                ],
             ],
         ]);
 
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'parent',
             'options' => [
                 'label' => 'Parent admin menu',
                 'disable_inarray_validator' => true,
-                'empty_option' => "Select parent admin menu",
-                'value_options' => $this->parent,
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\AdminMenu',
+                'property' => "caption",
+                'display_empty_item' => true,
+                'empty_item_label' => "Select parent admin menu",
+                'is_method' => true,
+                'find_method' => [
+                    'name' => 'getParentMenus',
+                ],
             ],
         ]);
 
@@ -147,6 +169,7 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
+                'value' => "Save",
             ],
         ]);
 

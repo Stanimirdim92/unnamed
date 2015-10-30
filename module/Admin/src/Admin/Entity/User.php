@@ -9,77 +9,115 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * User
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="user")
+ */
 final class User
 {
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var String $name
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=100, nullable=true)
      */
-    private $name = null;
+    private $name;
 
     /**
-     * @var String $surname
+     * @var string
+     *
+     * @ORM\Column(name="surname", type="string", length=100, nullable=true)
      */
-    private $surname = null;
+    private $surname;
 
     /**
-     * @var string $password
+     * @var string
+     *
+     * @ORM\Column(name="password", type="char", length=72, nullable=true)
      */
-    private $password = null;
+    private $password;
 
     /**
-     * @var String $email
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=true)
      */
-    private $email = null;
+    private $email;
 
     /**
-     * @var string $birthDate
+     * @var string
+     *
+     * @ORM\Column(name="birthDate", type="date", nullable=true)
      */
     private $birthDate = "0000-00-00";
 
     /**
-     * @var string $lastLogin
+     * @var string
+     *
+     * @ORM\Column(name="lastLogin", type="datetime", nullable=true)
      */
     private $lastLogin = "0000-00-00 00:00:00";
 
     /**
-     * @var Int $isDisabled
+     * @var boolean
+     *
+     * @ORM\Column(name="isDisabled", type="smallint", nullable=false)
      */
     private $isDisabled = false;
 
     /**
-     * @var String $image
+     * @var string
+     *
+     * @ORM\Column(name="image", type="string", length=100, nullable=true)
      */
-    private $image = null;
+    private $image;
 
     /**
-     * @var string $registered
+     * @var string
+     *
+     * @ORM\Column(name="registered", type="datetime", nullable=true)
      */
     private $registered = "0000-00-00 00:00:00";
 
     /**
-     * @var Int $hideEmail
+     * @var boolean
+     *
+     * @ORM\Column(name="hideEmail", type="smallint", nullable=false)
      */
     private $hideEmail = 0;
 
     /**
-     * @var String $ip
+     * @var string
+     *
+     * @ORM\Column(name="o[", type="string", length=30, nullable=true)
      */
-    private $ip = null;
+    private $ip;
 
     /**
-     * @var Int $admin
+     * @var integer
+     *
+     * @ORM\Column(name="admin", type="integer", nullable=false)
      */
     private $admin = 0;
 
     /**
-     * @var Int $language
+     * @var integer
+     *
+     * @ORM\Column(name="language", type="integer", nullable=false)
      */
     private $language = 1;
 
@@ -148,7 +186,7 @@ final class User
      *
      * @param String $name
      */
-    public function setName($name = null)
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -168,7 +206,7 @@ final class User
      *
      * @param String $surname
      */
-    public function setSurname($surname = null)
+    public function setSurname($surname)
     {
         $this->surname = $surname;
     }
@@ -188,7 +226,7 @@ final class User
      *
      * @param String $password
      */
-    public function setPassword($password = null)
+    public function setPassword($password)
     {
         $this->password = $password;
     }
@@ -208,7 +246,7 @@ final class User
      *
      * @param String $email
      */
-    public function setEmail($email = null)
+    public function setEmail($email)
     {
         $this->email = $email;
     }
@@ -288,7 +326,7 @@ final class User
      *
      * @param String $image
      */
-    public function setImage($image = null)
+    public function setImage($image)
     {
         $this->image = $image;
     }

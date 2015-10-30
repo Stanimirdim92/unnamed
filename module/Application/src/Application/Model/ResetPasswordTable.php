@@ -20,17 +20,25 @@ final class ResetPasswordTable
      */
     private $entityManager;
 
-    public function __construct($entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
-     * @param Doctrine\ORM\EntityManager
+     * @return Doctrine\ORM\QueryBuilder
      */
-    public function getEntityManager()
+    public function queryBuilder()
     {
-        return $this->entityManager;
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\ResetPassword
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\ResetPassword");
     }
 
     /**
@@ -50,6 +58,20 @@ final class ResetPasswordTable
             throw new RuntimeException("Couldn't find row");
         }
         return $rowset->current();
+
+         $menu = $this->queryBuilder();
+        $menu->select(["m"]);
+        $menu->from('Admin\Entity\Menu', 'm');
+        $menu->where("m.id = :id AND m.language = :language");
+        $menu->setParameter(':id', (int) $id);
+        $menu->setParameter(':language', (int) $language);
+        $menu = $menu->getQuery()->getSingleResult();
+
+        if (empty($menu)) {
+            throw new RuntimeException("Couldn't find row");
+        }
+
+        return $menu;
     }
 
     /**

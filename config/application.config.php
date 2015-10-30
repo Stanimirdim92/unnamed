@@ -8,10 +8,10 @@ $modules[] = 'DoctrineModule';
 $modules[] = 'DoctrineORMModule';
 $modules[] = 'Themes';
 
-// if (APP_ENV === 'development') {
-//     $modules[] = 'ZendDeveloperTools';
-//     $modules[] = 'SanSessionToolbar';
-// }
+if (APP_ENV === 'development') {
+    $modules[] = 'ZendDeveloperTools';
+    $modules[] = 'SanSessionToolbar';
+}
 
 $config = [
     'modules' => $modules,

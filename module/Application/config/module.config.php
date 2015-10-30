@@ -62,15 +62,6 @@ return [
             'Application\Controller\Menu'  => Controller\MenuController::class,
         ],
     ],
-    'shared' => [
-        'initSession'                         => false,
-        'Application\Controller\Login'        => false,
-        'Application\Controller\Contact'      => false,
-        'Application\Controller\Registration' => false,
-        'Application\Controller\Index'        => false,
-        'Application\Controller\News'         => false,
-        'Application\Controller\Menu'         => false,
-    ],
     'doctrine' => [
         'driver' => [
             __NAMESPACE__ . '_driver' => [

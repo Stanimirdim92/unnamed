@@ -12,6 +12,7 @@
 namespace Admin\Model;
 
 use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
 
 final class UserTable
 {
@@ -20,17 +21,25 @@ final class UserTable
      */
     private $entityManager;
 
-    public function __construct($entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
-     * @param Doctrine\ORM\EntityManager
+     * @return Doctrine\ORM\QueryBuilder
      */
-    public function getEntityManager()
+    public function queryBuilder()
     {
-        return $this->entityManager;
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return Admin\Entity\User
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\User");
     }
 
     /**
@@ -40,12 +49,13 @@ final class UserTable
      */
     public function getUser($id = 0)
     {
-        $rowset = $this->select(['id' => (int) $id]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
-            return;
+        $user = $this->getEntityRepository()->find($id)
+
+        if (empty($user)) {
+            throw new RuntimeException("Couldn't find user");
         }
-        return $rowset->current();
+
+        return $user;
     }
 
     /**

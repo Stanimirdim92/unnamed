@@ -21,19 +21,11 @@ final class AdminMenuFormFactory
      */
     public function __invoke(ServiceLocatorInterface $serviceLocator)
     {
-        $parents = $serviceLocator->getServiceLocator()->get("AdminMenuTable");
-        $parents->columns(["caption", "id"]);
-        $parents->where(["parent" => 0]);
-        $parents = $parents->fetch();
+        $services = $serviceLocator->getServiceLocator();
 
-        $valueOptions = [];
-        if (count($parents) > 0) {
-            foreach ($parents as $parent) {
-                $valueOptions[$parent->getId()] = $parent->getCaption();
-            }
-        }
+        $entityManager = $services->get('Doctrine\ORM\EntityManager');
 
-        $form = new AdminMenuForm($valueOptions);
+        $form = new AdminMenuForm($entityManager);
 
         return $form;
     }

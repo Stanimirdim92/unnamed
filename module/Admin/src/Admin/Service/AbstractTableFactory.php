@@ -18,7 +18,11 @@ final class AbstractTableFactory implements AbstractFactoryInterface
 {
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $className)
     {
-        return (class_exists($className) ? true : false);
+        if (strpos($className, "Table") && class_exists($className)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $className)

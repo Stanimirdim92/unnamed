@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="menu")
+ * @ORM\Entity(repositoryClass="Admin\Repository\MenuRepository")
  */
 final class Menu
 {
@@ -94,7 +95,7 @@ final class Menu
     private $menulink;
 
     /**
-     * @var bool
+     * @var boolean
      *
      * @ORM\Column(name="active", type="smallint", nullable=false)
      */
@@ -135,8 +136,6 @@ final class Menu
     }
 
     /**
-     * constructor.
-     *
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -401,26 +400,5 @@ final class Menu
         } else {
             return "Right menu";
         }
-    }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field).
-     * Note that this method will not save the object.
-     */
-    public function getCopy()
-    {
-        $clone = new self();
-        $clone->setCaption($this->getCaption());
-        $clone->setMenuOrder($this->getMenuOrder());
-        $clone->setLanguage($this->getLanguage());
-        $clone->setParent($this->getParent());
-        $clone->setKeywords($this->getKeywords());
-        $clone->setDescription($this->getDescription());
-        $clone->setMenuType($this->getMenuType());
-        $clone->setFooterColumn($this->getFooterColumn());
-        $clone->setMenuLink($this->getMenuLink());
-        $clone->setActive($this->getActive());
-        $clone->setClass($this->getClass());
-        return $clone;
     }
 }

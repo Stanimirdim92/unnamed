@@ -31,6 +31,10 @@
             <li class="table-cell"><?=$this->translate("MENU_TYPE")?></li>
             <li class="table-cell"><?=$menu->getMenuTypeAsName()?></li>
         </ul>
+        <ul class="table-row">
+            <li class="table-cell"><?=$this->translate("CLASS")?></li>
+            <li class="table-cell"><i class="fa <?=$menu->getClass()?>"> &dash; <?=$menu->getClass()?></i></li>
+        </ul>
 
 <?php
     if ($menu->getParent() > 0) {

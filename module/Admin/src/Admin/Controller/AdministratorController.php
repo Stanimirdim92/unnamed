@@ -19,14 +19,20 @@ use Zend\View\Model\JsonModel;
 final class AdministratorController extends BaseController
 {
     /**
-     * @var AdministratorForm $administratorForm
+     * @var AdministratorForm
      */
-    private $administratorForm = null;
+    private $administratorForm;
+
+    /**
+     * @var Administrator
+     */
+    private $administratorTable;
+
 
     /**
      * @param AdministratorForm $administratorForm
      */
-    public function __construct(AdministratorForm $administratorForm = null)
+    public function __construct(AdministratorForm $administratorForm)
     {
         parent::__construct();
 
@@ -39,6 +45,8 @@ final class AdministratorController extends BaseController
     public function onDispatch(\Zend\Mvc\MvcEvent $e)
     {
         $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
+        $this->administratorTable = $this->getTable("Admin\Model\AdministratorTable");
+
         parent::onDispatch($e);
     }
 
@@ -48,13 +56,24 @@ final class AdministratorController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/administrator/index");
-        $paginator = $this->getTable("AdministratorTable");
-        $paginator->columns(["user"]);
-        $paginator->join("user", "administrator.user=user.id", ["name"], "left");
-        $paginator = $paginator->fetchPagination();
-        $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        $paginator->setItemCountPerPage($this->systemSettings('posts', 'administrator'));
+        $query = $this->administratorTable->queryBuilder();
+
+
+        $query->select('a', 'u')
+                  ->from('Admin\Entity\Administrator', 'a')
+                  ->leftJoin(
+                    'Admin\Entity\User',
+                    'u',
+                    \Doctrine\ORM\Query\Expr\Join::WITH,
+                    'a.user = u.id'
+                  );
+
+        $paginator = $this->administratorTable->preparePagination($query, true);
+
+        // $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
+        // $paginator->setItemCountPerPage($this->systemSettings('posts', 'administrator'));
         $this->getView()->paginator = $paginator;
+
         return $this->getView();
     }
 
@@ -78,10 +97,11 @@ final class AdministratorController extends BaseController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/administrator/edit");
-        $administrator = $this->getTable("AdministratorTable")->getAdministrator((int) $this->getParam("id", 0));
+        $administrator = $this->administratorTable->getAdministrator((int) $this->getParam("id", 0));
         $this->getView()->administrator = $administrator;
         $this->addBreadcrumb(["reference"=>"/admin/administrator/edit/{$administrator->getUser()}", "name"=>$this->translate("EDIT_ADMINISTRATOR")]);
         $this->initForm($this->translate("EDIT_ADMINISTRATOR"), $administrator);
+
         return $this->getView();
     }
 
@@ -95,7 +115,7 @@ final class AdministratorController extends BaseController
         $user = $userTable->getUser($id);
         $user->setAdmin(0);
         $userTable->saveUser($user);
-        $this->getTable("AdministratorTable")->deleteAdministrator($id);
+        $this->administratorTable->deleteAdministrator($id);
         $this->setLayoutMessages($this->translate("DELETE_ADMINISTRATOR_SUCCESS"), "success");
     }
 
@@ -164,7 +184,7 @@ final class AdministratorController extends BaseController
                 // valid user id
                 if (count($user) === 1) {
                     // should return false|null|0 etc.
-                    $adminExist = $this->getTable("AdministratorTable")->getAdministrator($user->getId());
+                    $adminExist = $this->administratorTable->getAdministrator($user->getId());
 
                     /*
                      * See if user is in admin table, but admin column from user table is 0.
@@ -175,7 +195,7 @@ final class AdministratorController extends BaseController
                        ) {
                         $user->setAdmin(0);
                         $this->getTable("UserTable")->saveUser($user);
-                        $this->getTable("AdministratorTable")->deleteAdministrator($user->getId());
+                        $this->administratorTable->deleteAdministrator($user->getId());
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
                     }
 
@@ -185,7 +205,7 @@ final class AdministratorController extends BaseController
                     if (!$adminExist && (int) $user->getAdmin() === 0) {
                         $user->setAdmin(1);
                         $this->getTable("UserTable")->saveUser($user);
-                        $this->getTable("AdministratorTable")->saveAdministrator($administrator);
+                        $this->getTable("Admin\Model\AdministratorTable")->saveAdministrator($administrator);
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                     }
                     return $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');

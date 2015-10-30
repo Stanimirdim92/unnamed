@@ -9,19 +9,33 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Administrator
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="administrator")
+ */
 final class Administrator
 {
     /**
-     * @var Int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @param Int $user
+     * @var integer
+     *
+     * @ORM\Column(name="user", type="integer", nullable=false)
      */
-    private $user = null;
+    private $user = 0;
 
     /**
      * @var array $data
@@ -41,8 +55,6 @@ final class Administrator
     }
 
     /**
-     * constructor.
-     *
      * @param array $options
      */
     public function __construct(array $options = [])
@@ -51,8 +63,6 @@ final class Administrator
     }
 
     /**
-     * Get id.
-     *
      * @return int
      */
     public function getId()
@@ -61,8 +71,6 @@ final class Administrator
     }
 
     /**
-     * Set id.
-     *
      * @param int
      */
     public function setId($id = 0)
@@ -71,9 +79,9 @@ final class Administrator
     }
 
     /**
-     * Set User.
+     * Set user id.
      *
-     * @param String $user
+     * @param string $user
      */
     public function setUser($user = 0)
     {
@@ -81,9 +89,9 @@ final class Administrator
     }
 
     /**
-     * Get user.
+     * Get user id.
      *
-     * @return String
+     * @return string
      */
     public function getUser()
     {

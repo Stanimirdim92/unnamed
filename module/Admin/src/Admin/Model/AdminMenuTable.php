@@ -13,14 +13,18 @@ namespace Admin\Model;
 
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
+use Admin\Entity\AdminMenu;
 
 final class AdminMenuTable
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
 
+    /**
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -51,12 +55,7 @@ final class AdminMenuTable
      */
     public function getAdminMenu($id = 0)
     {
-        $adminMenu = $this->queryBuilder();
-        $adminMenu->select(["am"]);
-        $adminMenu->from('Admin\Entity\AdminMenu', 'am');
-        $adminMenu->where("am.id = :id");
-        $adminMenu->setParameter(':id', (int) $id);
-        $adminMenu = $adminMenu->getQuery()->getSingleResult();
+        $adminMenu = $this->getEntityRepository()->find($id);
 
         if (empty($adminMenu)) {
             throw new RuntimeException("Couldn't find admin menu");
@@ -68,64 +67,32 @@ final class AdminMenuTable
     /**
      * Delete a adminmenu based on the provided id.
      *
-     * @param int $id adminmenu id
+     * @param int $id admin menu id
      *
      * @return AdminMenu
      */
     public function deleteAdminMenu($id = 0)
     {
-        if ($this->getAdminMenu($id)) {
-            $del = $this->queryBuilder();
-            $del->delete('Admin\Entity\AdminMenu', 'am');
-            $del->where("am.id = :id");
-            $del->setParameter(':id', (int) $id);
+        $adminMenu = $this->getAdminMenu($id);
 
-            return $del->getQuery()->execute();
+        if ($adminMenu) {
+            $this->entityManager->remove($adminMenu);
+            $this->entityManager->flush();
         }
     }
 
     /**
      * Save or update menu based on the provided id and language.
      *
-     * @param  AdminMenu $adminMenu
+     * @param AdminMenu $adminMenu
      *
      * @return AdminMenu
      */
     public function saveAdminMenu(AdminMenu $adminMenu)
     {
-        $data = [
-            'caption'     => (string) $adminMenu->getCaption(),
-            'description' => (string) $adminMenu->getDescription(),
-            'menuOrder'   => (int) $adminMenu->getMenuOrder(),
-            'controller'  => (string) $adminMenu->getController(),
-            'action'      => (string) $adminMenu->getAction(),
-            'class'       => (string) $adminMenu->getClass(),
-            'parent'      => (int) $adminMenu->getParent(),
-        ];
-        $id = (int)$adminMenu->getId();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if ($this->getAdminMenu($id)) {
-                $this->update($data, ['id' => $id]);
-            }
-        }
-        unset($id, $data);
-        return $adminMenu;
-    }
+        $this->entityManager->persist($adminMenu);
+        $this->entityManager->flush();
 
-    /**
-     * duplicate a content.
-     *
-     * @param  int    $id
-     *
-     * @return AdminMenu
-     */
-    public function duplicate($id = 0)
-    {
-        $adminMenu = $this->getAdminMenu($id);
-        $clone = $adminMenu->getCopy();
-        $this->saveAdminMenu($clone);
-        return $clone;
+        return $adminMenu;
     }
 }

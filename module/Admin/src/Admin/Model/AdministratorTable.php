@@ -11,39 +11,67 @@
 
 namespace Admin\Model;
 
+use Admin\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
+use Admin\Entity\Administrator;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 final class AdministratorTable
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
 
-    public function __construct($entityManager)
+    /**
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
-     * @param Doctrine\ORM\EntityManager
+     * @return Doctrine\ORM\QueryBuilder
      */
-    public function getEntityManager()
+    public function queryBuilder()
     {
-        return $this->entityManager;
+        return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new Paginator($query, $fetchJoinCollection);
+    }
+
+    /**
+     * @return Admin\Entity\Administrator
+     */
+    public function getEntityRepository()
+    {
+        return $this->entityManager->getRepository("Admin\Entity\Administrator");
     }
 
     /**
      * @param int $id user id
      *
-     * @return Administrator|null
+     * @return Administrator
      */
     public function getAdministrator($id = 0)
     {
-        $rowset = $this->select(['user' => (int) $id]);
-        $rowset->buffer();
-        if (!$rowset->current()) {
-            return;
+        $administrator = $this->getEntityRepository()->find($id);
+
+        if (empty($administrator)) {
+            throw new RuntimeException("Couldn't find administrator");
         }
-        return $rowset->current();
+
+        return $administrator;
     }
 
     /**
@@ -53,32 +81,25 @@ final class AdministratorTable
      */
     public function deleteAdministrator($id = 0)
     {
-        if ($this->getAdministrator($id)) {
-            $this->delete(['user' => (int) $id]);
+        $administrator = $this->getAdministrator($id);
+        if ($administrator) {
+            $this->entityManager->remove($administrator);
+            $this->entityManager->flush();
         }
     }
 
     /**
      * Save or update administrator based on the provided id.
      *
-     * @param  Administrator $administrator
+     * @param Administrator $administrator
      *
      * @return Administrator
      */
     public function saveAdministrator(Administrator $administrator)
     {
-        $data = [
-            'user' => (int) $administrator->getUser(),
-        ];
-        $id = (int)$administrator->getId();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if ($this->getAdministrator($id)) {
-                $this->update($data, ['user' => $id]);
-            }
-        }
-        unset($id, $data);
+        $this->entityManager->persist($administrator);
+        $this->entityManager->flush();
+
         return $administrator;
     }
 }
