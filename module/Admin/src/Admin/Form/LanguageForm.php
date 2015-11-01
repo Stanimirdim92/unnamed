@@ -13,12 +13,22 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Doctrine\ORM\EntityManager;
 
 final class LanguageForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct()
+    /**
+     * @var Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @param $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct("language");
+        $this->entityManager = $entityManager;
     }
 
     public function init()
@@ -30,13 +40,16 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'name',
-            'attributes' => [
-                'required'   => true,
-                'size'        => 40,
-                'placeholder' => 'Name',
-            ],
             'options' => [
                 'label' => 'Name',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Language',
+                'property' => "name",
+                'option_attributes' => [
+                    'required'   => "true",
+                    'size'        => "40",
+                    'placeholder' => 'Name',
+                ],
             ],
             ]
         );
@@ -47,6 +60,9 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
             'name' => 'active',
             'options' => [
                 'label' => 'Active',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Language',
+                'property' => "active",
             ],
             ]
         );
@@ -69,6 +85,7 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
+                'value' => 'Save',
             ],
             ]
         );
@@ -77,6 +94,11 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
+            'options' => [
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Language',
+                'property' => "id",
+            ],
             ]
         );
     }

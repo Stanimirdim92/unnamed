@@ -14,7 +14,9 @@ namespace Admin\Model;
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
 use Admin\Entity\Administrator;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class AdministratorTable
 {
@@ -47,7 +49,7 @@ final class AdministratorTable
      */
     public function preparePagination($query, $fetchJoinCollection = true)
     {
-        return new Paginator($query, $fetchJoinCollection);
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
     }
 
     /**
@@ -65,7 +67,7 @@ final class AdministratorTable
      */
     public function getAdministrator($id = 0)
     {
-        $administrator = $this->getEntityRepository()->find($id);
+        $administrator = $this->getEntityRepository()->findBy(["user" => $id]);
 
         if (empty($administrator)) {
             throw new RuntimeException("Couldn't find administrator");
@@ -82,8 +84,9 @@ final class AdministratorTable
     public function deleteAdministrator($id = 0)
     {
         $administrator = $this->getAdministrator($id);
+
         if ($administrator) {
-            $this->entityManager->remove($administrator);
+            $this->entityManager->remove($administrator[0]);
             $this->entityManager->flush();
         }
     }

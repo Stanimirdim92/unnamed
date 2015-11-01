@@ -11,22 +11,23 @@
 
 namespace Admin\Controller;
 
-use Admin\Model\Language;
+use Admin\Entity\Language;
 use Admin\Form\LanguageForm;
 use Admin\Exception\RunTimeException;
 use Zend\Stdlib\Parameters;
+use Zend\Mvc\MvcEvent;
 
 final class LanguageController extends BaseController
 {
     /**
-     * @var LanguageForm $languageForm
+     * @var LanguageForm
      */
-    private $languageForm = null;
+    private $languageForm;
 
     /**
      * @param LanguageForm $languageForm
      */
-    public function __construct(LanguageForm $languageForm = null)
+    public function __construct(LanguageForm $languageForm)
     {
         parent::__construct();
 
@@ -36,7 +37,7 @@ final class LanguageController extends BaseController
     /**
      * @param MvcEvent $e
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $e)
     {
         $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
         parent::onDispatch($e);
@@ -50,10 +51,17 @@ final class LanguageController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/language/index");
-        $paginator = $this->getTable("LanguageTable")->fetchPagination();
+        $query = $this->getTable("Admin\Model\LanguageTable");
+
+        $q = $query->queryBuilder()
+                   ->select(["l"])
+                   ->from('Admin\Entity\Language', 'l');
+
+        $paginator = $query->preparePagination($q, false);
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage($this->systemSettings('posts', 'language'));
         $this->getView()->paginator = $paginator;
+
         return $this->getView();
     }
 
@@ -65,8 +73,9 @@ final class LanguageController extends BaseController
     protected function addAction()
     {
         $this->getView()->setTemplate("admin/language/add");
-        $this->initForm($this->translate("ADD_LANGUAGE"), null);
+        $this->initForm();
         $this->addBreadcrumb(["reference"=>"/admin/language/add", "name"=>$this->translate("ADD_LANGUAGE")]);
+
         return $this->getView();
     }
 
@@ -79,10 +88,11 @@ final class LanguageController extends BaseController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/language/edit");
-        $language = $this->getTable("LanguageTable")->getLanguage((int)$this->getParam("id", 0));
+        $language = $this->getTable("Admin\Model\LanguageTable")->getLanguage((int)$this->getParam("id", 0));
         $this->getView()->language = $language;
         $this->addBreadcrumb(["reference"=>"/admin/language/edit/{$language->getId()}", "name"=>$this->translate("EDIT_LANGUAGE")." &laquo;".$language->getName()."&raquo;"]);
-        $this->initForm($this->translate("EDIT_LANGUAGE"), $language);
+        $this->initForm($language);
+
         return $this->getView();
     }
 
@@ -91,7 +101,7 @@ final class LanguageController extends BaseController
      */
     protected function deleteAction()
     {
-        $this->getTable("LanguageTable")->deleteLanguage((int)$this->getParam('id', 0));
+        $this->getTable("Admin\Model\LanguageTable")->deleteLanguage((int)$this->getParam('id', 0));
         $this->setLayoutMessages($this->translate("DELETE_LANGUAGE_SUCCESS"), "success");
     }
 
@@ -103,9 +113,10 @@ final class LanguageController extends BaseController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/language/detail");
-        $lang = $this->getTable("LanguageTable")->getLanguage((int)$this->getParam('id', 0));
+        $lang = $this->getTable("Admin\Model\LanguageTable")->getLanguage((int)$this->getParam('id', 0));
         $this->getView()->lang = $lang;
         $this->addBreadcrumb(["reference"=>"/admin/language/detail/{$lang->getId()}", "name"=>"&laquo;". $lang->getName()."&raquo; ".$this->translate("DETAILS")]);
+
         return $this->getView();
     }
 
@@ -152,10 +163,9 @@ final class LanguageController extends BaseController
     /**
      * This is common function used by add and edit actions (to avoid code duplication).
      *
-     * @param String $label button title
      * @param Language $language object
      */
-    private function initForm($label = '', Language $language = null)
+    private function initForm(Language $language = null)
     {
         if (!$language instanceof Language) {
             $language = new Language([]);
@@ -165,14 +175,13 @@ final class LanguageController extends BaseController
          * @var $form LanguageForm
          */
         $form = $this->languageForm;
-        $form->get("submit")->setValue($label);
         $form->bind($language);
         $this->getView()->form = $form;
         if ($this->getRequest()->isPost()) {
             $form->setInputFilter($form->getInputFilter());
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
-                $this->getTable("LanguageTable")->saveLanguage($language);
+                $this->getTable("Admin\Model\LanguageTable")->saveLanguage($language);
                 return $this->setLayoutMessages($this->translate("LANGUAGE")." &laquo;".$language->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
             }
             return $this->setLayoutMessages($form->getMessages(), 'error');

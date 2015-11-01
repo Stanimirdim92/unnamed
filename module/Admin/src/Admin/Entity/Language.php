@@ -9,7 +9,7 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="language")
+ * @ORM\Entity(repositoryClass="Admin\Repository\LanguageRepository")
  */
 final class Language
 {

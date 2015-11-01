@@ -9,7 +9,7 @@
  * @link       TBA
  */
 
-namespace Admin\Model;
+namespace Admin\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -75,7 +75,7 @@ final class Content
     /**
      * @var string
      *
-     * @ORM\Column(name="date", type="datetime", nullable=false)
+     * @ORM\Column(name="date", type="string", nullable=false)
      */
     private $date = "0000-00-00 00:00:00";
 
@@ -382,26 +382,5 @@ final class Content
     public function getLanguage()
     {
         return $this->language;
-    }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field).
-     * Note that this method will not save the object.
-     */
-    public function getCopy()
-    {
-        $clone = new self();
-        $clone->setMenu($this->getMenu());
-        $clone->setTitle($this->getTitle());
-        $clone->setPreview($this->getPreview());
-        $clone->setText($this->getText());
-        $clone->setMenuOrder($this->getMenuOrder());
-        $clone->setType($this->getType());
-        $clone->setDate($this->getDate());
-        $clone->setLanguage($this->getLanguage());
-        $clone->setTitleLink($this->getTitleLink());
-        $clone->setActive($this->getActive());
-        $clone->setAuthor($this->getAuthor());
-        return $clone;
     }
 }

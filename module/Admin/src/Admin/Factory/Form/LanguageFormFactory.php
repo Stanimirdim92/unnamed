@@ -11,11 +11,10 @@
 
 namespace Admin\Factory\Form;
 
-use Admin\Form\ContentForm;
-use Zend\Session\Container;
+use Admin\Form\LanguageForm;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-final class ContentFormFactory
+final class LanguageFormFactory
 {
     /**
      * @{inheritDoc}
@@ -26,7 +25,7 @@ final class ContentFormFactory
 
         $entityManager = $services->get('Doctrine\ORM\EntityManager');
 
-        $form = new ContentForm($entityManager);
+        $form = new LanguageForm($entityManager);
 
         return $form;
     }

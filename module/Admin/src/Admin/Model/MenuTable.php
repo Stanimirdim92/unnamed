@@ -14,6 +14,9 @@ namespace Admin\Model;
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
 use Admin\Entity\Menu;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class MenuTable
 {
@@ -36,6 +39,17 @@ final class MenuTable
     public function queryBuilder()
     {
         return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
     }
 
     /**
@@ -76,19 +90,13 @@ final class MenuTable
      *
      * @param int $id menu id
      * @param int $language user language
-     *
-     * @return int
      */
     public function deleteMenu($id = 0, $language = 1)
     {
-        if ($this->getMenu($id, $language)) {
-            $del = $this->queryBuilder();
-            $del->delete('Admin\Entity\Menu', 'm');
-            $del->where("m.id = :id AND m.language = :language");
-            $del->setParameter(':id', (int) $id);
-            $del->setParameter(':language', (int) $language);
-
-            return $del->getQuery()->execute();
+        $menu = $this->getMenu($id, $language);
+        if ($menu) {
+            $this->entityManager->remove($menu);
+            $this->entityManager->flush();
         }
     }
 
@@ -117,7 +125,7 @@ final class MenuTable
         $menu = $this->getMenu($id, $language);
 
         if ($menu) {
-            $menu->setActive($state);
+            $menu->setActive((int) $state);
             $this->saveMenu($menu);
         }
     }

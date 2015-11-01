@@ -14,6 +14,9 @@ namespace Admin\Model;
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
 use Admin\Entity\AdminMenu;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class AdminMenuTable
 {
@@ -36,6 +39,17 @@ final class AdminMenuTable
     public function queryBuilder()
     {
         return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
     }
 
     /**

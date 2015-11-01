@@ -97,15 +97,4 @@ final class Administrator
     {
         return $this->user;
     }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field).
-     * Note that this method will not save the object.
-     */
-    public function getCopy()
-    {
-        $clone = new self();
-        $clone->setUser($this->getUser());
-        return $clone;
-    }
 }

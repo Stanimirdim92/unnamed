@@ -47,7 +47,7 @@ final class User
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="char", length=72, nullable=true)
+     * @ORM\Column(name="password", type="string", length=72, nullable=true)
      */
     private $password;
 
@@ -61,14 +61,14 @@ final class User
     /**
      * @var string
      *
-     * @ORM\Column(name="birthDate", type="date", nullable=true)
+     * @ORM\Column(name="birthDate", type="string", nullable=true)
      */
     private $birthDate = "0000-00-00";
 
     /**
      * @var string
      *
-     * @ORM\Column(name="lastLogin", type="datetime", nullable=true)
+     * @ORM\Column(name="lastLogin", type="string", nullable=true)
      */
     private $lastLogin = "0000-00-00 00:00:00";
 
@@ -89,7 +89,7 @@ final class User
     /**
      * @var string
      *
-     * @ORM\Column(name="registered", type="datetime", nullable=true)
+     * @ORM\Column(name="registered", type="string", nullable=true)
      */
     private $registered = "0000-00-00 00:00:00";
 
@@ -103,7 +103,7 @@ final class User
     /**
      * @var string
      *
-     * @ORM\Column(name="o[", type="string", length=30, nullable=true)
+     * @ORM\Column(name="ip", type="string", length=30, nullable=true)
      */
     private $ip;
 
@@ -304,7 +304,7 @@ final class User
     /**
      * Set isDisabled.
      *
-     * @param int $isDisabled
+     * @param bool $isDisabled
      */
     public function setDisabled($isDisabled = false)
     {

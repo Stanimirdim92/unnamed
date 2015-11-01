@@ -13,12 +13,22 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Doctrine\ORM\EntityManager;
 
 final class AdministratorForm extends Form implements InputFilterProviderInterface
 {
-    public function __construct()
+    /**
+     * @var Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @param $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct("administrator");
+        $this->entityManager = $entityManager;
     }
 
     public function init()
@@ -30,15 +40,18 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
             [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'user',
-            'attributes' => [
-                'required'   => true,
-                'size'        => 40,
-            'class'      => 'administrator-user ajax-search',
-            'placeholder' => 'User ID',
-            'autocomplete' => "off",
-            ],
             'options' => [
                 'label' => 'Caption',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Administrator',
+                'property' => "caption",
+                'option_attributes' => [
+                    'required'   => "true",
+                    'size'        => "40",
+                    'class'      => 'administrator-user ajax-search',
+                    'placeholder' => 'User ID',
+                    'autocomplete' => "off",
+                ],
             ],
             ]
         );
@@ -61,6 +74,7 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
+                'value' => "Save",
             ],
             ]
         );

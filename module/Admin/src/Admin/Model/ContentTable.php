@@ -13,6 +13,10 @@ namespace Admin\Model;
 
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
+use Admin\Entity\Content;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class ContentTable
 {
@@ -35,11 +39,22 @@ final class ContentTable
     }
 
     /**
-     * @return Admin\Entity\Content
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
+    }
+
+    /**
+     * @return Admin\Entity\User
      */
     public function getEntityRepository()
     {
-        return $this->entityManager->getRepository("Admin\Entity\Content");
+        return $this->entityManager->getRepository("Admin\Entity\User");
     }
 
     /**
@@ -72,19 +87,13 @@ final class ContentTable
      *
      * @param int $id content id
      * @param int $language user language
-     *
-     * @return Content
      */
     public function deleteContent($id = 0, $language = 1)
     {
-        if ($this->getContent($id, $language)) {
-            $del = $this->queryBuilder();
-            $del->delete('Admin\Entity\Content', 'c');
-            $del->where("c.id = :id AND c.language = :language");
-            $del->setParameter(':id', (int) $id);
-            $del->setParameter(':language', (int) $language);
-
-            return $del->getQuery()->execute();
+        $content = $this->getContent($id, $language);
+        if ($content) {
+            $this->entityManager->remove($content);
+            $this->entityManager->flush();
         }
     }
 
@@ -97,29 +106,9 @@ final class ContentTable
      */
     public function saveContent(Content $content)
     {
-        $data = [
-            'menu'      => (int) $content->getMenu(),
-            'title'     => (string) $content->getTitle(),
-            'preview'   => (string) $content->getPreview(),
-            'text'      => (string) $content->getText(),
-            'menuOrder' => (int) $content->getMenuOrder(),
-            'type'      => (int) $content->getType(),
-            'date'      => (string) $content->getDate(),
-            'language'  => (int) $content->getLanguage(),
-            'titleLink' => (string) $content->getTitleLink(),
-            'active'    => (int) $content->getActive(),
-            'author'    => (string) $content->getAuthor(),
-        ];
-        $id = (int) $content->getId();
-        $language = (int) $content->getLanguage();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if ($this->getContent($id, $language)) {
-                $this->update($data, ['id' => $id, 'language' => $language]);
-            }
-        }
-        unset($id, $language, $data);
+        $this->entityManager->persist($content);
+        $this->entityManager->flush();
+
         return $content;
     }
 
@@ -127,28 +116,16 @@ final class ContentTable
      * This method can disable or enable contents.
      *
      * @param int $id content id
+     * @param int $language user language
      * @param  int $state 0 - deactivated, 1 - active
      */
-    public function toggleActiveContent($id = 0, $state = 0)
+    public function toggleActiveContent($id = 0,  $language = 1, $state = 0)
     {
-        if ($this->getContent($id)) {
-            $this->update(["active" => (int) $state], ['id' => (int) $id]);
-        }
-    }
+        $menu = $this->getContent($id, $language);
 
-    /**
-     * duplicate a content.
-     *
-     * @param  int    $id
-     * @param  int    $language
-     *
-     * @return Content
-     */
-    public function duplicate($id = 0, $language = 1)
-    {
-        $content = $this->getContent($id, $language);
-        $clone = $content->getCopy();
-        $this->saveContent($clone);
-        return $clone;
+        if ($menu) {
+            $menu->setActive((int) $state);
+            $this->saveContent($menu);
+        }
     }
 }

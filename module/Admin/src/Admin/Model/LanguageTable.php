@@ -13,14 +13,21 @@ namespace Admin\Model;
 
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
+use Admin\Entity\Language;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class LanguageTable
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
 
+    /**
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -32,6 +39,17 @@ final class LanguageTable
     public function queryBuilder()
     {
         return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
     }
 
     /**
@@ -51,12 +69,7 @@ final class LanguageTable
      */
     public function getLanguage($id = 0)
     {
-        $language = $this->queryBuilder();
-        $language->select(["l"]);
-        $language->from('Admin\Entity\Language', 'l');
-        $language->where("l.id = :id");
-        $language->setParameter(':id', (int) $id);
-        $language = $language->getQuery()->getSingleResult();
+        $language = $this->getEntityRepository()->find($id);
 
         if (empty($language)) {
             throw new RuntimeException("Couldn't find language");
@@ -72,13 +85,10 @@ final class LanguageTable
      */
     public function deleteLanguage($id = 0)
     {
-        if ($this->getLanguage($id)) {
-            $del = $this->queryBuilder();
-            $del->delete('Admin\Entity\Language', 'l');
-            $del->where("l.id = :id");
-            $del->setParameter(':id', (int) $id);
-
-            return $del->getQuery()->execute();
+        $language = $this->getLanguage($id);
+        if ($language) {
+            $this->entityManager->remove($language);
+            $this->entityManager->flush();
         }
     }
 
@@ -91,20 +101,9 @@ final class LanguageTable
      */
     public function saveLanguage(Language $language)
     {
-        $data = [
-            'name' => (string) $language->getName(),
-            'active' => (int) $language->getActive(),
-        ];
+        $this->entityManager->persist($language);
+        $this->entityManager->flush();
 
-        $id = (int) $language->getId();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if ($this->getLanguage($id)) {
-                $this->update($data, ['id' => $id]);
-            }
-        }
-        unset($id, $data);
         return $language;
     }
 }

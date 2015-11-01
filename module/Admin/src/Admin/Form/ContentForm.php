@@ -13,51 +13,22 @@ namespace Admin\Form;
 
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
+use Doctrine\ORM\EntityManager;
 
 final class ContentForm extends Form implements InputFilterProviderInterface
 {
     /**
-     * @var array $menus
+     * @var Doctrine\ORM\EntityManager
      */
-    private $menus = [];
+    private $entityManager;
 
     /**
-     * @var array $languages
+     * @param $entityManager
      */
-    private $languages = [];
-
-    /**
-     * @param Zend\Db\ResultSet\ResultSet $languages
-     * @param array $menus
-     */
-    public function __construct($languages, $menus = null)
+    public function __construct(EntityManager $entityManager)
     {
-        $this->languages = $languages;
-        $this->menus = $menus;
-
         parent::__construct("content");
-    }
-
-    private function collectLanguageOptions()
-    {
-        $valueOptions = [];
-        foreach ($this->languages as $language) {
-            $valueOptions[$language->getId()] = $language->getName();
-        }
-
-        return $valueOptions;
-    }
-
-    private function collectMenuOptions()
-    {
-        $valueOptions = [];
-        if ($this->menus) {
-            foreach ($this->menus as $submenus) {
-                $valueOptions[$submenus->getId()] = $submenus->getCaption();
-            }
-            return $valueOptions;
-        }
-        return;
+        $this->entityManager = $entityManager;
     }
 
     public function init()
@@ -72,12 +43,15 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\File',
             'name' => 'preview',
-            'attributes' => [
-                'id' => 'preview',
-                'class' => 'preview',
-            ],
             'options' => [
                 'label' => 'Image',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "preview",
+                'option_attributes' => [
+                    'id' => 'preview',
+                    'class' => 'preview',
+                ],
             ],
             ]
         );
@@ -104,14 +78,17 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'title',
-            'attributes' => [
-                'required'   => true,
-                'size'        => 40,
-                'id'         => "seo-caption",
-                'placeholder' => 'Title',
-            ],
             'options' => [
                 'label' => 'Title',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "title",
+                'option_attributes' => [
+                    'required'   => "true",
+                    'size'        => "40",
+                    'id'         => "seo-caption",
+                    'placeholder' => 'Title',
+                ],
             ],
             ]
         );
@@ -120,13 +97,16 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'text',
-            'attributes' => [
-                'class'   => 'ckeditor',
-                'rows'        => 5,
-                'cols'      => 80,
-            ],
             'options' => [
                 'label' => 'Text',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "text",
+                'option_attributes' => [
+                    'class'   => 'ckeditor',
+                    'rows'        => "5",
+                    'cols'      => "80",
+                ],
             ],
             ]
         );
@@ -135,25 +115,33 @@ final class ContentForm extends Form implements InputFilterProviderInterface
         for ($i = 1; $i < 100; $i++) {
             $valueOptions[$i] = $i;
         }
-        $this->add(
-            [
-            'type' => 'Zend\Form\Element\Select',
+        $this->add([
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'menuOrder',
             'options' => [
-                'empty_option' => 'Please choose menu order (optional)',
+                'object_manager' => $this->entityManager,
+                'disable_inarray_validator' => true,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => 'menuOrder',
+                'display_empty_item' => true,
+                'empty_item_label' => 'Please choose menu order (optional)',
                 'value_options' => $valueOptions,
                 'label' => 'Menu order',
             ],
-            ]
-        );
+        ]);
 
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'type',
             'options' => [
                 'label' => 'Type',
-                'empty_option' => 'Please choose your content type',
+                'object_manager' => $this->entityManager,
+                'disable_inarray_validator' => true,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => 'type',
+                'display_empty_item' => true,
+                'empty_item_label' => 'Please choose your content type',
                 'value_options' => [
                     '0' => "Menu",
                     '1' => "News",
@@ -166,35 +154,54 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Text',
             'name' => 'date',
-            'attributes' => [
-                'size'  => 20,
-            ],
             'options' => [
                 'label' => 'Date',
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "date",
+                'option_attributes' => [
+                    'size'  => "20",
+                ],
             ],
             ]
         );
 
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'menu',
             'options' => [
                 'label' => 'Menu',
-                'empty_option' => 'Please choose your menu',
-                'value_options' => $this->collectMenuOptions(),
+                'disable_inarray_validator' => true,
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Menu',
+                'property' => "caption",
+                'display_empty_item' => true,
+                'empty_item_label' => 'Please choose your menu',
+                'is_method' => true,
+                'find_method' => [
+                    'name' => 'getMenus',
+                ],
             ],
             ]
         );
 
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'DoctrineModule\Form\Element\ObjectSelect',
             'name' => 'language',
             'options' => [
-                'label' => 'Language',
-                'empty_option' => 'Please choose a language',
-                'value_options' => $this->collectLanguageOptions(),
+                'label' => 'Select language',
+                'disable_inarray_validator' => true,
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Language',
+                'property' => "name",
+                'display_empty_item' => true,
+                'empty_item_label' => 'Please choose a language',
+                'is_method' => true,
+                'find_method' => [
+                    'name' => 'getLanguages',
+                ],
             ],
             ]
         );
@@ -217,6 +224,7 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'type'  => 'submit',
                 'id' => 'submitbutton',
+                'value' => "Save",
             ],
             ]
         );
@@ -225,6 +233,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
+            'options' => [
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "id",
+            ],
             ]
         );
 
@@ -232,8 +245,13 @@ final class ContentForm extends Form implements InputFilterProviderInterface
             [
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'titleLink',
-            'attributes' => [
-                'id' => 'titleLink',
+            'options' => [
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Content',
+                'property' => "titleLink",
+                'option_attributes' => [
+                    'id' => 'titleLink',
+                ],
             ],
             ]
         );

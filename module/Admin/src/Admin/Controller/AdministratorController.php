@@ -11,7 +11,7 @@
 
 namespace Admin\Controller;
 
-use Admin\Model\Administrator;
+use Admin\Entity\Administrator;
 use Admin\Form\AdministratorForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
@@ -56,23 +56,10 @@ final class AdministratorController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/administrator/index");
-        $query = $this->administratorTable->queryBuilder();
+        $query = $this->administratorTable->queryBuilder()->getEntityManager();
+        $query = $query->createQuery("SELECT a.user, u.name FROM Admin\Entity\Administrator AS a LEFT JOIN Admin\Entity\User AS u WITH a.user=u.id");
 
-
-        $query->select('a', 'u')
-                  ->from('Admin\Entity\Administrator', 'a')
-                  ->leftJoin(
-                    'Admin\Entity\User',
-                    'u',
-                    \Doctrine\ORM\Query\Expr\Join::WITH,
-                    'a.user = u.id'
-                  );
-
-        $paginator = $this->administratorTable->preparePagination($query, true);
-
-        // $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        // $paginator->setItemCountPerPage($this->systemSettings('posts', 'administrator'));
-        $this->getView()->paginator = $paginator;
+        $this->getView()->paginator = $query->getResult();
 
         return $this->getView();
     }
@@ -83,8 +70,9 @@ final class AdministratorController extends BaseController
     protected function addAction()
     {
         $this->getView()->setTemplate("admin/administrator/add");
-        $this->initForm($this->translate("ADD_ADMINISTRATOR"), null);
+        $this->initForm(null);
         $this->addBreadcrumb(["reference"=>"/admin/administrator/add", "name"=>$this->translate("ADD_ADMINISTRATOR")]);
+
         return $this->getView();
     }
 
@@ -100,7 +88,7 @@ final class AdministratorController extends BaseController
         $administrator = $this->administratorTable->getAdministrator((int) $this->getParam("id", 0));
         $this->getView()->administrator = $administrator;
         $this->addBreadcrumb(["reference"=>"/admin/administrator/edit/{$administrator->getUser()}", "name"=>$this->translate("EDIT_ADMINISTRATOR")]);
-        $this->initForm($this->translate("EDIT_ADMINISTRATOR"), $administrator);
+        $this->initForm($administrator);
 
         return $this->getView();
     }
@@ -111,7 +99,7 @@ final class AdministratorController extends BaseController
     protected function deleteAction()
     {
         $id = (int)$this->getParam('id', 0);
-        $userTable = $this->getTable("UserTable");
+        $userTable = $this->getTable("Admin\Model\UserTable");
         $user = $userTable->getUser($id);
         $user->setAdmin(0);
         $userTable->saveUser($user);
@@ -128,12 +116,19 @@ final class AdministratorController extends BaseController
     protected function searchAction()
     {
         $search = (string) $this->getParam('ajaxsearch');
-        $this->getView()->setTerminal(true);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
-            $results = $this->getTable("UserTable");
-            $results->columns(["id", "name", "surname", "email"]);
-            $results->where("`name` LIKE '%{$search}%' OR `surname` LIKE '%{$search}%' OR `email` LIKE '%{$search}%'");
-            $results = $results->fetch();
+                $this->getView()->setTerminal(true);
+                $queryBuilder = $this->getTable("Admin\Model\UserTable")->queryBuilder();
+                $results = $queryBuilder->select(["u"])
+                    ->from('Admin\Entity\User', 'u')
+                    ->where('u.name = :name')
+                    ->orWhere('u.surname LIKE :surname')
+                    ->orWhere('u.email LIKE :email')
+                    ->setParameter(':name', (string) $search)
+                    ->setParameter(':surname', (string) $search)
+                    ->setParameter(':email', (string) $search)
+                    ->getQuery()
+                    ->getResult();
 
             $json = [];
             $success = false;
@@ -158,10 +153,9 @@ final class AdministratorController extends BaseController
     /**
      * This is common function used by add and edit actions (to avoid code duplication).
      *
-     * @param String $label
      * @param Administrator $administrator
      */
-    private function initForm($label = '', Administrator $administrator = null)
+    private function initForm(Administrator $administrator = null)
     {
         if (!$administrator instanceof Administrator) {
             $administrator = new Administrator([]);
@@ -171,7 +165,6 @@ final class AdministratorController extends BaseController
          * @var $form AdministratorForm
          */
         $form = $this->administratorForm;
-        $form->get("submit")->setValue($label);
         $form->bind($administrator);
         $this->getView()->form = $form;
 
@@ -180,7 +173,7 @@ final class AdministratorController extends BaseController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $user = $this->getTable("UserTable")->getUser($formData->getUser());
+                $user = $this->getTable("Admin\Model\UserTable")->getUser($formData->getUser());
                 // valid user id
                 if (count($user) === 1) {
                     // should return false|null|0 etc.
@@ -194,7 +187,7 @@ final class AdministratorController extends BaseController
                          (!$adminExist && (int) $user->getAdmin() > 0)
                        ) {
                         $user->setAdmin(0);
-                        $this->getTable("UserTable")->saveUser($user);
+                        $this->getTable("Admin\Model\UserTable")->saveUser($user);
                         $this->administratorTable->deleteAdministrator($user->getId());
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
                     }
@@ -204,7 +197,7 @@ final class AdministratorController extends BaseController
                      */
                     if (!$adminExist && (int) $user->getAdmin() === 0) {
                         $user->setAdmin(1);
-                        $this->getTable("UserTable")->saveUser($user);
+                        $this->getTable("Admin\Model\UserTable")->saveUser($user);
                         $this->getTable("Admin\Model\AdministratorTable")->saveAdministrator($administrator);
                         return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                     }

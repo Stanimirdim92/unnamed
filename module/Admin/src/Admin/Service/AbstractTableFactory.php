@@ -16,6 +16,17 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 final class AbstractTableFactory implements AbstractFactoryInterface
 {
+    /**
+     * Determine if we can create a service with name
+     *
+     * @method canCreateServiceWithName
+     *
+     * @param  ServiceLocatorInterface $services
+     * @param  string                  $name
+     * @param  string                  $requestedName
+     *
+     * @return bool
+     */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $className)
     {
         if (strpos($className, "Table") && class_exists($className)) {
@@ -25,6 +36,15 @@ final class AbstractTableFactory implements AbstractFactoryInterface
         return false;
     }
 
+    /**
+     * Create service with name
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param string $name
+     * @param string $requestedName
+     *
+     * @return object
+     */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $className)
     {
         return new $className($serviceLocator->get("Doctrine\ORM\EntityManager"));

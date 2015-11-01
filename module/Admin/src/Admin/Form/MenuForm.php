@@ -127,7 +127,7 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "caption",
                 'display_empty_item' => true,
-                'empty_item_label' => 'Please choose your menu',
+                'empty_item_label' => 'Please choose a language',
                 'is_method' => true,
                 'find_method' => [
                     'name' => 'getMenus',
@@ -215,13 +215,23 @@ final class MenuForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'id',
+            'options' => [
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Menu',
+                'property' => "id",
+            ],
         ]);
 
         $this->add([
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'menulink',
-            'attributes' => [
-                'id' => 'menulink',
+            'options' => [
+                'object_manager' => $this->entityManager,
+                'target_class' => 'Admin\Entity\Menu',
+                'property' => "menulink",
+                'option_attributes' => [
+                    'id' => 'menulink',
+                ],
             ],
         ]);
     }

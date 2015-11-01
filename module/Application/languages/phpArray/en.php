@@ -23,7 +23,7 @@ return [
     "CLONE_SUCCESS" => " was successfully cloned",
     "CONTENTS" => "Contents",
     "ADD_NEW_CONTENT" => "Add new content",
-    "EDIT_CONTENT" => "Save content",
+    "EDIT_CONTENT" => "Edit content",
     "DELETE_CONTENT_SUCCESS" => "Content was successfully deleted",
     "UPLOAD_SUCCESS" => "was successfully uploaded",
     "UPLOAD_FAIL" => "was not uploaded",

@@ -3925,16 +3925,16 @@
         },
         {
             "name": "san/san-session-toolbar",
-            "version": "0.2.0",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/samsonasik/SanSessionToolbar.git",
-                "reference": "c091c55b0c537cd65c14eebab5e6b4cf491cb5b5"
+                "reference": "a8cb9496ce61e518ec3260ae4b901db2034c6925"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/samsonasik/SanSessionToolbar/zipball/c091c55b0c537cd65c14eebab5e6b4cf491cb5b5",
-                "reference": "c091c55b0c537cd65c14eebab5e6b4cf491cb5b5",
+                "url": "https://api.github.com/repos/samsonasik/SanSessionToolbar/zipball/a8cb9496ce61e518ec3260ae4b901db2034c6925",
+                "reference": "a8cb9496ce61e518ec3260ae4b901db2034c6925",
                 "shasum": ""
             },
             "require": {
@@ -3983,7 +3983,7 @@
                 "session",
                 "zf2"
             ],
-            "time": "2015-07-22 16:50:32"
+            "time": "2015-10-31 19:26:30"
         },
         {
             "name": "satooshi/php-coveralls",

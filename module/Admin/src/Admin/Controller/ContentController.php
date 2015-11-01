@@ -11,7 +11,7 @@
 
 namespace Admin\Controller;
 
-use Admin\Model\Content;
+use Admin\Entity\Content;
 use Zend\View\Model\JsonModel;
 use Admin\Form\ContentForm;
 use Zend\File\Transfer\Adapter\Http;
@@ -30,14 +30,14 @@ final class ContentController extends BaseController
     ];
 
     /**
-     * @var ContentForm $contentForm
+     * @var ContentForm
      */
-    private $contentForm = null;
+    private $contentForm;
 
     /**
      * @param ContentForm $contentForm
      */
-    public function __construct(ContentForm $contentForm = null)
+    public function __construct(ContentForm $contentForm)
     {
         parent::__construct();
 
@@ -62,20 +62,23 @@ final class ContentController extends BaseController
     {
         $this->getView()->setTemplate("admin/content/index");
 
-        $paginator = $this->getTable("ContentTable");
+        $query = $this->getTable("Admin\Model\ContentTable");
+
         if ((int) $this->getParam("id", 0) === 1) {
-            $paginator->where(["type" => 1, "content.language" => $this->language()]);
-            $paginator->order("content.date DESC");
+            $q = $query->queryBuilder()->select(["c"])
+                   ->from('Admin\Entity\Content', 'c')
+                   ->where("c.type = 1 AND c.language = :language")
+                   ->setParameter(":language", (int) $this->language())
+                   ->orderBy("c.date DESC");
         } else {
-            $paginator->join("menu", "content.menu=menu.id", [], "inner");
-            $paginator->where(["type" => 0, "content.language" => $this->language()]);
-            $paginator->order("menu.parent ASC, menu.menuOrder ASC, content.date DESC");
+            $q = $query->queryBuilder()->getEntityManager()->createQuery("SELECT c FROM Admin\Entity\Content AS c INNER JOIN Admin\Entity\Menu AS m WITH c.menu=m.id WHERE c.type = 0 AND c.language = {$this->language()} ORDER BY m.parent ASC, m.menuOrder ASC, c.date DESC");
         }
 
-        $paginator = $paginator->fetchPagination();
+        $paginator = $query->preparePagination($q, false);
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
-        $paginator->setItemCountPerPage($this->systemSettings('posts', 'content'));
+        $paginator->setItemCountPerPage($this->systemSettings('posts', 'language'));
         $this->getView()->paginator = $paginator;
+
         return $this->getView();
     }
 
@@ -87,8 +90,9 @@ final class ContentController extends BaseController
     protected function addAction()
     {
         $this->getView()->setTemplate("admin/content/add");
-        $this->initForm($this->translate("ADD_NEW_CONTENT"), null);
+        $this->initForm();
         $this->addBreadcrumb(["reference"=>"/admin/content/add", "name"=>$this->translate("ADD_NEW_CONTENT")]);
+
         return $this->getView();
     }
 
@@ -103,10 +107,11 @@ final class ContentController extends BaseController
         $this->acceptableviewmodelselector($this->acceptCriteria);
 
         $this->getView()->setTemplate("admin/content/edit");
-        $content = $this->getTable("ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
+        $content = $this->getTable("Admin\Model\ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/edit/{$content->getId()}", "name"=> $this->translate("EDIT_CONTENT")." &laquo;".$content->getTitle()."&raquo;"]);
-        $this->initForm($this->translate("EDIT_CONTENT"), $content);
+        $this->initForm($content);
+
         return $this->getView();
     }
 
@@ -115,7 +120,7 @@ final class ContentController extends BaseController
      */
     protected function deleteAction()
     {
-        $this->getTable("ContentTable")->deleteContent((int)$this->getParam("id", 0), $this->language());
+        $this->getTable("Admin\Model\ContentTable")->deleteContent((int)$this->getParam("id", 0), $this->language());
         $this->setLayoutMessages($this->translate("DELETE_CONTENT_SUCCESS"), "success");
     }
 
@@ -127,40 +132,31 @@ final class ContentController extends BaseController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/content/detail");
-        $content = $this->getTable("ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
+        $content = $this->getTable("Admin\Model\ContentTable")->getContent((int)$this->getParam("id", 0), $this->language());
         $this->getView()->content = $content;
         $this->addBreadcrumb(["reference"=>"/admin/content/detail/".$content->getId()."", "name"=>"&laquo;". $content->getTitle()."&raquo; ".$this->translate("DETAILS")]);
+
         return $this->getView();
     }
 
     protected function deactivateAction()
     {
-        $this->getTable("ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), 0);
+        $this->getTable("Admin\Model\ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), $this->language(), 0);
         $this->setLayoutMessages($this->translate("CONTENT_DISABLE_SUCCESS"), "success");
     }
 
     protected function activateAction()
     {
-        $this->getTable("ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), 1);
+        $this->getTable("Admin\Model\ContentTable")->toggleActiveContent((int)$this->getParam("id", 0), $this->language(), 1);
         $this->setLayoutMessages($this->translate("CONTENT_ENABLE_SUCCESS"), "success");
-    }
-
-    /**
-     * This action will clone the object.
-     */
-    protected function cloneAction()
-    {
-        $this->getTable("ContentTable")->duplicate((int)$this->getParam("id", 0), $this->language());
-        $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("CLONE_SUCCESS"), "success");
     }
 
     /**
      * This is common function used by add and edit actions.
      *
-     * @param string $label button title
      * @param Content $content
      */
-    private function initForm($label = '', Content $content = null)
+    private function initForm(Content $content = null)
     {
         if (!$content instanceof Content) {
             $content = new Content([]);
@@ -171,7 +167,6 @@ final class ContentController extends BaseController
          */
         $form = $this->contentForm;
         $form->bind($content);
-        $form->get("submit")->setValue($label);
         $this->getView()->form = $form;
 
         return $this->form($form, $content);
@@ -197,17 +192,16 @@ final class ContentController extends BaseController
                 $userData = $this->UserData();
 
                 if ($userData->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
-                    $name = $userData->getIdentity()->name." ".$userData->getIdentity()->surname;
+                    $content->setAuthor($userData->getIdentity()->name." ".$userData->getIdentity()->surname);
                 } else {
-                    $name = "Admin";
+                    $content->setAuthor("Admin");
                 }
 
                 /*
                  * We only need the name. All images ar stored in the same folder, based on the month and year
                  */
-                $formData->setPreview($formData->getPreview()["name"]);
-                $formData->setAuthor($name);
-                $this->getTable("ContentTable")->saveContent($content);
+                $content->setPreview($formData->getPreview()["name"]);
+                $this->getTable("Admin\Model\ContentTable")->saveContent($content);
                 $this->setLayoutMessages("&laquo;".$content->getTitle()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
             } else {
                 $this->setLayoutMessages($form->getMessages(), "error");

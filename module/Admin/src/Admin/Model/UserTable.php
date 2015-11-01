@@ -13,6 +13,10 @@ namespace Admin\Model;
 
 use Admin\Exception\RuntimeException;
 use Doctrine\ORM\EntityManager;
+use Admin\Entity\User;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator as ZendPaginator;
 
 final class UserTable
 {
@@ -35,6 +39,17 @@ final class UserTable
     }
 
     /**
+     * @param Query|QueryBuilder $query               A Doctrine ORM query or query builder.
+     * @param boolean            $fetchJoinCollection Whether the query joins a collection (true by default).
+     *
+     * @return Paginator
+     */
+    public function preparePagination($query, $fetchJoinCollection = true)
+    {
+        return new ZendPaginator(new PaginatorAdapter(new ORMPaginator($query, $fetchJoinCollection)));
+    }
+
+    /**
      * @return Admin\Entity\User
      */
     public function getEntityRepository()
@@ -49,7 +64,7 @@ final class UserTable
      */
     public function getUser($id = 0)
     {
-        $user = $this->getEntityRepository()->find($id)
+        $user = $this->getEntityRepository()->find($id);
 
         if (empty($user)) {
             throw new RuntimeException("Couldn't find user");
@@ -66,48 +81,26 @@ final class UserTable
      */
     public function toggleUserState($id = 0, $state = 0)
     {
-        if ($this->getUser($id)) {
-            $this->update(["isDisabled" => (int) $state, 'admin' => 0], ['id' => (int) $id]);
+        $user = $this->getUser($id);
+        if ($user) {
+            $user->setDisabled((int) $state);
+            $user->setAdmin(0); // doesn't matter the $state. Remove user admin rights.
+            $this->saveUser($user);
         }
     }
 
     /**
      * Update user based on the provided id.
      *
-     * @param  User $use
-     *
-     * @throws RuntimeException
+     * @param User $user
      *
      * @return User
      */
     public function saveUser(User $user)
     {
-        $data = [
-            'name'       => (string) $user->getName(),
-            'surname'    => (string) $user->getSurname(),
-            'password'   => (string) $user->getPassword(),
-            'email'      => (string) $user->getemail(),
-            'birthDate'  => (string) $user->getBirthDate(),
-            'lastLogin'  => (string) $user->getLastLogin(),
-            'isDisabled'    => (int) $user->isDisabled(),
-            'image'      => (string) $user->getImage(),
-            'registered' => (string) $user->getRegistered(),
-            'hideEmail'  => (int) $user->getHideEmail(),
-            'ip'         => (string) $user->getIp(),
-            'admin'      => (int) $user->getAdmin(),
-            'language'   => (int) $user->getLanguage(),
-        ];
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
-        $id = (int) $user->getId();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if (!$this->getUser($id)) {
-                throw new RuntimeException("User not saved");
-            }
-            $this->update($data, ['id' =>(int)  $id]);
-        }
-        unset($id, $data);
         return $user;
     }
 }

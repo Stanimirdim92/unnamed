@@ -27,12 +27,12 @@
                 <a title='<?=$this->translate("EDIT_USER")?>' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "edit", "id" => $user->getId()])?>' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a>
             </li>
             <li class="table-cell flex-b">
-                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DISABLE")?>" id='<?=$user->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DISABLE")?>'><i class='fa fa-trash-o'></i></button>
+                <button role="button" aria-pressed="false" aria-label="<?=$this->translate("DISABLE")?>" id='<?=$user->getId()?>' type="button" class='btn btn-sm delete dialog_delete' title='<?=$this->translate("DISABLE")?>'><i class='fa fa-times'></i></button>
                 <div role="alertdialog" aria-labelledby="dialog<?=$user->getId()?>Title" class='delete_<?=$user->getId()?> dialog_hide'>
                    <p id="dialog<?=$user->getId()?>Title"><?=$this->translate("DISABLE_CONFIRM_TEXT")?> &laquo;<?=$user->getFullName()?>&raquo;</p>
                     <ul>
                         <li>
-                            <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "disable", "id" => $user->getId()])?>'><i class='fa fa-trash-o'></i> <?=$this->translate("DISABLE")?></a>
+                            <a class='btn delete' href='<?=$this->url("admin/default", ['controller' => "user", "action" => "disable", "id" => $user->getId()])?>'><i class='fa fa-times'></i> <?=$this->translate("DISABLE")?></a>
                         </li>
                         <li>
                             <button role="button" aria-pressed="false" aria-label="<?=$this->translate("CANCEL")?>" type="button" title='<?=$this->translate("CANCEL")?>' class='btn btn-default cancel'><i class='fa fa-times'></i> <?=$this->translate("CANCEL")?></button>

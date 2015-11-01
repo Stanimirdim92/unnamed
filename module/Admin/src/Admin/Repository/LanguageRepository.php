@@ -12,19 +12,17 @@
 namespace Admin\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Zend\Session\Container;
 
-class MenuRepository extends EntityRepository
+class LanguageRepository extends EntityRepository
 {
     /**
      * @return arrayobject
      */
-    public function getMenus()
+    public function getLanguages()
     {
-        $lang = new Container("translations");
-        return $this->createQueryBuilder('m')->select('m')
-                    ->where("m.active = 1 AND m.language = '{$lang->language}'")
-                    ->orderBy('m.parent', 'ASC')
+        return $this->createQueryBuilder('l')->select('l')
+                    ->where('l.active = 1')
+                    ->orderBy('l.id', 'ASC')
                     ->getQuery()->getResult();
     }
 }
