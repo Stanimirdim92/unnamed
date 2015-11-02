@@ -1,4 +1,9 @@
-# CHANGELOG
+# CHANGELOG #
+DD.MM.YYYY
+## 0.0.21 (13.10.2015) - Stable Alpha ##
+- Migrated to DoctrineORM
+- Fixed AbstractTableFactory
+
 DD.MM.YYYY
 ## 0.0.18 (13.10.2015) - Stable Alpha ##
 - Created Themes module. Now users can create their own themes with minimum configuration. There are still some updates to be maid, thought.
