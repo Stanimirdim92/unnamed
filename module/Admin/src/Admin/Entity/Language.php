@@ -87,6 +87,8 @@ final class Language
      * Set id.
      *
      * @param int
+     *
+     * @return $this
      */
     public function setId($id = 0)
     {
@@ -100,6 +102,8 @@ final class Language
      * Set name.
      *
      * @param null $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
@@ -121,7 +125,9 @@ final class Language
     /**
      * Set active.
      *
-     * @param Boolean $active
+     * @param bool|int $active
+     *
+     * @return $this
      */
     public function setActive($active = 0)
     {
@@ -138,17 +144,5 @@ final class Language
     public function isActive()
     {
         return $this->active;
-    }
-
-    /**
-     * This method is a copy constructor that will return a copy object (except for the id field).
-     * Note that this method will not save the object.
-     */
-    public function getCopy()
-    {
-        $copy = new self();
-        $copy->setName($this->getName());
-        $copy->setActive($this->isActive());
-        return $copy;
     }
 }

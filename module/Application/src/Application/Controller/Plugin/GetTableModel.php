@@ -36,10 +36,6 @@ final class GetTableModel extends AbstractPlugin
      */
     public function __invoke($tableName)
     {
-        if ($this->serviceLocator->has($tableName)) {
-            return $this->serviceLocator->get($tableName);
-        }
-
-        return;
+        return $this->serviceLocator->has($tableName) ? $this->serviceLocator->get($tableName) : null;
     }
 }

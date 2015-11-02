@@ -117,7 +117,7 @@ final class Image implements ImageInterface
      * @param string $imageFile
      * @param array  $options
      *
-     * @return ImageInteface
+     * @return self
      */
     public function open($imageFile, array $options = [])
     {
@@ -216,7 +216,7 @@ final class Image implements ImageInterface
      *
      * @param array $options
      *
-     * @return ImageInteface
+     * @return self
      */
     private function setOptions(array $options = [])
     {
@@ -253,7 +253,7 @@ final class Image implements ImageInterface
      *
      * Keys are normalized to lowercase.
      *
-     * Returns null for unfound options.
+     * Returns null for not found options.
      *
      * @param string $option
      *
@@ -266,7 +266,7 @@ final class Image implements ImageInterface
             return $this->options[$option];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -453,12 +453,12 @@ final class Image implements ImageInterface
     /**
      * Create the image with the given width and height.
      *
-     * @param int width
-     * @param int height
+     * @param int $width
+     * @param int $height
      *
      * @throws RuntimeException on invalid operation
      *
-     * @return ImageInteface
+     * @return self
      */
     public function resize($width = 1, $height = 1)
     {
@@ -471,7 +471,7 @@ final class Image implements ImageInterface
         imagealphablending($newImage, true);
 
         if (!imagecopyresampled($newImage, $this->getImageFile(), 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $oldImageDimensions['width'], $oldImageDimensions['height'])) {
-            throw new \RuntimeException('Image resizing has failed');
+            throw new RuntimeException('Image resizing has failed');
         }
 
         imagealphablending($this->getImageFile(), false);
@@ -583,7 +583,7 @@ final class Image implements ImageInterface
     /**
      * @return array
      */
-    private function wbmpOptions()
+    private function wBmpOptions()
     {
         $foreground = $this->getOption('foreground');
 

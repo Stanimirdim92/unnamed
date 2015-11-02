@@ -49,6 +49,9 @@ final class RegistrationController extends BaseController
         }
     }
 
+    /**
+     * @return \Zend\Http\Response
+     */
     public function processregistrationAction()
     {
         if (!$this->getRequest()->isPost()) {
@@ -70,7 +73,7 @@ final class RegistrationController extends BaseController
             /*
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("Admin\Model\UserTable")
+            $existingEmail = $this->getTable("Admin\\Model\\UserTable")
                                   ->getEntityRepository()
                                   ->findBy(["email" => $formData["email"]]);
 
@@ -85,7 +88,7 @@ final class RegistrationController extends BaseController
                 $registerUser->setIp($remote->getIpAddress());
                 $registerUser->setEmail($formData["email"]);
                 $registerUser->setLanguage($this->language());
-                $this->getTable("Admin\Model\UserTable")->saveUser($registerUser);
+                $this->getTable("Admin\\Model\\UserTable")->saveUser($registerUser);
                 return $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
             }
         } else {
@@ -94,7 +97,7 @@ final class RegistrationController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {

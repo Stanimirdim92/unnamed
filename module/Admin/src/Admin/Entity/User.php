@@ -366,7 +366,7 @@ final class User
      *
      * @param Boolean $hideEmail
      */
-    public function setHideEmail($hideEmail = 0)
+    public function setHideEmail($hideEmail = false)
     {
         $this->hideEmail = $hideEmail;
     }

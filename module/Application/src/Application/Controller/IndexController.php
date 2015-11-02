@@ -18,7 +18,7 @@ final class IndexController extends BaseController
     /**
      * Main websites view.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -34,7 +34,7 @@ final class IndexController extends BaseController
      */
     protected function languageAction()
     {
-        $language = $this->getTable("Admin\Model\LanguageTable")->getLanguage((int) $this->getParam("id", 1));
+        $language = $this->getTable("Admin\\Model\\LanguageTable")->getLanguage((int) $this->getParam("id", 1));
 
         $this->getTranslation()->language = $language->getId();
         $this->getTranslation()->languageName = $language->getName();

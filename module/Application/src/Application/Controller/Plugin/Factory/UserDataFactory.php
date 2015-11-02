@@ -18,6 +18,10 @@ class UserDataFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return UserData
      */
     public function __invoke(PluginManager $pluginManager)
     {

@@ -90,8 +90,6 @@ final class ErrorHandling
     /**
      * @param MvcEvent $event
      * @param ServiceLocatorInterface $sm
-     *
-     * @return MvcEvent
      */
     public function logError(MvcEvent $event, ServiceLocatorInterface $sm)
     {
@@ -113,14 +111,11 @@ final class ErrorHandling
         );
         $event->getViewModel()->setTemplate('error/index');
         $event->stopPropagation();
-
-        return $event;
     }
 
     /**
      * @param MvcEvent $event
      * @param ServiceLocatorInterface $sm
-     * @todo add user data such as id and name
      *
      * @return ErrorHandling
      */

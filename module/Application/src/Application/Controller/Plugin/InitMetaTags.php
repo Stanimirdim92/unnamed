@@ -22,22 +22,22 @@ final class InitMetaTags extends AbstractPlugin
     /**
      * @var Placeholder
      */
-    private $placeholder = null;
+    private $placeholder;
 
     /**
      * @var HeadMeta
      */
-    private $headMeta = null;
+    private $headMeta;
 
     /**
      * @var Request
      */
-    private $request = null;
+    private $request;
 
     /**
      * @var SystemSettings
      */
-    private $settings = null;
+    private $settings;
 
     /**
      * @param Placeholder $placeholder

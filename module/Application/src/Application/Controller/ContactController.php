@@ -32,7 +32,7 @@ final class ContactController extends BaseController
     /**
      * Simple contact form.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {

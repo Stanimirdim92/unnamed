@@ -43,7 +43,7 @@ final class AdminMenuController extends BaseController
     public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
-        $this->adminMenuTable = $this->getTable("Admin\Model\AdminMenuTable");
+        $this->adminMenuTable = $this->getTable("Admin\\Model\\AdminMenuTable");
 
         parent::onDispatch($event);
     }
@@ -51,7 +51,7 @@ final class AdminMenuController extends BaseController
     /**
      * This action shows the list of all admin menus.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -80,7 +80,7 @@ final class AdminMenuController extends BaseController
     /**
      * This action serves for adding a new admin menus.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function addAction()
     {
@@ -95,7 +95,7 @@ final class AdminMenuController extends BaseController
      * This action presents a edit form for AdminMenu with a given id.
      * Upon POST the form is processed and saved.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function editAction()
     {
@@ -118,7 +118,7 @@ final class AdminMenuController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function detailAction()
     {

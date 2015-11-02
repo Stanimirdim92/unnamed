@@ -22,14 +22,14 @@ use Zend\Session\Container;
 final class Module implements ConfigProviderInterface, BootstrapListenerInterface, InitProviderInterface
 {
     /**
-     * @var \Zend\getServiceManager\ServiceManager
+     * @var \Zend\ServiceManager\ServiceManager
      */
     private $service;
 
     /**
      * Setup module layout.
      *
-     * @param $moduleManager ModuleManager
+     * @param $moduleManager ModuleManagerInterface
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
@@ -46,6 +46,7 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      * Listen to the bootstrap event.
      *
      * @param EventInterface $event
+     * @return array|void
      */
     public function onBootstrap(EventInterface $event)
     {
@@ -67,14 +68,12 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      * Log errors.
      *
      * @param EventInterface $event
-     *
-     * @return void
      */
     public function onError(EventInterface $event)
     {
         $service = $this->service->get('ErrorHandling');
         $service->logError($event, $this->service);
-        return $event->stopPropagation();
+        $event->stopPropagation();
     }
 
     /**
@@ -100,10 +99,10 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
         /*
          * Load page title
          */
-        $action = ($route->getParam('post') ? ' - '.$route->getParam('post') : ucfirst($route->getParam('__CONTROLLER__')));
+        $action = ($route->getParam('post') ? ' - ' . $route->getParam('post') : ucfirst($route->getParam('__CONTROLLER__')));
 
         $headTitleHelper = $viewHelper->get('headTitle');
-        $headTitleHelper->append($title->__invoke('general', 'site_name')." ".$action);
+        $headTitleHelper->append($title->__invoke('general', 'site_name') . " " . $action);
     }
 
     /**
@@ -111,6 +110,6 @@ final class Module implements ConfigProviderInterface, BootstrapListenerInterfac
      */
     public function getConfig()
     {
-        return include __DIR__.'/config/module.config.php';
+        return include __DIR__ . '/config/module.config.php';
     }
 }

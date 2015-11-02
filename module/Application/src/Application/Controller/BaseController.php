@@ -63,11 +63,11 @@ class BaseController extends AbstractActionController
     /**
      * Initialize menus and their submenus. 1 query to rule them all!
      *
-     * @return void
+     * @return ViewModel
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Admin\Model\MenuTable")
+        $menu = $this->getTable("Admin\\Model\\MenuTable")
                      ->getEntityRepository()
                      ->findBy(["active" => 1, "language" => $this->language()], ['parent' => "DESC"]);
 
@@ -159,7 +159,7 @@ class BaseController extends AbstractActionController
      *
      * @return Container
      */
-    final protected function getTranslation()
+    protected function getTranslation()
     {
         return $this->translation;
     }

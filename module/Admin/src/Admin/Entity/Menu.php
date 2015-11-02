@@ -99,7 +99,7 @@ final class Menu
      *
      * @ORM\Column(name="active", type="smallint", nullable=false)
      */
-    private $active = 1;
+    private $active = true;
 
     /**
      * @var string
@@ -209,7 +209,7 @@ final class Menu
      *
      * @param Boolean $active
      */
-    public function setActive($active = 0)
+    public function setActive($active = true)
     {
         $this->active = $active;
     }

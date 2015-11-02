@@ -38,7 +38,7 @@ final class GD implements GDInterface
     /**
      * Load GD library.
      *
-     * @throws RuntimeException if gd_info doesn't exists
+     * @throws BadMethodCallException if gd_info doesn't exists
      */
     private function loadGDInfo()
     {
@@ -54,7 +54,7 @@ final class GD implements GDInterface
      *
      * @param string $version
      *
-     * @throws RuntimeException on invalid version
+     * @throws InvalidArgumentException on invalid version
      */
     private function checkGDVersion($version = '2.0.1')
     {
@@ -84,7 +84,7 @@ final class GD implements GDInterface
             return $this->gd['FreeType Linkage'];
         }
 
-        return;
+        return null;
     }
 
     /**

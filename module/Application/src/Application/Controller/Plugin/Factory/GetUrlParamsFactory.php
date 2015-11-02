@@ -18,6 +18,10 @@ class GetUrlParamsFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return GetUrlParams
      */
     public function __invoke(PluginManager $pluginManager)
     {

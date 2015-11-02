@@ -33,6 +33,7 @@ final class SystemSettings extends AbstractPlugin
      * Shorthand method for requesting global system settings.
      *
      * @param string $option
+     * @param string $value
      *
      * @return string
      */
@@ -59,7 +60,7 @@ final class SystemSettings extends AbstractPlugin
      *
      * Keys are normalized to lowercase.
      *
-     * Returns null for unfound options.
+     * Returns null for not found options.
      *
      * @param string $key
      * @param string $value
@@ -70,10 +71,6 @@ final class SystemSettings extends AbstractPlugin
     {
         $key = strtolower($key);
         $value = strtolower($value);
-        if (array_key_exists($value, $this->options[$key])) {
-            return $this->options[$key][$value];
-        }
-
-        return;
+        return array_key_exists($value, $this->options[$key]) ? $this->options[$key][$value] : null;
     }
 }

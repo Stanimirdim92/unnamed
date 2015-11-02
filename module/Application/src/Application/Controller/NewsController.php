@@ -16,13 +16,13 @@ final class NewsController extends BaseController
     /**
      * Get the contents for all the news.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
         $this->getView()->setTemplate("application/news/index");
 
-        $query = $this->getTable("Admin\Model\ContentTable");
+        $query = $this->getTable("Admin\\Model\\ContentTable");
         $news = $query->queryBuilder()->select(["c"])
                ->from('Admin\Entity\Content', 'c')
                ->where("c.type = 1 AND c.menu = 0 AND c.language = :language")
@@ -37,10 +37,9 @@ final class NewsController extends BaseController
         return $this->getView();
     }
 
+
     /**
-     * Get the contents for one newspost.
-     *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function postAction()
     {
@@ -48,7 +47,7 @@ final class NewsController extends BaseController
 
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         $post = (string) $escaper->escapeUrl($this->getParam("post"));
-        $query = $this->getTable("Admin\Model\ContentTable");
+        $query = $this->getTable("Admin\\Model\\ContentTable");
         $new = $query->queryBuilder()->select(["c.title, c.text, c.date, c.preview"])
                ->from('Admin\Entity\Content', 'c')
                ->where("c.type = 1 AND c.menu = 0 AND c.language = :language AND c.titleLink = :titleLink")

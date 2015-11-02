@@ -16,13 +16,13 @@ final class MenuController extends BaseController
     /**
      * Get the contents for the menu/submenu.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function postAction()
     {
         $this->getView()->setTemplate("application/menu/post");
 
-        $contents = $this->getTable("Admin\Model\ContentTable")->queryBuilder();
+        $contents = $this->getTable("Admin\\Model\\ContentTable")->queryBuilder();
         $contents->select('m.menulink, m.parent, m.keywords, m.description', 'c.menu, c.text, c.id, c.title, c.preview')
                  ->from('Admin\Entity\Menu', 'm')
                  ->innerJoin(

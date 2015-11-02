@@ -18,6 +18,10 @@ class SystemSettingsFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return SystemSettings
      */
     public function __invoke(PluginManager $pluginManager)
     {

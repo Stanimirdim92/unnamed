@@ -41,6 +41,8 @@ final class UserController extends BaseController
 
     /**
      * @param MvcEvent $event
+     *
+     * @return mixed|void
      */
     public function onDispatch(MvcEvent $event)
     {
@@ -53,7 +55,7 @@ final class UserController extends BaseController
     /**
      * This action shows the list with all users.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -76,7 +78,7 @@ final class UserController extends BaseController
      * This action presents a edit form for User object with a given id.
      * Upon POST the form is processed and saved.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function editAction()
     {
@@ -131,7 +133,7 @@ final class UserController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function disabledAction()
     {
@@ -173,7 +175,7 @@ final class UserController extends BaseController
     /**
      * this action shows user details from the provided id.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function detailAction()
     {
@@ -230,7 +232,7 @@ final class UserController extends BaseController
     }
 
     /**
-     * Used to generade buttons for every user row
+     * Used to generate buttons for every user row
      *
      * @method htmlButtons
      *

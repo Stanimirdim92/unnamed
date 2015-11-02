@@ -53,11 +53,13 @@ final class ContentController extends BaseController
 
     /**
      * @param MvcEvent $event
+     *
+     * @return mixed|void
      */
     public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/content", "name"=>$this->translate("CONTENTS")]);
-        $this->contentTable = $this->getTable("Admin\Model\ContentTable");
+        $this->contentTable = $this->getTable("Admin\\Model\\ContentTable");
 
         parent::onDispatch($event);
     }
@@ -65,7 +67,7 @@ final class ContentController extends BaseController
     /**
      * This action shows the list of all contents.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -95,7 +97,7 @@ final class ContentController extends BaseController
     /**
      * This action serves for adding a new object of type Content.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function addAction()
     {
@@ -110,7 +112,7 @@ final class ContentController extends BaseController
      * This action presents a edit form for Content object with a given id and session language.
      * Upon POST the form is processed and saved.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function editAction()
     {
@@ -137,7 +139,7 @@ final class ContentController extends BaseController
     /**
      * this action shows content details.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function detailAction()
     {
@@ -323,7 +325,7 @@ final class ContentController extends BaseController
         foreach ($adapter->getFileInfo() as $key => $file) {
             if ($key != "preview") {
                 if (!$adapter->isValid($file["name"])) {
-                    foreach ($adapter->getMessages() as $key => $msg) {
+                    foreach ($adapter->getMessages() as $msg) {
                         $uploadStatus["errorFiles"][] = $file["name"]." ".strtolower($msg);
                     }
                 }

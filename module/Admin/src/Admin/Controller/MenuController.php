@@ -42,7 +42,7 @@ final class MenuController extends BaseController
     public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>$this->translate("MENUS")]);
-        $this->menuTable = $this->getTable("Admin\Model\MenuTable");
+        $this->menuTable = $this->getTable("Admin\\Model\\MenuTable");
 
         parent::onDispatch($event);
     }
@@ -58,8 +58,8 @@ final class MenuController extends BaseController
                      ->getEntityRepository()
                      ->findBy(["language" => $this->language()], ['parent' => "DESC"]);
 
+        $menus = ['menus' => [], 'submenus' => []];
         if (count($menu) > 0) {
-            $menus = ['menus' => [], 'submenus' => []];
 
             foreach ($menu as $submenus) {
                 $menus['menus'][$submenus->getId()] = $submenus;
@@ -123,7 +123,7 @@ final class MenuController extends BaseController
     /**
      * This action shows the list with all menus.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -137,7 +137,7 @@ final class MenuController extends BaseController
     /**
      * This action serves for adding a new menu
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function addAction()
     {
@@ -152,7 +152,7 @@ final class MenuController extends BaseController
      * This action presents a edit form for Menu object with a given id.
      * Upon POST the form is processed and saved.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function editAction()
     {
@@ -190,7 +190,7 @@ final class MenuController extends BaseController
     /**
      * This action shows menu details from the provided id and session language.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function detailAction()
     {

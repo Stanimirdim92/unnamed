@@ -21,7 +21,7 @@ final class Module implements ConfigProviderInterface, InitProviderInterface
     /**
      * Setup module layout.
      *
-     * @param  $moduleManager ModuleManager
+     * @param  $moduleManager ModuleManagerInterface
      */
     public function init(ModuleManagerInterface $moduleManager)
     {

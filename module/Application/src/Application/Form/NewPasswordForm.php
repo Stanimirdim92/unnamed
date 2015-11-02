@@ -37,6 +37,9 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
                 'size' => 30,
                 'placeholder' => '1234567890',
             ],
+            'options' => [
+                'label' => "Password",
+            ],
             ]
         );
 
@@ -50,7 +53,7 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
                 'placeholder' => '1234567890',
             ],
             'options' => [
-                'label' => "Password",
+                'label' => "Repeat password",
             ],
             ]
         );
@@ -63,9 +66,6 @@ final class NewPasswordForm extends Form implements InputFilterProviderInterface
                 'csrf_options' => [
                     'timeout' => 320,
                 ],
-            ],
-            'options' => [
-                'label' => "Repeat password",
             ],
             ]
         );

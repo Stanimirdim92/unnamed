@@ -72,6 +72,8 @@ final class SettingsController extends BaseController
 
     /**
      * @param MvcEvent $event
+     *
+     * @return mixed|void
      */
     public function onDispatch(MvcEvent $event)
     {
@@ -80,7 +82,7 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function generalAction()
     {
@@ -92,7 +94,7 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function registrationAction()
     {
@@ -104,7 +106,7 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function mailAction()
     {
@@ -116,7 +118,7 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function postsAction()
     {
@@ -128,7 +130,7 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function discussionAction()
     {

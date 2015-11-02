@@ -37,8 +37,8 @@ interface ImageInterface
     /**
      * Create the image with the given width and height.
      *
-     * @param int width
-     * @param int height
+     * @param int $width
+     * @param int $height
      */
     public function resize($width = 1, $height = 1);
 

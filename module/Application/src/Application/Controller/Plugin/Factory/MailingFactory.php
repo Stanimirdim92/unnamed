@@ -18,6 +18,10 @@ class MailingFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return Mailing
      */
     public function __invoke(PluginManager $pluginManager)
     {

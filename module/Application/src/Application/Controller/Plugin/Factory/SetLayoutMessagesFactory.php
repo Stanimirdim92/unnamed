@@ -18,6 +18,10 @@ class SetLayoutMessagesFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return SetLayoutMessages
      */
     public function __invoke(PluginManager $pluginManager)
     {

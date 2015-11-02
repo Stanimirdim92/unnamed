@@ -18,7 +18,7 @@ use Application\Entity\ResetPassword;
 final class ResetPasswordTable
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
 
@@ -28,7 +28,7 @@ final class ResetPasswordTable
     }
 
     /**
-     * @return Doctrine\ORM\QueryBuilder
+     * @return \Doctrine\ORM\QueryBuilder
      */
     public function queryBuilder()
     {
@@ -36,52 +36,53 @@ final class ResetPasswordTable
     }
 
     /**
-     * @return Admin\Entity\ResetPassword
+     * @return \Application\Entity\ResetPassword
      */
     public function getEntityRepository()
     {
-        return $this->entityManager->getRepository("Application\Entity\ResetPassword");
+        return $this->entityManager->getRepository("Application\\Entity\\ResetPassword");
     }
 
     /**
      * This method returns a single row which verifies that this is the user that needs to reset his password.
      *
-     * @param int $id password id
      * @param int $id user id
      *
-     * @throws RuntimeException If row is not found
+     * @param int $user
+     * @return ResetPassword If row is not found
      *
-     * @return ResetPassword
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getResetPassword($id = 0, $user = 0)
     {
-        $resetpw = $this->queryBuilder();
-        $resetpw->select(["r"]);
-        $resetpw->from('Application\Entity\ResetPassword', 'r');
-        $resetpw->where("r.id = :id AND r.user = :user");
-        $resetpw->setParameter(':id', (int) $id);
-        $resetpw->setParameter(':user', (int) $user);
-        $resetpw = $resetpw->getQuery()->getSingleResult();
+        $resetPassword = $this->queryBuilder();
+        $resetPassword->select(["r"]);
+        $resetPassword->from('Application\Entity\ResetPassword', 'r');
+        $resetPassword->where("r.id = :id AND r.user = :user");
+        $resetPassword->setParameter(':id', (int) $id);
+        $resetPassword->setParameter(':user', (int) $user);
+        $resetPassword = $resetPassword->getQuery()->getSingleResult();
 
-        if (empty($resetpw)) {
+        if (empty($resetPassword)) {
             throw new RuntimeException("Couldn't find record");
         }
 
-        return $resetpw;
+        return $resetPassword;
     }
 
     /**
      * Save or update password based on the provided id.
      *
-     * @param ResetPassword $resetpassword
+     * @param ResetPassword $resetPassword
      *
      * @return ResetPassword
      */
-    public function saveResetPassword(ResetPassword $resetpw)
+    public function saveResetPassword(ResetPassword $resetPassword)
     {
-        $this->entityManager->persist($resetpw);
+        $this->entityManager->persist($resetPassword);
         $this->entityManager->flush();
 
-        return $resetpw;
+        return $resetPassword;
     }
 }

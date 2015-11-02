@@ -46,6 +46,8 @@ class BaseController extends AbstractActionController
 
     /**
      * @param MvcEvent $event
+     *
+     * @return mixed|void
      */
     public function onDispatch(MvcEvent $event)
     {
@@ -62,11 +64,11 @@ class BaseController extends AbstractActionController
     /**
      * Initialize menus and their submenus. 1 query to rule them all!
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     private function initMenus()
     {
-        $menu = $this->getTable("Admin\Model\AdminMenuTable")
+        $menu = $this->getTable("Admin\\Model\\AdminMenuTable")
                      ->getEntityRepository()
                      ->findAll();
 
@@ -149,7 +151,7 @@ class BaseController extends AbstractActionController
      * 2. Else go to Login Controller and attempt to login as [u]real[/u] admin. Just in case log every access to login controller.
      * 3. On success run this function. If all went fine, access admin else clear identity and create log.
      *
-     * @throws AuthorizationException If wrong credentials or not in administrator table
+     * @throws \Admin\Exception\AuthorizationException If wrong credentials or not in administrator table
      *
      * @todo create a bruteforce protection for failed login attempts.
      *
@@ -160,7 +162,7 @@ class BaseController extends AbstractActionController
         $auth = $this->UserData();
         if ($auth->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
             $userId = $auth->getIdentity()["id"];
-            $adminExist = $this->getTable("Admin\Model\AdministratorTable")
+            $adminExist = $this->getTable("Admin\\Model\\AdministratorTable")
                                         ->queryBuilder()
                                         ->getEntityManager()
                                         ->createQuery("SELECT a.user, u.name FROM Admin\Entity\Administrator AS a LEFT JOIN Admin\Entity\User AS u WITH a.user=u.id WHERE u.id = {$userId} AND u.admin = 1")->getResult();
@@ -189,7 +191,7 @@ class BaseController extends AbstractActionController
      *
      * @return Container
      */
-    final protected function getTranslation()
+    protected function getTranslation()
     {
         return $this->translation;
     }

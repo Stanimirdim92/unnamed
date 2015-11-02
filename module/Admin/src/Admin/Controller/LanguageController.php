@@ -41,11 +41,13 @@ final class LanguageController extends BaseController
 
     /**
      * @param MvcEvent $event
+     *
+     * @return mixed|void
      */
     public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/language", "name"=>$this->translate("LANGUAGE")]);
-        $this->languageTable = $this->getTable("Admin\Model\LanguageTable");
+        $this->languageTable = $this->getTable("Admin\\Model\\LanguageTable");
 
         parent::onDispatch($event);
     }
@@ -53,7 +55,7 @@ final class LanguageController extends BaseController
     /**
      * This action shows the list of all (or filtered) Language objects.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     public function indexAction()
     {
@@ -75,7 +77,7 @@ final class LanguageController extends BaseController
     /**
      * This action serves for adding a new object of type Language.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function addAction()
     {
@@ -90,7 +92,7 @@ final class LanguageController extends BaseController
      * This action presents a edit form for Language object with a given id.
      * Upon POST the form is processed and saved.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function editAction()
     {
@@ -115,7 +117,7 @@ final class LanguageController extends BaseController
     /**
      * this action shows language details from the provided id.
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function detailAction()
     {
@@ -134,7 +136,7 @@ final class LanguageController extends BaseController
      *
      * @throws RunTimeException if no file is found
      *
-     * @return ViewModel
+     * @return \Zend\View\Model\ViewModel
      */
     protected function translationsAction()
     {
@@ -164,13 +166,14 @@ final class LanguageController extends BaseController
             file_put_contents($filename, '<?php return ' . var_export($arr2, true).';');
             $this->setLayoutMessages($this->translate("TRANSLATIONS_SAVE_SUCCESS"), "success");
         }
+
         return $this->getView();
     }
 
     /**
      * This is common function used by add and edit actions (to avoid code duplication).
      *
-     * @param Language $language object
+     * @param Language $language
      */
     private function initForm(Language $language = null)
     {

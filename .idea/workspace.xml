@@ -1,0 +1,1257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="512dd800-76b4-43f9-bbfd-cf2d4df91449" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdminMenuController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdminMenuController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdministratorController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdministratorController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/BaseController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/BaseController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/BaseController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/BaseController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/ContactController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/ContactController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/ContentController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/ContentController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/ErrorHandling.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/ErrorHandling.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/GD.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/GD.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/GetTableModel.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/GetTableModel.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/GetUrlParamsFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/GetUrlParamsFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Image.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Image.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/ImageInterface.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/ImageInterface.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/IndexController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/IndexController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/IndexController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/IndexController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/InitMetaTags.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/InitMetaTags.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/InitMetaTagsFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/InitMetaTagsFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Language.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Language.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/LanguageController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/LanguageController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/LoginController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/LoginController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/MailingFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/MailingFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Menu.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Menu.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/MenuController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/MenuController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/MenuController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/MenuController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/Module.php" afterPath="$PROJECT_DIR$/module/Admin/Module.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/Module.php" afterPath="$PROJECT_DIR$/module/Application/Module.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Form/NewPasswordForm.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Form/NewPasswordForm.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/NewsController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/NewsController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/RegistrationController.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/RegistrationController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Entity/ResetPassword.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Entity/ResetPassword.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Model/ResetPasswordTable.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Model/ResetPasswordTable.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SetLayoutMessagesFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SetLayoutMessagesFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/SettingsController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/SettingsController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/SystemSettings.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/SystemSettings.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SystemSettingsFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SystemSettingsFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/TranslateFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/TranslateFactory.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/User.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Entity/User.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/UserController.php" afterPath="$PROJECT_DIR$/module/Admin/src/Admin/Controller/UserController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/UserData.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/UserData.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/UserDataFactory.php" afterPath="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/UserDataFactory.php" />
+    </list>
+    <ignored path="unnamed.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DatabaseView">
+    <option name="FLATTEN" value="false" />
+    <option name="GROUP_BY_TYPE" value="true" />
+    <option name="SORT_CHILDREN" value="false" />
+    <option name="SHOW_TABLE_CONSTRAINTS" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="unnamed" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="Administrator.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Administrator.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-9.807693">
+              <caret line="15" column="3" selection-start-line="15" selection-start-column="3" selection-end-line="15" selection-end-column="3" />
+              <folding>
+                <element signature="e#7#183#0#PHP" expanded="true" />
+                <element signature="e#712#925#0#PHP" expanded="true" />
+                <element signature="e#978#1059#0#PHP" expanded="true" />
+                <element signature="e#1110#1210#0#PHP" expanded="true" />
+                <element signature="e#1251#1312#0#PHP" expanded="true" />
+                <element signature="e#1352#1419#0#PHP" expanded="true" />
+                <element signature="e#1495#1570#0#PHP" expanded="true" />
+                <element signature="e#1641#1706#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AdminMenu.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/AdminMenu.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="68.65385">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Content.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Content.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GD.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/GD.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-7.8461537">
+              <caret line="19" column="7" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+              <folding>
+                <element signature="e#210#253#0#PHP" expanded="true" />
+                <element signature="e#560#689#0#PHP" expanded="true" />
+                <element signature="e#806#1015#0#PHP" expanded="true" />
+                <element signature="e#1180#1418#0#PHP" expanded="true" />
+                <element signature="e#1499#1593#0#PHP" expanded="true" />
+                <element signature="e#1689#1862#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Menu.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Menu.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.013539651">
+              <caret line="94" column="22" selection-start-line="94" selection-start-column="22" selection-end-line="94" selection-end-column="22" />
+              <folding>
+                <element signature="e#4626#4712#0#PHP" expanded="true" />
+                <element signature="e#4783#4851#0#PHP" expanded="true" />
+                <element signature="e#4929#5020#0#PHP" expanded="true" />
+                <element signature="e#5093#5166#0#PHP" expanded="true" />
+                <element signature="e#5240#5323#0#PHP" expanded="true" />
+                <element signature="e#5394#5463#0#PHP" expanded="true" />
+                <element signature="e#5544#5631#0#PHP" expanded="true" />
+                <element signature="e#5703#5776#0#PHP" expanded="true" />
+                <element signature="e#5861#5960#0#PHP" expanded="true" />
+                <element signature="e#6035#6114#0#PHP" expanded="true" />
+                <element signature="e#6192#6283#0#PHP" expanded="true" />
+                <element signature="e#6356#6429#0#PHP" expanded="true" />
+                <element signature="e#6515#6622#0#PHP" expanded="true" />
+                <element signature="e#6699#6780#0#PHP" expanded="true" />
+                <element signature="e#6859#6946#0#PHP" expanded="true" />
+                <element signature="e#7019#7092#0#PHP" expanded="true" />
+                <element signature="e#7167#7242#0#PHP" expanded="true" />
+                <element signature="e#7311#7378#0#PHP" expanded="true" />
+                <element signature="e#7455#7798#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/composer.json" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Entity/ResetPassword.php" />
+        <option value="$PROJECT_DIR$/vendor/zendframework/zend-view/src/Model/ViewModel.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/LoginController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/RegistrationController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/BaseController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/NewsController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/MenuController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/IndexController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/ErrorHandling.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/ContactController.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/GetTableModel.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/InitMetaTags.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/SystemSettings.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Mailing.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/UserData.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Form/NewPasswordForm.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Model/ResetPasswordTable.php" />
+        <option value="$PROJECT_DIR$/module/Application/Module.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/GetUrlParamsFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/InitMetaTagsFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/MailingFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SetLayoutMessagesFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SystemSettingsFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/TranslateFactory.php" />
+        <option value="$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/UserDataFactory.php" />
+        <option value="$PROJECT_DIR$/module/Admin/Module.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdministratorController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdminMenuController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/BaseController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/ContentController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/IndexController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/LanguageController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/MenuController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/SettingsController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Controller/UserController.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/GD.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Image.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/ImageInterface.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Language.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/Menu.php" />
+        <option value="$PROJECT_DIR$/module/Admin/src/Admin/Entity/User.php" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <gulpfiles>
+      <GulpfileState>
+        <gulpfile-path>$PROJECT_DIR$/gulpfile.js</gulpfile-path>
+        <tasks>
+          <GulpTaskState>
+            <task-name>styles-f</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>scripts-f</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>images-f</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>styles-b</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>scripts-b</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>images-b</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <task-name>watch</task-name>
+          </GulpTaskState>
+          <GulpTaskState>
+            <dependencies>
+              <dependency value="images-b" />
+              <dependency value="images-f" />
+              <dependency value="styles-f" />
+              <dependency value="styles-b" />
+              <dependency value="scripts-f" />
+              <dependency value="scripts-b" />
+              <dependency value="watch" />
+            </dependencies>
+            <task-name>default</task-name>
+          </GulpTaskState>
+        </tasks>
+      </GulpfileState>
+    </gulpfiles>
+  </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
+  <component name="PhpServers">
+    <servers />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1382" />
+    <option name="height" value="744" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Blade files</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="1" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Controller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Entity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="unnamed" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="module" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.tools" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="FullScreen" value="false" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="AppEnginePhpConfigurationType" factoryName="App Engine for PHP">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+      <method />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="512dd800-76b4-43f9-bbfd-cf2d4df91449" name="Default" comment="" />
+      <created>1446494167536</created>
+      <option name="number" value="Default" />
+      <updated>1446494167536</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3407155" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952693" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34094617" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24392097" sideWeight="0.16840278" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24392097" sideWeight="0.8315972" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/vendor/zendframework/zend-servicemanager/src/ServiceLocatorInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.09864604">
+          <caret line="9" column="29" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/GetTableModel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.1179883">
+          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding>
+            <element signature="e#227#273#0#PHP" expanded="false" />
+            <element signature="e#554#690#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/GetUrlParams.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5261122">
+          <caret line="25" column="28" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/InitMetaTags.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3326886">
+          <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
+          <folding>
+            <element signature="e#227#273#0#PHP" expanded="false" />
+            <element signature="e#880#1223#0#PHP" expanded="false" />
+            <element signature="e#1359#4176#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/SystemSettings.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.663443">
+          <caret line="51" column="27" selection-start-line="51" selection-start-column="27" selection-end-line="51" selection-end-column="27" />
+          <folding>
+            <element signature="e#501#598#0#PHP" expanded="false" />
+            <element signature="e#1481#1704#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Mailing.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52998066">
+          <caret line="34" column="7" selection-start-line="34" selection-start-column="7" selection-end-line="34" selection-end-column="7" />
+          <folding>
+            <element signature="e#227#273#0#PHP" expanded="false" />
+            <element signature="e#868#1065#0#PHP" expanded="false" />
+            <element signature="e#1323#2887#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Translate.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5918762">
+          <caret line="34" column="21" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
+          <folding>
+            <element signature="e#227#273#0#PHP" expanded="false" />
+            <element signature="e#500#611#0#PHP" expanded="false" />
+            <element signature="e#692#798#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/UserData.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.26692456">
+          <caret line="67" column="20" selection-start-line="67" selection-start-column="20" selection-end-line="67" selection-end-column="20" />
+          <folding>
+            <element signature="e#1729#2377#0#PHP" expanded="false" />
+            <element signature="e#2420#2504#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Form/ContactForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3288201">
+          <caret line="20" column="33" selection-start-line="20" selection-start-column="33" selection-end-line="20" selection-end-column="33" />
+          <folding>
+            <element signature="e#427#513#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Form/LoginForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Form/NewPasswordForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5396518">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#1950#3495#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Form/RegistrationForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Form/ResetPasswordForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Model/ResetPasswordTable.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13539653">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#804#943#0#PHP" expanded="false" />
+            <element signature="e#1301#1919#0#PHP" expanded="false" />
+            <element signature="e#2084#2285#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/Module.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.4139266">
+          <caret line="89" column="53" selection-start-line="89" selection-start-column="53" selection-end-line="89" selection-end-column="53" />
+          <folding>
+            <element signature="e#7#183#0#PHP" expanded="false" />
+            <element signature="e#209#242#0#PHP" expanded="false" />
+            <element signature="e#827#1154#0#PHP" expanded="false" />
+            <element signature="e#1027#1137#1#PHP" expanded="false" />
+            <element signature="e#1283#1922#0#PHP" expanded="false" />
+            <element signature="e#2006#2208#0#PHP" expanded="false" />
+            <element signature="e#3299#3400#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/ErrorCodes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.384615">
+          <caret line="33" column="84" selection-start-line="33" selection-start-column="84" selection-end-line="33" selection-end-column="84" />
+          <folding>
+            <element signature="e#631#793#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/ErrorCodesFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.730769">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding>
+            <element signature="e#235#280#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/FunctionsFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.5">
+          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+          <folding>
+            <element signature="e#347#445#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/GetTableModelFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5918762">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/GetUrlParamsFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3752418">
+          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+          <folding>
+            <element signature="e#235#282#0#PHP" expanded="false" />
+            <element signature="e#477#663#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/InitMetaTagsFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.46034816">
+          <caret line="24" column="7" selection-start-line="24" selection-start-column="7" selection-end-line="24" selection-end-column="7" />
+          <folding>
+            <element signature="e#477#1526#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/MailingFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3752418">
+          <caret line="22" column="7" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
+          <folding>
+            <element signature="e#235#277#0#PHP" expanded="false" />
+            <element signature="e#462#749#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SetLayoutMessagesFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3617021">
+          <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+          <folding>
+            <element signature="e#235#287#0#PHP" expanded="false" />
+            <element signature="e#492#778#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/SystemSettingsFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50676984">
+          <caret line="27" column="47" selection-start-line="27" selection-start-column="47" selection-end-line="27" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/UserDataFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50676984">
+          <caret line="25" column="48" selection-start-line="25" selection-start-column="48" selection-end-line="25" selection-end-column="48" />
+          <folding>
+            <element signature="e#465#653#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/Plugin/Factory/TranslateFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34235978">
+          <caret line="20" column="6" selection-start-line="18" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#474#724#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/config/module.config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3617021">
+          <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/template_map.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.19729207">
+          <caret line="6" column="30" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/Module.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.2166344">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#203#240#0#PHP" expanded="false" />
+            <element signature="e#586#904#0#PHP" expanded="false" />
+            <element signature="e#786#887#1#PHP" expanded="false" />
+            <element signature="e#960#1059#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/config/module.config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2630561">
+          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/IndexController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2514507">
+          <caret line="20" column="41" selection-start-line="20" selection-start-column="15" selection-end-line="20" selection-end-column="41" />
+          <folding>
+            <element signature="e#7#183#0#PHP" expanded="true" />
+            <element signature="e#413#554#0#PHP" expanded="true" />
+            <element signature="e#691#1033#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Application/src/Application/Controller/BaseController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.845261">
+          <caret line="132" column="7" selection-start-line="132" selection-start-column="7" selection-end-line="132" selection-end-column="7" />
+          <folding>
+            <element signature="e#220#269#0#PHP" expanded="true" />
+            <element signature="e#536#886#0#PHP" expanded="true" />
+            <element signature="e#938#1451#0#PHP" expanded="true" />
+            <element signature="e#1575#3169#0#PHP" expanded="true" />
+            <element signature="e#3461#4226#0#PHP" expanded="true" />
+            <element signature="e#4567#4947#0#PHP" expanded="true" />
+            <element signature="e#5024#5092#0#PHP" expanded="true" />
+            <element signature="e#5239#5321#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdministratorController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34235978">
+          <caret line="94" column="41" selection-start-line="94" selection-start-column="15" selection-end-line="94" selection-end-column="41" />
+          <folding>
+            <element signature="e#214#245#0#PHP" expanded="true" />
+            <element signature="e#736#900#0#PHP" expanded="true" />
+            <element signature="e#985#1350#0#PHP" expanded="true" />
+            <element signature="e#1478#1911#0#PHP" expanded="true" />
+            <element signature="e#2050#2343#0#PHP" expanded="true" />
+            <element signature="e#2546#3041#0#PHP" expanded="true" />
+            <element signature="e#3106#3498#0#PHP" expanded="true" />
+            <element signature="e#3696#5090#0#PHP" expanded="true" />
+            <element signature="e#5251#6960#0#PHP" expanded="true" />
+            <marker date="1446498712123" expanded="true" signature="-1:-1" placeholder="SELECT a.use..Admin..." />
+            <marker date="1446498712123" expanded="true" signature="-1:-1" placeholder="SELECT a.use..Admin..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/AdminMenuController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6711799">
+          <caret line="45" column="18" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
+          <folding>
+            <element signature="e#214#241#0#PHP" expanded="true" />
+            <element signature="e#573#721#0#PHP" expanded="true" />
+            <element signature="e#1177#1941#0#PHP" expanded="true" />
+            <element signature="e#2068#2350#0#PHP" expanded="true" />
+            <element signature="e#2542#3042#0#PHP" expanded="true" />
+            <element signature="e#3124#3339#0#PHP" expanded="true" />
+            <element signature="e#3403#3886#0#PHP" expanded="true" />
+            <element signature="e#4039#4829#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/ContentController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8027079">
+          <caret line="345" column="0" selection-start-line="345" selection-start-column="0" selection-end-line="345" selection-end-column="0" />
+          <folding>
+            <element signature="e#214#239#0#PHP" expanded="true" />
+            <element signature="e#913#1053#0#PHP" expanded="true" />
+            <element signature="e#1138#1408#0#PHP" expanded="true" />
+            <element signature="e#1530#2706#0#PHP" expanded="true" />
+            <element signature="e#2844#3119#0#PHP" expanded="true" />
+            <element signature="e#3337#3899#0#PHP" expanded="true" />
+            <element signature="e#3959#4187#0#PHP" expanded="true" />
+            <element signature="e#4300#4762#0#PHP" expanded="true" />
+            <element signature="e#4768#5010#0#PHP" expanded="true" />
+            <element signature="e#5016#5255#0#PHP" expanded="true" />
+            <element signature="e#5376#5744#0#PHP" expanded="true" />
+            <element signature="e#5829#7182#0#PHP" expanded="true" />
+            <element signature="e#7229#7471#0#PHP" expanded="true" />
+            <element signature="e#7604#8062#0#PHP" expanded="true" />
+            <element signature="e#8250#9206#0#PHP" expanded="true" />
+            <element signature="e#9288#9887#0#PHP" expanded="true" />
+            <element signature="e#9966#10919#0#PHP" expanded="true" />
+            <marker date="1446498992310" expanded="true" signature="-1:-1" placeholder="SELECT c FRO..Admin..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/BaseController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7369439">
+          <caret line="172" column="9" selection-start-line="172" selection-start-column="9" selection-end-line="172" selection-end-column="9" />
+          <folding>
+            <element signature="e#214#263#0#PHP" expanded="true" />
+            <element signature="e#683#1033#0#PHP" expanded="true" />
+            <element signature="e#1118#1380#0#PHP" expanded="true" />
+            <element signature="e#1521#2306#0#PHP" expanded="true" />
+            <element signature="e#2598#3387#0#PHP" expanded="true" />
+            <element signature="e#3728#4108#0#PHP" expanded="true" />
+            <element signature="e#4163#4281#0#PHP" expanded="true" />
+            <element signature="e#5797#5871#0#PHP" expanded="true" />
+            <element signature="e#6018#6100#0#PHP" expanded="true" />
+            <marker date="1446498884724" expanded="true" signature="-1:-1" placeholder="SELECT a.use..Admin..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/IndexController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5396518">
+          <caret line="34" column="51" selection-start-line="34" selection-start-column="51" selection-end-line="34" selection-end-column="51" />
+          <folding>
+            <element signature="e#367#502#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/MenuController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.2823985">
+          <caret line="221" column="43" selection-start-line="221" selection-start-column="43" selection-end-line="221" selection-end-column="43" />
+          <folding>
+            <element signature="e#214#236#0#PHP" expanded="true" />
+            <element signature="e#510#637#0#PHP" expanded="true" />
+            <element signature="e#689#947#0#PHP" expanded="true" />
+            <element signature="e#1068#1620#0#PHP" expanded="true" />
+            <element signature="e#1806#5081#0#PHP" expanded="true" />
+            <element signature="e#5202#5391#0#PHP" expanded="true" />
+            <element signature="e#5510#5780#0#PHP" expanded="true" />
+            <element signature="e#5974#6397#0#PHP" expanded="true" />
+            <element signature="e#6403#6685#0#PHP" expanded="true" />
+            <element signature="e#6691#6970#0#PHP" expanded="true" />
+            <element signature="e#7066#7285#0#PHP" expanded="true" />
+            <element signature="e#7437#7880#0#PHP" expanded="true" />
+            <marker date="1446499130538" expanded="false" signature="-1:-1" placeholder="..." />
+            <marker date="1446499130538" expanded="false" signature="-1:-1" placeholder="..." />
+            <marker date="1446499130538" expanded="false" signature="-1:-1" placeholder="..." />
+            <marker date="1446499130538" expanded="false" signature="-1:-1" placeholder="..." />
+            <marker date="1446499130538" expanded="false" signature="-1:-1" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/LanguageController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.7524178">
+          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding>
+            <element signature="e#214#240#0#PHP" expanded="true" />
+            <element signature="e#859#1132#0#PHP" expanded="true" />
+            <element signature="e#1276#1860#0#PHP" expanded="true" />
+            <element signature="e#1999#2273#0#PHP" expanded="true" />
+            <element signature="e#2471#2955#0#PHP" expanded="true" />
+            <element signature="e#3042#3254#0#PHP" expanded="true" />
+            <element signature="e#3389#3818#0#PHP" expanded="true" />
+            <element signature="e#4210#5380#0#PHP" expanded="true" />
+            <element signature="e#5531#6392#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/UserController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.065764025">
+          <caret line="82" column="35" selection-start-line="82" selection-start-column="34" selection-end-line="82" selection-end-column="35" />
+          <folding>
+            <element signature="e#2020#2461#0#PHP" expanded="true" />
+            <element signature="e#7874#9711#0#PHP" expanded="true" />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1446499285440" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Controller/SettingsController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.102514505">
+          <caret line="86" column="38" selection-start-line="86" selection-start-column="37" selection-end-line="86" selection-end-column="38" />
+          <folding>
+            <element signature="e#1153#1663#0#PHP" expanded="true" />
+            <element signature="e#1748#1941#0#PHP" expanded="true" />
+            <element signature="e#2005#2196#0#PHP" expanded="true" />
+            <element signature="e#3058#3272#0#PHP" expanded="true" />
+            <element signature="e#3350#4384#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Administrator.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.807693">
+          <caret line="15" column="3" selection-start-line="15" selection-start-column="3" selection-end-line="15" selection-end-column="3" />
+          <folding>
+            <element signature="e#7#183#0#PHP" expanded="true" />
+            <element signature="e#712#925#0#PHP" expanded="true" />
+            <element signature="e#978#1059#0#PHP" expanded="true" />
+            <element signature="e#1110#1210#0#PHP" expanded="true" />
+            <element signature="e#1251#1312#0#PHP" expanded="true" />
+            <element signature="e#1352#1419#0#PHP" expanded="true" />
+            <element signature="e#1495#1570#0#PHP" expanded="true" />
+            <element signature="e#1641#1706#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/AdminMenu.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="68.65385">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Content.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/GDInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.2959381">
+          <caret line="19" column="7" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Image.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42746615">
+          <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+          <folding>
+            <element signature="e#210#253#0#PHP" expanded="true" />
+            <element signature="e#2439#3449#0#PHP" expanded="true" />
+            <element signature="e#5345#5563#0#PHP" expanded="true" />
+            <element signature="e#10618#11406#0#PHP" expanded="true" />
+            <element signature="e#11525#12338#0#PHP" expanded="true" />
+            <element signature="e#12381#12862#0#PHP" expanded="true" />
+            <element signature="e#12905#13838#0#PHP" expanded="true" />
+            <element signature="e#13879#14163#0#PHP" expanded="true" />
+            <element signature="e#14206#14473#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/ImageInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2959381">
+          <caret line="40" column="19" selection-start-line="40" selection-start-column="19" selection-end-line="40" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Language.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.0058026">
+          <caret line="79" column="7" selection-start-line="79" selection-start-column="7" selection-end-line="79" selection-end-column="7" />
+          <folding>
+            <element signature="e#1584#1645#0#PHP" expanded="true" />
+            <element signature="e#1735#1825#0#PHP" expanded="true" />
+            <element signature="e#1925#2019#0#PHP" expanded="true" />
+            <element signature="e#2087#2152#0#PHP" expanded="true" />
+            <element signature="e#2259#2365#0#PHP" expanded="true" />
+            <element signature="e#2436#2504#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/GD.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.8461537">
+          <caret line="19" column="7" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+          <folding>
+            <element signature="e#210#253#0#PHP" expanded="true" />
+            <element signature="e#560#689#0#PHP" expanded="true" />
+            <element signature="e#806#1015#0#PHP" expanded="true" />
+            <element signature="e#1180#1418#0#PHP" expanded="true" />
+            <element signature="e#1499#1593#0#PHP" expanded="true" />
+            <element signature="e#1689#1862#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/User.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.3423598">
+          <caret line="309" column="5" selection-start-line="309" selection-start-column="5" selection-end-line="309" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/module/Admin/src/Admin/Entity/Menu.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.013539651">
+          <caret line="94" column="22" selection-start-line="94" selection-start-column="22" selection-end-line="94" selection-end-column="22" />
+          <folding>
+            <element signature="e#4626#4712#0#PHP" expanded="true" />
+            <element signature="e#4783#4851#0#PHP" expanded="true" />
+            <element signature="e#4929#5020#0#PHP" expanded="true" />
+            <element signature="e#5093#5166#0#PHP" expanded="true" />
+            <element signature="e#5240#5323#0#PHP" expanded="true" />
+            <element signature="e#5394#5463#0#PHP" expanded="true" />
+            <element signature="e#5544#5631#0#PHP" expanded="true" />
+            <element signature="e#5703#5776#0#PHP" expanded="true" />
+            <element signature="e#5861#5960#0#PHP" expanded="true" />
+            <element signature="e#6035#6114#0#PHP" expanded="true" />
+            <element signature="e#6192#6283#0#PHP" expanded="true" />
+            <element signature="e#6356#6429#0#PHP" expanded="true" />
+            <element signature="e#6515#6622#0#PHP" expanded="true" />
+            <element signature="e#6699#6780#0#PHP" expanded="true" />
+            <element signature="e#6859#6946#0#PHP" expanded="true" />
+            <element signature="e#7019#7092#0#PHP" expanded="true" />
+            <element signature="e#7167#7242#0#PHP" expanded="true" />
+            <element signature="e#7311#7378#0#PHP" expanded="true" />
+            <element signature="e#7455#7798#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

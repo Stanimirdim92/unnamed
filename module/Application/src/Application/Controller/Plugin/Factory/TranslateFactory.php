@@ -18,6 +18,10 @@ final class TranslateFactory
 {
     /**
      * @{inheritDoc}
+     *
+     * @param PluginManager $pluginManager
+     *
+     * @return Translate
      */
     public function __invoke(PluginManager $pluginManager)
     {
