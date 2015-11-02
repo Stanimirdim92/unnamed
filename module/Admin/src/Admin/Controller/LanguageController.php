@@ -58,13 +58,13 @@ final class LanguageController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/language/index");
-        $query = $this->languageTable;
+        $table = $this->languageTable;
 
-        $q = $query->queryBuilder()
+        $query = $table->queryBuilder()
                    ->select(["l"])
                    ->from('Admin\Entity\Language', 'l');
 
-        $paginator = $query->preparePagination($q, false);
+        $paginator = $table->preparePagination($query, false);
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage($this->systemSettings('posts', 'language'));
         $this->getView()->paginator = $paginator;

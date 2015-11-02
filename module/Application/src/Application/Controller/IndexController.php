@@ -12,7 +12,6 @@
 namespace Application\Controller;
 
 use Application\Controller\BaseController;
-use Zend\Mvc\MvcEvent;
 
 final class IndexController extends BaseController
 {

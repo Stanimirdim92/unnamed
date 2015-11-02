@@ -123,7 +123,7 @@ final class Menu
         $this->menutype = (isset($data['menutype'])) ? $data['menutype'] : $this->getMenuType();
         $this->footercolumn = (isset($data['footercolumn'])) ? $data['footercolumn'] : $this->getFooterColumn();
         $this->menulink = (isset($data['menulink'])) ? $data['menulink'] : $this->getMenuLink();
-        $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
+        $this->active = (isset($data['active'])) ? $data['active'] : $this->isActive();
         $this->class = (isset($data['class'])) ? $data['class'] : $this->getClass();
     }
 
@@ -219,7 +219,7 @@ final class Menu
      *
      * @return Boolean
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }

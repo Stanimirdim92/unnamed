@@ -16,7 +16,7 @@
         <ul class="table-row">
             <li class="table-cell"><?=$language->getName()?></li>
             <li class="table-cell">
-                <?php if (($language->getActive())) {?><i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i><?php } ?></li>
+                <?php if (($language->isActive())) {?><i class='fa fa-check'></i> <?php } else {  ?> <i class='fa fa-times'></i><?php } ?></li>
             <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DETAILS")?>' class='btn blue btn-sm' href='<?=$this->url("admin/default", ['controller' => "language", "action" => "detail", "id" => $language->getId()])?>'><i class='fa fa-info'></i></a>
             </li>

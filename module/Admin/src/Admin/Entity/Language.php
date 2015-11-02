@@ -52,7 +52,7 @@ final class Language
     {
         $this->id = (isset($data['id'])) ? $data['id'] : $this->getId();
         $this->name = (isset($data['name'])) ? $data['name'] : $this->getName();
-        $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
+        $this->active = (isset($data['active'])) ? $data['active'] : $this->isActive();
     }
 
     /**
@@ -135,7 +135,7 @@ final class Language
      *
      * @return Boolean
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
@@ -148,7 +148,7 @@ final class Language
     {
         $copy = new self();
         $copy->setName($this->getName());
-        $copy->setActive($this->getActive());
+        $copy->setActive($this->isActive());
         return $copy;
     }
 }

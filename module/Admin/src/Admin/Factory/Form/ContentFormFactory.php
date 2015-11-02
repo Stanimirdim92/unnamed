@@ -12,7 +12,6 @@
 namespace Admin\Factory\Form;
 
 use Admin\Form\ContentForm;
-use Zend\Session\Container;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 final class ContentFormFactory

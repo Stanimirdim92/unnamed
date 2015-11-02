@@ -91,7 +91,7 @@ final class MenuController extends BaseController
                 $output .= "<li class='table-cell flex-2'>{$menu['menus'][$id]->getCaption()}</li>";
                 $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DETAILS')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/detail/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm blue'><i class='fa fa-info'></i></a></li>";
                 $output .= "<li class='table-cell flex-b'><a title='{$this->translate('EDIT')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/edit/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm orange'><i class='fa fa-pencil'></i></a></li>";
-                if ($menu['menus'][$id]->getActive() == 0) {
+                if ($menu['menus'][$id]->isActive() == 0) {
                     $output .= "<li class='table-cell flex-b'><a title='{$this->translate('DEACTIVATED')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/activate/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm deactivated'><i class='fa fa-minus-square-o'></i></a></li>";
                 } else {
                     $output .= "<li class='table-cell flex-b'><a title='{$this->translate('ACTIVE')}' hreflang='{$this->language("languageName")}' itemprop='url' href='/admin/menu/deactivate/{$escaper->escapeUrl($menu['menus'][$id]->getId())}' class='btn btn-sm active'><i class='fa fa fa-check-square-o'></i></a></li>";

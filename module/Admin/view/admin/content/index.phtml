@@ -28,7 +28,7 @@
                 </a>
             </li>
 <?php
-        if ($content->getActive() == 0) {
+        if ($content->isActive() == 0) {
 ?>
             <li class="table-cell flex-b">
                 <a title='<?=$this->translate("DEACTIVATED");?>' href='<?=$this->url("admin/default", ["controller" => "content", "action" => "activate", "id" => $content->getId()])?>' class='btn btn-sm deactivated'>

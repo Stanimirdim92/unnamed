@@ -58,13 +58,13 @@ final class UserController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/user/index");
-        $query = $this->userTable;
-        $q = $query->queryBuilder()
+        $table = $this->userTable;
+        $query = $table->queryBuilder()
                    ->select(["u"])
                    ->from('Admin\Entity\User', 'u')
                    ->where("u.isDisabled = 0");
 
-        $paginator = $query->preparePagination($q, false);
+        $paginator = $table->preparePagination($query, false);
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));
         $paginator->setItemCountPerPage($this->systemSettings('posts', 'user'));
         $this->getView()->paginator = $paginator;

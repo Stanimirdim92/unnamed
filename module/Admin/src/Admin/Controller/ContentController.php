@@ -71,18 +71,18 @@ final class ContentController extends BaseController
     {
         $this->getView()->setTemplate("admin/content/index");
 
-        $query = $this->contentTable;
+        $table = $this->contentTable;
 
         if ((int) $this->getParam("id", 0) === 1) {
-            $q = $query->queryBuilder()->select(["c"])
+            $query = $table->queryBuilder()->select(["c"])
                    ->from('Admin\Entity\Content', 'c')
                    ->where("c.type = 1 AND c.language = :language")
                    ->setParameter(":language", (int) $this->language())
                    ->orderBy("c.date DESC");
-            $paginator = $query->preparePagination($q, false);
+            $paginator = $table->preparePagination($query, false);
         } else {
-            $q = $query->queryBuilder()->getEntityManager()->createQuery("SELECT c FROM Admin\Entity\Content AS c LEFT JOIN Admin\Entity\Menu AS m WITH c.menu=m.id WHERE c.type = 0 AND c.language = {$this->language()} ORDER BY m.parent ASC, m.menuOrder ASC, c.date DESC");
-            $paginator = $query->preparePagination($q, true);
+            $query = $table->queryBuilder()->getEntityManager()->createQuery("SELECT c FROM Admin\Entity\Content AS c LEFT JOIN Admin\Entity\Menu AS m WITH c.menu=m.id WHERE c.type = 0 AND c.language = {$this->language()} ORDER BY m.parent ASC, m.menuOrder ASC, c.date DESC");
+            $paginator = $table->preparePagination($query, true);
         }
 
         $paginator->setCurrentPageNumber((int)$this->getParam("page", 1));

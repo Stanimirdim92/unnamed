@@ -122,7 +122,7 @@ final class Content
         $this->date = (isset($data['date'])) ? $data['date'] : $this->getDate();
         $this->language = (isset($data['language'])) ? $data['language'] : $this->getLanguage();
         $this->titleLink = (isset($data['titleLink'])) ? $data['titleLink'] :  $this->getTitleLink();
-        $this->active = (isset($data['active'])) ? $data['active'] : $this->getActive();
+        $this->active = (isset($data['active'])) ? $data['active'] : $this->isActive();
         $this->author = (isset($data['author'])) ? $data['author'] : $this->getAuthor();
     }
 
@@ -259,7 +259,7 @@ final class Content
      *
      * @return Boolean
      */
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
