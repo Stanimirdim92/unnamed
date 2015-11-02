@@ -508,7 +508,7 @@ final class Image implements ImageInterface
         $options = [$this->getImageFile(), $path.DIRECTORY_SEPARATOR.$fileName];
 
         $opt = $this->checkFormatOptions();
-        foreach ($opt as $key => $option) {
+        foreach ($opt as $option) {
             $options[] = $option;
         }
 

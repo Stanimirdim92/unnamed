@@ -61,29 +61,29 @@ final class AdministratorTable
     }
 
     /**
-     * @param int $id user id
+     * @param int $adminId user id
      *
      * @return Administrator
      */
-    public function getAdministrator($id = 0)
+    public function getAdministrator($adminId = 0)
     {
-        $administrator = $this->getEntityRepository()->findBy(["user" => $id]);
+        $administrator = $this->getEntityRepository()->findBy(["user" => $adminId]);
 
         if (empty($administrator)) {
             throw new RuntimeException("Couldn't find administrator");
         }
 
-        return $administrator;
+        return $administrator[0];
     }
 
     /**
      * Delete a administrator based on the provided user id.
      *
-     * @param int $id user id
+     * @param int $adminId user id
      */
-    public function deleteAdministrator($id = 0)
+    public function deleteAdministrator($adminId = 0)
     {
-        $administrator = $this->getAdministrator($id);
+        $administrator = $this->getAdministrator($adminId);
 
         if ($administrator) {
             $this->entityManager->remove($administrator[0]);

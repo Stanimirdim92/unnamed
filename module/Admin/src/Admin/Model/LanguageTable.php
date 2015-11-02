@@ -61,31 +61,31 @@ final class LanguageTable
     }
 
     /**
-     * @param int $id
+     * @param int $languageId
      *
      * @throws RuntimeException
      *
      * @return Language
      */
-    public function getLanguage($id = 0)
+    public function getLanguage($languageId = 0)
     {
-        $language = $this->getEntityRepository()->find($id);
+        $language = $this->getEntityRepository()->find($languageId);
 
         if (empty($language)) {
             throw new RuntimeException("Couldn't find language");
         }
 
-        return $language;
+        return $language[0];
     }
 
     /**
-     * @param int $id
+     * @param int $languageId
      *
      * @return Language
      */
-    public function deleteLanguage($id = 0)
+    public function deleteLanguage($languageId = 0)
     {
-        $language = $this->getLanguage($id);
+        $language = $this->getLanguage($languageId);
         if ($language) {
             $this->entityManager->remove($language);
             $this->entityManager->flush();

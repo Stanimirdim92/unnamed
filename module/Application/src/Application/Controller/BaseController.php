@@ -40,16 +40,16 @@ class BaseController extends AbstractActionController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         $userData = $this->UserData();
         if ($userData->checkIdentity(false)) {
             $this->getView()->identity = $userData->getIdentity();
         }
 
-        parent::onDispatch($e);
+        parent::onDispatch($event);
         $this->initMenus();
 
         /*
@@ -79,12 +79,13 @@ class BaseController extends AbstractActionController
             }
 
             $output = "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/'>{$this->translate("HOME")}</a></li>";
+            $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/news'>{$this->translate("NEWS")}</a></li>";
             if ($this->UserData()->checkIdentity(false)) {
                 $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login/logout'>{$this->translate("SIGN_OUT")}</a></li>";
             } else {
                 $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/login'>{$this->translate("SIGN_IN")}</a></li>";
+                $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
             }
-            $output .= "<li role='menuitem'><a hreflang='{$this->language("languageName")}' itemprop='url' href='/registration'>{$this->translate("SIGN_UP")}</a></li>";
 
             $this->getView()->menu = $this->generateMenu(0, $menus, "menubar", $output);
         }
@@ -132,13 +133,13 @@ class BaseController extends AbstractActionController
      */
     final protected function language($offset = "language")
     {
-        $offset = 1;
         if ($this->getTranslation()->offSetExists($offset)) {
-            $offset = $this->getTranslation()->offSetGet($offset);
+            return $this->getTranslation()->offSetGet($offset);
         } elseif ($this->getTranslation()->offSetExists("language")) {
-            $offset = $this->getTranslation()->offSetGet("language");
+            return $this->getTranslation()->offSetGet("language");
+        } else {
+            return 1;
         }
-        return $offset;
     }
 
     /**

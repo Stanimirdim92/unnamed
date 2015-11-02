@@ -21,17 +21,23 @@ final class MenuController extends BaseController
     protected function postAction()
     {
         $this->getView()->setTemplate("application/menu/post");
-        $escaper = new \Zend\Escaper\Escaper('utf-8');
 
-        $contents = $this->getTable("ContentTable");
-        $contents->columns(["menu", "text", "id", "title", "titleLink", "preview"]);
-        $contents->join("menu", "content.menu=menu.id", ["parent", "keywords", "description"], "inner");
-        $contents->where(["menu.menulink" => (string) $escaper->escapeUrl($this->getParam("post")), "content.type" => 0, "content.language" => $this->language()], "AND");
-        $contents->order("menu.parent ASC, menu.menuOrder ASC");
-        $contents = $contents->fetch();
+        $contents = $this->getTable("Admin\Model\ContentTable")->queryBuilder();
+        $contents->select('m.menulink, m.parent, m.keywords, m.description', 'c.menu, c.text, c.id, c.title, c.preview')
+                 ->from('Admin\Entity\Menu', 'm')
+                 ->innerJoin(
+                    'Admin\Entity\Content',
+                    'c',
+                    \Doctrine\ORM\Query\Expr\Join::WITH,
+                    'c.menu = m.id'
+                 )
+                 ->where("m.menulink = :menulink AND c.type = 0 AND c.language = :language")
+                 ->setParameter(":menulink", (string) $this->getParam("post"))
+                 ->setParameter(":language", (int) $this->language());
 
+        $contents = $contents->getQuery()->getResult();
         if ($contents) {
-            $this->initMetaTags($contents->getDataSource()->current());
+            $this->initMetaTags($contents[0]);
             $this->getView()->contents = $contents;
         }
 

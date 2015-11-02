@@ -12,6 +12,8 @@
 namespace Application\Model;
 
 use Application\Exception\RuntimeException;
+use Doctrine\ORM\EntityManager;
+use Application\Entity\ResetPassword;
 
 final class ResetPasswordTable
 {
@@ -38,7 +40,7 @@ final class ResetPasswordTable
      */
     public function getEntityRepository()
     {
-        return $this->entityManager->getRepository("Admin\Entity\ResetPassword");
+        return $this->entityManager->getRepository("Application\Entity\ResetPassword");
     }
 
     /**
@@ -53,52 +55,33 @@ final class ResetPasswordTable
      */
     public function getResetPassword($id = 0, $user = 0)
     {
-        $rowset = $this->select(['id' => (int) $id, 'user' => (int) $user]);
-        if (!$rowset->current()) {
-            throw new RuntimeException("Couldn't find row");
-        }
-        return $rowset->current();
+        $resetpw = $this->queryBuilder();
+        $resetpw->select(["r"]);
+        $resetpw->from('Application\Entity\ResetPassword', 'r');
+        $resetpw->where("r.id = :id AND r.user = :user");
+        $resetpw->setParameter(':id', (int) $id);
+        $resetpw->setParameter(':user', (int) $user);
+        $resetpw = $resetpw->getQuery()->getSingleResult();
 
-         $menu = $this->queryBuilder();
-        $menu->select(["m"]);
-        $menu->from('Admin\Entity\Menu', 'm');
-        $menu->where("m.id = :id AND m.language = :language");
-        $menu->setParameter(':id', (int) $id);
-        $menu->setParameter(':language', (int) $language);
-        $menu = $menu->getQuery()->getSingleResult();
-
-        if (empty($menu)) {
-            throw new RuntimeException("Couldn't find row");
+        if (empty($resetpw)) {
+            throw new RuntimeException("Couldn't find record");
         }
 
-        return $menu;
+        return $resetpw;
     }
 
     /**
      * Save or update password based on the provided id.
      *
-     * @param  ResetPassword $resetpassword
+     * @param ResetPassword $resetpassword
      *
      * @return ResetPassword
      */
     public function saveResetPassword(ResetPassword $resetpw)
     {
-        $data = [
-            'ip'    => (string) $resetpw->getIp(),
-            'user'  => (int) $resetpw->getUser(),
-            'date'  => (string) $resetpw->getDate(),
-            'token' => (string) $resetpw->getToken(),
-        ];
-        $id = (int) $resetpw->getId();
-        $user = (int) $resetpw->getUser();
-        if (!$id) {
-            $this->insert($data);
-        } else {
-            if ($this->getResetPassword($id, $user)) {
-                $this->update($data, ['id' => (int) $id, 'user' => (int) $user]);
-            }
-        }
-        unset($id, $user, $data);
+        $this->entityManager->persist($resetpw);
+        $this->entityManager->flush();
+
         return $resetpw;
     }
 }

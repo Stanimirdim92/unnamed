@@ -37,14 +37,14 @@ final class MenuController extends BaseController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/menu", "name"=>$this->translate("MENUS")]);
         $this->menuTable = $this->getTable("Admin\Model\MenuTable");
 
-        parent::onDispatch($e);
+        parent::onDispatch($event);
     }
 
     /**

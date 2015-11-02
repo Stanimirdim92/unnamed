@@ -19,12 +19,12 @@ use Zend\Authentication\AuthenticationService;
 final class UserData extends AbstractPlugin
 {
     /**
-     * @var AuthenticationService $auth
+     * @var AuthenticationService
      */
     private $auth;
 
     /**
-     * @var Redirect $redirect
+     * @var Redirect
      */
     private $redirect;
 
@@ -67,12 +67,10 @@ final class UserData extends AbstractPlugin
      *
      * @return mixed
      */
-    public function checkIdentity($redirect = true, $errorString = "ERROR", $url = "/")
+    public function checkIdentity($redirect = true, $errorString = "Error", $url = "/")
     {
         if ($this->auth->hasIdentity()) {
-            if (!empty($this->auth->getIdentity()->role) &&
-              ((int) $this->auth->getIdentity()->role === 1 || (int) $this->auth->getIdentity()->role === 10) &&
-              isset($this->auth->getIdentity()->logged) && $this->auth->getIdentity()->logged === true) {
+            if (isset($this->auth->getIdentity()["id"])) {
                 /*
                  * If everything went fine, just return true and let the user access the requested area or make a redirect
                  */
@@ -87,7 +85,7 @@ final class UserData extends AbstractPlugin
     }
 
     /**
-     * @return \stdClass
+     * @return array
      */
     public function getIdentity()
     {

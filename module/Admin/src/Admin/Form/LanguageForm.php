@@ -45,11 +45,11 @@ final class LanguageForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Language',
                 'property' => "name",
-                'option_attributes' => [
-                    'required'   => "true",
-                    'size'        => "40",
-                    'placeholder' => 'Name',
-                ],
+            ],
+            'attributes' => [
+                'required'   => "true",
+                'size'        => "40",
+                'placeholder' => 'Name',
             ],
             ]
         );

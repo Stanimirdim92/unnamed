@@ -58,20 +58,20 @@ final class ContentTable
     }
 
     /**
-     * @param int $id content id
+     * @param int $contentId content id
      * @param int $language user language
      *
      * @throws RuntimeException If content is not found
      *
      * @return Content
      */
-    public function getContent($id = 0, $language = 1)
+    public function getContent($contentId = 0, $language = 1)
     {
         $content = $this->queryBuilder();
         $content->select(["c"]);
         $content->from('Admin\Entity\Content', 'c');
         $content->where("c.id = :id AND c.language = :language");
-        $content->setParameter(':id', (int) $id);
+        $content->setParameter(':id', (int) $contentId);
         $content->setParameter(':language', (int) $language);
         $content = $content->getQuery()->getSingleResult();
 
@@ -85,12 +85,12 @@ final class ContentTable
     /**
      * Delete content based on the provided id and language.
      *
-     * @param int $id content id
+     * @param int $contentId content id
      * @param int $language user language
      */
-    public function deleteContent($id = 0, $language = 1)
+    public function deleteContent($contentId = 0, $language = 1)
     {
-        $content = $this->getContent($id, $language);
+        $content = $this->getContent($contentId, $language);
         if ($content) {
             $this->entityManager->remove($content);
             $this->entityManager->flush();
@@ -115,13 +115,13 @@ final class ContentTable
     /**
      * This method can disable or enable contents.
      *
-     * @param int $id content id
+     * @param int $contentId content id
      * @param int $language user language
      * @param  int $state 0 - deactivated, 1 - active
      */
-    public function toggleActiveContent($id = 0,  $language = 1, $state = 0)
+    public function toggleActiveContent($contentId = 0,  $language = 1, $state = 0)
     {
-        $menu = $this->getContent($id, $language);
+        $menu = $this->getContent($contentId, $language);
 
         if ($menu) {
             $menu->setActive((int) $state);

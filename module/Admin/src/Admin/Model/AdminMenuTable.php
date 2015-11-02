@@ -61,15 +61,15 @@ final class AdminMenuTable
     }
 
     /**
-     * @param int $id adminmenu id
+     * @param int $adminMenuId adminmenu id
      *
      * @throws RuntimeException If adminmenu is not found
      *
      * @return AdminMenu
      */
-    public function getAdminMenu($id = 0)
+    public function getAdminMenu($adminMenuId = 0)
     {
-        $adminMenu = $this->getEntityRepository()->find($id);
+        $adminMenu = $this->getEntityRepository()->find($adminMenuId);
 
         if (empty($adminMenu)) {
             throw new RuntimeException("Couldn't find admin menu");
@@ -81,13 +81,13 @@ final class AdminMenuTable
     /**
      * Delete a adminmenu based on the provided id.
      *
-     * @param int $id admin menu id
+     * @param int $adminMenuId admin menu id
      *
      * @return AdminMenu
      */
-    public function deleteAdminMenu($id = 0)
+    public function deleteAdminMenu($adminMenuId = 0)
     {
-        $adminMenu = $this->getAdminMenu($id);
+        $adminMenu = $this->getAdminMenu($adminMenuId);
 
         if ($adminMenu) {
             $this->entityManager->remove($adminMenu);

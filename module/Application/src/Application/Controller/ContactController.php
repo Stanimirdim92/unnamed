@@ -16,14 +16,14 @@ use Application\Form\ContactForm;
 final class ContactController extends BaseController
 {
     /**
-     * @var ContactForm $contactForm
+     * @var ContactForm
      */
-    private $contactForm = null;
+    private $contactForm;
 
     /**
      * @param ContactForm $contactForm
      */
-    public function __construct(ContactForm $contactForm = null)
+    public function __construct(ContactForm $contactForm)
     {
         parent::__construct();
         $this->contactForm = $contactForm;
@@ -58,13 +58,14 @@ final class ContactController extends BaseController
                 try {
                     $this->Mailing()->sendMail($this->systemSettings("general", "system_email"), '', $formData["subject"], $formData["message"], $formData["email"], $formData["name"]);
                     $this->setLayoutMessages($this->translate("CONTACT_SUCCESS"), 'success');
-                } catch (\Exception $e) {
+                } catch (\Exception $exception) {
                     $this->setLayoutMessages($this->translate("CONTACT_ERROR"), 'error');
                 }
             } else {
                 $this->setLayoutMessages($form->getMessages(), 'error');
             }
         }
+
         return $this->getView();
     }
 }

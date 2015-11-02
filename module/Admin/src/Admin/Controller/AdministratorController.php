@@ -15,6 +15,7 @@ use Admin\Entity\Administrator;
 use Admin\Form\AdministratorForm;
 use Zend\Json\Json;
 use Zend\View\Model\JsonModel;
+use Zend\Mvc\MvcEvent;
 
 final class AdministratorController extends BaseController
 {
@@ -24,10 +25,14 @@ final class AdministratorController extends BaseController
     private $administratorForm;
 
     /**
-     * @var Administrator
+     * @var \Admin\Model\AdministratorTable
      */
     private $administratorTable;
 
+    /**
+     * @var \Admin\Model\UserTable
+     */
+    private $userTable;
 
     /**
      * @param AdministratorForm $administratorForm
@@ -40,14 +45,15 @@ final class AdministratorController extends BaseController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/administrator", "name"=>$this->translate("ADMINISTRATORS")]);
         $this->administratorTable = $this->getTable("Admin\Model\AdministratorTable");
+        $this->userTable = $this->getTable("Admin\Model\UserTable");
 
-        parent::onDispatch($e);
+        parent::onDispatch($event);
     }
 
     /**
@@ -99,7 +105,7 @@ final class AdministratorController extends BaseController
     protected function deleteAction()
     {
         $id = (int)$this->getParam('id', 0);
-        $userTable = $this->getTable("Admin\Model\UserTable");
+        $userTable = $this->userTable;
         $user = $userTable->getUser($id);
         $user->setAdmin(0);
         $userTable->saveUser($user);
@@ -118,7 +124,7 @@ final class AdministratorController extends BaseController
         $search = (string) $this->getParam('ajaxsearch');
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
                 $this->getView()->setTerminal(true);
-                $queryBuilder = $this->getTable("Admin\Model\UserTable")->queryBuilder();
+                $queryBuilder = $this->userTable->queryBuilder();
                 $results = $queryBuilder->select(["u"])
                     ->from('Admin\Entity\User', 'u')
                     ->where('u.name = :name')
@@ -173,37 +179,20 @@ final class AdministratorController extends BaseController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $user = $this->getTable("Admin\Model\UserTable")->getUser($formData->getUser());
-                // valid user id
-                if (count($user) === 1) {
-                    // should return false|null|0 etc.
-                    $adminExist = $this->administratorTable->getAdministrator($user->getId());
+                $userId = $formData->getUser();
+                $adminExist = $this->administratorTable
+                                        ->queryBuilder()
+                                        ->getEntityManager()
+                                        ->createQuery("SELECT a.user, u.name, u.admin FROM Admin\Entity\Administrator AS a LEFT JOIN Admin\Entity\User AS u WITH a.user=u.id WHERE u.id = {$userId}")->getResult();
 
-                    /*
-                     * See if user is in admin table, but admin column from user table is 0.
-                     * If this is the case remove all access
-                     */
-                    if (($adminExist && (int) $user->getAdmin() === 0) ||
-                         (!$adminExist && (int) $user->getAdmin() > 0)
-                       ) {
-                        $user->setAdmin(0);
-                        $this->getTable("Admin\Model\UserTable")->saveUser($user);
-                        $this->administratorTable->deleteAdministrator($user->getId());
-                        return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("ERROR"), 'error');
-                    }
-
-                    /*
-                     * If user is not in admin table and user.admin column is 0
-                     */
-                    if (!$adminExist && (int) $user->getAdmin() === 0) {
-                        $user->setAdmin(1);
-                        $this->getTable("Admin\Model\UserTable")->saveUser($user);
-                        $this->getTable("Admin\Model\AdministratorTable")->saveAdministrator($administrator);
-                        return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
-                    }
-                    return $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');
+                if (!isset($adminExist[0])) {
+                    $user = $this->userTable->getUser($userId);
+                    $user->setAdmin(1);
+                    $this->userTable->saveUser($user);
+                    $this->administratorTable->saveAdministrator($administrator);
+                    return $this->setLayoutMessages("&laquo;".$user->getName()."&raquo; ".$this->translate("SAVE_SUCCESS"), 'success');
                 }
-                return $this->setLayoutMessages($this->translate("ERROR"), 'error');
+                return $this->setLayoutMessages($user->getName().$this->translate("ALREADY_ADMIN"), 'info');
             }
             return $this->setLayoutMessages($form->getMessages(), 'error');
         }

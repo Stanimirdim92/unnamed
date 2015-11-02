@@ -23,7 +23,7 @@ final class AdminMenuController extends BaseController
     private $adminMenuForm;
 
     /**
-     * @var AdminMenu
+     * @var \Admin\Model\AdminMenuTable
      */
     private $adminMenuTable;
 
@@ -38,13 +38,14 @@ final class AdminMenuController extends BaseController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/adminmenu", "name"=>$this->translate("ADMIN_MENUS")]);
         $this->adminMenuTable = $this->getTable("Admin\Model\AdminMenuTable");
-        parent::onDispatch($e);
+
+        parent::onDispatch($event);
     }
 
     /**
@@ -134,7 +135,7 @@ final class AdminMenuController extends BaseController
      *
      * @param AdminMenu $adminMenu
      */
-    private function initForm(AdminMenu $adminMenu)
+    private function initForm(AdminMenu $adminMenu = null)
     {
         if (!$adminMenu instanceof AdminMenu) {
             $adminMenu = new AdminMenu([]);

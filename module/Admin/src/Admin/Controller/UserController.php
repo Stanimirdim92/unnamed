@@ -26,6 +26,11 @@ final class UserController extends BaseController
     private $userForm;
 
     /**
+     * @var \Admin\Model\UserTable
+     */
+    private $userTable;
+
+    /**
      * @param UserForm $userForm
      */
     public function __construct(UserForm $userForm)
@@ -35,12 +40,14 @@ final class UserController extends BaseController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         $this->addBreadcrumb(["reference"=>"/admin/user", "name"=>$this->translate("USERS")]);
-        parent::onDispatch($e);
+        $this->userTable = $this->getTable("Admin\Model\UserTable");
+
+        parent::onDispatch($event);
     }
 
     /**
@@ -51,7 +58,7 @@ final class UserController extends BaseController
     public function indexAction()
     {
         $this->getView()->setTemplate("admin/user/index");
-        $query = $this->getTable("Admin\Model\UserTable");
+        $query = $this->userTable;
         $q = $query->queryBuilder()
                    ->select(["u"])
                    ->from('Admin\Entity\User', 'u')
@@ -74,7 +81,7 @@ final class UserController extends BaseController
     protected function editAction()
     {
         $this->getView()->setTemplate("admin/user/edit");
-        $user = $this->getTable("Admin\Model\UserTable")->getUser((int)$this->getParam("id", 0));
+        $user = $this->userTable->getUser((int)$this->getParam("id", 0));
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/edit/{$user->getId()}", "name"=> $this->translate("EDIT_USER")." &laquo;".$user->getName()."&raquo;"]);
         $this->initForm($user);
@@ -104,7 +111,7 @@ final class UserController extends BaseController
                 $formData = $form->getData();
 
                 // check for existing email
-                $query = $this->getTable("Admin\Model\UserTable");
+                $query = $this->userTable;
                 $existingEmail = $query->queryBuilder()
                    ->select(["u"])
                    ->from('Admin\Entity\User', 'u')
@@ -115,7 +122,7 @@ final class UserController extends BaseController
                     return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData->getEmail()."</b> ".$this->translate("ALREADY_EXIST"), 'info');
                 }
 
-                $this->getTable("Admin\Model\UserTable")->saveUser($user);
+                $this->userTable->saveUser($user);
                 return $this->setLayoutMessages("&laquo;".$user->getFullName()."&raquo; ".$this->translate("SAVE_SUCCESS"), "success");
 
             }
@@ -130,7 +137,7 @@ final class UserController extends BaseController
     {
         $this->getView()->setTemplate("admin/user/disabled");
 
-        $query = $this->getTable("Admin\Model\UserTable");
+        $query = $this->userTable;
         $q = $query->queryBuilder()
                    ->select(["u"])
                    ->from('Admin\Entity\User', 'u')
@@ -150,7 +157,7 @@ final class UserController extends BaseController
      */
     protected function enableAction()
     {
-        $this->getTable("Admin\Model\UserTable")->toggleUserState((int)$this->getParam("id", 0), 0);
+        $this->userTable->toggleUserState((int)$this->getParam("id", 0), 0);
         $this->setLayoutMessages($this->translate("USER_ENABLE_SUCCESS"), "success");
     }
 
@@ -159,7 +166,7 @@ final class UserController extends BaseController
      */
     protected function disableAction()
     {
-        $this->getTable("Admin\Model\UserTable")->toggleUserState((int)$this->getParam("id", 0), 1);
+        $this->userTable->toggleUserState((int)$this->getParam("id", 0), 1);
         $this->setLayoutMessages($this->translate("USER_DISABLE_SUCCESS"), "success");
     }
 
@@ -171,7 +178,7 @@ final class UserController extends BaseController
     protected function detailAction()
     {
         $this->getView()->setTemplate("admin/user/detail");
-        $user = $this->getTable("Admin\Model\UserTable")->getUser((int)$this->getParam("id", 0));
+        $user = $this->userTable->getUser((int)$this->getParam("id", 0));
         $this->getView()->user = $user;
         $this->addBreadcrumb(["reference"=>"/admin/user/detail/".$user->getId()."", "name"=>"&laquo;". $user->getFullName()."&raquo; ".$this->translate("DETAILS")]);
 
@@ -188,7 +195,7 @@ final class UserController extends BaseController
         $search = (string) $this->getParam('ajaxsearch', null);
         if (isset($search) && $this->getRequest()->isXmlHttpRequest()) {
                 $this->getView()->setTerminal(true);
-                $queryBuilder = $this->getTable("Admin\Model\UserTable")->queryBuilder();
+                $queryBuilder = $this->userTable->queryBuilder();
                 $results = $queryBuilder->select(["u"])
                     ->from('Admin\Entity\User', 'u')
                     ->where('u.name = :name')

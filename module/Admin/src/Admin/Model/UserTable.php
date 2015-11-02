@@ -58,30 +58,30 @@ final class UserTable
     }
 
     /**
-     * @param int $id user id
+     * @param int $userId user id
      *
-     * @return User|null
+     * @return array
      */
-    public function getUser($id = 0)
+    public function getUser($userId = 0)
     {
-        $user = $this->getEntityRepository()->find($id);
+        $user = $this->getEntityRepository()->find($userId);
 
         if (empty($user)) {
             throw new RuntimeException("Couldn't find user");
         }
 
-        return $user;
+        return $user[0];
     }
 
     /**
      * This method can disable or enable user accounts.
      *
-     * @param int $id user id
+     * @param int $userId user id
      * @param int $state 0 - enabled, 1 - disabled
      */
-    public function toggleUserState($id = 0, $state = 0)
+    public function toggleUserState($userId = 0, $state = 0)
     {
-        $user = $this->getUser($id);
+        $user = $this->getUser($userId);
         if ($user) {
             $user->setDisabled((int) $state);
             $user->setAdmin(0); // doesn't matter the $state. Remove user admin rights.

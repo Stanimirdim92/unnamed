@@ -45,13 +45,13 @@ final class AdministratorForm extends Form implements InputFilterProviderInterfa
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Administrator',
                 'property' => "caption",
-                'option_attributes' => [
-                    'required'   => "true",
-                    'size'        => "40",
-                    'class'      => 'administrator-user ajax-search',
-                    'placeholder' => 'User ID',
-                    'autocomplete' => "off",
-                ],
+            ],
+            'attributes' => [
+                'required'   => "true",
+                'size'        => "40",
+                'class'      => 'administrator-user ajax-search',
+                'placeholder' => 'User ID',
+                'autocomplete' => "off",
             ],
             ]
         );

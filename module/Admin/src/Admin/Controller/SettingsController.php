@@ -16,33 +16,34 @@ use Admin\Form\SettingsPostsForm;
 use Admin\Form\SettingsGeneralForm;
 use Admin\Form\SettingsDiscussionForm;
 use Admin\Form\SettingsRegistrationForm;
+use Zend\Mvc\MvcEvent;
 
 final class SettingsController extends BaseController
 {
     /**
      * @var SettingsMailForm
      */
-    private $mailForm = null;
+    private $mailForm;
 
     /**
      * @var SettingsPostsForm
      */
-    private $postsForm = null;
+    private $postsForm;
 
     /**
      * @var SettingsGeneralForm
      */
-    private $generalForm = null;
+    private $generalForm;
 
     /**
      * @var SettingsDiscussionForm
      */
-    private $discussionForm = null;
+    private $discussionForm;
 
     /**
      * @var SettingsRegistrationForm
      */
-    private $registrationForm = null;
+    private $registrationForm;
 
     /**
      * @method __construct
@@ -54,11 +55,11 @@ final class SettingsController extends BaseController
      * @param SettingsRegistrationForm $registrationForm
      */
     public function __construct(
-        SettingsMailForm $mailForm = null,
-        SettingsPostsForm $postsForm = null,
-        SettingsGeneralForm $generalForm = null,
-        SettingsDiscussionForm $discussionForm = null,
-        SettingsRegistrationForm $registrationForm = null
+        SettingsMailForm $mailForm,
+        SettingsPostsForm $postsForm,
+        SettingsGeneralForm $generalForm,
+        SettingsDiscussionForm $discussionForm,
+        SettingsRegistrationForm $registrationForm
     ) {
         parent::__construct();
 
@@ -70,11 +71,11 @@ final class SettingsController extends BaseController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
-        parent::onDispatch($e);
+        parent::onDispatch($event);
         $this->addBreadcrumb(["reference"=>"/admin/settings", "name"=>$this->translate("SETTINGS")]);
     }
 

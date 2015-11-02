@@ -61,20 +61,20 @@ final class MenuTable
     }
 
     /**
-     * @param int $id menu id
+     * @param int $menuId menu id
      * @param int $language user language
      *
      * @throws RuntimeException If menu is not found
      *
      * @return Menu
      */
-    public function getMenu($id = 0, $language = 1)
+    public function getMenu($menuId = 0, $language = 1)
     {
         $menu = $this->queryBuilder();
         $menu->select(["m"]);
         $menu->from('Admin\Entity\Menu', 'm');
         $menu->where("m.id = :id AND m.language = :language");
-        $menu->setParameter(':id', (int) $id);
+        $menu->setParameter(':id', (int) $menuId);
         $menu->setParameter(':language', (int) $language);
         $menu = $menu->getQuery()->getSingleResult();
 
@@ -88,12 +88,12 @@ final class MenuTable
     /**
      * Delete a menu based on the provided id and language.
      *
-     * @param int $id menu id
+     * @param int $menuId menu id
      * @param int $language user language
      */
-    public function deleteMenu($id = 0, $language = 1)
+    public function deleteMenu($menuId = 0, $language = 1)
     {
-        $menu = $this->getMenu($id, $language);
+        $menu = $this->getMenu($menuId, $language);
         if ($menu) {
             $this->entityManager->remove($menu);
             $this->entityManager->flush();
@@ -116,13 +116,13 @@ final class MenuTable
     /**
      * This method can disable or enable menus.
      *
-     * @param int $id menu id
+     * @param int $menuId menu id
      * @param int $language user language
      * @param int $state 0 - deactivated, 1 - active
      */
-    public function toggleActiveMenu($id = 0, $language = 1, $state = 0)
+    public function toggleActiveMenu($menuId = 0, $language = 1, $state = 0)
     {
-        $menu = $this->getMenu($id, $language);
+        $menu = $this->getMenu($menuId, $language);
 
         if ($menu) {
             $menu->setActive((int) $state);

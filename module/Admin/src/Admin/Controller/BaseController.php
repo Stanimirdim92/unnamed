@@ -45,15 +45,15 @@ class BaseController extends AbstractActionController
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
         if (APP_ENV !== 'development') {
             $this->isAdmin();
         }
 
-        parent::onDispatch($e);
+        parent::onDispatch($event);
         $this->initMenus();
 
         $this->getView()->breadcrumbs = $this->breadcrumbs;
@@ -125,13 +125,13 @@ class BaseController extends AbstractActionController
      */
     final protected function language($offset = "language")
     {
-        $offset = 1;
         if ($this->getTranslation()->offSetExists($offset)) {
-            $offset = $this->getTranslation()->offSetGet($offset);
+            return $this->getTranslation()->offSetGet($offset);
         } elseif ($this->getTranslation()->offSetExists("language")) {
-            $offset = $this->getTranslation()->offSetGet("language");
+            return $this->getTranslation()->offSetGet("language");
+        } else {
+            return 1;
         }
-        return $offset;
     }
 
     /**
@@ -152,7 +152,6 @@ class BaseController extends AbstractActionController
      * @throws AuthorizationException If wrong credentials or not in administrator table
      *
      * @todo create a bruteforce protection for failed login attempts.
-     * @todo create a join query for admin column check via the user table.
      *
      * @return mixed
      */
@@ -160,21 +159,18 @@ class BaseController extends AbstractActionController
     {
         $auth = $this->UserData();
         if ($auth->checkIdentity(false, $this->translate("ERROR_AUTHORIZATION"))) {
-            if (isset($auth->getIdentity()->role)         &&
-                ((int) $auth->getIdentity()->role === 10) &&
-                isset($auth->getIdentity()->logged)       &&
-                $auth->getIdentity()->logged === true
-            ) {
-                $checkAdminExistence = $this->getTable("Admin\Model\AdministratorTable");
-                $checkAdminExistence->where(["user" => $auth->getIdentity()->id]);
-                $checkAdminExistence = $checkAdminExistence->current();
+            $userId = $auth->getIdentity()["id"];
+            $adminExist = $this->getTable("Admin\Model\AdministratorTable")
+                                        ->queryBuilder()
+                                        ->getEntityManager()
+                                        ->createQuery("SELECT a.user, u.name FROM Admin\Entity\Administrator AS a LEFT JOIN Admin\Entity\User AS u WITH a.user=u.id WHERE u.id = {$userId} AND u.admin = 1")->getResult();
 
-                if (count($checkAdminExistence) === 1) {
-                    unset($checkAdminExistence);
-                    return true;
-                }
+            if (isset($adminExist[0])) {
+                unset($adminExist);
+                return true;
             }
         }
+
         return $auth->clearUserData($this->translate("ERROR_AUTHORIZATION"));
     }
 

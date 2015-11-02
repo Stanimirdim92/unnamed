@@ -81,7 +81,7 @@ final class ContactForm extends Form implements InputFilterProviderInterface
 
         $captchaImage = new CaptchaImage(
             [
-            'font'           => 'public/assets/prod/front/fonts/arial.ttf',
+            'font'           => 'public/layouts/default/front/fonts/arial.ttf',
             'width'          => 180,
             'height'         => 50,
             'size'           => 30,

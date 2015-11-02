@@ -44,12 +44,12 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\AdminMenu',
                 'property' => "caption",
-                'option_attributes' => [
-                    'required'   => "true",
-                    'size'        => "40",
-                    'class'      => 'admin-menu-caption',
-                    'placeholder' => 'Caption',
-                ],
+            ],
+            'attributes' => [
+                'required'   => "true",
+                'size'        => "40",
+                'class'      => 'admin-menu-caption',
+                'placeholder' => 'Caption',
             ],
         ]);
 
@@ -80,11 +80,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\AdminMenu',
                 'property' => "controller",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'admin-menu-controller',
-                    'placeholder' => 'Controller',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'admin-menu-controller',
+                'placeholder' => 'Controller',
             ],
         ]);
 
@@ -96,11 +96,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\AdminMenu',
                 'property' => "class",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'admin-menu-class',
-                    'placeholder' => 'CSS class',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'admin-menu-class',
+                'placeholder' => 'CSS class',
             ],
         ]);
 
@@ -112,11 +112,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\AdminMenu',
                 'property' => "action",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'admin-menu-action',
-                    'placeholder' => 'Action',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'admin-menu-action',
+                'placeholder' => 'Action',
             ],
         ]);
 
@@ -128,11 +128,11 @@ final class AdminMenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\AdminMenu',
                 'property' => "caption",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'admin-menu-description',
-                    'placeholder' => 'Description',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'admin-menu-description',
+                'placeholder' => 'Description',
             ],
         ]);
 

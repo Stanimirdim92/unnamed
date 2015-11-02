@@ -11,30 +11,50 @@
 
 namespace Application\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ResetPassword
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="resetpassword")
+ */
 final class ResetPassword
 {
     /**
-     * @var int $id
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="id", type="integer", nullable=false)
      */
     private $id = 0;
 
     /**
-     * @var string $password
+     * @var string
+     *
+     * @ORM\Column(name="token", type="string", length=100, nullable=true)
      */
-    private $token = null;
+    private $token;
 
     /**
-     * @var string $ip
+     * @var string
+     *
+     * @ORM\Column(name="ip", type="string", length=30, nullable=true)
      */
-    private $ip = null;
+    private $ip;
 
     /**
-     * @var string $date
+     * @var string
+     *
+     * @ORM\Column(name="date", type="string", nullable=true)
      */
     private $date = "0000-00-00 00:00:00";
 
     /**
-     * @var int $user
+     * @var integer
+     *
+     * @ORM\Column(name="user", type="integer", nullable=false)
      */
     private $user = 0;
 
@@ -95,7 +115,7 @@ final class ResetPassword
      *
      * @param String $token
      */
-    public function setToken($token = null)
+    public function setToken($token)
     {
         $this->token = $token;
     }
@@ -115,7 +135,7 @@ final class ResetPassword
      *
      * @param String $ip
      */
-    public function setIp($ip = null)
+    public function setIp($ip)
     {
         $this->ip = $ip;
     }
@@ -155,7 +175,7 @@ final class ResetPassword
      *
      * @param Int $user
      */
-    public function setUser($user = null)
+    public function setUser($user)
     {
         $this->user = $user;
     }

@@ -15,8 +15,7 @@ use Zend\Authentication\AuthenticationService;
 use Zend\Session\Container;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
-use Zend\Authentication\Adapter\DbTable\CallbackCheckAdapter;
-use Application\Model\ResetPassword;
+use Application\Entity\ResetPassword;
 use Application\Form\LoginForm;
 use Application\Form\ResetPasswordForm;
 use Application\Form\NewPasswordForm;
@@ -25,50 +24,50 @@ use Application\Exception\RuntimeException;
 final class LoginController extends BaseController
 {
     /**
-     * @var $adapter
+     * @var AuthenticationService
      */
-    private $adapter = null;
+    private $authService;
 
     /**
-     * @var ResetPasswordForm $resetPasswordForm
+     * @var ResetPasswordForm
      */
-    private $resetPasswordForm = null;
+    private $resetPasswordForm;
 
     /**
-     * @var NewPasswordForm $newPasswordForm
+     * @var NewPasswordForm
      */
-    private $newPasswordForm = null;
+    private $newPasswordForm;
 
     /**
-     * @var LoginForm $loginForm
+     * @var LoginForm
      */
-    private $loginForm = null;
+    private $loginForm;
 
     /**
      * @param LoginForm $contactForm
-     * @param $adapter
+     * @param AuthenticationService $authService
      * @param ResetPasswordForm $resetPasswordForm
      * @param NewPasswordForm $newPasswordForm
      */
     public function __construct(
-        LoginForm $loginForm = null,
-        $adapter = null,
-        ResetPasswordForm $resetPasswordForm = null,
-        NewPasswordForm $newPasswordForm = null
+        LoginForm $loginForm,
+        AuthenticationService $authService,
+        ResetPasswordForm $resetPasswordForm,
+        NewPasswordForm $newPasswordForm
     ) {
         parent::__construct();
         $this->loginForm = $loginForm;
-        $this->adapter = $adapter;
+        $this->authService = $authService;
         $this->resetPasswordForm = $resetPasswordForm;
         $this->newPasswordForm = $newPasswordForm;
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
-        parent::onDispatch($e);
+        parent::onDispatch($event);
 
         /*
          * If user is logged and tries to access one of the given actions
@@ -85,17 +84,13 @@ final class LoginController extends BaseController
      *
      * @param array $options
      *
-     * @return DbTable|Adapter
+     * @return EntityManager
      */
     private function getAuthAdapter(array $options = [])
     {
-        $credentialCallback = function ($passwordInDatabase, $passwordProvided) {
-            return password_verify($passwordProvided, $passwordInDatabase);
-        };
-
-        $authAdapter = new CallbackCheckAdapter($this->adapter, "user", "email", "password", $credentialCallback);
-        $authAdapter->setIdentity((string) $options["email"]);
-        $authAdapter->setCredential((string) $options["password"]);
+        $authAdapter = $this->authService->getAdapter();
+        $authAdapter->setIdentityValue((string) $options["email"]);
+        $authAdapter->setCredentialValue((string) $options["password"]);
 
         return $authAdapter;
     }
@@ -116,6 +111,7 @@ final class LoginController extends BaseController
         $form->get("email")->setLabel($this->translate("EMAIL"));
         $form->get("password")->setLabel($this->translate("PASSWORD"));
         $this->getView()->form = $form;
+
         return $this->getView();
     }
 
@@ -156,40 +152,23 @@ final class LoginController extends BaseController
             return $this->setLayoutMessages($result->getMessages(), 'error');
         }
 
-        $role = 1;
-        $url = "/";
-        $includeRows = ['id', 'ip', 'name', 'surname', 'email', 'isDisabled', 'image', 'admin', 'language'];
-        $excludeRows = ['password', 'registered', 'lastLogin', 'birthDate', 'hideEmail', ];
-        $data = $adapter->getResultRowObject($includeRows, $excludeRows);
-        $user = $this->getTable('UserTable')->getUser($data->id);
-
         /*
          * If account is disabled/banned (call it w/e you like) clear user data and redirect
          */
-        if ((int) $user->isDisabled() === 1) {
+        if ((int) $result->getIdentity()->isDisabled() === 1) {
             $this->setLayoutMessages($this->translate("LOGIN_ERROR"), 'error');
             return $this->logoutAction();
         }
 
-        /*
-         * See if user is admin
-         */
-        if ((int) $user->getAdmin() === 1) {
-            $role = 10;
-            $url = "/admin";
-        }
-
-        $user->setLastLogin(date("Y-m-d H:i:s", time()));
+        $result->getIdentity()->setLastLogin(date("Y-m-d H:i:s", time()));
         $remote = new RemoteAddress();
-        $user->setIp($remote->getIpAddress());
-        $this->getTable('UserTable')->saveUser($user);
+        $result->getIdentity()->setIp($remote->getIpAddress());
+        $this->getTable('Admin\Model\UserTable')->saveUser($result->getIdentity());
 
-        $data->role = (int) $role;
-        $data->logged = true;
         Container::getDefaultManager()->regenerateId();
 
-        $auth->getStorage()->write($data);
-        return $this->redirect()->toUrl($url);
+        $this->authService->getStorage()->write($data); // puts only id in session!
+        return $this->redirect()->toUrl("/");
     }
 
     /**
@@ -216,7 +195,7 @@ final class LoginController extends BaseController
         /**
          * See if token exist or has expired
          */
-        $tokenExist = $this->getTable("ResetPasswordTable");
+        $tokenExist = $this->getTable("Application\Model\ResetPasswordTable");
         $tokenExist->columns(["user", "token", "date"]);
         $tokenExist->where("token = '{$token}' AND date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)", "AND");
         $tokenExist = $tokenExist->fetch()->current();
@@ -259,12 +238,12 @@ final class LoginController extends BaseController
                 $formData = $form->getData();
                 $pw = $func::createPassword($formData->password);
                 if (!empty($pw)) {
-                    $user = $this->getTable("UserTable")->getUser($this->getView()->resetpwUserId);
+                    $user = $this->getTable("Admin\Model\UserTable")->getUser($this->getView()->resetpwUserId);
                     $remote = new RemoteAddress();
                     unset($this->getView()->resetpwUserId);
                     $user->setPassword($pw);
                     $user->setIp($remote->getIpAddress());
-                    $this->getTable("UserTable")->saveUser($user);
+                    $this->getTable("Admin\Model\UserTable")->saveUser($user);
                     $this->setLayoutMessages($this->translate("NEW_PW_SUCCESS"), 'success');
                 } else {
                     $this->setLayoutMessages($this->translate("PASSWORD_NOT_GENERATED"), 'error');
@@ -285,7 +264,7 @@ final class LoginController extends BaseController
         $this->getView()->setTemplate("application/login/resetpassword");
 
         /**
-         * @var  ResetPasswordForm $form
+         * @var ResetPasswordForm $form
          */
         $form = $this->resetPasswordForm;
 
@@ -297,8 +276,9 @@ final class LoginController extends BaseController
             $form->setData($this->getRequest()->getPost());
             if ($form->isValid()) {
                 $formData = $form->getData();
-                $existingEmail = $this->getTable("UserTable");
-                $existingEmail = $existingEmail->where(["email" => $formData["email"]])->current();
+                $existingEmail = $this->getTable("Admin\Model\UserTable")
+                                      ->getEntityRepository()
+                                      ->findBy(["email" => $formData["email"]]);
 
                 if (count($existingEmail) === 1) {
                     $func = $this->getFunctions();
@@ -309,8 +289,9 @@ final class LoginController extends BaseController
                     $resetpw->setUser($existingEmail->getId());
                     $resetpw->setDate(date("Y-m-d H:i:s", time()));
                     $resetpw->setIp($remote->getIpAddress());
-                    $this->getTable("ResetPasswordTable")->saveResetPassword($resetpw);
+                    $this->getTable("Application\Model\ResetPasswordTable")->saveResetPassword($resetpw);
                     $message = $this->translate("NEW_PW_TEXT")." ".$_SERVER["SERVER_NAME"]."/login/newpassword/token/{$token}";
+
                     $result = $this->Mailing()->sendMail($formData["email"], $existingEmail->getFullName(), $this->translate("NEW_PW_TITLE"), $message, $this->systemSettings("general", "system_email"), $this->systemSettings("general", "site_name"));
                     if (!$result) {
                         $this->setLayoutMessages($this->translate("EMAIL_NOT_SENT"), 'error');
@@ -333,8 +314,7 @@ final class LoginController extends BaseController
     protected function logoutAction()
     {
         $this->getTranslation()->getManager()->getStorage()->clear();
-        $auth = new AuthenticationService();
-        $auth->clearIdentity();
+        $this->authService->clearIdentity();
         return $this->redirect()->toUrl("/");
     }
 }

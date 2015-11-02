@@ -39,17 +39,17 @@ final class MenuForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'Zend\Form\Element\Text',
             'name' => 'caption',
+            'attributes' => [
+                'required' => "true",
+                'size' => "40",
+                'id' => "seo-caption",
+                'placeholder' => 'Caption',
+            ],
             'options' => [
                 'label' => 'Caption',
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "caption",
-                'option_attributes' => [
-                    'required' => "true",
-                    'size' => "40",
-                    'id' => "seo-caption",
-                    'placeholder' => 'Caption',
-                ],
             ],
         ]);
 
@@ -80,10 +80,10 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "keywords",
                 'label' => 'Keywords',
-                'option_attributes' => [
-                    'size'        => "40",
-                    'placeholder' => 'Keywords (max 15 words) seperated by commas',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'placeholder' => 'Keywords (max 15 words) seperated by commas',
             ],
         ]);
 
@@ -95,10 +95,10 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "description",
                 'label' => 'Description',
-                'option_attributes' => [
-                    'size'        => "40",
-                    'placeholder' => 'Description (max 150 characters)',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'placeholder' => 'Description (max 150 characters)',
             ],
         ]);
 
@@ -110,10 +110,10 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "language",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'placeholder' => 'Language',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'placeholder' => 'Language',
             ],
         ]);
 
@@ -127,7 +127,7 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "caption",
                 'display_empty_item' => true,
-                'empty_item_label' => 'Please choose a language',
+                'empty_item_label' => 'Please choose parent menu',
                 'is_method' => true,
                 'find_method' => [
                     'name' => 'getMenus',
@@ -163,11 +163,11 @@ final class MenuForm extends Form implements InputFilterProviderInterface
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "class",
                 'label' => 'CSS class',
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'admin-menu-class',
-                    'placeholder' => 'CSS class',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'admin-menu-class',
+                'placeholder' => 'CSS class',
             ],
         ]);
 
@@ -225,13 +225,13 @@ final class MenuForm extends Form implements InputFilterProviderInterface
         $this->add([
             'type' => 'Zend\Form\Element\Hidden',
             'name' => 'menulink',
+            'attributes' => [
+                'id' => 'menulink',
+            ],
             'options' => [
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Menu',
                 'property' => "menulink",
-                'option_attributes' => [
-                    'id' => 'menulink',
-                ],
             ],
         ]);
     }

@@ -45,11 +45,11 @@ final class UserForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\User',
                 'property' => "name",
-                'option_attributes' => [
-                    'required'   => "true",
-                    'size'        => "40",
-                    'placeholder' => 'Name',
-                ],
+            ],
+            'attributes' => [
+                'required'   => "true",
+                'size'        => "40",
+                'placeholder' => 'Name',
             ],
             ]
         );
@@ -63,10 +63,10 @@ final class UserForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\User',
                 'property' => "surname",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'placeholder' => 'Surname',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'placeholder' => 'Surname',
             ],
             ]
         );
@@ -80,12 +80,12 @@ final class UserForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\User',
                 'property' => "email",
-                'option_attributes' => [
-                    'required' => "true",
-                    'min' => "3",
-                    'size' => "30",
-                    'placeholder' => 'johnsmith@example.com',
-                ],
+            ],
+            'attributes' => [
+                'required' => "true",
+                'min' => "3",
+                'size' => "30",
+                'placeholder' => 'johnsmith@example.com',
             ],
             ]
         );
@@ -99,11 +99,11 @@ final class UserForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\User',
                 'property' => "birthDate",
-                'option_attributes' => [
-                    'size'        => "40",
-                    'class'       => 'datetimepicker',
-                    'placeholder' => 'YYYY-MM-DD',
-                ],
+            ],
+            'attributes' => [
+                'size'        => "40",
+                'class'       => 'datetimepicker',
+                'placeholder' => 'YYYY-MM-DD',
             ],
             ]
         );

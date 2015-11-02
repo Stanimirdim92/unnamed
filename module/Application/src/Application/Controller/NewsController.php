@@ -22,14 +22,17 @@ final class NewsController extends BaseController
     {
         $this->getView()->setTemplate("application/news/index");
 
-        $news = $this->getTable("ContentTable");
-        $news->columns(["title", "titleLink", "text", "date", "preview"]);
-        $news->where(["type" => 1, "menu" => 0, "language" => $this->language()], "AND");
-        $news->order("date DESC");
-        $news = $news->fetchPagination();
-        $news->setCurrentPageNumber((int)$this->getParam('page', 1));
-        $news->setItemCountPerPage($this->systemSettings("posts", "news"));
-        $this->getView()->news = $news;
+        $query = $this->getTable("Admin\Model\ContentTable");
+        $news = $query->queryBuilder()->select(["c"])
+               ->from('Admin\Entity\Content', 'c')
+               ->where("c.type = 1 AND c.menu = 0 AND c.language = :language")
+               ->setParameter(":language", (int) $this->language())
+               ->orderBy("c.date", "DESC");
+
+        $paginator = $query->preparePagination($news, false);
+        $paginator->setCurrentPageNumber((int)$this->getParam('page', 1));
+        $paginator->setItemCountPerPage($this->systemSettings("posts", "news"));
+        $this->getView()->news = $paginator;
 
         return $this->getView();
     }
@@ -45,18 +48,21 @@ final class NewsController extends BaseController
 
         $escaper = new \Zend\Escaper\Escaper('utf-8');
         $post = (string) $escaper->escapeUrl($this->getParam("post"));
-        $new = $this->getTable("ContentTable");
-        $new->columns(["title", "text", "date", "preview"]);
-        $new->where(["type" => 1, "menu" => 0, "titleLink" => $post, "language" => $this->language()]);
-        $new = $new->fetch();
+        $query = $this->getTable("Admin\Model\ContentTable");
+        $new = $query->queryBuilder()->select(["c.title, c.text, c.date, c.preview"])
+               ->from('Admin\Entity\Content', 'c')
+               ->where("c.type = 1 AND c.menu = 0 AND c.language = :language AND c.titleLink = :titleLink")
+               ->setParameter(":language", (int) $this->language())
+               ->setParameter(":titleLink", (string) $post)
+               ->orderBy("c.date", "DESC");
 
+        $new = $new->getQuery()->getResult();
         if ($new) {
-            $new = $new->getDataSource()->current();
-            $this->getView()->new = $new;
-            $this->initMetaTags($new);
+            $this->getView()->new = $new[0];
+            $this->initMetaTags($new[0]);
             return $this->getView();
-        } else {
-            return $this->setErrorCode(404);
         }
+
+        return $this->setErrorCode(404);
     }
 }

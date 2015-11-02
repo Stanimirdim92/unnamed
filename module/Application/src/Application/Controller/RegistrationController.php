@@ -11,7 +11,7 @@
 
 namespace Application\Controller;
 
-use Admin\Model\User;
+use Admin\Entity\User;
 use Zend\Http\PhpEnvironment\RemoteAddress;
 use Zend\Mvc\MvcEvent;
 use Application\Form\RegistrationForm;
@@ -19,25 +19,25 @@ use Application\Form\RegistrationForm;
 final class RegistrationController extends BaseController
 {
     /**
-     * @var RegistrationForm $registrationForm
+     * @var RegistrationForm
      */
-    private $registrationForm = null;
+    private $registrationForm;
 
     /**
      * @param RegistrationForm $registrationForm
      */
-    public function __construct(RegistrationForm $registrationForm = null)
+    public function __construct(RegistrationForm $registrationForm)
     {
         parent::__construct();
         $this->registrationForm = $registrationForm;
     }
 
     /**
-     * @param MvcEvent $e
+     * @param MvcEvent $event
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $event)
     {
-        parent::onDispatch($e);
+        parent::onDispatch($event);
 
         /**
          * If user is logged and tries to access one of the given actions
@@ -70,9 +70,9 @@ final class RegistrationController extends BaseController
             /*
              * See if there is already registered user with this email
              */
-            $existingEmail = $this->getTable("UserTable");
-            $existingEmail->where(["email" => $formData["email"]]);
-            $existingEmail = $existingEmail->fetch();
+            $existingEmail = $this->getTable("Admin\Model\UserTable")
+                                  ->getEntityRepository()
+                                  ->findBy(["email" => $formData["email"]]);
 
             if (count($existingEmail) > 0) {
                 return $this->setLayoutMessages($this->translate("EMAIL_EXIST")." <b>".$formData["email"]."</b> ".$this->translate("ALREADY_EXIST"), 'info');
@@ -85,7 +85,7 @@ final class RegistrationController extends BaseController
                 $registerUser->setIp($remote->getIpAddress());
                 $registerUser->setEmail($formData["email"]);
                 $registerUser->setLanguage($this->language());
-                $this->getTable("UserTable")->saveUser($registerUser);
+                $this->getTable("Admin\Model\UserTable")->saveUser($registerUser);
                 return $this->setLayoutMessages($this->translate("REGISTRATION_SUCCESS"), 'success');
             }
         } else {
@@ -102,6 +102,7 @@ final class RegistrationController extends BaseController
 
         if ($this->systemSettings("registration", "allow_registrations") !== 1) {
             $this->getView()->form = $this->translate("REGISTRATION_CLOSED");
+
             return $this->getView();
         }
 
@@ -118,6 +119,7 @@ final class RegistrationController extends BaseController
         $form->get("register")->setValue($this->translate("SIGN_UP"));
 
         $this->getView()->form = $form;
+
         return $this->getView();
     }
 }

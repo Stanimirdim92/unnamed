@@ -31,12 +31,12 @@ final class ErrorHandling
     /**
      * @var Logger $logger;
      */
-    private $logger = null;
+    private $logger;
 
     /**
      * @param Logger $logger
      */
-    public function __construct(Logger $logger = null)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
@@ -48,7 +48,7 @@ final class ErrorHandling
      *
      * @return ErrorHandling
      */
-    public function setDestination($destination = null)
+    public function setDestination($destination)
     {
         $destination = (string) $destination;
 
@@ -75,7 +75,7 @@ final class ErrorHandling
      *
      * @return ErrorHandling
      */
-    private function logException(\Exception $exception = null)
+    private function logException(\Exception $exception)
     {
         $log = PHP_EOL."Exception: ".$exception->getMessage();
         $log .= PHP_EOL."Code: ".$exception->getCode();
@@ -93,7 +93,7 @@ final class ErrorHandling
      *
      * @return MvcEvent
      */
-    public function logError(MvcEvent $event = null, ServiceLocatorInterface $sm = null)
+    public function logError(MvcEvent $event, ServiceLocatorInterface $sm)
     {
         $exception = $event->getParam("exception");
         if ($exception instanceof AuthorizationException) {
@@ -124,7 +124,7 @@ final class ErrorHandling
      *
      * @return ErrorHandling
      */
-    private function logAuthorisationError(MvcEvent $event = null, ServiceLocatorInterface $sm = null)
+    private function logAuthorisationError(MvcEvent $event, ServiceLocatorInterface $sm)
     {
         $remote = new RemoteAddress();
 

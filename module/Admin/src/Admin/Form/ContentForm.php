@@ -48,10 +48,10 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Content',
                 'property' => "preview",
-                'option_attributes' => [
-                    'id' => 'preview',
-                    'class' => 'preview',
-                ],
+            ],
+            'attributes' => [
+                'id' => 'preview',
+                'class' => 'preview',
             ],
             ]
         );
@@ -83,12 +83,12 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Content',
                 'property' => "title",
-                'option_attributes' => [
-                    'required'   => "true",
-                    'size'        => "40",
-                    'id'         => "seo-caption",
-                    'placeholder' => 'Title',
-                ],
+            ],
+            'attributes' => [
+                'required'   => "true",
+                'size'        => "40",
+                'id'         => "seo-caption",
+                'placeholder' => 'Title',
             ],
             ]
         );
@@ -102,11 +102,11 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Content',
                 'property' => "text",
-                'option_attributes' => [
-                    'class'   => 'ckeditor',
-                    'rows'        => "5",
-                    'cols'      => "80",
-                ],
+            ],
+            'attributes' => [
+                'class'   => 'ckeditor',
+                'rows'        => "5",
+                'cols'      => "80",
             ],
             ]
         );
@@ -159,9 +159,9 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Content',
                 'property' => "date",
-                'option_attributes' => [
-                    'size'  => "20",
-                ],
+            ],
+            'attributes' => [
+                'size'  => "20",
             ],
             ]
         );
@@ -249,9 +249,9 @@ final class ContentForm extends Form implements InputFilterProviderInterface
                 'object_manager' => $this->entityManager,
                 'target_class' => 'Admin\Entity\Content',
                 'property' => "titleLink",
-                'option_attributes' => [
-                    'id' => 'titleLink',
-                ],
+            ],
+            'attributes' => [
+                'id' => 'titleLink',
             ],
             ]
         );
